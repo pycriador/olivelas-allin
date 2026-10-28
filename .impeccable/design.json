@@ -1,0 +1,34 @@
+{
+  "name": "Olivelas Allin Design System",
+  "version": "1.0.0",
+  "direction": "Registro Corporativo & Atlas de Despacho (Notarial Registry & Dispatch Atlas)",
+  "colorScheme": "light-dark()",
+  "tokens": {
+    "colors": {
+      "bgCanvas": { "light": "#f8fafc", "dark": "#0b0f17" },
+      "bgSurface": { "light": "#ffffff", "dark": "#111827" },
+      "bgSurfaceRaised": { "light": "#f1f5f9", "dark": "#1e293b" },
+      "bgSidebar": { "light": "#0f172a", "dark": "#090d16" },
+      "textPrimary": { "light": "#0f172a", "dark": "#f8fafc" },
+      "textSecondary": { "light": "#334155", "dark": "#cbd5e1" },
+      "textMuted": { "light": "#64748b", "dark": "#94a3b8" },
+      "borderSubtle": { "light": "#e2e8f0", "dark": "#1e293b" },
+      "borderStrong": { "light": "#cbd5e1", "dark": "#334155" },
+      "accentPrimary": { "light": "#1d4ed8", "dark": "#3b82f6" },
+      "statusSuccess": { "light": "#15803d", "dark": "#4ade80" },
+      "statusWarning": { "light": "#b45309", "dark": "#fbbf24" },
+      "statusDanger": { "light": "#b91c1c", "dark": "#f87171" },
+      "statusInfo": { "light": "#1d4ed8", "dark": "#60a5fa" }
+    },
+    "typography": {
+      "fontSans": "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+      "fontMono": "'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace",
+      "numericVariant": "tabular-nums"
+    },
+    "radii": {
+      "sm": "4px",
+      "md": "6px",
+      "lg": "8px"
+    }
+  }
+}
