@@ -14,7 +14,7 @@ import {
   interpolateVariables,
   validateSafeSandboxUrl,
 } from '../services/operationalUtils';
-import { formatCurrency, translations } from '../i18n/translations';
+import { formatCurrency, translate, translations } from '../i18n/translations';
 import {
   INITIAL_API_TOKENS,
   INITIAL_OPERATIONAL_ITEMS,
@@ -261,10 +261,88 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     expect([200, 201]).toContain(simResult.historyEntry?.responseStatus);
   });
 
-  it('6. Internationalization (PT-BR, EN, ES): provides complete translations and locale currency formatting', () => {
+  it('6. Internationalization (PT-BR, EN, ES): provides complete translations for all UI keys and locale currency formatting', () => {
     expect(translations['pt-BR']['app.name']).toBe('Olivelas Allin');
     expect(translations.en['app.name']).toBe('Olivelas Allin');
     expect(translations.es['app.name']).toBe('Olivelas Allin');
+
+    const criticalUiKeys = [
+      'landing.hero.eyebrow',
+      'landing.hero.title',
+      'landing.hero.subtitle',
+      'landing.hero.ctaPrimary',
+      'landing.hero.ctaSecondary',
+      'public.nav.home',
+      'public.nav.plans',
+      'public.nav.terms',
+      'public.nav.privacy',
+      'public.nav.login',
+      'public.nav.enterConsole',
+      'scope.global',
+      'scope.company',
+      'scope.impersonating',
+      'scope.exitImpersonation',
+      'scope.restoreDemo',
+      'scope.logout',
+      'nav.dashboard',
+      'nav.companies',
+      'nav.users',
+      'nav.roles',
+      'nav.modules',
+      'nav.contracts',
+      'nav.finance',
+      'nav.payments',
+      'nav.tickets',
+      'nav.audit',
+      'nav.reports',
+      'nav.apiHub',
+      'nav.companyProfile',
+      'nav.inventory',
+      'nav.orders',
+      'nav.crm',
+      'common.cancel',
+      'common.confirm',
+      'common.save',
+      'common.create',
+      'common.edit',
+      'common.view',
+      'common.archive',
+      'common.restore',
+      'common.exportCsv',
+      'common.search',
+      'common.filterStatus',
+      'common.allStatuses',
+      'common.showArchived',
+      'common.actions',
+      'common.status',
+      'common.createdAt',
+      'common.updatedAt',
+      'common.loading',
+      'common.emptyTitle',
+      'common.emptyDesc',
+      'common.simulatedBadge',
+      'common.showing',
+      'common.of',
+      'common.records',
+      'common.page',
+      'common.previous',
+      'common.next',
+      'common.back',
+      'common.required',
+      'common.optional',
+      'common.archiveConfirmTitle',
+      'common.archiveReasonLabel',
+      'common.archiveReasonPlaceholder',
+      'msg.savedSuccess',
+    ];
+
+    for (const key of criticalUiKeys) {
+      for (const lang of ['pt-BR', 'en', 'es'] as const) {
+        const value = translate(lang, key);
+        expect(value).toBeTruthy();
+        expect(value).not.toBe(key);
+      }
+    }
 
     const brl = formatCurrency(1250.5, 'BRL', 'pt-BR');
     const usd = formatCurrency(1250.5, 'USD', 'en');
