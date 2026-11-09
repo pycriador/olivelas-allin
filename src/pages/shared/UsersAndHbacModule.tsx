@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  Building2,
+  CheckCircle2,
   Database,
   Edit3,
   KeyRound,
@@ -15,7 +17,10 @@ import {
   changeUserPasswordInSupabase,
   validatePasswordStrength,
 } from '../../services/supabaseAuthService';
-import { OLIVELAS_ECOSYSTEM_MODULES } from '../../services/olivelasEcosystemService';
+import {
+  OLIVELAS_ECOSYSTEM_MODULES,
+  syncUnifiedUserProfileToSupabase,
+} from '../../services/olivelasEcosystemService';
 import {
   IndividualPermissionOverride,
   LanguageCode,
@@ -283,8 +288,22 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
   const [selectedCompanyIds, setSelectedCompanyIds] = useState<string[]>(
     existing?.companyIds || (targetCompanyId ? [targetCompanyId] : ['emp-olivelas-matriz']),
   );
+  const [companyToAddId, setCompanyToAddId] = useState<string>('');
+  const [isAddCompanyModalOpen, setIsAddCompanyModalOpen] = useState<boolean>(false);
   const [hbacError, setHbacError] = useState('');
   const [isDirty, setIsDirty] = useState(false);
+
+  useEffect(() => {
+    if (existing) {
+      setName(existing.name);
+      setEmail(existing.email);
+      setPhone(existing.phone);
+      setStatus(existing.status);
+      setLanguage(existing.language);
+      setSelectedRoleIds(existing.roleIds);
+      setSelectedCompanyIds(existing.companyIds);
+    }
+  }, [existing]);
 
   if (!currentUser || !hasPermission('users', mode === 'create' ? 'create' : 'edit', targetCompanyId)) {
     return (
@@ -306,16 +325,29 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
     ? companies
     : companies.filter((c) => currentUser.companyIds.includes(c.id));
 
+  const memberCompanies = availableCompanies.filter((c) => selectedCompanyIds.includes(c.id));
+  const unlinkedCompanies = availableCompanies.filter((c) => !selectedCompanyIds.includes(c.id));
+
   const toggleRole = (rid: string) => {
     setSelectedRoleIds((prev) =>
       prev.includes(rid) ? prev.filter((id) => id !== rid) : [...prev, rid],
     );
   };
 
-  const toggleCompany = (cid: string) => {
-    setSelectedCompanyIds((prev) =>
-      prev.includes(cid) ? prev.filter((id) => id !== cid) : [...prev, cid],
-    );
+  const handleAddCompanyToUser = (cid: string) => {
+    if (!cid) return;
+    setSelectedCompanyIds((prev) => (prev.includes(cid) ? prev : [...prev, cid]));
+    setIsDirty(true);
+    const addedComp = companies.find((c) => c.id === cid);
+    notify({
+      type: 'info',
+      title: `Empresa "${addedComp?.tradeName || cid}" adicionada à lista do usuário.`,
+    });
+  };
+
+  const handleRemoveCompanyFromUser = (cid: string) => {
+    setSelectedCompanyIds((prev) => prev.filter((id) => id !== cid));
+    setIsDirty(true);
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -361,10 +393,22 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
         actor,
         `Cadastro de usuário ${newUser.name} (${newUser.email}) com papéis [${selectedRoleIds.join(', ')}].`,
       );
+      await syncUnifiedUserProfileToSupabase(newUser);
       await refreshData();
       notify({ type: 'success', title: `Usuário ${newUser.name} criado com sucesso.` });
       navigate(`${baseRoute}/${newId}`);
     } else if (existing) {
+      const updatedUserObj: UserEntity = {
+        ...existing,
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+        status,
+        language,
+        roleIds: selectedRoleIds,
+        companyIds: selectedCompanyIds,
+        updatedAt: new Date().toISOString(),
+      };
       await repositories.users.update(
         existing.id,
         (curr) => ({
@@ -378,8 +422,9 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
           companyIds: selectedCompanyIds,
         }),
         actor,
-        `Atualização de cadastro e papéis HBAC do usuário ${name.trim()}.`,
+        `Atualização de cadastro, papéis HBAC e empresas associadas (${selectedCompanyIds.length}) do usuário ${name.trim()}.`,
       );
+      await syncUnifiedUserProfileToSupabase(updatedUserObj);
       await refreshData();
       notify({ type: 'success', title: t('msg.savedSuccess') });
       navigate(`${baseRoute}/${existing.id}`);
@@ -527,37 +572,156 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
         </div>
 
         <div className="form-section">
-          <div className="form-section-title">3. Empresas Associadas (Escopo Multiempresa)</div>
-          <div className="form-grid mt-2">
-            {availableCompanies.map((c) => {
-              const checked = selectedCompanyIds.includes(c.id);
-              return (
-                <label
-                  key={c.id}
-                  style={{
-                    border: checked
-                      ? '1px solid var(--accent-teal)'
-                      : '1px solid var(--border-subtle)',
-                    padding: '0.75rem',
-                    borderRadius: 'var(--radius-sm)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={() => toggleCompany(c.id)}
-                  />
-                  <div>
-                    <div className="font-semibold text-sm">{c.tradeName}</div>
-                    <div className="text-xs text-muted mono">{c.id}</div>
+          <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
+            <div>
+              <div className="form-section-title">3. Empresas Associadas (Escopo Multiempresa)</div>
+              <div className="form-section-desc">
+                Lista de empresas das quais este usuário faz parte e controle de adição de novas unidades/empresas.
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                if (unlinkedCompanies[0] && !companyToAddId) {
+                  setCompanyToAddId(unlinkedCompanies[0].id);
+                }
+                setIsAddCompanyModalOpen(true);
+              }}
+              className="btn btn-primary btn-sm"
+            >
+              <Plus size={14} /> Adicionar Outra Empresa
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            {/* Coluna Esquerda: Lista de Empresas que o Usuário Faz Parte */}
+            <div className="lg:col-span-7 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase text-muted">
+                  Empresas das quais faz parte ({memberCompanies.length})
+                </span>
+                <span className="badge badge-teal">{memberCompanies.length} vinculada(s)</span>
+              </div>
+
+              {memberCompanies.length === 0 ? (
+                <div className="p-5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-2">
+                  <Building2 size={22} className="mx-auto text-muted" />
+                  <div className="text-sm font-semibold">Nenhuma empresa vinculada</div>
+                  <p className="text-xs text-muted">
+                    Utilize o painel ao lado ou o botão <strong>Adicionar Outra Empresa</strong> para vincular empresas a este usuário.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {memberCompanies.map((comp) => (
+                    <div
+                      key={comp.id}
+                      className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/30"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="stat-icon-box" style={{ width: 36, height: 36 }}>
+                          <Building2 size={16} />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <strong className="text-sm">{comp.tradeName}</strong>
+                            <StatusBadge status={comp.operationalStatus} />
+                          </div>
+                          <div className="text-xs text-muted">
+                            {comp.legalName} • Doc: <span className="mono">{comp.taxId || comp.id}</span> • ID:{' '}
+                            <code className="mono">{comp.id}</code>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveCompanyFromUser(comp.id)}
+                        className="btn btn-ghost btn-sm text-rose-600 shrink-0"
+                        title="Remover usuário desta empresa"
+                      >
+                        <Trash2 size={14} /> Remover
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Coluna Direita (Do Lado): Adicionar Outras Empresas */}
+            <div className="lg:col-span-5 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3 bg-slate-50/30 dark:bg-slate-800/20">
+              <div className="flex items-center justify-between">
+                <strong className="text-sm flex items-center gap-2">
+                  <Plus size={15} className="text-teal-600" /> Adicionar Outras Empresas
+                </strong>
+                <span className="badge badge-info">{unlinkedCompanies.length} disponível(is)</span>
+              </div>
+
+              {unlinkedCompanies.length === 0 ? (
+                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs space-y-1">
+                  <div className="font-bold text-emerald-600 flex items-center gap-1.5">
+                    <CheckCircle2 size={15} /> Usuário já faz parte de todas as empresas cadastradas!
                   </div>
-                </label>
-              );
-            })}
+                  <p className="text-muted">
+                    Caso deseje criar uma nova empresa na plataforma para vinculá-la, acesse{' '}
+                    <Link to="/app/global/empresas/nova" className="underline font-semibold">
+                      Cadastrar Nova Empresa
+                    </Link>
+                    .
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2">
+                    <select
+                      aria-label="Selecionar empresa para adicionar"
+                      className="select flex-1 text-xs"
+                      value={companyToAddId || unlinkedCompanies[0]?.id || ''}
+                      onChange={(e) => setCompanyToAddId(e.target.value)}
+                    >
+                      {unlinkedCompanies.map((c) => (
+                        <option key={c.id} value={c.id}>
+                          {c.tradeName} ({c.taxId || c.id})
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleAddCompanyToUser(companyToAddId || unlinkedCompanies[0]?.id || '')
+                      }
+                      className="btn btn-primary btn-sm shrink-0"
+                    >
+                      <Plus size={14} /> Adicionar
+                    </button>
+                  </div>
+
+                  <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
+                    <span className="text-[11px] font-semibold uppercase text-muted block">
+                      Ou adicione com 1 clique:
+                    </span>
+                    {unlinkedCompanies.map((c) => (
+                      <div
+                        key={c.id}
+                        className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 text-xs bg-white dark:bg-slate-900"
+                      >
+                        <div>
+                          <div className="font-semibold">{c.tradeName}</div>
+                          <div className="text-[11px] text-muted mono">{c.id}</div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleAddCompanyToUser(c.id)}
+                          className="btn btn-secondary btn-sm"
+                        >
+                          <Plus size={13} /> Vincular
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
 
@@ -571,6 +735,57 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
           </button>
         </div>
       </form>
+
+      <ModalDialog
+        open={isAddCompanyModalOpen}
+        onClose={() => setIsAddCompanyModalOpen(false)}
+        title="Adicionar Empresa ao Usuário"
+        footer={
+          <div className="flex items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setIsAddCompanyModalOpen(false)}
+              className="btn btn-secondary"
+            >
+              Fechar
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-3">
+          <p className="text-xs text-muted">
+            Selecione as empresas que deseja vincular a <strong>{name || existing?.name || 'este usuário'}</strong>:
+          </p>
+          {unlinkedCompanies.length === 0 ? (
+            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs">
+              Todas as empresas disponíveis já estão associadas a este usuário.
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {unlinkedCompanies.map((c) => (
+                <div
+                  key={c.id}
+                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3"
+                >
+                  <div>
+                    <div className="font-semibold text-sm">{c.tradeName}</div>
+                    <div className="text-xs text-muted">
+                      {c.legalName} • Doc: <span className="mono">{c.taxId || c.id}</span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleAddCompanyToUser(c.id)}
+                    className="btn btn-primary btn-sm"
+                  >
+                    <Plus size={14} /> Adicionar
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </ModalDialog>
     </div>
   );
 };
