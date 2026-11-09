@@ -680,21 +680,6 @@ export const OlivelasEcosystemHub: React.FC = () => {
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {/* Troca rápida entre as 16 Plataformas */}
-            <select
-              aria-label="Alternar plataforma Olivelas"
-              className="select text-xs"
-              style={{ width: 'auto', minWidth: 215 }}
-              value={selectedModule.slug}
-              onChange={(e) => navigate(buildModuleRoute(e.target.value))}
-            >
-              {OLIVELAS_ECOSYSTEM_MODULES.map((m) => (
-                <option key={m.slug} value={m.slug}>
-                  Plataforma: {m.brandName}
-                </option>
-              ))}
-            </select>
-
             <button
               type="button"
               onClick={() => setIsFullscreenPlatform((prev) => !prev)}
@@ -1259,24 +1244,6 @@ export const OlivelasEcosystemHub: React.FC = () => {
                       </button>
                     )}
                   </div>
-                </div>
-
-                {/* Abas Rápidas de Todas as Tabelas do Módulo */}
-                <div className="flex flex-wrap items-center gap-1.5">
-                  {selectedModule.tables.map((tbl) => {
-                    const meta = getTableCatalogMetadata(selectedModule, tbl);
-                    const isActiveTbl = (selectedTable || selectedModule.primaryTable) === tbl;
-                    return (
-                      <button
-                        key={tbl}
-                        type="button"
-                        onClick={() => handleSelectSchemaTable(tbl)}
-                        className={`btn btn-sm ${isActiveTbl ? 'btn-primary' : 'btn-secondary'}`}
-                      >
-                        {meta.menuLabel}
-                      </button>
-                    );
-                  })}
                 </div>
 
                 <div className="card overflow-hidden">
