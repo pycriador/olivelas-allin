@@ -434,34 +434,43 @@ export const CompanyDashboardPage: React.FC = () => {
               const mod = modules.find((m) => m.id === sub.moduleId);
               if (!mod) return null;
               let targetRoute = `/app/empresa/${company.id}/modulos`;
-              if (mod.code === 'allin_estoque') targetRoute = `/app/empresa/${company.id}/operacao/estoque`;
-              if (mod.code === 'allin_vendas') targetRoute = `/app/empresa/${company.id}/operacao/vendas`;
-              if (mod.code === 'allin_crm') targetRoute = `/app/empresa/${company.id}/operacao/crm`;
-              if (mod.code === 'allin_financeiro') targetRoute = `/app/empresa/${company.id}/financeiro`;
-              if (mod.code === 'allin_equipe') targetRoute = `/app/empresa/${company.id}/papeis`;
-              if (mod.code === 'allin_contratos') targetRoute = `/app/empresa/${company.id}/contratos`;
-              if (mod.code === 'allin_suporte') targetRoute = `/app/empresa/${company.id}/tickets`;
-              if (mod.code === 'allin_analytics') targetRoute = `/app/empresa/${company.id}/relatorios`;
+              if (!mod.isExample) {
+                targetRoute = `/app/empresa/${company.id}/ecossistema/${mod.ecosystemSlug || mod.code}`;
+              } else {
+                if (mod.code === 'allin_estoque') targetRoute = `/app/empresa/${company.id}/operacao/estoque`;
+                if (mod.code === 'allin_vendas') targetRoute = `/app/empresa/${company.id}/operacao/vendas`;
+                if (mod.code === 'allin_crm') targetRoute = `/app/empresa/${company.id}/operacao/crm`;
+                if (mod.code === 'allin_financeiro') targetRoute = `/app/empresa/${company.id}/financeiro`;
+                if (mod.code === 'allin_equipe') targetRoute = `/app/empresa/${company.id}/papeis`;
+                if (mod.code === 'allin_contratos') targetRoute = `/app/empresa/${company.id}/contratos`;
+                if (mod.code === 'allin_suporte') targetRoute = `/app/empresa/${company.id}/tickets`;
+                if (mod.code === 'allin_analytics') targetRoute = `/app/empresa/${company.id}/relatorios`;
+              }
 
               return (
                 <div
                   key={sub.id}
-                  className="card"
-                  style={{ padding: '0.9rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.6rem' }}
+                  className="card card-interactive"
+                  style={{ padding: '1.1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.75rem' }}
                 >
                   <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <strong>{mod.name[session.language]}</strong>
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className={`badge ${mod.isExample ? 'badge-warning' : 'badge-info'}`}>
+                        {mod.isExample ? 'Exemplo Base' : mod.dbSchema ? `schema: ${mod.dbSchema}` : 'Olivelas Comercial'}
+                      </span>
                       <StatusBadge status={sub.status} />
                     </div>
-                    <p className="text-xs text-muted mt-2">{mod.description[session.language]}</p>
+                    <strong className="block mt-2" style={{ fontSize: '0.98rem' }}>
+                      {mod.name[session.language]}
+                    </strong>
+                    <p className="text-xs text-muted mt-1">{mod.description[session.language]}</p>
                   </div>
-                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+                  <div className="flex items-center justify-between pt-2.5" style={{ borderTop: '1px solid var(--border-subtle)' }}>
                     <span className="text-xs text-muted tabular">
-                      Renovação: {sub.renewalDate}
+                      {formatCurrency(sub.agreedPrice, sub.currency, session.language)}/mês
                     </span>
-                    <Link to={targetRoute} className="text-xs font-semibold flex items-center gap-1">
-                      Acessar <ArrowRight size={12} />
+                    <Link to={targetRoute} className="btn btn-primary btn-sm">
+                      Abrir Interface <ArrowRight size={12} />
                     </Link>
                   </div>
                 </div>

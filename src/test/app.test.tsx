@@ -49,7 +49,7 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     await resetToInitialSeed();
   });
 
-  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 7 users, 10 modules and persists CRUD + logical archiving without physical deletion', async () => {
+  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 7 users, 26 modules (16 commercial + 10 examples) and persists CRUD + logical archiving without physical deletion', async () => {
     await ensureSeeded();
 
     const roles = await repositories.roles.listAll();
@@ -60,7 +60,9 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     expect(roles.length).toBeGreaterThanOrEqual(6);
     expect(companies.length).toBe(4);
     expect(users.length).toBe(7);
-    expect(modules.length).toBe(10);
+    expect(modules.length).toBe(26);
+    expect(modules.filter((m) => !m.isExample).length).toBe(16);
+    expect(modules.filter((m) => m.isExample).length).toBe(10);
 
     // Create a new company via repository
     const created = await repositories.companies.create(
@@ -217,8 +219,8 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       order: 'asc',
     });
 
-    expect(page1.total).toBe(10);
-    expect(page1.totalPages).toBe(3);
+    expect(page1.total).toBe(26);
+    expect(page1.totalPages).toBe(7);
     expect(page1.items.length).toBe(4);
     expect(page1.items[0].priceMonthly).toBeLessThanOrEqual(page1.items[1].priceMonthly);
 
@@ -236,8 +238,9 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       undefined,
       (m) => `${m.name['pt-BR']} ${m.code}`,
     );
-    expect(searched.total).toBe(1);
-    expect(searched.items[0].code).toBe('allin_estoque');
+    expect(searched.total).toBe(2);
+    expect(searched.items.map((i) => i.code)).toContain('allin_gestao_estoque');
+    expect(searched.items.map((i) => i.code)).toContain('allin_estoque');
   });
 
   it('5. API Hub Security & Variable Interpolation: blocks SSRF targets and interpolates environment variables', async () => {

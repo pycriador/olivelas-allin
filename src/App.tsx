@@ -58,7 +58,7 @@ import { OlivelasEcosystemHub } from './pages/company/OlivelasEcosystemHub';
 export const App: React.FC = () => {
   return (
     <Routes>
-      {/* 1. ÁREA PÚBLICA */}
+      {/* 1. ÁREA PÚBLICA & DEMONSTRAÇÃO INTERATIVA DOS 16 MÓDULOS OLIVELAS */}
       <Route element={<PublicLayout />}>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -66,6 +66,8 @@ export const App: React.FC = () => {
         <Route path="/planos" element={<PlansPage />} />
         <Route path="/termos" element={<TermsPage />} />
         <Route path="/privacidade" element={<PrivacyPage />} />
+        <Route path="/demo" element={<OlivelasEcosystemHub />} />
+        <Route path="/demo/:moduleSlug" element={<OlivelasEcosystemHub />} />
       </Route>
 
       {/* 2. CONSOLE GLOBAL DA PLATAFORMA (/app/global) */}

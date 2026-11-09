@@ -4,12 +4,16 @@ import {
   ArrowRight,
   Building2,
   CheckCircle2,
+  Database,
+  ExternalLink,
   KeyRound,
   Layers,
   Lock,
   Package,
+  Play,
   ScrollText,
   ShieldCheck,
+  Sparkles,
   Terminal,
   UserCheck,
 } from 'lucide-react';
@@ -21,16 +25,21 @@ import { recordAuditEvent } from '../../repositories/repositories';
 
 export const LandingPage: React.FC = () => {
   const { modules, session, t } = useApp();
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
   const [selectedSimModules, setSelectedSimModules] = useState<string[]>([
-    'mod-core',
-    'mod-estoque',
-    'mod-financeiro',
-    'mod-equipe',
+    'mod_gestao_estoque',
+    'mod_personal_treiner',
+    'mod_agendamento_simples',
+    'mod_restaurante',
   ]);
 
+  const commercialModules = modules.filter((m) => !m.isExample);
+  const exampleModules = modules.filter((m) => Boolean(m.isExample));
+  const displayedModules = catalogTab === 'commercial' ? commercialModules : exampleModules;
+
   const toggleSimModule = (modId: string) => {
-    if (modId === 'mod-core') return; // Core is mandatory base
     setSelectedSimModules((prev) =>
       prev.includes(modId) ? prev.filter((id) => id !== modId) : [...prev, modId],
     );
@@ -41,35 +50,46 @@ export const LandingPage: React.FC = () => {
     .reduce((acc, m) => acc + (billingCycle === 'monthly' ? m.priceMonthly : m.priceYearly), 0);
 
   return (
-    <div style={{ maxWidth: 1280, margin: '0 auto', padding: '2.5rem 1.5rem' }} className="flex flex-col gap-4">
-      {/* Hero Section */}
+    <div style={{ maxWidth: 1360, margin: '0 auto', padding: '2.25rem 1.5rem' }} className="flex flex-col gap-6">
+      {/* Hero Section Modernizada (Padrão Gestao Estoque) */}
       <section
         className="card"
         style={{
-          padding: '2.5rem',
-          border: '1px solid var(--border-strong)',
+          padding: '2.75rem',
+          border: '1px solid var(--border-subtle)',
+          background:
+            'linear-gradient(135deg, color-mix(in srgb, var(--accent-primary-soft) 55%, var(--bg-surface)) 0%, var(--bg-surface) 60%)',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '2rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '2.5rem',
           alignItems: 'center',
         }}
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3.5">
           <div className="flex items-center gap-2 flex-wrap">
-            <span className="badge badge-info">{t('landing.hero.eyebrow')}</span>
-            <span className="badge badge-teal">HBAC + IndexedDB Local</span>
+            <span className="badge badge-info">
+              <Sparkles size={12} /> {t('landing.hero.eyebrow')}
+            </span>
+            <span className="badge badge-teal">
+              <Database size={12} /> 16 Schemas PostgreSQL no Supabase
+            </span>
           </div>
-          <h1 style={{ fontSize: '2.1rem', lineHeight: 1.2 }}>{t('landing.hero.title')}</h1>
-          <p className="text-muted" style={{ fontSize: '0.95rem', maxWidth: '60ch' }}>
-            {t('landing.hero.subtitle')}
+          <h1 style={{ fontSize: '2.35rem', lineHeight: 1.15, fontWeight: 800 }}>
+            Ecossistema Olivelas All In: 16 Plataformas Comerciais em Uma Única Arquitetura
+          </h1>
+          <p className="text-muted" style={{ fontSize: '0.98rem', maxWidth: '62ch', lineHeight: 1.6 }}>
+            Padronizado sob o design e arquitetura do <strong>Olivelas - Gestão de Estoque & PDV</strong>, com login
+            único em <code>public.profiles</code>, 16 schemas dedicados no PostgreSQL (Supabase) e demonstração
+            interativa de cada módulo diretamente no navegador.
           </p>
           <div className="flex items-center gap-3 mt-2 flex-wrap">
-            <Link to="/login" className="btn btn-primary">
+            <Link to="/demo/allin_gestao_estoque" className="btn btn-primary btn-lg">
+              <Play size={16} />
+              Testar Demonstração dos 16 Módulos
+            </Link>
+            <Link to="/login" className="btn btn-secondary btn-lg">
               {t('landing.hero.ctaPrimary')}
               <ArrowRight size={15} />
-            </Link>
-            <Link to="/planos" className="btn btn-secondary">
-              {t('landing.hero.ctaSecondary')}
             </Link>
           </div>
         </div>
@@ -77,58 +97,63 @@ export const LandingPage: React.FC = () => {
         {/* Architectural Proof Card */}
         <div
           style={{
-            backgroundColor: 'var(--bg-subtle)',
+            backgroundColor: 'var(--bg-surface)',
             border: '1px solid var(--border-subtle)',
-            borderRadius: 'var(--radius-md)',
-            padding: '1.25rem',
+            borderRadius: 'var(--radius-lg)',
+            padding: '1.5rem',
+            boxShadow: 'var(--shadow-md)',
           }}
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-3.5"
         >
-          <div className="flex items-center justify-between">
-            <strong className="text-sm">Arquitetura de Governança Multiempresa</strong>
-            <span className="badge badge-success">Fundação V1 Operacional</span>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <strong className="text-sm">Arquitetura Multi-Schema & Governança HBAC</strong>
+            <span className="badge badge-success">Supabase Online</span>
           </div>
-          <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.75rem' }}>
-            <div className="card" style={{ padding: '0.75rem' }}>
+          <div className="kpi-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.85rem' }}>
+            <div className="kpi-card" style={{ padding: '0.95rem' }}>
               <div className="kpi-label">Módulos Comerciais</div>
-              <div className="kpi-value">10</div>
-              <div className="kpi-meta">Contratáveis sob demanda</div>
+              <div className="kpi-value">{commercialModules.length}</div>
+              <div className="kpi-meta">Plataformas Olivelas oficiais</div>
             </div>
-            <div className="card" style={{ padding: '0.75rem' }}>
-              <div className="kpi-label">Papéis HBAC</div>
-              <div className="kpi-value">6 + Custom</div>
-              <div className="kpi-meta">Matriz efetiva rastreável</div>
+            <div className="kpi-card" style={{ padding: '0.95rem' }}>
+              <div className="kpi-label">Módulos de Exemplo</div>
+              <div className="kpi-value">{exampleModules.length}</div>
+              <div className="kpi-meta">Estrutura base migrada</div>
             </div>
-            <div className="card" style={{ padding: '0.75rem' }}>
-              <div className="kpi-label">Isolamento Tenant</div>
-              <div className="kpi-value">100%</div>
-              <div className="kpi-meta">Proteção de rota por empresa</div>
+            <div className="kpi-card" style={{ padding: '0.95rem' }}>
+              <div className="kpi-label">Schemas PostgreSQL</div>
+              <div className="kpi-value">16 + public</div>
+              <div className="kpi-meta">Isolados no Supabase</div>
             </div>
-            <div className="card" style={{ padding: '0.75rem' }}>
-              <div className="kpi-label">Exclusão Física</div>
-              <div className="kpi-value">Zero</div>
-              <div className="kpi-meta">Arquivamento com histórico</div>
+            <div className="kpi-card" style={{ padding: '0.95rem' }}>
+              <div className="kpi-label">Login Unificado</div>
+              <div className="kpi-value">SSO</div>
+              <div className="kpi-meta">Tabela única public.profiles</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Benefits for Small Businesses & Governance Pillars */}
-      <section className="kpi-grid" style={{ marginTop: '1rem' }}>
+      <section className="kpi-grid">
         <div className="card card-body flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-semibold">
-            <Layers size={18} style={{ color: 'var(--accent-primary)' }} />
-            <span>Contratação Modular sem Desperdício</span>
+          <div className="flex items-center gap-2.5 font-semibold">
+            <span className="icon-box">
+              <Layers size={18} />
+            </span>
+            <span>16 Plataformas Olivelas Prontas para Uso</span>
           </div>
           <p className="text-sm text-muted">
-            Pequenas e médias empresas iniciam com o <strong>Allin Core</strong> e ativam Estoque,
-            Financeiro, Vendas, CRM ou API Hub apenas quando a operação exigir.
+            Gestão de Estoque & PDV, Personal Trainer, Consultório & Odonto, Clínicas, Condomínios,
+            Restaurantes & KDS, Delivery, Supermercado, Rifas, Contratos e Vitrine IA.
           </p>
         </div>
 
         <div className="card card-body flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-semibold">
-            <ShieldCheck size={18} style={{ color: 'var(--accent-teal)' }} />
+          <div className="flex items-center gap-2.5 font-semibold">
+            <span className="icon-box icon-box-teal">
+              <ShieldCheck size={18} />
+            </span>
             <span>Controle de Acesso Hierárquico (HBAC)</span>
           </div>
           <p className="text-sm text-muted">
@@ -138,8 +163,10 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="card card-body flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-semibold">
-            <ScrollText size={18} style={{ color: 'var(--accent-primary)' }} />
+          <div className="flex items-center gap-2.5 font-semibold">
+            <span className="icon-box">
+              <ScrollText size={18} />
+            </span>
             <span>Auditoria Imutável & Retenção Contábil</span>
           </div>
           <p className="text-sm text-muted">
@@ -149,44 +176,66 @@ export const LandingPage: React.FC = () => {
         </div>
 
         <div className="card card-body flex flex-col gap-2">
-          <div className="flex items-center gap-2 font-semibold">
-            <Terminal size={18} style={{ color: 'var(--accent-teal)' }} />
-            <span>Allin API Hub Integrado</span>
+          <div className="flex items-center gap-2.5 font-semibold">
+            <span className="icon-box icon-box-teal">
+              <Terminal size={18} />
+            </span>
+            <span>Demonstração Interativa em 1 Clique</span>
           </div>
           <p className="text-sm text-muted">
-            Console técnico estilo Postman para gerenciamento de coleções HTTP, variáveis por ambiente,
-            tokens com escopo e simulador com proteção anti-SSRF.
+            Clique em qualquer plataforma Olivelas abaixo para abrir imediatamente no navegador a
+            interface operacional do módulo conectada ao seu schema no Supabase.
           </p>
         </div>
       </section>
 
-      {/* Interactive Modular Catalog & Simulator */}
-      <section className="card mt-2">
+      {/* Interactive Modular Catalog & Live Demo Launcher */}
+      <section className="card">
         <div className="card-header">
           <div>
-            <h2 style={{ fontSize: '1.15rem' }}>
-              Catálogo de Módulos & Simulador de Contratação Modular
+            <h2 style={{ fontSize: '1.2rem' }}>
+              Catálogo Comercial de Módulos Olivelas & Demonstração ao Vivo
             </h2>
-            <p className="text-xs text-muted">
-              Valores meramente ilustrativos para demonstração comercial do modelo SaaS modular.
+            <p className="text-xs text-muted mt-0.5">
+              Clique em <strong>"Abrir Demonstração"</strong> em qualquer plataforma Olivelas para abrir sua interface funcional no navegador.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="badge badge-warning">Preços Demonstrativos / Ilustrativos</span>
-            <button
-              type="button"
-              className={`btn btn-sm ${billingCycle === 'monthly' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Ciclo Mensal
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm ${billingCycle === 'yearly' ? 'btn-primary' : 'btn-secondary'}`}
-              onClick={() => setBillingCycle('yearly')}
-            >
-              Ciclo Anual (2 meses bonificados)
-            </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="segmented-tabs">
+              <button
+                type="button"
+                className={`segmented-tab ${catalogTab === 'commercial' ? 'active' : ''}`}
+                onClick={() => setCatalogTab('commercial')}
+              >
+                <Sparkles size={13} />
+                16 Módulos Comerciais Olivelas
+              </button>
+              <button
+                type="button"
+                className={`segmented-tab ${catalogTab === 'examples' ? 'active' : ''}`}
+                onClick={() => setCatalogTab('examples')}
+              >
+                <Layers size={13} />
+                10 Módulos de Exemplo
+              </button>
+            </div>
+
+            <div className="segmented-tabs">
+              <button
+                type="button"
+                className={`segmented-tab ${billingCycle === 'monthly' ? 'active' : ''}`}
+                onClick={() => setBillingCycle('monthly')}
+              >
+                Mensal
+              </button>
+              <button
+                type="button"
+                className={`segmented-tab ${billingCycle === 'yearly' ? 'active' : ''}`}
+                onClick={() => setBillingCycle('yearly')}
+              >
+                Anual (-16%)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -194,54 +243,88 @@ export const LandingPage: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-              gap: '0.85rem',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(310px, 1fr))',
+              gap: '1.1rem',
             }}
           >
-            {modules.map((mod) => {
+            {displayedModules.map((mod) => {
               const selected = selectedSimModules.includes(mod.id);
               const price = billingCycle === 'monthly' ? mod.priceMonthly : mod.priceYearly;
+              const demoSlug = mod.ecosystemSlug || mod.code;
+              const demoPath = !mod.isExample ? `/demo/${demoSlug}` : '/login';
+
               return (
                 <div
                   key={mod.id}
-                  onClick={() => toggleSimModule(mod.id)}
+                  onClick={() => navigate(demoPath)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      toggleSimModule(mod.id);
+                      navigate(demoPath);
                     }
                   }}
+                  className="card card-interactive"
                   style={{
                     border: selected
                       ? '1px solid var(--accent-primary)'
                       : '1px solid var(--border-subtle)',
                     backgroundColor: selected ? 'var(--accent-primary-soft)' : 'var(--bg-surface)',
-                    borderRadius: 'var(--radius-md)',
-                    padding: '1rem',
-                    cursor: mod.isCore ? 'default' : 'pointer',
+                    padding: '1.25rem',
                     display: 'flex',
                     flexDirection: 'column',
                     justifyContent: 'space-between',
-                    gap: '0.75rem',
+                    gap: '0.9rem',
                   }}
                 >
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center justify-between gap-2">
-                      <strong>{mod.name[session.language]}</strong>
-                      <span className="badge">{mod.code}</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="badge badge-info">{mod.category}</span>
+                      {mod.dbSchema ? (
+                        <span className="badge badge-success mono">
+                          schema: {mod.dbSchema}
+                        </span>
+                      ) : (
+                        <span className="badge badge-warning">Exemplo Base</span>
+                      )}
                     </div>
-                    <p className="text-xs text-muted">{mod.description[session.language]}</p>
+                    <strong style={{ fontSize: '1.05rem' }}>{mod.name[session.language]}</strong>
+                    <p className="text-xs text-muted leading-relaxed">
+                      {mod.description[session.language]}
+                    </p>
                   </div>
-                  <div className="flex items-center justify-between pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                    <span className="font-semibold tabular">
-                      {formatCurrency(price, mod.currency, session.language)} /{' '}
-                      {billingCycle === 'monthly' ? 'mês' : 'ano'}
-                    </span>
-                    <span className={`badge ${selected ? 'badge-success' : ''}`}>
-                      {mod.isCore ? 'Base Obrigatória' : selected ? 'Selecionado' : 'Incluir'}
-                    </span>
+
+                  <div
+                    className="flex items-center justify-between pt-3 gap-2 flex-wrap"
+                    style={{ borderTop: '1px solid var(--border-subtle)' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div>
+                      <span className="font-bold tabular" style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>
+                        {formatCurrency(price, mod.currency, session.language)}
+                      </span>
+                      <span className="text-xs text-muted">
+                        /{billingCycle === 'monthly' ? 'mês' : 'ano'}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => toggleSimModule(mod.id)}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        {selected ? 'No Pacote ✓' : '+ Simular'}
+                      </button>
+                      <Link
+                        to={demoPath}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <Play size={12} />
+                        Abrir Demo
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
@@ -252,43 +335,49 @@ export const LandingPage: React.FC = () => {
         <div className="card-footer">
           <div className="flex items-center gap-3 flex-wrap">
             <span className="text-sm">
-              Módulos selecionados: <strong>{selectedSimModules.length}</strong> de {modules.length}
+              Módulos no simulador: <strong>{selectedSimModules.length}</strong>
             </span>
             <span className="text-sm">•</span>
             <span className="text-sm">
-              Investimento estimado (ilustrativo):{' '}
-              <strong className="tabular" style={{ fontSize: '1.05rem', color: 'var(--accent-primary)' }}>
+              Investimento estimado:{' '}
+              <strong className="tabular" style={{ fontSize: '1.1rem', color: 'var(--accent-primary)' }}>
                 {formatCurrency(simulatedTotal, 'BRL', session.language)}
               </strong>{' '}
               / {billingCycle === 'monthly' ? 'mês' : 'ano'}
             </span>
           </div>
-          <Link to="/login" className="btn btn-primary btn-sm">
-            Testar Contratação no Console
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/demo/allin_gestao_estoque" className="btn btn-secondary btn-sm">
+              <Play size={13} />
+              Abrir Demo Gestão de Estoque
+            </Link>
+            <Link to="/login" className="btn btn-primary btn-sm">
+              Entrar no Console All In
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* FAQ Section */}
-      <section className="card mt-2">
+      <section className="card">
         <div className="card-header">
           <h2 style={{ fontSize: '1.1rem' }}>Perguntas Frequentes (FAQ)</h2>
         </div>
         <div className="card-body form-grid">
           <div className="flex flex-col gap-1">
-            <strong>1. Como funciona o isolamento entre empresas no Olivelas Allin?</strong>
+            <strong>1. Como funcionam os 16 módulos comerciais Olivelas?</strong>
             <p className="text-xs text-muted">
-              Cada empresa possui seu identificador único (`empresaId`), contratos, módulos ativos e
-              usuários. Mesmo que um usuário altere manualmente o ID na URL, o guardião de escopo
-              bloqueia o acesso se a empresa não pertencer ao seu vínculo autorizado.
+              Todas as 16 plataformas Olivelas estão integradas ao catálogo comercial com schemas
+              PostgreSQL dedicados no Supabase e login único em <code>public.profiles</code>. Ao clicar em
+              qualquer módulo, você abre sua interface interativa para demonstração imediata.
             </p>
           </div>
           <div className="flex flex-col gap-1">
-            <strong>2. O que acontece quando um registro é arquivado?</strong>
+            <strong>2. O que são os Módulos de Exemplo?</strong>
             <p className="text-xs text-muted">
-              Seguindo boas práticas de governança corporativa, nenhum registro sofre `DELETE` físico. O
-              arquivamento exige justificativa, registra data e autor, e pode ser filtrado ou restaurado
-              com preservação integral do histórico.
+              Os 10 módulos genéricos iniciais foram preservados em uma aba separada de{' '}
+              <strong>Módulos de Exemplo (Fundação)</strong> para referência arquitetural de HBAC, contratos e
+              auditoria.
             </p>
           </div>
           <div className="flex flex-col gap-1">
@@ -296,15 +385,14 @@ export const LandingPage: React.FC = () => {
             <p className="text-xs text-muted">
               É o inspetor que calcula em tempo real todas as permissões de um usuário combinando seus
               papéis diretos, herança hierárquica e exceções individuais, exibindo a origem exata de cada
-              permissão e impedindo elevação de privilégios.
+              permissão.
             </p>
           </div>
           <div className="flex flex-col gap-1">
-            <strong>4. Os dados persistem ao recarregar o navegador?</strong>
+            <strong>4. Os dados persistem no Supabase e no navegador?</strong>
             <p className="text-xs text-muted">
-              Sim. Toda a aplicação utiliza <strong>IndexedDB</strong> estruturado através de uma camada
-              desacoplada de repositórios. Você pode criar registros, recarregar a página e também
-              restaurar o seed original quando desejar.
+              Sim. Os 16 módulos comerciais sincronizam diretamente com seus schemas no PostgreSQL
+              (Supabase) e também mantêm persistência local resiliente em IndexedDB/LocalStorage.
             </p>
           </div>
         </div>
@@ -643,65 +731,124 @@ export const RecoverPasswordPage: React.FC = () => {
 
 export const PlansPage: React.FC = () => {
   const { modules, session } = useApp();
+  const [planTab, setPlanTab] = useState<'commercial' | 'examples'>('commercial');
+
+  const commercialModules = modules.filter((m) => !m.isExample);
+  const exampleModules = modules.filter((m) => m.isExample);
+  const activeModules = planTab === 'commercial' ? commercialModules : exampleModules;
+
   return (
-    <div style={{ maxWidth: 1200, margin: '2rem auto', padding: '0 1.5rem' }} className="flex flex-col gap-4">
-      <div className="card">
-        <div className="card-header">
+    <div style={{ maxWidth: 1280, margin: '2rem auto', padding: '0 1.5rem' }} className="flex flex-col gap-5">
+      <div className="card p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 style={{ fontSize: '1.35rem' }}>Planos e Catálogo Comercial de Módulos Allin</h1>
-            <p className="text-sm text-muted">
-              Contrate individualmente cada módulo ou combine pacotes sob medida. Preços ilustrativos.
+            <div className="flex items-center gap-2 mb-2">
+              <span className="badge badge-teal">Catálogo Comercial Unificado</span>
+              <span className="badge badge-info">16 Schemas PostgreSQL no Supabase</span>
+            </div>
+            <h1 style={{ fontSize: '1.5rem' }}>
+              Planos e Catálogo Comercial — Plataformas Olivelas All In
+            </h1>
+            <p className="text-sm text-muted mt-1">
+              Todas as 16 plataformas Olivelas operam como módulos comerciais sob demanda. Clique em qualquer módulo para abrir a interface de demonstração no navegador.
             </p>
           </div>
-          <span className="badge badge-warning">Valores Demonstrativos</span>
+
+          <div className="segmented-tabs">
+            <button
+              type="button"
+              className={`segmented-tab ${planTab === 'commercial' ? 'active' : ''}`}
+              onClick={() => setPlanTab('commercial')}
+            >
+              Módulos Comerciais Olivelas
+              <span className="badge badge-teal">{commercialModules.length}</span>
+            </button>
+            <button
+              type="button"
+              className={`segmented-tab ${planTab === 'examples' ? 'active' : ''}`}
+              onClick={() => setPlanTab('examples')}
+            >
+              Módulos de Exemplo (Base)
+              <span className="badge badge-neutral">{exampleModules.length}</span>
+            </button>
+          </div>
         </div>
-        <div className="card-body">
-          <div className="table-wrapper" tabIndex={0} role="region" aria-label="Tabela de Módulos Comerciais">
+      </div>
+
+      <div className="card">
+        <div className="card-body" style={{ padding: 0 }}>
+          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }} tabIndex={0} role="region" aria-label="Tabela de Módulos Comerciais">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>Código</th>
                   <th>Módulo Comercial</th>
                   <th>Categoria</th>
-                  <th>Dependências</th>
+                  <th>Schema / Estrutura</th>
                   <th>Limites Operacionais</th>
                   <th className="num">Mensal (BRL)</th>
                   <th className="num">Anual (BRL)</th>
+                  <th className="num">Demonstração</th>
                 </tr>
               </thead>
               <tbody>
-                {modules.map((m) => (
-                  <tr key={m.id}>
-                    <td>
-                      <code className="text-xs">{m.code}</code>
-                    </td>
-                    <td>
-                      <strong>{m.name[session.language]}</strong>
-                      <div className="text-xs text-muted">{m.description[session.language]}</div>
-                    </td>
-                    <td>
-                      <span className="badge">{m.category}</span>
-                    </td>
-                    <td>
-                      {m.dependencies.length === 0 ? (
-                        <span className="text-xs text-muted">Nenhuma (Base)</span>
-                      ) : (
-                        m.dependencies.map((d) => (
-                          <code key={d} className="text-xs" style={{ marginRight: 4 }}>
-                            {d}
-                          </code>
-                        ))
-                      )}
-                    </td>
-                    <td className="text-xs">{m.usageLimits}</td>
-                    <td className="num font-semibold">
-                      {formatCurrency(m.priceMonthly, m.currency, session.language)}
-                    </td>
-                    <td className="num font-semibold">
-                      {formatCurrency(m.priceYearly, m.currency, session.language)}
-                    </td>
-                  </tr>
-                ))}
+                {activeModules.map((m) => {
+                  const demoUrl = !m.isExample
+                    ? `/demo/${m.ecosystemSlug || m.code}`
+                    : `/login`;
+                  return (
+                    <tr key={m.id}>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to={demoUrl}
+                            style={{ fontWeight: 700, color: 'var(--text-primary)' }}
+                          >
+                            {m.name[session.language]}
+                          </Link>
+                          {m.isExample ? (
+                            <span className="badge badge-warning">Exemplo</span>
+                          ) : (
+                            <span className="badge badge-teal">Oficial</span>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted mt-1">{m.description[session.language]}</div>
+                      </td>
+                      <td>
+                        <span className="badge badge-neutral">{m.category}</span>
+                      </td>
+                      <td>
+                        {m.dbSchema ? (
+                          <div className="flex flex-col gap-1">
+                            <span className="badge badge-info font-mono">{m.dbSchema}</span>
+                            {m.projectFolder && (
+                              <span className="text-xs text-muted font-mono">/projetos/{m.projectFolder}</span>
+                            )}
+                          </div>
+                        ) : (
+                          <code className="text-xs">{m.code}</code>
+                        )}
+                      </td>
+                      <td className="text-xs">{m.usageLimits}</td>
+                      <td className="num font-semibold">
+                        {formatCurrency(m.priceMonthly, m.currency, session.language)}
+                      </td>
+                      <td className="num font-semibold">
+                        {formatCurrency(m.priceYearly, m.currency, session.language)}
+                      </td>
+                      <td className="num">
+                        {!m.isExample ? (
+                          <Link to={demoUrl} className="btn btn-primary btn-sm">
+                            Abrir Interface <ArrowRight size={13} />
+                          </Link>
+                        ) : (
+                          <Link to="/login" className="btn btn-secondary btn-sm">
+                            Ver Exemplo
+                          </Link>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

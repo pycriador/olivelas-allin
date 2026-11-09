@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   CheckCircle2,
+  Database,
   Edit3,
+  ExternalLink,
   FileSignature,
+  Layers,
   Package,
+  Play,
   Plus,
   Save,
+  Sparkles,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -32,7 +37,9 @@ import {
 export const GlobalModulesCatalogPage: React.FC = () => {
   const { modules, companyModules, session, hasPermission, getActor, refreshData, notify, t } =
     useApp();
+  const navigate = useNavigate();
   const [archiveTarget, setArchiveTarget] = useState<CatalogModuleEntity | null>(null);
+  const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
 
   if (!hasPermission('modules', 'view')) {
     return (
@@ -42,6 +49,10 @@ export const GlobalModulesCatalogPage: React.FC = () => {
       />
     );
   }
+
+  const commercialModules = modules.filter((m) => !m.isExample);
+  const exampleModules = modules.filter((m) => Boolean(m.isExample));
+  const activeTabItems = catalogTab === 'commercial' ? commercialModules : exampleModules;
 
   const handleRestore = async (mod: CatalogModuleEntity) => {
     await repositories.modules.restore(mod.id, getActor());
@@ -56,14 +67,14 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           { label: t('scope.global'), to: '/app/global' },
           { label: t('nav.modules') },
         ]}
-        title="Catálogo Comercial de Módulos Allin"
-        subtitle="Gerencie preços, categorias, limites de utilização, dependências técnicas e versões dos módulos contratáveis."
+        title="Catálogo Comercial de Módulos Olivelas All In"
+        subtitle="Todas as 16 plataformas Olivelas integram o catálogo comercial oficial com schemas PostgreSQL dedicados no Supabase. Clique em qualquer módulo para abrir a interface de demonstração no navegador."
         scopeBadge={t('scope.global')}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Link to="/app/global/ecossistema" className="btn btn-secondary btn-sm">
-              <Package size={14} />
-              16 Plataformas Olivelas (Schemas Supabase)
+              <Sparkles size={14} />
+              Hub de Demonstração (16 Schemas)
             </Link>
             {hasPermission('modules', 'create') && (
               <Link to="/app/global/modulos/novo" className="btn btn-primary btn-sm">
@@ -75,16 +86,161 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         }
       />
 
+      {/* Segmented Tabs: 16 Módulos Comerciais Olivelas vs 10 Módulos de Exemplo */}
+      <div className="card p-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="segmented-tabs" role="tablist" aria-label="Estrutura do Catálogo de Módulos">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={catalogTab === 'commercial'}
+            className={`segmented-tab ${catalogTab === 'commercial' ? 'active' : ''}`}
+            onClick={() => setCatalogTab('commercial')}
+          >
+            <Sparkles size={14} />
+            <span>Módulos Comerciais Olivelas ({commercialModules.length} Plataformas)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={catalogTab === 'examples'}
+            className={`segmented-tab ${catalogTab === 'examples' ? 'active' : ''}`}
+            onClick={() => setCatalogTab('examples')}
+          >
+            <Layers size={14} />
+            <span>Módulos de Exemplo / Fundação ({exampleModules.length} Exemplos)</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 flex-wrap">
+          {catalogTab === 'commercial' ? (
+            <span className="badge badge-success">
+              <Database size={12} /> 16 Schemas PostgreSQL Ativos no Supabase
+            </span>
+          ) : (
+            <span className="badge badge-warning">
+              Estrutura de Exemplos (Módulos Base Migrados)
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Interactive Showcase Grid for the 16 Commercial Olivelas Modules */}
+      {catalogTab === 'commercial' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+            gap: '1.1rem',
+          }}
+        >
+          {commercialModules
+            .filter((m) => !m.archiveMetadata.isArchived)
+            .map((mod) => {
+              const demoSlug = mod.ecosystemSlug || mod.code;
+              const activeCount = companyModules.filter(
+                (cm) => cm.moduleId === mod.id && cm.status === 'active',
+              ).length;
+              return (
+                <div
+                  key={mod.id}
+                  onClick={() => navigate(`/app/global/ecossistema/${demoSlug}`)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigate(`/app/global/ecossistema/${demoSlug}`);
+                    }
+                  }}
+                  className="card card-interactive"
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <div className="card-body flex flex-col gap-2.5">
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                      <span className="badge badge-info">{mod.category}</span>
+                      {mod.dbSchema && (
+                        <span className="badge badge-success mono">
+                          <Database size={11} /> {mod.dbSchema}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>
+                        {mod.name[session.language]}
+                      </h3>
+                      {mod.tagline && (
+                        <p className="text-xs text-muted mt-0.5">{mod.tagline}</p>
+                      )}
+                    </div>
+
+                    <p className="text-xs text-muted leading-relaxed">
+                      {mod.description[session.language]}
+                    </p>
+
+                    {mod.features && mod.features.length > 0 && (
+                      <div className="flex flex-wrap gap-1 pt-1">
+                        {mod.features.slice(0, 3).map((feat) => (
+                          <span key={feat} className="badge badge-neutral" style={{ fontSize: '0.66rem' }}>
+                            {feat}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="card-footer" onClick={(e) => e.stopPropagation()}>
+                    <div>
+                      <div className="font-bold tabular" style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>
+                        {formatCurrency(mod.priceMonthly, mod.currency, session.language)}/mês
+                      </div>
+                      <span className="text-xs text-muted">{activeCount} empresa(s) ativa(s)</span>
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        to={`/app/global/modulos/${mod.id}`}
+                        className="btn btn-secondary btn-sm"
+                      >
+                        Ficha
+                      </Link>
+                      <Link
+                        to={`/app/global/ecossistema/${demoSlug}`}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <Play size={12} />
+                        Abrir Interface
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+        </div>
+      )}
+
       <UrlDataTable<CatalogModuleEntity>
         tableId="global-modules-table"
         caption="Catálogo comercial de módulos da plataforma Olivelas Allin"
-        items={modules}
+        items={activeTabItems}
         defaultSortField="code"
-        csvFilename="catalogo-modulos-allin.csv"
-        searchPlaceholder="Buscar por código técnico, nome ou categoria..."
+        csvFilename={
+          catalogTab === 'commercial'
+            ? 'catalogo-modulos-comerciais-olivelas.csv'
+            : 'catalogo-modulos-exemplos-allin.csv'
+        }
+        searchPlaceholder={
+          catalogTab === 'commercial'
+            ? 'Buscar plataforma Olivelas, schema PostgreSQL ou categoria...'
+            : 'Buscar módulo de exemplo por código ou nome...'
+        }
         statusExtractor={(m) => m.commercialStatus}
         searchExtractor={(m) =>
-          `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits}`
+          `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits} ${m.dbSchema || ''}`
         }
         statusOptions={[
           { value: 'active', label: t('status.active') },
@@ -100,7 +256,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         columns={[
           {
             key: 'code',
-            header: 'Módulo / Código Técnico',
+            header: catalogTab === 'commercial' ? 'Plataforma Comercial Olivelas' : 'Módulo de Exemplo',
             sortable: true,
             csvValue: (m) => `${m.name[session.language]} (${m.code})`,
             render: (m) => (
@@ -110,18 +266,28 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 </Link>
                 <div className="text-xs text-muted mono">
                   {m.code} • v{m.version}
+                  {m.dbSchema ? ` • schema: ${m.dbSchema}` : ' • estrutura: exemplo'}
                 </div>
               </div>
             ),
           },
           {
             key: 'category',
-            header: 'Categoria & Dependências',
+            header: 'Categoria & Arquitetura',
             render: (m) => (
               <div className="flex flex-col gap-1">
-                <span className="badge">{m.category}</span>
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="badge badge-info">{m.category}</span>
+                  {m.isExample ? (
+                    <span className="badge badge-warning">Exemplo</span>
+                  ) : (
+                    <span className="badge badge-success">Comercial Oficial</span>
+                  )}
+                </div>
                 <span className="text-xs text-muted">
-                  Dep.: {m.dependencies.length > 0 ? m.dependencies.join(', ') : 'Nenhuma'}
+                  {m.dbSchema
+                    ? `PostgreSQL: ${m.dbSchema} (${m.tables?.length || 4} tabelas)`
+                    : `Dep.: ${m.dependencies.length > 0 ? m.dependencies.join(', ') : 'Nenhuma'}`}
                 </span>
               </div>
             ),
@@ -164,22 +330,34 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           },
           {
             key: 'actions',
-            header: 'Ficha & Edição',
-            render: (m) => (
-              <div className="flex items-center gap-1">
-                <Link to={`/app/global/modulos/${m.id}`} className="btn btn-secondary btn-sm">
-                  Detalhes
-                </Link>
-                {hasPermission('modules', 'edit') && (
-                  <Link
-                    to={`/app/global/modulos/${m.id}/editar`}
-                    className="btn btn-ghost btn-sm"
-                  >
-                    <Edit3 size={13} />
+            header: 'Demonstração & Ficha',
+            render: (m) => {
+              const demoSlug = m.ecosystemSlug || m.code;
+              return (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  {!m.isExample && (
+                    <Link
+                      to={`/app/global/ecossistema/${demoSlug}`}
+                      className="btn btn-primary btn-sm"
+                    >
+                      <Play size={12} />
+                      Abrir Demo
+                    </Link>
+                  )}
+                  <Link to={`/app/global/modulos/${m.id}`} className="btn btn-secondary btn-sm">
+                    Detalhes
                   </Link>
-                )}
-              </div>
-            ),
+                  {hasPermission('modules', 'edit') && (
+                    <Link
+                      to={`/app/global/modulos/${m.id}/editar`}
+                      className="btn btn-ghost btn-sm"
+                    >
+                      <Edit3 size={13} />
+                    </Link>
+                  )}
+                </div>
+              );
+            },
           },
         ]}
       />
@@ -325,7 +503,7 @@ export const ModuleFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) 
                 required
                 value={namePt}
                 onChange={(e) => setNamePt(e.target.value)}
-                placeholder="Ex.: Allin Fiscal"
+                placeholder="Ex.: Olivelas - Fiscal & NFe"
               />
             </div>
             <div className="field">
@@ -493,7 +671,7 @@ export const ModuleDetailPage: React.FC = () => {
   const { moduloId } = useParams<{ moduloId: string }>();
   const { modules, companyModules, companies, session, hasPermission, t } = useApp();
 
-  const mod = modules.find((m) => m.id === moduloId);
+  const mod = modules.find((m) => m.id === moduloId || m.code === moduloId);
   if (!mod) {
     return (
       <AccessDeniedView
@@ -505,6 +683,7 @@ export const ModuleDetailPage: React.FC = () => {
   }
 
   const subscribedCompanies = companyModules.filter((cm) => cm.moduleId === mod.id);
+  const demoSlug = mod.ecosystemSlug || mod.code;
 
   return (
     <div className="flex flex-col gap-4">
@@ -518,12 +697,33 @@ export const ModuleDetailPage: React.FC = () => {
         subtitle={mod.description[session.language]}
         scopeBadge={`v${mod.version}`}
         actions={
-          hasPermission('modules', 'edit') && (
-            <Link to={`/app/global/modulos/${mod.id}/editar`} className="btn btn-primary btn-sm">
-              <Edit3 size={14} />
-              Editar Módulo
-            </Link>
-          )
+          <div className="flex items-center gap-2 flex-wrap">
+            {!mod.isExample && (
+              <>
+                <Link
+                  to={`/app/global/ecossistema/${demoSlug}`}
+                  className="btn btn-primary btn-sm"
+                >
+                  <Play size={14} />
+                  Abrir Demonstração no Console
+                </Link>
+                <Link
+                  to={`/demo/${demoSlug}`}
+                  target="_blank"
+                  className="btn btn-secondary btn-sm"
+                >
+                  <ExternalLink size={14} />
+                  Tela Cheia (Nova Guia)
+                </Link>
+              </>
+            )}
+            {hasPermission('modules', 'edit') && (
+              <Link to={`/app/global/modulos/${mod.id}/editar`} className="btn btn-secondary btn-sm">
+                <Edit3 size={14} />
+                Editar Módulo
+              </Link>
+            )}
+          </div>
         }
       />
 
@@ -549,7 +749,60 @@ export const ModuleDetailPage: React.FC = () => {
           </span>
           <span className="kpi-meta">Limites: {mod.usageLimits}</span>
         </div>
+        {mod.dbSchema && (
+          <div className="kpi-card">
+            <span className="kpi-label">Schema PostgreSQL (Supabase)</span>
+            <span className="kpi-value mono" style={{ fontSize: '1.2rem' }}>
+              {mod.dbSchema}
+            </span>
+            <span className="kpi-meta">
+              {mod.tables?.length || 4} tabelas dedicadas • Login único public.profiles
+            </span>
+          </div>
+        )}
       </div>
+
+      {mod.features && mod.features.length > 0 && (
+        <div className="card">
+          <div className="card-header">
+            <h2 style={{ fontSize: '1rem' }}>Recursos & Tabelas do Módulo Comercial</h2>
+            {mod.projectFolder && (
+              <span className="badge badge-info mono">
+                /projetos/{mod.projectFolder}
+              </span>
+            )}
+          </div>
+          <div className="card-body grid-2">
+            <div>
+              <strong className="text-xs uppercase text-muted block mb-2">
+                Funcionalidades Disponíveis na Demonstração
+              </strong>
+              <div className="flex flex-col gap-1.5">
+                {mod.features.map((feat) => (
+                  <div key={feat} className="flex items-center gap-2 text-sm">
+                    <CheckCircle2 size={15} style={{ color: 'var(--status-success)' }} />
+                    <span>{feat}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {mod.tables && (
+              <div>
+                <strong className="text-xs uppercase text-muted block mb-2">
+                  Tabelas no Schema PostgreSQL ({mod.dbSchema})
+                </strong>
+                <div className="flex flex-wrap gap-1.5">
+                  {mod.tables.map((tbl) => (
+                    <span key={tbl} className="badge badge-teal mono">
+                      {mod.dbSchema}.{tbl}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="card">
         <div className="card-header">
@@ -600,6 +853,7 @@ export const ModuleDetailPage: React.FC = () => {
 
 export const CompanyModulesSubscriptionPage: React.FC = () => {
   const { empresaId } = useParams<{ empresaId: string }>();
+  const navigate = useNavigate();
   const {
     companies,
     modules,
@@ -610,6 +864,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
     refreshData,
     notify,
   } = useApp();
+  const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
 
   const company = companies.find((c) => c.id === empresaId);
   if (!company) return null;
@@ -617,13 +872,16 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
   const canManage = hasPermission('modules', 'approve', company.id) || hasPermission('modules', 'edit', company.id);
   const mySubs = companyModules.filter((cm) => cm.companyId === company.id);
 
+  const commercialModules = modules.filter((m) => !m.archiveMetadata.isArchived && !m.isExample);
+  const exampleModules = modules.filter((m) => !m.archiveMetadata.isArchived && Boolean(m.isExample));
+  const visibleModules = catalogTab === 'commercial' ? commercialModules : exampleModules;
+
   const handleToggleSubscription = async (mod: CatalogModuleEntity) => {
     if (!canManage) return;
     const existing = mySubs.find((s) => s.moduleId === mod.id);
     const isActive = existing?.status === 'active';
 
     if (!isActive) {
-      // Check module dependencies
       for (const depCode of mod.dependencies) {
         const depActive = mySubs.some((s) => s.moduleCode === depCode && s.status === 'active');
         if (!depActive && depCode !== 'allin_core') {
@@ -676,85 +934,171 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
       <PageHeader
         breadcrumbs={[
           { label: company.tradeName, to: `/app/empresa/${company.id}` },
-          { label: 'Módulos Contratados & Loja Modular' },
+          { label: 'Módulos Comerciais Olivelas & Loja Modular' },
         ]}
-        title={`Catálogo & Assinaturas Modulares — ${company.tradeName}`}
-        subtitle="Contrate novos módulos sob demanda ou gerencie os módulos atualmente ativos no ambiente da sua empresa."
+        title={`Módulos Comerciais Olivelas — ${company.tradeName}`}
+        subtitle="Clique em qualquer plataforma Olivelas para abrir sua interface funcional de demonstração no navegador ou gerencie suas assinaturas."
         scopeBadge={company.tradeName}
         actions={
           <Link to={`/app/empresa/${company.id}/ecossistema`} className="btn btn-primary btn-sm">
-            <Package size={14} />
-            Abrir 16 Plataformas Olivelas (Supabase)
+            <Sparkles size={14} />
+            Ver Hub Completo (16 Plataformas)
           </Link>
         }
       />
 
+      {/* Segmented Tabs: 16 Módulos Comerciais Olivelas vs 10 Módulos de Exemplo */}
+      <div className="card p-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="segmented-tabs" role="tablist">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={catalogTab === 'commercial'}
+            className={`segmented-tab ${catalogTab === 'commercial' ? 'active' : ''}`}
+            onClick={() => setCatalogTab('commercial')}
+          >
+            <Sparkles size={14} />
+            <span>Módulos Comerciais Olivelas ({commercialModules.length} Plataformas)</span>
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={catalogTab === 'examples'}
+            className={`segmented-tab ${catalogTab === 'examples' ? 'active' : ''}`}
+            onClick={() => setCatalogTab('examples')}
+          >
+            <Layers size={14} />
+            <span>Módulos de Exemplo ({exampleModules.length} Base)</span>
+          </button>
+        </div>
+
+        <span className="text-xs text-muted">
+          {catalogTab === 'commercial'
+            ? 'Clique no card ou em "Abrir Plataforma" para testar a interface do módulo no navegador.'
+            : 'Módulos originais de fundação migrados para a estrutura de exemplos.'}
+        </span>
+      </div>
+
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-          gap: '1rem',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))',
+          gap: '1.15rem',
         }}
       >
-        {modules
-          .filter((m) => !m.archiveMetadata.isArchived)
-          .map((mod) => {
-            const sub = mySubs.find((s) => s.moduleId === mod.id);
-            const active = sub?.status === 'active';
-            return (
-              <div
-                key={mod.id}
-                className="card"
-                style={{
-                  border: active
-                    ? '1px solid var(--accent-teal)'
-                    : '1px solid var(--border-subtle)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <div className="card-body flex flex-col gap-2">
-                  <div className="flex items-center justify-between">
-                    <span className="badge">{mod.code}</span>
-                    <StatusBadge status={active ? 'active' : 'pending'} />
+        {visibleModules.map((mod) => {
+          const sub = mySubs.find((s) => s.moduleId === mod.id);
+          const active = sub?.status === 'active';
+          const demoSlug = mod.ecosystemSlug || mod.code;
+          const targetDemoRoute = !mod.isExample
+            ? `/app/empresa/${company.id}/ecossistema/${demoSlug}`
+            : mod.code === 'allin_estoque'
+              ? `/app/empresa/${company.id}/operacao/estoque`
+              : mod.code === 'allin_vendas'
+                ? `/app/empresa/${company.id}/operacao/vendas`
+                : mod.code === 'allin_crm'
+                  ? `/app/empresa/${company.id}/operacao/crm`
+                  : `/app/empresa/${company.id}`;
+
+          return (
+            <div
+              key={mod.id}
+              onClick={() => navigate(targetDemoRoute)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate(targetDemoRoute);
+                }
+              }}
+              className="card card-interactive"
+              style={{
+                border: active
+                  ? '1px solid color-mix(in srgb, var(--accent-teal) 55%, var(--border-subtle))'
+                  : '1px solid var(--border-subtle)',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div className="card-body flex flex-col gap-2.5">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5">
+                    <span className="badge badge-info">{mod.category}</span>
+                    {mod.dbSchema && (
+                      <span className="badge badge-teal mono">
+                        <Database size={11} /> {mod.dbSchema}
+                      </span>
+                    )}
+                    {mod.isExample && <span className="badge badge-warning">Exemplo</span>}
                   </div>
-                  <h3 style={{ fontSize: '1.05rem' }}>{mod.name[session.language]}</h3>
-                  <p className="text-xs text-muted">{mod.description[session.language]}</p>
-                  <div className="text-xs text-muted mt-2">
-                    <strong>Limites:</strong> {mod.usageLimits}
-                  </div>
-                  {mod.dependencies.length > 0 && (
-                    <div className="text-xs text-muted">
-                      <strong>Dependências:</strong> {mod.dependencies.join(', ')}
-                    </div>
+                  <StatusBadge status={active ? 'active' : 'pending'} />
+                </div>
+
+                <div>
+                  <h3 style={{ fontSize: '1.08rem', fontWeight: 700 }}>
+                    {mod.name[session.language]}
+                  </h3>
+                  {mod.tagline && (
+                    <p className="text-xs text-muted mt-0.5">{mod.tagline}</p>
                   )}
                 </div>
-                <div className="card-footer">
-                  <span className="font-semibold tabular">
+
+                <p className="text-xs text-muted leading-relaxed">
+                  {mod.description[session.language]}
+                </p>
+
+                {mod.features && mod.features.length > 0 && (
+                  <div className="flex flex-wrap gap-1 pt-1">
+                    {mod.features.map((feat) => (
+                      <span key={feat} className="badge badge-neutral" style={{ fontSize: '0.67rem' }}>
+                        {feat}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                <div className="text-xs text-muted mt-1">
+                  <strong>Limites:</strong> {mod.usageLimits}
+                </div>
+              </div>
+
+              <div className="card-footer" onClick={(e) => e.stopPropagation()}>
+                <div>
+                  <span className="font-bold tabular" style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>
                     {formatCurrency(mod.priceMonthly, mod.currency, session.language)}/mês
                   </span>
-                  {canManage ? (
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Link
+                    to={targetDemoRoute}
+                    className="btn btn-primary btn-sm"
+                  >
+                    <Play size={13} />
+                    Abrir Plataforma
+                  </Link>
+                  {canManage && (
                     <button
                       type="button"
                       disabled={mod.isCore && active}
                       onClick={() => handleToggleSubscription(mod)}
-                      className={`btn btn-sm ${active ? 'btn-secondary' : 'btn-primary'}`}
+                      className="btn btn-secondary btn-sm"
                     >
-                      <Package size={14} />
+                      <Package size={13} />
                       {mod.isCore && active
-                        ? 'Módulo Base'
+                        ? 'Base Ativa'
                         : active
-                          ? 'Desativar Módulo'
-                          : 'Contratar Módulo'}
+                          ? 'Desativar'
+                          : 'Contratar'}
                     </button>
-                  ) : (
-                    <span className="text-xs text-muted">Somente leitura</span>
                   )}
                 </div>
               </div>
-            );
-          })}
+            </div>
+          );
+        })}
       </div>
     </div>
   );

@@ -208,6 +208,13 @@ export interface CatalogModuleEntity {
   version: string;
   effectiveDate: string;
   isCore?: boolean;
+  isExample?: boolean;
+  dbSchema?: string;
+  projectFolder?: string;
+  ecosystemSlug?: string;
+  tagline?: string;
+  tables?: string[];
+  features?: string[];
   createdAt: string;
   updatedAt: string;
   archiveMetadata: ArchiveMetadata;

@@ -20,7 +20,7 @@ import {
 } from '../seed/initialData';
 
 export const DB_NAME = 'olivelas_allin_mock_v1';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 
 export type StoreName =
   | 'roles'
@@ -173,9 +173,10 @@ async function populateAllSeedData(): Promise<void> {
 }
 
 export async function ensureSeeded(): Promise<void> {
-  const meta = await getByIdFromStore<{ id: string; seededAt: string }>('meta', 'seed_status');
+  const meta = await getByIdFromStore<{ id: string; seededAt: string; schemaVersion?: number }>('meta', 'seed_status');
   const companies = await getAllFromStore('companies');
-  if (!meta || companies.length === 0) {
+  const modules = await getAllFromStore('modules');
+  if (!meta || companies.length === 0 || meta.schemaVersion !== DB_VERSION || modules.length < INITIAL_MODULES.length) {
     await populateAllSeedData();
     return;
   }

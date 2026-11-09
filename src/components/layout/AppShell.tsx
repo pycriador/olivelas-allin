@@ -7,10 +7,14 @@ import {
   Building2,
   Check,
   CreditCard,
+  Database,
   DatabaseBackup,
+  ExternalLink,
   FileSignature,
+  FolderTree,
   Globe,
   KeyRound,
+  Layers,
   LayoutDashboard,
   LifeBuoy,
   LogOut,
@@ -19,10 +23,13 @@ import {
   Package,
   Palette,
   ScrollText,
+  Shield,
   ShieldCheck,
   ShoppingCart,
+  Sparkles,
   Sun,
   Terminal,
+  TrendingUp,
   UserCheck,
   Users,
   X,
@@ -129,7 +136,7 @@ export const TopPreferencesControls: React.FC = () => {
         <Globe size={14} className="text-muted" />
         <select
           className="select"
-          style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+          style={{ width: 'auto', padding: '0.32rem 0.65rem', fontSize: '0.75rem', borderRadius: '0.65rem' }}
           value={session.language}
           onChange={(e) => setLanguage(e.target.value as LanguageCode)}
           aria-label="Selecionar idioma"
@@ -148,7 +155,7 @@ export const TopPreferencesControls: React.FC = () => {
         )}
         <select
           className="select"
-          style={{ width: 'auto', maxWidth: '185px', padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+          style={{ width: 'auto', maxWidth: '185px', padding: '0.32rem 0.65rem', fontSize: '0.75rem', borderRadius: '0.65rem' }}
           value={normalizedSelectValue}
           onChange={(e) => setTheme(e.target.value as ThemeMode)}
           aria-label="Selecionar tema visual (15 claros e 15 escuros)"
@@ -240,42 +247,60 @@ export const PublicLayout: React.FC = () => {
   return (
     <div className="app-main">
       <div className="simulated-ribbon">
-        <span>
-          <strong>OLIVELAS ALLIN — FUNDAÇÃO MOCK V1</strong> • Persistência local IndexedDB ativa •
-          Governança multiempresa HBAC e trilha de auditoria reais no navegador
+        <span className="flex items-center gap-2 flex-wrap">
+          <Database size={13} style={{ color: 'var(--accent-primary)' }} />
+          <span>
+            <strong>OLIVELAS ALL IN — ECOSSISTEMA MULTI-SCHEMA SUPABASE</strong> • 16 Módulos Comerciais Oficiais • Login Único em <code>public.profiles</code> • Governança HBAC
+          </span>
         </span>
-        <span className="badge badge-info">{t('common.simulatedBadge')}</span>
+        <span className="badge badge-success">PostgreSQL 17 + IndexedDB</span>
       </div>
       <header className="app-topbar">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6 flex-wrap">
           <Link
             to="/"
-            className="flex items-center gap-2 font-semibold"
-            style={{ color: 'var(--text-primary)', fontSize: '1rem', textDecoration: 'none' }}
+            className="flex items-center gap-2.5"
+            style={{ color: 'var(--text-primary)', textDecoration: 'none' }}
           >
             <span
               style={{
-                width: 28,
-                height: 28,
-                borderRadius: 4,
-                backgroundColor: 'var(--accent-primary)',
+                width: 36,
+                height: 36,
+                borderRadius: '0.75rem',
+                background: 'linear-gradient(135deg, var(--accent-primary) 0%, #1d4ed8 100%)',
                 color: '#fff',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontWeight: 700,
-                fontSize: '0.85rem',
+                fontWeight: 800,
+                fontSize: '1rem',
+                boxShadow: 'var(--shadow-primary)',
               }}
             >
-              OA
+              O
             </span>
-            <span>Olivelas Allin</span>
+            <div className="flex flex-col">
+              <span style={{ fontWeight: 800, fontSize: '1rem', letterSpacing: '-0.02em', lineHeight: 1.15 }}>
+                Olivelas All In
+              </span>
+              <span className="mono" style={{ fontSize: '0.64rem', color: 'var(--text-secondary)', letterSpacing: '0.06em' }}>
+                GESTÃO & 16 PLATAFORMAS
+              </span>
+            </div>
           </Link>
-          <nav aria-label="Navegação Pública" className="flex items-center gap-3 text-sm">
-            <Link to="/">{t('public.nav.home')}</Link>
-            <Link to="/planos">{t('public.nav.plans')}</Link>
-            <Link to="/termos">{t('public.nav.terms')}</Link>
-            <Link to="/privacidade">{t('public.nav.privacy')}</Link>
+          <nav aria-label="Navegação Pública" className="flex items-center gap-4 text-sm font-medium">
+            <Link to="/" style={{ color: 'var(--text-secondary)' }}>{t('public.nav.home')}</Link>
+            <Link to="/planos" style={{ color: 'var(--text-secondary)' }}>{t('public.nav.plans')}</Link>
+            <Link
+              to="/demo/allin_gestao_estoque"
+              className="flex items-center gap-1 font-semibold"
+              style={{ color: 'var(--accent-primary)' }}
+            >
+              <Sparkles size={14} />
+              Demonstração dos 16 Módulos
+            </Link>
+            <Link to="/termos" style={{ color: 'var(--text-secondary)' }}>{t('public.nav.terms')}</Link>
+            <Link to="/privacidade" style={{ color: 'var(--text-secondary)' }}>{t('public.nav.privacy')}</Link>
           </nav>
         </div>
 
@@ -283,7 +308,8 @@ export const PublicLayout: React.FC = () => {
           <TopPreferencesControls />
           {currentUser ? (
             <Link to={defaultConsolePath} className="btn btn-primary btn-sm">
-              Ir para Console ({currentUser.name.split(' ')[0]})
+              <LayoutDashboard size={14} />
+              Acessar Painel ({currentUser.name.split(' ')[0]})
             </Link>
           ) : (
             <Link to="/login" className="btn btn-primary btn-sm">
@@ -301,22 +327,41 @@ export const PublicLayout: React.FC = () => {
         style={{
           borderTop: '1px solid var(--border-subtle)',
           backgroundColor: 'var(--bg-surface)',
-          padding: '2rem 1.5rem',
+          padding: '2.5rem 1.5rem',
           marginTop: '3rem',
         }}
       >
         <div
-          style={{ maxWidth: 1280, margin: '0 auto' }}
+          style={{ maxWidth: 1360, margin: '0 auto' }}
           className="flex items-center justify-between gap-4 flex-wrap"
         >
-          <div className="flex flex-col gap-1">
-            <strong>Olivelas Allin — Plataforma SaaS Modular Multiempresa</strong>
-            <span className="text-xs text-muted">
-              Arquitetura multiempresa isolada • Controle de acesso hierárquico HBAC • Sem exclusão física de registros
+          <div className="flex items-center gap-3">
+            <span
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: '0.6rem',
+                background: 'linear-gradient(135deg, var(--accent-primary) 0%, #1d4ed8 100%)',
+                color: '#fff',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 800,
+                fontSize: '0.85rem',
+              }}
+            >
+              O
             </span>
+            <div className="flex flex-col gap-0.5">
+              <strong className="text-sm">Olivelas All In — Plataforma SaaS Modular Multiempresa</strong>
+              <span className="text-xs text-muted">
+                16 Plataformas Comerciais Olivelas • Schemas PostgreSQL dedicados no Supabase • Design referência Gestão de Estoque
+              </span>
+            </div>
           </div>
-          <div className="flex items-center gap-3 text-xs">
+          <div className="flex items-center gap-4 text-xs font-medium">
             <Link to="/planos">{t('public.nav.plans')}</Link>
+            <Link to="/demo/allin_gestao_estoque">Demo Interativa</Link>
             <Link to="/termos">{t('public.nav.terms')}</Link>
             <Link to="/privacidade">{t('public.nav.privacy')}</Link>
             <Link to="/login">{t('public.nav.login')}</Link>
@@ -335,6 +380,8 @@ interface SidebarNavItem {
   resource: PermissionResource;
   requiredModuleCode?: string;
   end?: boolean;
+  group: 'top' | 'commercial' | 'operations' | 'governance';
+  badgeText?: string;
 }
 
 export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode }) => {
@@ -419,36 +466,36 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
   }
 
   const globalNavItems: SidebarNavItem[] = [
-    { to: '/app/global', label: t('nav.dashboard'), icon: <LayoutDashboard size={16} />, resource: 'dashboard', end: true },
-    { to: '/app/global/empresas', label: t('nav.companies'), icon: <Building2 size={16} />, resource: 'companies' },
-    { to: '/app/global/usuarios', label: t('nav.users'), icon: <Users size={16} />, resource: 'users' },
-    { to: '/app/global/papeis', label: t('nav.roles'), icon: <ShieldCheck size={16} />, resource: 'roles' },
-    { to: '/app/global/modulos', label: t('nav.modules'), icon: <Package size={16} />, resource: 'modules' },
-    { to: '/app/global/ecossistema', label: '16 Plataformas Olivelas', icon: <Boxes size={16} />, resource: 'modules' },
-    { to: '/app/global/contratos', label: t('nav.contracts'), icon: <FileSignature size={16} />, resource: 'contracts' },
-    { to: '/app/global/financeiro', label: t('nav.finance'), icon: <CreditCard size={16} />, resource: 'finance' },
-    { to: '/app/global/meios-pagamento', label: t('nav.paymentMethods'), icon: <KeyRound size={16} />, resource: 'payment_methods' },
-    { to: '/app/global/api-hub/servicos', label: t('nav.apiHub'), icon: <Terminal size={16} />, resource: 'api_hub' },
-    { to: '/app/global/tickets', label: t('nav.tickets'), icon: <LifeBuoy size={16} />, resource: 'tickets' },
-    { to: '/app/global/auditoria', label: t('nav.audit'), icon: <ScrollText size={16} />, resource: 'audit' },
-    { to: '/app/global/relatorios', label: t('nav.reports'), icon: <BarChart3 size={16} />, resource: 'reports' },
+    { to: '/app/global', label: t('nav.dashboard'), icon: <LayoutDashboard size={15} />, resource: 'dashboard', end: true, group: 'top' },
+    { to: '/app/global/ecossistema', label: '16 Plataformas Olivelas', icon: <Sparkles size={15} />, resource: 'modules', group: 'top', badgeText: '16 Apps' },
+    { to: '/app/global/modulos', label: t('nav.modules'), icon: <Package size={15} />, resource: 'modules', group: 'commercial', badgeText: 'Comercial' },
+    { to: '/app/global/empresas', label: t('nav.companies'), icon: <Building2 size={15} />, resource: 'companies', group: 'commercial' },
+    { to: '/app/global/contratos', label: t('nav.contracts'), icon: <FileSignature size={15} />, resource: 'contracts', group: 'commercial' },
+    { to: '/app/global/financeiro', label: t('nav.finance'), icon: <CreditCard size={15} />, resource: 'finance', group: 'commercial' },
+    { to: '/app/global/meios-pagamento', label: t('nav.paymentMethods'), icon: <KeyRound size={15} />, resource: 'payment_methods', group: 'commercial' },
+    { to: '/app/global/usuarios', label: t('nav.users'), icon: <Users size={15} />, resource: 'users', group: 'governance' },
+    { to: '/app/global/papeis', label: t('nav.roles'), icon: <ShieldCheck size={15} />, resource: 'roles', group: 'governance' },
+    { to: '/app/global/api-hub/servicos', label: t('nav.apiHub'), icon: <Terminal size={15} />, resource: 'api_hub', group: 'governance' },
+    { to: '/app/global/tickets', label: t('nav.tickets'), icon: <LifeBuoy size={15} />, resource: 'tickets', group: 'governance' },
+    { to: '/app/global/auditoria', label: t('nav.audit'), icon: <ScrollText size={15} />, resource: 'audit', group: 'governance' },
+    { to: '/app/global/relatorios', label: t('nav.reports'), icon: <BarChart3 size={15} />, resource: 'reports', group: 'governance' },
   ];
 
   const cid = empresaId || session.activeCompanyId || 'emp-olivelas-matriz';
   const companyNavItems: SidebarNavItem[] = [
-    { to: `/app/empresa/${cid}`, label: t('nav.dashboard'), icon: <LayoutDashboard size={16} />, resource: 'dashboard', requiredModuleCode: 'allin_core', end: true },
-    { to: `/app/empresa/${cid}/usuarios`, label: t('nav.users'), icon: <Users size={16} />, resource: 'users', requiredModuleCode: 'allin_core' },
-    { to: `/app/empresa/${cid}/papeis`, label: t('nav.roles'), icon: <ShieldCheck size={16} />, resource: 'roles', requiredModuleCode: 'allin_equipe' },
-    { to: `/app/empresa/${cid}/modulos`, label: t('nav.modules'), icon: <Package size={16} />, resource: 'modules', requiredModuleCode: 'allin_core' },
-    { to: `/app/empresa/${cid}/ecossistema`, label: '16 Plataformas Olivelas', icon: <Boxes size={16} />, resource: 'modules', requiredModuleCode: 'allin_core' },
-    { to: `/app/empresa/${cid}/contratos`, label: t('nav.contracts'), icon: <FileSignature size={16} />, resource: 'contracts', requiredModuleCode: 'allin_contratos' },
-    { to: `/app/empresa/${cid}/financeiro`, label: t('nav.finance'), icon: <CreditCard size={16} />, resource: 'finance', requiredModuleCode: 'allin_financeiro' },
-    { to: `/app/empresa/${cid}/operacao/estoque`, label: t('nav.inventory'), icon: <Boxes size={16} />, resource: 'inventory', requiredModuleCode: 'allin_estoque' },
-    { to: `/app/empresa/${cid}/operacao/vendas`, label: t('nav.orders'), icon: <ShoppingCart size={16} />, resource: 'orders', requiredModuleCode: 'allin_vendas' },
-    { to: `/app/empresa/${cid}/operacao/crm`, label: t('nav.crm'), icon: <Activity size={16} />, resource: 'crm', requiredModuleCode: 'allin_crm' },
-    { to: `/app/empresa/${cid}/tickets`, label: t('nav.tickets'), icon: <LifeBuoy size={16} />, resource: 'tickets', requiredModuleCode: 'allin_suporte' },
-    { to: `/app/empresa/${cid}/auditoria`, label: t('nav.audit'), icon: <ScrollText size={16} />, resource: 'audit', requiredModuleCode: 'allin_core' },
-    { to: `/app/empresa/${cid}/relatorios`, label: t('nav.reports'), icon: <BarChart3 size={16} />, resource: 'reports', requiredModuleCode: 'allin_analytics' },
+    { to: `/app/empresa/${cid}`, label: t('nav.dashboard'), icon: <LayoutDashboard size={15} />, resource: 'dashboard', end: true, group: 'top' },
+    { to: `/app/empresa/${cid}/ecossistema`, label: '16 Plataformas Olivelas', icon: <Sparkles size={15} />, resource: 'modules', group: 'top', badgeText: '16 Apps' },
+    { to: `/app/empresa/${cid}/modulos`, label: t('nav.modules'), icon: <Package size={15} />, resource: 'modules', group: 'commercial', badgeText: 'Loja' },
+    { to: `/app/empresa/${cid}/contratos`, label: t('nav.contracts'), icon: <FileSignature size={15} />, resource: 'contracts', requiredModuleCode: 'allin_contratos', group: 'commercial' },
+    { to: `/app/empresa/${cid}/financeiro`, label: t('nav.finance'), icon: <CreditCard size={15} />, resource: 'finance', requiredModuleCode: 'allin_financeiro', group: 'commercial' },
+    { to: `/app/empresa/${cid}/operacao/estoque`, label: t('nav.inventory'), icon: <Boxes size={15} />, resource: 'inventory', requiredModuleCode: 'allin_estoque', group: 'operations' },
+    { to: `/app/empresa/${cid}/operacao/vendas`, label: t('nav.orders'), icon: <ShoppingCart size={15} />, resource: 'orders', requiredModuleCode: 'allin_vendas', group: 'operations' },
+    { to: `/app/empresa/${cid}/operacao/crm`, label: t('nav.crm'), icon: <Activity size={15} />, resource: 'crm', requiredModuleCode: 'allin_crm', group: 'operations' },
+    { to: `/app/empresa/${cid}/usuarios`, label: t('nav.users'), icon: <Users size={15} />, resource: 'users', group: 'governance' },
+    { to: `/app/empresa/${cid}/papeis`, label: t('nav.roles'), icon: <ShieldCheck size={15} />, resource: 'roles', requiredModuleCode: 'allin_equipe', group: 'governance' },
+    { to: `/app/empresa/${cid}/tickets`, label: t('nav.tickets'), icon: <LifeBuoy size={15} />, resource: 'tickets', requiredModuleCode: 'allin_suporte', group: 'governance' },
+    { to: `/app/empresa/${cid}/auditoria`, label: t('nav.audit'), icon: <ScrollText size={15} />, resource: 'audit', group: 'governance' },
+    { to: `/app/empresa/${cid}/relatorios`, label: t('nav.reports'), icon: <BarChart3 size={15} />, resource: 'reports', requiredModuleCode: 'allin_analytics', group: 'governance' },
   ];
 
   const visibleNavItems = (mode === 'global' ? globalNavItems : companyNavItems).filter((item) => {
@@ -482,6 +529,59 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
     navigate(`/app/empresa/${newCompanyId}`);
   };
 
+  const renderNavLink = (item: SidebarNavItem) => (
+    <NavLink
+      key={item.to}
+      to={item.to}
+      end={item.end}
+      onClick={() => setSidebarOpen(false)}
+      style={({ isActive }) => ({
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        gap: '0.65rem',
+        padding: '0.52rem 0.78rem',
+        borderRadius: '0.75rem',
+        fontSize: '0.79rem',
+        fontWeight: isActive ? 600 : 500,
+        color: isActive ? '#ffffff' : '#cbd5e1',
+        background: isActive
+          ? 'linear-gradient(135deg, var(--bg-sidebar-active) 0%, #1d4ed8 100%)'
+          : 'transparent',
+        boxShadow: isActive ? '0 4px 12px -2px rgba(37, 99, 235, 0.35)' : 'none',
+        textDecoration: 'none',
+        transition: 'all 0.16s ease',
+      })}
+    >
+      <span className="flex items-center gap-2.5 truncate">
+        {item.icon}
+        <span className="truncate">{item.label}</span>
+      </span>
+      {item.badgeText && (
+        <span
+          style={{
+            fontSize: '0.64rem',
+            fontWeight: 700,
+            padding: '0.1rem 0.42rem',
+            borderRadius: '9999px',
+            backgroundColor: 'rgba(255,255,255,0.16)',
+            color: '#fff',
+          }}
+        >
+          {item.badgeText}
+        </span>
+      )}
+    </NavLink>
+  );
+
+  const topItems = visibleNavItems.filter((i) => i.group === 'top');
+  const commercialItems = visibleNavItems.filter((i) => i.group === 'commercial');
+  const operationItems = visibleNavItems.filter((i) => i.group === 'operations');
+  const governanceItems = visibleNavItems.filter((i) => i.group === 'governance');
+
+  const ecosystemBaseRoute =
+    mode === 'global' ? '/app/global/ecossistema' : `/app/empresa/${cid}/ecossistema`;
+
   return (
     <div className="app-shell">
       {sidebarOpen && (
@@ -492,10 +592,11 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
         />
       )}
       <aside className={`app-sidebar ${sidebarOpen ? 'is-open' : ''}`} aria-label="Menu Lateral">
+        {/* Brand Header (Padrão Olivelas Gestão de Estoque) */}
         <div
           style={{
-            padding: '1rem 1.15rem',
-            borderBottom: '1px solid var(--bg-sidebar-hover)',
+            padding: '1rem 1.1rem',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -506,29 +607,39 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.6rem',
+              gap: '0.65rem',
               color: '#ffffff',
               textDecoration: 'none',
-              fontWeight: 700,
-              fontSize: '0.95rem',
             }}
           >
-            <span
+            <div
               style={{
-                width: 26,
-                height: 26,
-                borderRadius: 4,
-                backgroundColor: 'var(--bg-sidebar-active)',
+                width: 36,
+                height: 36,
+                borderRadius: '0.75rem',
+                background: 'linear-gradient(135deg, var(--bg-sidebar-active) 0%, #1d4ed8 100%)',
                 color: '#fff',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '0.78rem',
+                fontWeight: 800,
+                fontSize: '0.95rem',
+                boxShadow: '0 4px 14px -2px rgba(37, 99, 235, 0.45)',
               }}
             >
-              OA
-            </span>
-            <span>Olivelas Allin</span>
+              O
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '0.9rem', letterSpacing: '-0.015em', color: '#f8fafc' }}>
+                Olivelas All In
+              </div>
+              <span
+                className="mono"
+                style={{ fontSize: '0.62rem', color: '#94a3b8', display: 'block', letterSpacing: '0.05em' }}
+              >
+                ECOSSISTEMA & GESTÃO
+              </span>
+            </div>
           </Link>
           <button
             type="button"
@@ -541,141 +652,341 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
           </button>
         </div>
 
-        {/* Scope Switcher Pill in Sidebar */}
-        <div style={{ padding: '0.85rem 1rem', borderBottom: '1px solid var(--bg-sidebar-hover)' }}>
-          <div className="text-xs" style={{ color: '#94a3b8', marginBottom: '0.35rem', fontWeight: 600 }}>
-            ESCOPO OPERACIONAL ATIVO
-          </div>
-          <div className="flex flex-col gap-2">
-            {isCurrentGlobalStaff && (
-              <Link
-                to="/app/global"
-                onClick={() => setSidebarOpen(false)}
-                className="btn btn-sm"
+        {/* Tenant / Scope Selector Card (Estilo AppLayout do gestao_estoque) */}
+        <div style={{ padding: '0.85rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+          <div
+            style={{
+              padding: '0.7rem',
+              borderRadius: '0.85rem',
+              backgroundColor: 'rgba(30, 41, 59, 0.55)',
+              border: '1px solid rgba(148, 163, 184, 0.16)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.55rem',
+            }}
+          >
+            <div className="flex items-center gap-2.5">
+              <div
                 style={{
-                  justifyContent: 'flex-start',
-                  backgroundColor: mode === 'global' ? 'var(--bg-sidebar-active)' : 'var(--bg-sidebar-hover)',
-                  color: '#ffffff',
+                  padding: '0.42rem',
+                  borderRadius: '0.6rem',
+                  backgroundColor: mode === 'global' ? 'rgba(59, 130, 246, 0.18)' : 'rgba(20, 184, 166, 0.18)',
+                  color: mode === 'global' ? '#60a5fa' : '#2dd4bf',
+                  display: 'inline-flex',
+                  flexShrink: 0,
                 }}
               >
-                <Globe size={14} />
-                {t('scope.global')}
-              </Link>
-            )}
-
-            {accessibleCompanies.length > 0 && (
-              <div className="flex flex-col gap-1">
-                <label htmlFor="sidebar-tenant-select" className="text-xs" style={{ color: '#94a3b8' }}>
-                  {t('scope.company')}:
-                </label>
-                <select
-                  id="sidebar-tenant-select"
-                  className="select"
-                  style={{
-                    backgroundColor: 'var(--bg-sidebar-hover)',
-                    color: '#f8fafc',
-                    borderColor: mode === 'company' ? 'var(--bg-sidebar-active)' : 'var(--bg-sidebar-hover)',
-                    fontSize: '0.78rem',
-                  }}
-                  value={mode === 'company' ? cid : accessibleCompanies[0]?.id}
-                  onChange={(e) => {
-                    setSidebarOpen(false);
-                    handleCompanySelect(e.target.value);
-                  }}
+                {mode === 'global' ? <Globe size={16} /> : <Building2 size={16} />}
+              </div>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div
+                  className="truncate"
+                  style={{ fontSize: '0.78rem', fontWeight: 700, color: '#f8fafc' }}
+                  title={mode === 'global' ? t('scope.global') : currentCompany?.tradeName}
                 >
-                  {accessibleCompanies.map((comp) => (
-                    <option key={comp.id} value={comp.id}>
-                      {comp.tradeName} ({comp.operationalStatus})
-                    </option>
-                  ))}
-                </select>
-                {mode === 'global' && accessibleCompanies[0] && (
-                  <button
-                    type="button"
-                    className="btn btn-sm"
+                  {mode === 'global' ? t('scope.global') : currentCompany?.tradeName}
+                </div>
+                <div className="flex items-center gap-1 flex-wrap mt-0.5">
+                  <span
                     style={{
-                      backgroundColor: 'var(--bg-sidebar-hover)',
-                      color: '#cbd5e1',
-                      justifyContent: 'flex-start',
-                      marginTop: '0.2rem',
-                    }}
-                    onClick={() => {
-                      setSidebarOpen(false);
-                      handleCompanySelect(session.activeCompanyId || accessibleCompanies[0].id);
+                      fontSize: '0.62rem',
+                      fontWeight: 600,
+                      padding: '0.08rem 0.42rem',
+                      borderRadius: '9999px',
+                      backgroundColor: 'rgba(59, 130, 246, 0.16)',
+                      color: '#93c5fd',
+                      border: '1px solid rgba(59, 130, 246, 0.3)',
                     }}
                   >
-                    <Building2 size={13} />
-                    Abrir Ambiente da Empresa
-                  </button>
-                )}
+                    {mode === 'global' ? 'Governança Global' : 'Matriz / Tenant'}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: '0.62rem',
+                      fontWeight: 600,
+                      padding: '0.08rem 0.42rem',
+                      borderRadius: '9999px',
+                      backgroundColor: 'rgba(148, 163, 184, 0.14)',
+                      color: '#cbd5e1',
+                    }}
+                  >
+                    {userActiveRoles[0]?.name[session.language] || 'Membro'}
+                  </span>
+                </div>
               </div>
-            )}
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              {isCurrentGlobalStaff && (
+                <Link
+                  to="/app/global"
+                  onClick={() => setSidebarOpen(false)}
+                  className="btn btn-sm"
+                  style={{
+                    justifyContent: 'flex-start',
+                    borderRadius: '0.6rem',
+                    backgroundColor: mode === 'global' ? 'var(--bg-sidebar-active)' : 'rgba(15, 23, 42, 0.6)',
+                    color: '#ffffff',
+                    fontSize: '0.73rem',
+                    padding: '0.35rem 0.65rem',
+                  }}
+                >
+                  <Globe size={13} />
+                  {t('scope.global')}
+                </Link>
+              )}
+
+              {accessibleCompanies.length > 0 && (
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="sidebar-tenant-select" style={{ fontSize: '0.68rem', color: '#94a3b8', fontWeight: 600 }}>
+                    Alternar Unidade / Empresa:
+                  </label>
+                  <select
+                    id="sidebar-tenant-select"
+                    className="select"
+                    style={{
+                      backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                      color: '#f8fafc',
+                      borderColor: mode === 'company' ? 'rgba(59, 130, 246, 0.5)' : 'rgba(148, 163, 184, 0.25)',
+                      fontSize: '0.74rem',
+                      padding: '0.35rem 0.55rem',
+                      borderRadius: '0.6rem',
+                    }}
+                    value={mode === 'company' ? cid : accessibleCompanies[0]?.id}
+                    onChange={(e) => {
+                      setSidebarOpen(false);
+                      handleCompanySelect(e.target.value);
+                    }}
+                  >
+                    {accessibleCompanies.map((comp) => (
+                      <option key={comp.id} value={comp.id}>
+                        [Matriz] {comp.tradeName}
+                      </option>
+                    ))}
+                  </select>
+                  {mode === 'global' && accessibleCompanies[0] && (
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{
+                        backgroundColor: 'rgba(30, 41, 59, 0.8)',
+                        color: '#e2e8f0',
+                        justifyContent: 'flex-start',
+                        borderRadius: '0.6rem',
+                        fontSize: '0.72rem',
+                        padding: '0.32rem 0.65rem',
+                      }}
+                      onClick={() => {
+                        setSidebarOpen(false);
+                        handleCompanySelect(session.activeCompanyId || accessibleCompanies[0].id);
+                      }}
+                    >
+                      <Building2 size={13} />
+                      Abrir Ambiente da Empresa
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        {/* Navigation Links */}
+        {/* Navigation Links Grouped Like gestao_estoque */}
         <nav
           aria-label="Módulos e Recursos Autorizados"
-          style={{ padding: '0.75rem 0.65rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.2rem' }}
+          style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.85rem', overflowY: 'auto' }}
         >
-          {visibleNavItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.end}
-              onClick={() => setSidebarOpen(false)}
-              style={({ isActive }) => ({
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.65rem',
-                padding: '0.5rem 0.75rem',
-                borderRadius: '4px',
-                fontSize: '0.8125rem',
-                fontWeight: isActive ? 600 : 500,
-                color: isActive ? '#ffffff' : '#cbd5e1',
-                backgroundColor: isActive ? 'var(--bg-sidebar-active)' : 'transparent',
-                textDecoration: 'none',
-              })}
+          {/* Top Primary Items */}
+          <div className="flex flex-col gap-1">
+            {topItems.map(renderNavLink)}
+          </div>
+
+          {/* Quick Demo Shortcuts for Flagship Olivelas Commercial Modules */}
+          <div>
+            <div
+              className="flex items-center gap-2 px-2 mb-1"
+              style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
             >
-              {item.icon}
-              <span>{item.label}</span>
-            </NavLink>
-          ))}
+              <Layers size={12} />
+              <span>Acesso Rápido — Plataformas</span>
+            </div>
+            <div
+              style={{
+                marginLeft: '0.45rem',
+                paddingLeft: '0.55rem',
+                borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '0.2rem',
+              }}
+            >
+              {[
+                { slug: 'allin_gestao_estoque', label: 'Gestão de Estoque & PDV' },
+                { slug: 'allin_personal_trainer', label: 'Personal Trainer' },
+                { slug: 'allin_agendamento_simples', label: 'Consultório & Odonto' },
+                { slug: 'allin_restaurante', label: 'Restaurantes & KDS' },
+                { slug: 'allin_delivery', label: 'Central de Delivery' },
+              ].map((quick) => {
+                const target = `${ecosystemBaseRoute}/${quick.slug}`;
+                const active = location.pathname === target;
+                return (
+                  <Link
+                    key={quick.slug}
+                    to={target}
+                    onClick={() => setSidebarOpen(false)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '0.38rem 0.65rem',
+                      borderRadius: '0.6rem',
+                      fontSize: '0.75rem',
+                      fontWeight: active ? 600 : 500,
+                      color: active ? '#ffffff' : '#94a3b8',
+                      backgroundColor: active ? 'var(--bg-sidebar-active)' : 'transparent',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <span className="truncate">{quick.label}</span>
+                    <ExternalLink size={11} style={{ opacity: 0.7, flexShrink: 0 }} />
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Commercial & Modules Group */}
+          {commercialItems.length > 0 && (
+            <div>
+              <div
+                className="flex items-center gap-2 px-2 mb-1"
+                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
+              >
+                <FolderTree size={12} />
+                <span>Comercial & Licenciamento</span>
+              </div>
+              <div
+                style={{
+                  marginLeft: '0.45rem',
+                  paddingLeft: '0.55rem',
+                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.2rem',
+                }}
+              >
+                {commercialItems.map(renderNavLink)}
+              </div>
+            </div>
+          )}
+
+          {/* Operations Group */}
+          {operationItems.length > 0 && (
+            <div>
+              <div
+                className="flex items-center gap-2 px-2 mb-1"
+                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
+              >
+                <TrendingUp size={12} />
+                <span>Operação (Exemplos Base)</span>
+              </div>
+              <div
+                style={{
+                  marginLeft: '0.45rem',
+                  paddingLeft: '0.55rem',
+                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.2rem',
+                }}
+              >
+                {operationItems.map(renderNavLink)}
+              </div>
+            </div>
+          )}
+
+          {/* Governance & Audit Group */}
+          {governanceItems.length > 0 && (
+            <div>
+              <div
+                className="flex items-center gap-2 px-2 mb-1"
+                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
+              >
+                <Shield size={12} />
+                <span>Governança, HBAC & Auditoria</span>
+              </div>
+              <div
+                style={{
+                  marginLeft: '0.45rem',
+                  paddingLeft: '0.55rem',
+                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0.2rem',
+                }}
+              >
+                {governanceItems.map(renderNavLink)}
+              </div>
+            </div>
+          )}
         </nav>
 
-        {/* Active User Footer */}
+        {/* Active User Footer (Estilo gestao_estoque) */}
         <div
           style={{
             padding: '0.85rem 1rem',
-            borderTop: '1px solid #1e293b',
-            backgroundColor: '#090d16',
+            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            backgroundColor: 'rgba(6, 9, 17, 0.75)',
             display: 'flex',
-            flexDirection: 'column',
-            gap: '0.5rem',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '0.65rem',
           }}
         >
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex flex-col" style={{ minWidth: 0 }}>
-              <span style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#f8fafc' }}>
+          <div className="flex items-center gap-2.5" style={{ minWidth: 0 }}>
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: '9999px',
+                backgroundColor: 'rgba(59, 130, 246, 0.22)',
+                color: '#60a5fa',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: '0.75rem',
+                flexShrink: 0,
+                border: '1px solid rgba(59, 130, 246, 0.35)',
+              }}
+            >
+              {currentUser.name
+                .split(' ')
+                .slice(0, 2)
+                .map((n) => n[0])
+                .join('')}
+            </div>
+            <div className="flex flex-col truncate" style={{ minWidth: 0 }}>
+              <span className="truncate" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#f8fafc' }}>
                 {currentUser.name}
               </span>
-              <span style={{ fontSize: '0.72rem', color: '#94a3b8' }}>
-                {userActiveRoles.map((r) => r.name[session.language]).join(', ')}
+              <span className="truncate" style={{ fontSize: '0.68rem', color: '#94a3b8' }}>
+                {currentUser.email}
               </span>
             </div>
-            <button
-              type="button"
-              className="btn btn-ghost btn-sm"
-              style={{ color: '#cbd5e1' }}
-              onClick={async () => {
-                await logout();
-                navigate('/login');
-              }}
-              title={t('scope.logout')}
-            >
-              <LogOut size={15} />
-            </button>
           </div>
+          <button
+            type="button"
+            className="btn btn-ghost btn-sm"
+            style={{ color: '#cbd5e1', padding: '0.4rem' }}
+            onClick={async () => {
+              await logout();
+              navigate('/login');
+            }}
+            title={t('scope.logout')}
+          >
+            <LogOut size={15} />
+          </button>
         </div>
       </aside>
 
@@ -704,7 +1015,7 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
           </div>
         )}
 
-        {/* Top Operational Bar */}
+        {/* Top Operational Bar (Glassmorphic like gestao_estoque Header) */}
         <header className="app-topbar">
           <div className="flex items-center gap-3">
             <button
@@ -719,21 +1030,21 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
               <span className={`badge ${mode === 'global' ? 'badge-info' : 'badge-teal'}`}>
                 {mode === 'global' ? t('scope.global') : `${t('scope.company')}: ${currentCompany?.tradeName}`}
               </span>
-              {mode === 'company' && currentCompany && (
-                <span className="text-xs text-muted mono">ID: {currentCompany.id}</span>
-              )}
+              <span className="badge badge-success">
+                <Sparkles size={11} /> 16 Módulos Olivelas Ativos
+              </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
-            {/* Mock Profile Switcher */}
-            <div className="flex items-center gap-1">
-              <span className="badge badge-warning" title="Recurso exclusivo do Mock V1">
-                Troca Rápida Mock:
+            {/* Profile Switcher */}
+            <div className="flex items-center gap-1.5">
+              <span className="badge badge-info" title="Alternar perfil HBAC instantaneamente">
+                Perfil:
               </span>
               <select
                 className="select"
-                style={{ width: 'auto', padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                style={{ width: 'auto', padding: '0.3rem 0.65rem', fontSize: '0.75rem', borderRadius: '0.65rem' }}
                 value={currentUser.id}
                 onChange={(e) => handleQuickProfileChange(e.target.value)}
                 aria-label="Trocar usuário de demonstração"
@@ -771,7 +1082,7 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
       <ModalDialog
         open={confirmResetOpen}
         onClose={() => setConfirmResetOpen(false)}
-        title="Restaurar Dados Iniciais de Demonstração (Seed V1)"
+        title="Restaurar Dados Iniciais de Demonstração (16 Módulos Comerciais Olivelas)"
         footer={
           <>
             <button type="button" className="btn btn-secondary" onClick={() => setConfirmResetOpen(false)}>
@@ -792,9 +1103,9 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
         }
       >
         <p className="text-sm">
-          Esta operação irá redefinir todas as tabelas locais do <strong>IndexedDB</strong> (empresas,
-          usuários, papéis HBAC, módulos, contratos, cobranças, API Hub e chamados) de volta ao estado
-          original da especificação V1, registrando um evento de auditoria de restauração.
+          Esta operação irá redefinir todas as tabelas locais do <strong>IndexedDB</strong> (incluindo os
+          <strong> 16 Módulos Comerciais Olivelas</strong> e os <strong>10 Módulos de Exemplo</strong>) de
+          volta ao estado original, registrando um evento de auditoria de restauração.
         </p>
       </ModalDialog>
 
