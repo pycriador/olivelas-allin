@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Administrativo — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 20%, #f0f9ff 0%, #f8fafc 80%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--space-4);
+    }
+    .login-container {
+      width: 100%;
+      max-width: 440px;
+    }
+    .login-card {
+      background-color: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-xl);
+    }
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
+    }
+    .login-logo-circle {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: #ffffff;
+      font-weight: var(--font-weight-bold);
+      font-size: var(--font-size-xl);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-3);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
+    }
+    .mock-credential-hint {
+      background-color: var(--color-primary-subtle);
+      border: 1px dashed #bae6fd;
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-size-xs);
+      color: var(--color-primary-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <div class="login-card">
+      <div class="login-header">
+        <img src="assets/images/logo.png" alt="Logo Dra. Marta" style="width: 72px; height: 72px; object-fit: contain; margin-bottom: var(--space-2);">
+        <h1 style="font-size: var(--font-size-xl); color: var(--color-burgundy);">Dra. Marta Gelsi Dias</h1>
+        <div class="brand-subrow" style="justify-content: center; margin-top: 2px;">
+          <span class="brand-dentista-text">Dentista</span>
+          <span class="brand-cro-inline">• CRO 71482</span>
+        </div>
+        <p class="text-xs text-muted" style="text-transform: uppercase; letter-spacing: 0.06em; margin-top: 6px;">Painel Administrativo Interno</p>
+      </div>
+
+      <div class="mock-credential-hint" style="background-color: #fdf2f8; border-color: #fbcfe8; color: var(--color-burgundy);">
+        <strong style="color: var(--color-primary); display: flex; align-items: center; gap: 4px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Autenticação Segura via Supabase Auth:
+        </strong>
+        <span>E-mail: <code>admin@dramartagelsi.com.br</code></span>
+        <span>Senha: <code>Marta@2026Admin</code> <em style="font-size: 0.6875rem; color: var(--color-text-muted);">(criptografada no banco)</em></span>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label form-label-required" for="login-email">E-mail</label>
+          <input type="email" id="login-email" class="form-input" value="admin@dramartagelsi.com.br" required autocomplete="username">
+        </div>
+
+        <div class="form-group">
+          <div class="flex items-center justify-between">
+            <label class="form-label form-label-required" for="login-password">Senha</label>
+            <button type="button" class="btn-ghost text-xs text-primary" id="btn-forgot-password">Preencher dados padrão</button>
+          </div>
+          <input type="password" id="login-password" class="form-input" value="Marta@2026Admin" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="btn-login-submit" style="width: 100%; margin-top: var(--space-4);">
+          Entrar no Sistema
+        </button>
+      </form>
+
+      <div class="text-center" style="margin-top: var(--space-6);">
+        <a href="index.html" class="text-xs text-muted" style="text-decoration: underline;">← Voltar para a Landing Page pública</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Supabase CDN -->
+  <script src="js/supabase-js-v2.js"></script>
+  <script src="js/mock-data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/toast.js"></script>
+  <script src="js/modal.js"></script>
+  <script src="js/navigation.js"></script>
+  <script>
+    document.getElementById("btn-forgot-password").addEventListener("click", () => {
+      document.getElementById("login-email").value = "admin@dramartagelsi.com.br";
+      document.getElementById("login-password").value = "Marta@2026Admin";
+      Toast.info("Credenciais padrão preenchidas.");
+    });
+
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value.trim();
+
+      const btn = document.getElementById("btn-login-submit");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner spinner-sm"></span> Autenticando no Supabase...`;
+
+      try {
+        await AuthService.login(email, password);
+        Toast.success("Login autenticado com sucesso no Supabase! Redirecionando...");
+        const redirectUrl = sessionStorage.getItem("redirect_after_login") || "pages/dashboard.html";
+        sessionStorage.removeItem("redirect_after_login");
+        setTimeout(() => {
+          window.location.href = redirectUrl;
+        }, 600);
+      } catch (err) {
+        console.error("Falha no login:", err);
+        btn.disabled = false;
+        btn.innerText = "Entrar no Sistema";
+        Toast.error(err.message || "E-mail ou senha incorretos no Supabase.");
+      }
+    });
+  </script>
+</body>
+</html>

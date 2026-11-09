@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none" stroke="#db2777" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Moldura externa elegante -->
+  <rect x="18" y="16" width="60" height="78" rx="2" stroke="#db2777" stroke-width="4"/>
+  
+  <!-- Refletor / Luminária Odontológica -->
+  <path d="M60 28 L48 40" stroke="#db2777" stroke-width="4"/>
+  <path d="M42 46 C42 40 54 34 60 40 C66 46 54 52 48 46" fill="#fce7f3" stroke="#db2777" stroke-width="3"/>
+
+  <!-- Dente Delicado no Canto Superior -->
+  <path d="M82 20 C85 14 93 14 96 20 C98 22 101 25 99 35 C97 42 94 45 92 45 C90 45 90 38 89 38 C88 38 88 45 86 45 C84 45 81 42 79 35 C77 25 80 22 82 20 Z" fill="#fff1f2" stroke="#db2777" stroke-width="3.5"/>
+
+  <!-- Cadeira Odontológica Reclinável -->
+  <!-- Encosto e Assento -->
+  <path d="M26 62 L42 76 L70 76 L86 92" stroke="#db2777" stroke-width="4.5"/>
+  <!-- Base / Suporte da Cadeira -->
+  <path d="M50 76 L50 90 L64 90" stroke="#db2777" stroke-width="4"/>
+</svg>

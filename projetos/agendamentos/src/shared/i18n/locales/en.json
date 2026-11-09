@@ -1,0 +1,441 @@
+{
+  "app": {
+    "name": "ClinicFlow",
+    "tagline": "Smart management for your clinic"
+  },
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "new": "New",
+    "search": "Search",
+    "back": "Back",
+    "confirm": "Confirm",
+    "confirmDelete": "Confirm deletion?",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "empty": "No records found.",
+    "created": "Record created.",
+    "updated": "Record updated.",
+    "deleted": "Record deleted.",
+    "comingSoon": "Coming soon",
+    "comingSoonDesc": "This section ships in the next delivery."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "agenda": "Calendar",
+    "clients": "Clients",
+    "professionals": "Professionals",
+    "events": "Events",
+    "blocks": "Blocks",
+    "appointmentTypes": "Appointment Types",
+    "schedules": "Working Hours",
+    "scheduleGroups": "Schedule Groups",
+    "users": "Users",
+    "settings": "Settings",
+    "googleWorkspace": "Google Workspace",
+    "availability": "Availability"
+  },
+  "clients": {
+    "subtitle": "Manage your clinic's patients",
+    "new": "New client",
+    "edit": "Edit client",
+    "dialogDesc": "Register patient information.",
+    "fields": {
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone",
+      "cpf": "Tax ID",
+      "birthDate": "Birth date",
+      "guardian": "Guardian",
+      "notes": "Notes"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "archived": "Archived"
+    }
+  },
+  "professionals": {
+    "subtitle": "Manage your clinic team",
+    "new": "New professional",
+    "edit": "Edit professional",
+    "fields": {
+      "fullName": "Full name",
+      "crp": "License",
+      "specialty": "Specialty",
+      "color": "Calendar color",
+      "session": "Session (min)",
+      "interval": "Interval (min)",
+      "online": "Online sessions",
+      "inPerson": "In-person sessions",
+      "bio": "Bio"
+    }
+  },
+  "appointmentTypes": {
+    "subtitle": "Services and modalities offered",
+    "new": "New type",
+    "edit": "Edit type",
+    "fields": {
+      "name": "Name",
+      "color": "Color",
+      "duration": "Duration (min)"
+    }
+  },
+  "scheduleGroups": {
+    "subtitle": "Group hours by shift or on-call",
+    "new": "New group",
+    "edit": "Edit group",
+    "fields": {
+      "name": "Name",
+      "kind": "Kind",
+      "color": "Color"
+    },
+    "kinds": {
+      "full": "Full-time",
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "on_call": "On-call",
+      "custom": "Custom"
+    }
+  },
+  "schedules": {
+    "subtitle": "Set weekly availability for professionals",
+    "new": "New schedule",
+    "edit": "Edit schedule",
+    "allProfessionals": "All professionals",
+    "fields": {
+      "professional": "Professional",
+      "weekday": "Weekday",
+      "start": "Start",
+      "end": "End",
+      "interval": "Interval (min)",
+      "group": "Group"
+    },
+    "weekdays": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "clinicName": "Clinic name",
+    "confirmPassword": "Confirm password",
+    "forgotPassword": "Forgot password",
+    "resetPassword": "Reset password",
+    "newPassword": "New password",
+    "signInTitle": "Welcome back",
+    "signInSubtitle": "Access your clinic",
+    "signUpTitle": "Create your account",
+    "signUpSubtitle": "Get your clinic organized in minutes",
+    "haveAccount": "Already have an account?",
+    "noAccount": "No account?",
+    "sendResetLink": "Send reset link",
+    "resetSent": "Reset link sent to your email.",
+    "signedIn": "Signed in.",
+    "signedOut": "Signed out.",
+    "accountCreated": "Account created. Welcome!",
+    "passwordUpdated": "Password updated.",
+    "invalidCredentials": "Invalid email or password.",
+    "genericError": "Operation failed."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your clinic",
+    "cards": {
+      "clients": "Clients",
+      "professionals": "Professionals",
+      "todayAppointments": "Today's appointments",
+      "upcoming": "Upcoming",
+      "events": "Events",
+      "blocks": "Blocks"
+    },
+    "charts": {
+      "weekly": "Weekly appointments",
+      "byType": "Distribution by type"
+    }
+  },
+  "settings": {
+    "subtitle": "Customize your clinic and preferences",
+    "tabs": {
+      "clinic": "Clinic",
+      "prefs": "Preferences"
+    },
+    "clinic": {
+      "title": "Clinic details",
+      "description": "Information displayed across the app",
+      "logoUrl": "Logo URL",
+      "logoHint": "Paste a public image link (PNG, JPG or SVG).",
+      "logoPreview": "Logo preview"
+    },
+    "prefs": {
+      "title": "Regional preferences",
+      "description": "Timezone, language and formats used in the calendar",
+      "timezone": "Timezone",
+      "dateFormat": "Date format",
+      "timeFormat": "Time format"
+    }
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "pt-BR": "Português",
+    "en": "English",
+    "es": "Español"
+  },
+  "agenda": {
+    "subtitle": "View and manage the clinic calendar",
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "allProfessionals": "All professionals"
+  },
+  "events": {
+    "subtitle": "Manage all appointments and events",
+    "new": "New event",
+    "edit": "Edit event",
+    "dialogDesc": "Register an appointment or event.",
+    "fields": {
+      "title": "Title",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "professional": "Professional",
+      "client": "Client",
+      "appointmentType": "Appointment type",
+      "description": "Description"
+    },
+    "status": {
+      "scheduled": "Scheduled",
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No show"
+    },
+    "filters": {
+      "allStatuses": "All statuses"
+    }
+  },
+  "blocks": {
+    "subtitle": "Manage blocks, vacations and holidays",
+    "new": "New block",
+    "edit": "Edit block",
+    "dialogDesc": "Block time on the calendar.",
+    "clinicWide": "Clinic-wide",
+    "fields": {
+      "title": "Title",
+      "professional": "Professional",
+      "reason": "Reason",
+      "allDay": "All day",
+      "startsAt": "Starts",
+      "endsAt": "Ends",
+      "description": "Description"
+    },
+    "reasons": {
+      "vacation": "Vacation",
+      "holiday": "Holiday",
+      "sick_leave": "Sick leave",
+      "day_off": "Day off",
+      "training": "Training",
+      "conference": "Conference",
+      "meeting": "Meeting",
+      "manual": "Manual"
+    }
+  },
+  "google": {
+    "title": "Google Workspace",
+    "description": "Connect your Google account and choose which calendars sync with the agenda.",
+    "connect": "Connect Google",
+    "disconnect": "Disconnect",
+    "refresh": "Refresh calendars",
+    "accountTitle": "Connected account",
+    "accountDesc": "Each professional connects their own Google account.",
+    "accountEmail": "Email",
+    "lastSync": "Last sync",
+    "scopes": "Scopes",
+    "emptyAccount": "No Google account connected yet.",
+    "calendarsTitle": "Calendars",
+    "calendarsDesc": "Choose which calendars to sync and display in the agenda.",
+    "emptyCalendars": "No calendars available.",
+    "calendarName": "Calendar",
+    "calendarTimezone": "Timezone",
+    "calendarAccess": "Access",
+    "syncEnabled": "Sync",
+    "showInAgenda": "Show in agenda",
+    "primary": "Primary",
+    "readOnly": "Read only",
+    "readWrite": "Read & write",
+    "logsTitle": "Sync history",
+    "logsDesc": "Latest sync runs.",
+    "emptyLogs": "No sync recorded yet.",
+    "logDate": "Date",
+    "logType": "Type",
+    "logEvents": "Events",
+    "logResult": "Result",
+    "logOk": "Success",
+    "logFail": "Error",
+    "disconnectConfirmTitle": "Disconnect Google account?",
+    "disconnectConfirmDesc": "Calendars will stop syncing. You can reconnect anytime.",
+    "toastConnected": "Google account connected.",
+    "toastDisconnected": "Google account disconnected.",
+    "toastRefreshed": "Calendars refreshed.",
+    "status": {
+      "connected": "Connected",
+      "disconnected": "Disconnected",
+      "expired": "Expired",
+      "error": "Error"
+    },
+    "syncNow": "Sync now",
+    "syncCalendar": "Sync this calendar",
+    "syncActions": "Actions",
+    "toastSynced": "Sync completed."
+  },
+  "availability": {
+    "title": "Availability",
+    "subtitle": "Availability engine and smart scheduling",
+    "search": "Search slots",
+    "noSlots": "No slots available for these criteria.",
+    "noSpecialty": "No specialty",
+    "workload": "Workload",
+    "schedule": "Schedule",
+    "overbooking": "Overbooking",
+    "resultsIn": "suggestions in",
+    "appointments": "appts",
+    "heatmapHint": "Average clinic occupancy for the upcoming days.",
+    "tabs": {
+      "search": "Suggestions",
+      "timeline": "Timeline",
+      "heatmap": "Occupancy map",
+      "rules": "Rules"
+    },
+    "filters": {
+      "date": "Date",
+      "from": "From",
+      "to": "To",
+      "duration": "Duration (min)",
+      "professional": "Professional",
+      "appointmentType": "Appointment type",
+      "client": "Client",
+      "modality": "Modality",
+      "period": "Preferred period",
+      "urgent": "Urgent",
+      "any": "Any"
+    },
+    "modality": {
+      "online": "Online",
+      "inPerson": "In person"
+    },
+    "period": {
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening"
+    },
+    "states": {
+      "available": "Free",
+      "partial": "Partial",
+      "block": "Block",
+      "lunch": "Lunch",
+      "vacation": "Vacation",
+      "event": "Appointment",
+      "google": "Google",
+      "appointment": "Appointment",
+      "off": "Off hours"
+    },
+    "reasons": {
+      "available": "Available",
+      "sameProfessional": "Same professional",
+      "lowerWorkload": "Low workload",
+      "preferredPeriod": "Preferred period",
+      "specialtyMatch": "Specialty",
+      "almostFull": "Almost full",
+      "nearLunch": "Near lunch",
+      "overbooking": "Overbooking"
+    },
+    "stats": {
+      "freeNow": "Professionals free now",
+      "averageOccupancy": "Average occupancy",
+      "averageFree": "Average free time",
+      "overloaded": "Overloaded"
+    },
+    "rules": {
+      "title": "Engine rules",
+      "weights": "Score weights",
+      "limits": "Limits and granularity"
+    },
+    "weights": {
+      "weight_available": "Available",
+      "weight_same_professional": "Same professional",
+      "weight_lower_workload": "Lower workload",
+      "weight_preferred_period": "Preferred period",
+      "weight_almost_full": "Almost full",
+      "weight_near_lunch": "Near lunch",
+      "weight_overbooking": "Overbooking",
+      "weight_conflict": "Conflict",
+      "weight_specialty": "Specialty"
+    },
+    "limits": {
+      "min_minutes_between_appointments": "Minimum gap (min)",
+      "max_daily_minutes": "Max minutes/day",
+      "max_weekly_minutes": "Max minutes/week",
+      "max_daily_appointments": "Max appointments/day",
+      "overbooking_margin_minutes": "Overbooking margin (min)",
+      "slot_granularity_minutes": "Granularity (min)"
+    },
+    "wizard": {
+      "title": "Scheduling assistant",
+      "step1": "Criteria",
+      "step2": "Slots",
+      "step3": "Confirmation",
+      "step1Desc": "Set the criteria and let the engine suggest the best slots.",
+      "step2Desc": "Pick a suggestion to continue.",
+      "step3Desc": "Review conflicts and confirm the appointment.",
+      "back": "Back",
+      "confirm": "Confirm booking",
+      "validating": "Validating conflicts…",
+      "noConflicts": "No conflicts found.",
+      "booked": "Appointment created.",
+      "conflictBlocked": "Booking blocked by conflicts.",
+      "forceOverbooking": "Force overbooking despite conflicts",
+      "issues": {
+        "invalidRange": "End time must be after start time.",
+        "inPast": "Slot is in the past.",
+        "professionalMissing": "Professional not found.",
+        "professionalInactive": "Professional is inactive.",
+        "modalityUnsupported": "Professional does not accept this modality.",
+        "appointmentTypeUnsupported": "Professional does not perform this appointment type.",
+        "eventConflict": "Conflicts with an existing appointment.",
+        "googleConflict": "Conflicts with a Google Calendar event.",
+        "blockConflict": "Conflicts with a block.",
+        "vacationConflict": "Professional on leave.",
+        "holidayConflict": "Holiday.",
+        "lunchConflict": "Lunch break.",
+        "intervalConflict": "Conflicts with an interval.",
+        "outsideWorkingHours": "Outside the professional working hours.",
+        "dailyLimit": "Daily limit reached.",
+        "weeklyLimit": "Weekly limit reached.",
+        "appointmentsLimit": "Daily appointment cap reached.",
+        "clientBusy": "Client already has an appointment at this time."
+      }
+    },
+    "newBooking": "New booking"
+  }
+}

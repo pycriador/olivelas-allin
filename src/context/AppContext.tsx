@@ -35,6 +35,7 @@ import {
 } from '../services/hbacService';
 import { translate } from '../i18n/translations';
 import { applyThemePresetToDom } from '../styles/themes';
+import { syncUnifiedUserProfileToSupabase } from '../services/olivelasEcosystemService';
 
 export interface ToastMessage {
   id: string;
@@ -290,6 +291,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         language: targetUser.language || prev.language,
       }));
 
+      void syncUnifiedUserProfileToSupabase(targetUser);
       await recordAuditEvent({
         actor: {
           userId: targetUser.id,

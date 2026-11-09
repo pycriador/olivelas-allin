@@ -1,0 +1,123 @@
+# RaffleHub Documentation Manifest
+# Machine-readable document index
+
+documents:
+  - id: "ARCH-001"
+    path: "en/architecture/overview.md"
+    type: "architecture"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["architecture", "system", "overview"]
+    title: "Architecture Overview"
+
+  - id: "ARCH-002"
+    path: "en/architecture/data-model.md"
+    type: "architecture"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["architecture", "data", "database", "schema"]
+    title: "Data Model"
+
+  - id: "ARCH-003"
+    path: "en/architecture/components.md"
+    type: "architecture"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["architecture", "components", "frontend", "backend"]
+    title: "Components"
+
+  - id: "APP-001"
+    path: "en/application/campaigns.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "campaigns", "lifecycle"]
+    title: "Campaigns"
+
+  - id: "APP-002"
+    path: "en/application/numbers.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "numbers", "reservation"]
+    title: "Number Engine"
+
+  - id: "APP-003"
+    path: "en/application/participants.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "participants", "sales"]
+    title: "Participants & Sales"
+
+  - id: "APP-004"
+    path: "en/application/payments.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "payments", "pix", "webhooks"]
+    title: "Payment Engine"
+
+  - id: "APP-005"
+    path: "en/application/auth.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "auth", "multi-tenancy"]
+    title: "Authentication & Multi-tenancy"
+
+  - id: "APP-006"
+    path: "en/application/permissions.md"
+    type: "application"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["application", "permissions", "rbac", "roles"]
+    title: "Permissions & RBAC"
+
+  - id: "CTR-001"
+    path: "en/contracts/rpc-functions.md"
+    type: "contracts"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["contracts", "rpc", "database", "functions"]
+    title: "RPC Functions"
+
+  - id: "CTR-002"
+    path: "en/contracts/api-routes.md"
+    type: "contracts"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["contracts", "api", "server", "routes"]
+    title: "API Routes"
+
+  - id: "OPS-001"
+    path: "en/operations/deployment.md"
+    type: "operations"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["operations", "deployment", "cloudflare", "nitro"]
+    title: "Deployment"
+
+  - id: "OPS-002"
+    path: "en/operations/environment.md"
+    type: "operations"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["operations", "environment", "configuration"]
+    title: "Environment Configuration"
+
+  - id: "OPS-003"
+    path: "en/operations/migrations.md"
+    type: "operations"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["operations", "migrations", "database"]
+    title: "Database Migrations"
+
+  - id: "SEC-001"
+    path: "en/security/overview.md"
+    type: "security"
+    status: "ACCEPTED"
+    owner: "rafflehub"
+    tags: ["security", "rls", "authentication", "authorization"]
+    title: "Security Overview"

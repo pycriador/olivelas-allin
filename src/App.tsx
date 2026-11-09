@@ -53,6 +53,7 @@ import {
   TicketFormPage,
   TicketsListPage,
 } from './pages/shared/TicketsAuditAndOperationsModule';
+import { OlivelasEcosystemHub } from './pages/company/OlivelasEcosystemHub';
 
 export const App: React.FC = () => {
   return (
@@ -139,6 +140,10 @@ export const App: React.FC = () => {
 
         {/* 16. Relatórios e Indicadores Globais */}
         <Route path="relatorios" element={<ReportsAnalyticsPage scope="global" />} />
+
+        {/* 17. Ecossistema Olivelas (16 Plataformas & Schemas Supabase) */}
+        <Route path="ecossistema" element={<OlivelasEcosystemHub />} />
+        <Route path="ecossistema/:moduleSlug" element={<OlivelasEcosystemHub />} />
       </Route>
 
       {/* 3. AMBIENTE DA EMPRESA CLIENTE (/app/empresa/:empresaId) */}
@@ -166,10 +171,12 @@ export const App: React.FC = () => {
         <Route path="financeiro/pagamentos" element={<FinanceHubPage scope="company" activeTab="pagamentos" />} />
         <Route path="financeiro/parcelas" element={<FinanceHubPage scope="company" activeTab="parcelas" />} />
 
-        {/* Operação dos Módulos Contratados (Estoque, Vendas, CRM) */}
+        {/* Operação dos Módulos Contratados (Estoque, Vendas, CRM) e 16 Plataformas Olivelas */}
         <Route path="operacao/estoque" element={<CompanyOperationModulePage moduleType="inventory" />} />
         <Route path="operacao/vendas" element={<CompanyOperationModulePage moduleType="orders" />} />
         <Route path="operacao/crm" element={<CompanyOperationModulePage moduleType="crm" />} />
+        <Route path="ecossistema" element={<OlivelasEcosystemHub />} />
+        <Route path="ecossistema/:moduleSlug" element={<OlivelasEcosystemHub />} />
 
         {/* Tickets e Suporte da Empresa */}
         <Route path="tickets" element={<TicketsListPage scope="company" />} />

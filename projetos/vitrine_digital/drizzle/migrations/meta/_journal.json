@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1788913953562,
+      "tag": "0000_create_image_analysis",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1788913979997,
+      "tag": "0001_images_bucket_policies",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789007478816,
+      "tag": "0002_add_gemini_model_to_iam_groups",
+      "breakpoints": true
+    }
+  ]
+}

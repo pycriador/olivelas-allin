@@ -1,0 +1,215 @@
+import { supabase } from '@/lib/supabase/client'
+import { buildAccentRegex } from '@/utils/productUtils'
+import { storeService } from '@/services/storeService'
+
+/**
+ * Entidades que o Admin Global pode excluir definitivamente.
+ *
+ * A lista e fechada de proposito: a RPC global_admin_delete valida o mesmo
+ * conjunto, e aqui ela tambem define quais colunas cada entidade pode expor.
+ * Nada de nome de tabela ou coluna vindo da UI.
+ */
+export const GLOBAL_DELETE_ENTITIES = [
+  { value: 'stores', label: 'Loja / Filial' },
+  { value: 'orders', label: 'Pedido' },
+  { value: 'stock_movements', label: 'Movimentação de estoque' },
+  { value: 'products', label: 'Produto' },
+  { value: 'customers', label: 'Cliente' },
+  { value: 'suppliers', label: 'Fornecedor' },
+  { value: 'purchase_orders', label: 'Compra' },
+  { value: 'store_users', label: 'Membro da equipe' },
+] as const
+
+export type GlobalDeleteEntity = (typeof GLOBAL_DELETE_ENTITIES)[number]['value']
+
+export interface GlobalEntityRow {
+  id: string
+  store_id: string
+  store_name: string
+  label: string
+  detail: string
+  created_at: string | null
+}
+
+interface EntitySpec {
+  select: string
+  /** Coluna usada na busca livre. */
+  searchColumns: string[]
+  /** Coluna com o titulo legivel do registro. */
+  labelColumn: string
+  /** Colunas extras mostradas na coluna "detalhe". */
+  detailColumns: string[]
+  labelFallback: string
+}
+
+const ENTITY_SPECS: Record<GlobalDeleteEntity, EntitySpec> = {
+  stores: {
+    select: 'id, name, slug, document, is_branch, branch_code, is_active, created_at',
+    searchColumns: ['name', 'slug', 'document'],
+    labelColumn: 'name',
+    detailColumns: ['slug', 'document'],
+    labelFallback: 'Loja / Filial',
+  },
+  orders: {
+    select: 'id, store_id, order_number, total_amount, status, created_at',
+    searchColumns: ['order_number'],
+    labelColumn: 'order_number',
+    detailColumns: ['status', 'total_amount'],
+    labelFallback: 'Pedido',
+  },
+  stock_movements: {
+    select: 'id, store_id, movement_type, quantity, product_id, created_at, notes, reason_code',
+    searchColumns: ['movement_type', 'notes', 'reason_code'],
+    labelColumn: 'movement_type',
+    detailColumns: ['quantity'],
+    labelFallback: 'Movimentação',
+  },
+  products: {
+    select: 'id, store_id, name, sku, deleted_at, created_at',
+    searchColumns: ['name', 'sku'],
+    labelColumn: 'name',
+    detailColumns: ['sku'],
+    labelFallback: 'Produto',
+  },
+  customers: {
+    select: 'id, store_id, name, document, phone, email, created_at',
+    searchColumns: ['name', 'document', 'phone', 'email'],
+    labelColumn: 'name',
+    detailColumns: ['document'],
+    labelFallback: 'Cliente',
+  },
+  suppliers: {
+    select: 'id, store_id, corporate_name, trade_name, document, contact_name, created_at',
+    searchColumns: ['corporate_name', 'trade_name', 'document', 'contact_name'],
+    labelColumn: 'trade_name',
+    detailColumns: ['corporate_name', 'document'],
+    labelFallback: 'Fornecedor',
+  },
+  purchase_orders: {
+    select: 'id, store_id, order_number, status, total_amount, created_at, notes',
+    searchColumns: ['order_number', 'notes'],
+    labelColumn: 'order_number',
+    detailColumns: ['status', 'total_amount'],
+    labelFallback: 'Compra',
+  },
+  store_users: {
+    select: 'id, store_id, user_id, role, created_at',
+    searchColumns: ['role'],
+    labelColumn: 'user_id',
+    detailColumns: ['role'],
+    labelFallback: 'Membro',
+  },
+}
+
+export const globalAdminService = {
+  /**
+   * Lista registros de uma entidade em todas as lojas (ou em uma loja
+   * especifica) para a tela de exclusao. A listagem e so de leitura; a
+   * exclusao em si passa pela RPC.
+   */
+  async listEntities(
+    entity: GlobalDeleteEntity,
+    params: {
+      storeId?: string
+      search?: string
+      page?: number
+      pageSize?: number
+    } = {}
+  ): Promise<{ data: GlobalEntityRow[]; total: number }> {
+    const { storeId, search, page = 1, pageSize = 20 } = params
+    const spec = ENTITY_SPECS[entity]
+
+    let query = supabase
+      .from(entity)
+      .select(
+        entity === 'stores' ? spec.select : `${spec.select}, stores ( id, name )`,
+        { count: 'exact' }
+      )
+
+    if (entity === 'orders') {
+      query = query.not('order_number', 'like', '%-SUB-%')
+    }
+
+    if (storeId && storeId !== 'all' && storeId !== 'global') {
+      query = query.eq(entity === 'stores' ? 'id' : 'store_id', storeId)
+    }
+
+    if (search && search.trim()) {
+      const cleanTerm = search.trim().replace(/[%,()]/g, ' ')
+      if (cleanTerm) {
+        const pattern = buildAccentRegex(cleanTerm)
+        query = query.or(spec.searchColumns.map((c) => `${c}.imatch.${pattern}`).join(','))
+      }
+    }
+
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    const { data, count, error } = await query
+      .order('created_at', { ascending: false })
+      .range(from, to)
+
+    if (error) throw error
+
+    const rows: GlobalEntityRow[] = (data || []).map((row: any) => {
+      const storeName =
+        entity === 'stores'
+          ? row.is_branch
+            ? `Filial (${row.branch_code || 'FIL'})`
+            : 'Loja Matriz'
+          : row.stores?.name || 'Loja'
+      const rawLabel =
+        entity === 'suppliers'
+          ? (row.trade_name || row.corporate_name)
+          : row[spec.labelColumn]
+
+      // store_users lista por user_id, que nao e legivel: cai no rotulo fixo.
+      const label =
+        entity === 'store_users'
+          ? `${spec.labelFallback} · ${String(rawLabel).slice(0, 8)}`
+          : String(rawLabel || spec.labelFallback)
+
+      const detail = spec.detailColumns
+        .map((c) => {
+          const value = row[c]
+          if (value === null || value === undefined) return null
+          if (typeof value === 'number' && c === 'total_amount') {
+            return `R$ ${value.toFixed(2)}`
+          }
+          if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T/.test(value)) return null
+          return `${c}: ${value}`
+        })
+        .filter(Boolean)
+        .join(' · ')
+
+      return {
+        id: row.id,
+        store_id: entity === 'stores' ? row.id : row.store_id,
+        store_name: storeName,
+        label,
+        detail,
+        created_at: row.created_at || null,
+      }
+    })
+
+    return { data: rows, total: count || rows.length }
+  },
+
+  /**
+   * Exclusao definitiva cross-store. Sem justificativa; a RPC grava a trilha
+   * em audit_logs na mesma transacao e devolve um resumo do que foi removido.
+   */
+  async hardDelete(entity: GlobalDeleteEntity, id: string): Promise<string> {
+    if (entity === 'stores') {
+      await storeService.deleteStorePermanently(id)
+      return 'Loja / Filial e seus vínculos operacionais removidos definitivamente.'
+    }
+
+    const { data, error } = await supabase.rpc('global_admin_delete', {
+      p_entity: entity,
+      p_id: id,
+    })
+    if (error) throw error
+    return typeof data === 'string' ? data : 'Registro removido.'
+  },
+}

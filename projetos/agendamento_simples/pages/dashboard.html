@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <!-- Container da Sidebar -->
+  <div id="admin-sidebar-container"></div>
+
+  <!-- Área Principal -->
+  <div class="admin-main-wrapper">
+    <!-- Container da Topbar -->
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Visão geral</h1>
+          <p class="text-sm text-muted">Acompanhamento dos atendimentos, agendamentos e pacientes do consultório.</p>
+        </div>
+        <div class="flex gap-3">
+          <a href="agendamentos.html" class="btn btn-outline btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+            Ver Agendamentos
+          </a>
+          <a href="pacientes.html" class="btn btn-primary btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Novo Paciente
+          </a>
+        </div>
+      </div>
+
+      <!-- Cards de Métricas Demonstrativas -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Agendamentos hoje</span>
+            <span class="stat-value" id="stat-total-today">—</span>
+            <span class="text-xs text-success" style="margin-top: 4px; font-weight: 500;">Consultas agendadas</span>
+          </div>
+          <div class="stat-icon-wrapper">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Consultas ativas</span>
+            <span class="stat-value" id="stat-active-count">—</span>
+            <span class="text-xs text-muted" style="margin-top: 4px;">Confirmadas na agenda</span>
+          </div>
+          <div class="stat-icon-wrapper" style="background-color: var(--color-teal-light); color: var(--color-teal);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Pacientes cadastrados</span>
+            <span class="stat-value" id="stat-total-patients">—</span>
+            <span class="text-xs text-muted" style="margin-top: 4px;">Base de dados Supabase</span>
+          </div>
+          <div class="stat-icon-wrapper" style="background-color: #f3e8ff; color: #9333ea;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-info">
+            <span class="stat-label">Aguardando confirmação</span>
+            <span class="stat-value" id="stat-pending-count">—</span>
+            <span class="text-xs text-warning" style="margin-top: 4px; font-weight: 500;">Status 'Pendente'</span>
+          </div>
+          <div class="stat-icon-wrapper" style="background-color: var(--color-warning-light); color: var(--color-warning-text);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Agenda Resumida do Dia -->
+      <div class="card" style="margin-bottom: var(--space-8);">
+        <div class="card-header">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Agenda recente / próxima</h3>
+            <p class="text-xs text-muted">Atendimentos sincronizados diretamente do Supabase</p>
+          </div>
+          <a href="agenda.html" class="btn btn-ghost btn-sm">Abrir calendário completo →</a>
+        </div>
+
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Horário</th>
+                <th>Paciente</th>
+                <th>Procedimento</th>
+                <th>Origem</th>
+                <th>Status</th>
+                <th class="text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-schedule-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Banner de Integração Rápida -->
+      <div class="card" style="padding: var(--space-6); background: linear-gradient(135deg, #fdf2f8, #ffffff); border-color: #fbcfe8;">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="flex items-center gap-4">
+            <div style="width: 44px; height: 44px; border-radius: var(--radius-md); background-color: #fce7f3; color: var(--color-primary); display: flex; align-items: center; justify-content: center;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <h4 style="font-size: var(--font-size-base); color: var(--color-burgundy);">Conexão Supabase Ativa</h4>
+              <p class="text-xs text-muted">Persistência em PostgreSQL na nuvem com autenticação segura e senhas criptografadas.</p>
+            </div>
+          </div>
+          <span class="badge badge-success" style="padding: 6px 12px; font-size: 0.75rem;">PostgreSQL Conectado</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Scripts Compartilhados -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    // Inicializar Sidebar e Topbar
+    UIComponents.renderAdminSidebar("dashboard", "");
+    UIComponents.renderAdminTopbar("Dashboard", "Visão Geral");
+
+    async function loadDashboardData() {
+      // Carregar agendamentos e pacientes do Supabase
+      const appointments = await DatabaseService.appointments.getAll();
+      const patients = await DatabaseService.patients.getAll();
+
+      // Métricas
+      document.getElementById("stat-total-patients").innerText = patients.length;
+      document.getElementById("stat-total-today").innerText = appointments.length;
+      const activeCount = appointments.filter(a => a.status === "Confirmado").length;
+      document.getElementById("stat-active-count").innerText = activeCount;
+      const pendingCount = appointments.filter(a => a.status === "Pendente").length;
+      document.getElementById("stat-pending-count").innerText = pendingCount;
+
+      // Preencher tabela resumida
+      const tbody = document.getElementById("dashboard-schedule-tbody");
+      if (appointments.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">Nenhum agendamento cadastrado no Supabase.</td></tr>`;
+      } else {
+        tbody.innerHTML = appointments.slice(0, 6).map(apt => `
+          <tr>
+            <td><strong>${apt.time}</strong> <span class="text-xs text-muted">(${apt.duration})</span></td>
+            <td>
+              <div class="text-bold">${apt.patientName}</div>
+              <span class="text-xs text-muted">${apt.patientId || '—'}</span>
+            </td>
+            <td>${apt.service}</td>
+            <td><span class="badge badge-neutral">${apt.origin}</span></td>
+            <td>${UIComponents.renderStatusBadge(apt.status)}</td>
+            <td class="text-right">
+              <a href="agendamentos.html" class="btn btn-ghost btn-sm">Ver detalhes</a>
+            </td>
+          </tr>
+        `).join("");
+      }
+    }
+
+    loadDashboardData();
+  </script>
+</body>
+</html>

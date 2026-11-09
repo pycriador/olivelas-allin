@@ -1,0 +1,674 @@
+# ServiceForge — Sprint 8
+## Master Data Management (Cadastros Base)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda a arquitetura construída nas Sprints anteriores deverá ser preservada.
+
+NÃO remover funcionalidades.
+
+NÃO alterar o Core Platform.
+
+NÃO alterar o Metadata Platform.
+
+NÃO alterar o Event Bus.
+
+O objetivo desta Sprint é criar todos os cadastros mestres da plataforma.
+
+Ainda NÃO implementar Ordem de Serviço.
+
+Todos os cadastros deverão utilizar:
+
+• Metadata Platform
+
+• Audit Service
+
+• Workflow Engine
+
+• Communication Platform
+
+• Document Platform
+
+• Event Bus
+
+Todo CRUD deverá publicar eventos.
+
+Toda alteração deverá gerar auditoria.
+
+Toda tela deverá utilizar os componentes padronizados da plataforma.
+
+------------------------------------------------------------------
+
+MÓDULOS
+
+Implementar:
+
+Clientes
+
+Aparelhos
+
+Técnicos
+
+Fabricantes
+
+Marcas
+
+Modelos
+
+Categorias
+
+Defeitos
+
+Serviços
+
+Peças
+
+Fornecedores
+
+Unidades de Medida
+
+Formas de Pagamento
+
+Condições de Pagamento
+
+Garantias
+
+Todos como módulos independentes.
+
+------------------------------------------------------------------
+
+CLIENTES
+
+Criar cadastro completo.
+
+Campos mínimos:
+
+Nome
+
+Tipo
+
+Pessoa Física
+
+Pessoa Jurídica
+
+CPF
+
+CNPJ
+
+RG
+
+Inscrição Estadual
+
+Data de Nascimento
+
+Telefone
+
+Celular
+
+WhatsApp
+
+Email
+
+Website
+
+Observações
+
+Status
+
+Tags
+
+Classificação
+
+Empresa Principal
+
+Empresas Vinculadas
+
+Endereços múltiplos
+
+Contatos múltiplos
+
+Documentos anexos
+
+Foto
+
+Campos personalizados
+
+Timeline
+
+Comentários
+
+Anexos
+
+Histórico
+
+Versionamento
+
+------------------------------------------------------------------
+
+CLIENTES COMPARTILHADOS
+
+Implementar compartilhamento.
+
+Administrador Global poderá:
+
+Vincular cliente a várias empresas.
+
+Remover vínculo.
+
+Migrar clientes em lote.
+
+Copiar clientes.
+
+Mesclar clientes duplicados.
+
+Localizar duplicidades.
+
+Toda operação deverá gerar auditoria.
+
+------------------------------------------------------------------
+
+APARELHOS
+
+Cada aparelho será uma entidade própria.
+
+Campos:
+
+Cliente
+
+Tipo
+
+Categoria
+
+Fabricante
+
+Marca
+
+Modelo
+
+Número de Série
+
+IMEI
+
+Patrimônio
+
+Cor
+
+Voltagem
+
+Acessórios
+
+Senha
+
+Estado de Conservação
+
+Data de Compra
+
+Garantia
+
+Observações
+
+Fotos
+
+Arquivos
+
+Campos personalizados
+
+Timeline
+
+Histórico
+
+Um cliente poderá possuir quantidade ilimitada de aparelhos.
+
+Toda manutenção futura utilizará esta entidade.
+
+------------------------------------------------------------------
+
+TÉCNICOS
+
+Cadastro completo.
+
+Campos:
+
+Nome
+
+CPF
+
+Telefone
+
+WhatsApp
+
+Email
+
+Cargo
+
+Especialidades
+
+Certificações
+
+Carga Horária
+
+Status
+
+Foto
+
+Observações
+
+Agenda (estrutura)
+
+Campos personalizados
+
+------------------------------------------------------------------
+
+FABRICANTES
+
+CRUD completo.
+
+Logo
+
+Nome
+
+País
+
+Website
+
+Status
+
+Observações
+
+------------------------------------------------------------------
+
+MARCAS
+
+Relacionadas ao Fabricante.
+
+Logo
+
+Nome
+
+Status
+
+Observações
+
+------------------------------------------------------------------
+
+MODELOS
+
+Relacionados à Marca.
+
+Nome
+
+Categoria
+
+Descrição
+
+Status
+
+------------------------------------------------------------------
+
+CATEGORIAS
+
+Exemplos:
+
+Celular
+
+Notebook
+
+Desktop
+
+Televisão
+
+Micro-ondas
+
+Ar-condicionado
+
+Impressora
+
+Console
+
+Tablet
+
+Monitor
+
+Som
+
+Videogame
+
+Criar CRUD.
+
+------------------------------------------------------------------
+
+DEFEITOS
+
+Biblioteca reutilizável.
+
+Exemplos:
+
+Não liga
+
+Tela quebrada
+
+Sem imagem
+
+Não carrega
+
+Superaquecimento
+
+Sem áudio
+
+Oxidação
+
+Placa queimada
+
+Permitir:
+
+Categorias
+
+Tags
+
+Prioridade
+
+Descrição
+
+Solução sugerida
+
+------------------------------------------------------------------
+
+SERVIÇOS
+
+Tabela de serviços.
+
+Exemplos:
+
+Troca de tela
+
+Troca de bateria
+
+Formatação
+
+Solda
+
+Limpeza
+
+Diagnóstico
+
+Valor sugerido
+
+Tempo médio
+
+Garantia padrão
+
+------------------------------------------------------------------
+
+PEÇAS
+
+Cadastro simples.
+
+Código
+
+SKU
+
+Nome
+
+Fabricante
+
+Fornecedor
+
+Categoria
+
+Valor de custo
+
+Valor sugerido
+
+Quantidade
+
+Unidade
+
+Estoque mínimo
+
+Observações
+
+O controle avançado de estoque será implementado futuramente.
+
+------------------------------------------------------------------
+
+FORNECEDORES
+
+Cadastro completo.
+
+Empresa
+
+Contato
+
+Telefone
+
+Email
+
+Website
+
+CNPJ
+
+Endereço
+
+Observações
+
+------------------------------------------------------------------
+
+FORMAS DE PAGAMENTO
+
+Criar cadastro configurável.
+
+PIX
+
+Dinheiro
+
+Cartão
+
+Boleto
+
+Transferência
+
+Cheque
+
+Cada uma poderá possuir configurações próprias.
+
+------------------------------------------------------------------
+
+GARANTIAS
+
+Criar tabela.
+
+Nome
+
+Dias
+
+Cobertura
+
+Observações
+
+Status
+
+------------------------------------------------------------------
+
+PESQUISA GLOBAL
+
+Todos os módulos deverão possuir:
+
+Pesquisa rápida.
+
+Pesquisa avançada.
+
+Filtros.
+
+Ordenação.
+
+Favoritos.
+
+Visualizações salvas.
+
+------------------------------------------------------------------
+
+IMPORTAÇÃO
+
+Preparar arquitetura.
+
+CSV
+
+Excel
+
+JSON
+
+Ainda não implementar importação real.
+
+------------------------------------------------------------------
+
+EXPORTAÇÃO
+
+Preparar arquitetura.
+
+CSV
+
+Excel
+
+PDF
+
+JSON
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Todos os CRUDs deverão publicar eventos.
+
+Exemplos:
+
+Customer.Created
+
+Customer.Updated
+
+Customer.Deleted
+
+Device.Created
+
+Technician.Updated
+
+Part.Created
+
+Service.Updated
+
+Warranty.Created
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Todas as operações deverão gerar logs completos.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Novo cliente.
+
+↓
+
+Publicar evento.
+
+↓
+
+Gerar auditoria.
+
+↓
+
+Atualizar timeline.
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar dados realistas.
+
+100 Clientes
+
+250 Aparelhos
+
+25 Técnicos
+
+50 Fabricantes
+
+120 Marcas
+
+300 Modelos
+
+80 Serviços
+
+300 Peças
+
+40 Fornecedores
+
+100 Defeitos
+
+50 Garantias
+
+Todos relacionados.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Todos os módulos deverão possuir:
+
+Dashboard
+
+Listagem
+
+Pesquisa
+
+Filtros
+
+Cards
+
+Tabela
+
+Timeline
+
+Comentários
+
+Histórico
+
+Anexos
+
+Versionamento
+
+Campos personalizados
+
+Modais
+
+Responsividade
+
+Preview
+
+Favoritos
+
+Duplicação
+
+Exclusão lógica
+
+Lixeira
+
+Restauração
+
+Nenhuma tela poderá utilizar componentes diferentes dos padrões definidos anteriormente.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir um ecossistema completo de dados mestres (Master Data Management), servindo como base para o módulo de Ordem de Serviço.
+
+Nenhuma Ordem de Serviço deverá ser criada nesta Sprint.
+
+Todo o foco é construir um conjunto de entidades reutilizáveis, consistentes, auditáveis e integradas ao restante da plataforma.

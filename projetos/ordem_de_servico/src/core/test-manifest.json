@@ -1,0 +1,456 @@
+{
+  "generatedAt": "2026-10-15T19:25:28.986Z",
+  "totalScreensTested": 28,
+  "screensPassed": 1,
+  "crudTestsCount": 6,
+  "crudPassedCount": 6,
+  "databaseTarget": "Lovable Cloud / Supabase (ybgywoljyeumgzsdbldu)",
+  "crudResults": [
+    {
+      "entity": "fin_accounts (Contas Financeiras)",
+      "operations": "CREATE -> READ -> UPDATE -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Criado: Conta Teste Automatizado E2E (CC-TEST-MV9XI2VW), Saldo inicial: R$ 7.500,00, Atualizado para: R$ 9.200,50, Deletado com sucesso."
+    },
+    {
+      "entity": "inv_products (Produtos & Peças)",
+      "operations": "CREATE -> READ -> UPDATE -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Criado SKU PECA-TEST-MV9XI5B7, Preço Custo: R$ 85, Venda: R$ 190, Estoque atualizado p/ 45 un, Deletado com sucesso."
+    },
+    {
+      "entity": "hr_employees (Recursos Humanos)",
+      "operations": "CREATE -> READ -> UPDATE -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Criada funcionária: Mariana Oliveira E2E Test, Cargo: Supervisora Técnica de Bancada, Salário atualizado p/ R$ 5.100,00, Deletado com sucesso."
+    },
+    {
+      "entity": "fin_payables (Contas a Pagar)",
+      "operations": "CREATE -> UPDATE (BAIXA) -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Título a pagar R$ 1.250,00 criado com status pendente, baixado como pago e removido após teste."
+    },
+    {
+      "entity": "fin_receivables (Contas a Receber)",
+      "operations": "CREATE -> UPDATE (RECEBIDO) -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Título a receber R$ 890,00 criado, marcado como recebido e limpo."
+    },
+    {
+      "entity": "inv_warehouses (Almoxarifados)",
+      "operations": "CREATE -> UPDATE -> DELETE",
+      "status": "PASSED",
+      "realDb": true,
+      "details": "Criado almoxarifado código DEP-MV9XI96S, atualizado localização e excluído."
+    }
+  ],
+  "screens": [
+    {
+      "id": "landing",
+      "name": "Landing Page & Apresentação",
+      "module": "Geral",
+      "path": "/",
+      "desktopImg": "/screenshots/landing_desktop.png",
+      "mobileImg": "/screenshots/landing_mobile.png",
+      "status": "PASSED",
+      "warnings": []
+    },
+    {
+      "id": "how_it_works",
+      "name": "Como Funciona o Sistema & Evidências",
+      "module": "Documentação",
+      "path": "/how-it-works",
+      "desktopImg": "/screenshots/how_it_works_desktop.png",
+      "mobileImg": "/screenshots/how_it_works_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "so_dashboard",
+      "name": "Dashboard de Ordens de Serviço",
+      "module": "Ordens de Serviço",
+      "path": "/service-orders/dashboard",
+      "desktopImg": "/screenshots/so_dashboard_desktop.png",
+      "mobileImg": "/screenshots/so_dashboard_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "so_list",
+      "name": "Listagem de Ordens de Serviço",
+      "module": "Ordens de Serviço",
+      "path": "/service-orders",
+      "desktopImg": "/screenshots/so_list_desktop.png",
+      "mobileImg": "/screenshots/so_list_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "so_new",
+      "name": "Abertura de Nova OS",
+      "module": "Ordens de Serviço",
+      "path": "/service-orders/new",
+      "desktopImg": "/screenshots/so_new_desktop.png",
+      "mobileImg": "/screenshots/so_new_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "customers",
+      "name": "Cadastro e Gestão de Clientes",
+      "module": "Clientes",
+      "path": "/service-orders/customers/list",
+      "desktopImg": "/screenshots/customers_desktop.png",
+      "mobileImg": "/screenshots/customers_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "assets",
+      "name": "Equipamentos e Ativos",
+      "module": "Ativos",
+      "path": "/service-orders/assets/equipment",
+      "desktopImg": "/screenshots/assets_desktop.png",
+      "mobileImg": "/screenshots/assets_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "fin_accounts",
+      "name": "Contas Financeiras Bancárias",
+      "module": "Financeiro",
+      "path": "/financial/accounts",
+      "desktopImg": "/screenshots/fin_accounts_desktop.png",
+      "mobileImg": "/screenshots/fin_accounts_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "fin_transactions",
+      "name": "Movimentações e Fluxo de Caixa",
+      "module": "Financeiro",
+      "path": "/financial/transactions",
+      "desktopImg": "/screenshots/fin_transactions_desktop.png",
+      "mobileImg": "/screenshots/fin_transactions_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "fin_payable",
+      "name": "Contas a Pagar",
+      "module": "Financeiro",
+      "path": "/financial/payable",
+      "desktopImg": "/screenshots/fin_payable_desktop.png",
+      "mobileImg": "/screenshots/fin_payable_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "fin_receivable",
+      "name": "Contas a Receber",
+      "module": "Financeiro",
+      "path": "/financial/receivable",
+      "desktopImg": "/screenshots/fin_receivable_desktop.png",
+      "mobileImg": "/screenshots/fin_receivable_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "fin_invoices",
+      "name": "Notas Fiscais & Faturamento",
+      "module": "Financeiro",
+      "path": "/financial/invoices",
+      "desktopImg": "/screenshots/fin_invoices_desktop.png",
+      "mobileImg": "/screenshots/fin_invoices_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "inv_products",
+      "name": "Catálogo de Produtos & Peças",
+      "module": "Estoque",
+      "path": "/inventory/products",
+      "desktopImg": "/screenshots/inv_products_desktop.png",
+      "mobileImg": "/screenshots/inv_products_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "inv_warehouses",
+      "name": "Almoxarifados & Depósitos",
+      "module": "Estoque",
+      "path": "/inventory/warehouses",
+      "desktopImg": "/screenshots/inv_warehouses_desktop.png",
+      "mobileImg": "/screenshots/inv_warehouses_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "inv_movements",
+      "name": "Movimentações de Estoque",
+      "module": "Estoque",
+      "path": "/inventory/movements",
+      "desktopImg": "/screenshots/inv_movements_desktop.png",
+      "mobileImg": "/screenshots/inv_movements_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "pur_orders",
+      "name": "Ordens de Compra de Fornecedor",
+      "module": "Compras",
+      "path": "/purchasing/orders",
+      "desktopImg": "/screenshots/pur_orders_desktop.png",
+      "mobileImg": "/screenshots/pur_orders_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "pur_receiving",
+      "name": "Recebimento de Mercadorias",
+      "module": "Compras",
+      "path": "/purchasing/receiving",
+      "desktopImg": "/screenshots/pur_receiving_desktop.png",
+      "mobileImg": "/screenshots/pur_receiving_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "hr_employees",
+      "name": "Quadro de Funcionários & Técnicos",
+      "module": "RH",
+      "path": "/hr/employees",
+      "desktopImg": "/screenshots/hr_employees_desktop.png",
+      "mobileImg": "/screenshots/hr_employees_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "TypeError: Cannot read properties of undefined (reading 'toFixed')",
+        "TypeError: Cannot read properties of undefined (reading 'toFixed')",
+        "TypeError: Cannot read properties of undefined (reading 'toFixed')",
+        "TypeError: Cannot read properties of undefined (reading 'toFixed')",
+        "%o\n\n%s\n\n%s\n TypeError: Cannot read properties of undefined (reading 'toFixed') The above error occurred in the <EmployeesPage> component. React will try to recreate this component tree from scratch using the error boundary you provided, CatchBoundaryImpl.",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "hr_timesheets",
+      "name": "Apontamento de Horas & Ponto",
+      "module": "RH",
+      "path": "/hr/timesheets",
+      "desktopImg": "/screenshots/hr_timesheets_desktop.png",
+      "mobileImg": "/screenshots/hr_timesheets_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "hr_commissions",
+      "name": "Comissões de Serviços e Peças",
+      "module": "RH",
+      "path": "/hr/commissions",
+      "desktopImg": "/screenshots/hr_commissions_desktop.png",
+      "mobileImg": "/screenshots/hr_commissions_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "crm_leads",
+      "name": "Pipeline de Vendas & Leads",
+      "module": "CRM",
+      "path": "/crm/leads",
+      "desktopImg": "/screenshots/crm_leads_desktop.png",
+      "mobileImg": "/screenshots/crm_leads_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "crm_opportunities",
+      "name": "Oportunidades de Negócio",
+      "module": "CRM",
+      "path": "/crm/opportunities",
+      "desktopImg": "/screenshots/crm_opportunities_desktop.png",
+      "mobileImg": "/screenshots/crm_opportunities_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "documents_templates",
+      "name": "Modelos de Documentos & Laudos",
+      "module": "Documentos",
+      "path": "/documents/templates",
+      "desktopImg": "/screenshots/documents_templates_desktop.png",
+      "mobileImg": "/screenshots/documents_templates_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "documents_designer",
+      "name": "Designer Visual de Documentos",
+      "module": "Documentos",
+      "path": "/documents/designer",
+      "desktopImg": "/screenshots/documents_designer_desktop.png",
+      "mobileImg": "/screenshots/documents_designer_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "knowledge",
+      "name": "Base de Conhecimento Técnico",
+      "module": "Conhecimento",
+      "path": "/knowledge/library",
+      "desktopImg": "/screenshots/knowledge_desktop.png",
+      "mobileImg": "/screenshots/knowledge_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "admin_users",
+      "name": "Gestão de Usuários & Operadores",
+      "module": "Administração",
+      "path": "/admin/users",
+      "desktopImg": "/screenshots/admin_users_desktop.png",
+      "mobileImg": "/screenshots/admin_users_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "admin_companies",
+      "name": "Gestão de Unidades e Empresas",
+      "module": "Administração",
+      "path": "/admin/companies",
+      "desktopImg": "/screenshots/admin_companies_desktop.png",
+      "mobileImg": "/screenshots/admin_companies_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    },
+    {
+      "id": "settings",
+      "name": "Configurações Globais do Sistema",
+      "module": "Configurações",
+      "path": "/settings",
+      "desktopImg": "/screenshots/settings_desktop.png",
+      "mobileImg": "/screenshots/settings_mobile.png",
+      "status": "WARNING",
+      "warnings": [
+        "Failed to load resource: the server responded with a status of 404 ()",
+        "Failed to load resource: the server responded with a status of 404 ()"
+      ]
+    }
+  ]
+}

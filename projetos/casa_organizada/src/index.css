@@ -1,0 +1,172 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700&family=Epilogue:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 36 33% 97%;
+    --foreground: 30 12% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 30 12% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 12% 15%;
+    --primary: 30 24% 44%;
+    --primary-foreground: 40 40% 98%;
+    --primary-light: 36 30% 93%;
+    --secondary: 37 30% 91%;
+    --secondary-foreground: 30 20% 26%;
+    --muted: 37 22% 91%;
+    --muted-foreground: 30 8% 44%;
+    --accent: 39 30% 70%;
+    --accent-foreground: 30 25% 18%;
+    --destructive: 8 45% 45%;
+    --destructive-foreground: 40 40% 98%;
+    --success: 145 25% 36%;
+    --success-foreground: 40 40% 98%;
+    --border: 36 18% 87%;
+    --input: 36 18% 87%;
+    --ring: 30 24% 44%;
+    --radius: 0.375rem;
+    --shadow-card: 0 1px 2px 0 hsl(30 20% 30% / 0.05);
+    --shadow-elevated: 0 18px 40px -22px hsl(30 25% 25% / 0.28);
+    --morning: 32 42% 48%;
+    --morning-bg: 36 38% 95%;
+    --evening: 265 16% 44%;
+    --evening-bg: 265 18% 95%;
+    --pet: 20 34% 42%;
+    --pet-bg: 22 32% 94%;
+    --baby: 350 26% 52%;
+    --baby-bg: 350 28% 96%;
+    --laundry: 196 24% 40%;
+    --laundry-bg: 196 24% 94%;
+    --streak: 30 45% 46%;
+    --sidebar-background: 36 33% 97%;
+    --sidebar-foreground: 30 12% 25%;
+    --sidebar-primary: 30 24% 44%;
+    --sidebar-primary-foreground: 40 40% 98%;
+    --sidebar-accent: 37 30% 91%;
+    --sidebar-accent-foreground: 30 20% 20%;
+    --sidebar-border: 36 18% 87%;
+    --sidebar-ring: 30 24% 44%;
+  }
+
+  .dark {
+    --background: 30 10% 8%;
+    --foreground: 38 22% 92%;
+    --card: 30 10% 11%;
+    --card-foreground: 38 22% 92%;
+    --popover: 30 10% 11%;
+    --popover-foreground: 38 22% 92%;
+    --primary: 34 30% 62%;
+    --primary-foreground: 30 15% 12%;
+    --primary-light: 30 12% 16%;
+    --secondary: 30 8% 17%;
+    --secondary-foreground: 38 20% 82%;
+    --muted: 30 8% 15%;
+    --muted-foreground: 34 10% 60%;
+    --accent: 39 28% 62%;
+    --accent-foreground: 30 15% 12%;
+    --destructive: 8 40% 38%;
+    --destructive-foreground: 40 40% 96%;
+    --success: 145 22% 40%;
+    --success-foreground: 40 40% 96%;
+    --border: 30 8% 20%;
+    --input: 30 8% 22%;
+    --ring: 34 30% 62%;
+    --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+    --shadow-elevated: 0 18px 40px -22px rgb(0 0 0 / 0.6);
+    --morning: 34 40% 60%;
+    --morning-bg: 32 18% 14%;
+    --evening: 265 24% 68%;
+    --evening-bg: 265 14% 14%;
+    --pet: 22 34% 58%;
+    --pet-bg: 22 16% 14%;
+    --baby: 350 30% 66%;
+    --baby-bg: 350 14% 14%;
+    --laundry: 196 30% 58%;
+    --laundry-bg: 196 16% 14%;
+    --streak: 34 45% 60%;
+    --sidebar-background: 30 10% 8%;
+    --sidebar-foreground: 38 20% 88%;
+    --sidebar-primary: 34 30% 62%;
+    --sidebar-primary-foreground: 30 15% 12%;
+    --sidebar-accent: 30 8% 17%;
+    --sidebar-accent-foreground: 38 20% 88%;
+    --sidebar-border: 30 8% 20%;
+    --sidebar-ring: 34 30% 62%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading;
+  }
+}
+
+@layer utilities {
+  .card-morning {
+    @apply border-l-4 border-l-[hsl(var(--morning))] bg-[hsl(var(--morning-bg))];
+  }
+  .card-evening {
+    @apply border-l-4 border-l-[hsl(var(--evening))] bg-[hsl(var(--evening-bg))];
+  }
+  .card-pet {
+    @apply border-l-4 border-l-[hsl(var(--pet))] bg-[hsl(var(--pet-bg))];
+  }
+  .card-baby {
+    @apply border-l-4 border-l-[hsl(var(--baby))] bg-[hsl(var(--baby-bg))];
+  }
+  .card-laundry {
+    @apply border-l-4 border-l-[hsl(var(--laundry))] bg-[hsl(var(--laundry-bg))];
+  }
+  .icon-morning {
+    @apply text-[hsl(var(--morning))];
+  }
+  .icon-evening {
+    @apply text-[hsl(var(--evening))];
+  }
+  .icon-pet {
+    @apply text-[hsl(var(--pet))];
+  }
+  .icon-baby {
+    @apply text-[hsl(var(--baby))];
+  }
+  .icon-laundry {
+    @apply text-[hsl(var(--laundry))];
+  }
+  .icon-streak {
+    @apply text-[hsl(var(--streak))];
+  }
+  .card-glass {
+    @apply bg-card/80 backdrop-blur-sm border shadow-[var(--shadow-card)];
+  }
+  .card-elevated {
+    @apply bg-card border shadow-[var(--shadow-elevated)];
+  }
+  .badge-category {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider;
+  }
+  .badge-morning {
+    @apply text-[hsl(var(--morning))] bg-[hsl(var(--morning-bg))];
+  }
+  .badge-evening {
+    @apply text-[hsl(var(--evening))] bg-[hsl(var(--evening-bg))];
+  }
+  .badge-pet {
+    @apply text-[hsl(var(--pet))] bg-[hsl(var(--pet-bg))];
+  }
+  .badge-baby {
+    @apply text-[hsl(var(--baby))] bg-[hsl(var(--baby-bg))];
+  }
+  .badge-laundry {
+    @apply text-[hsl(var(--laundry))] bg-[hsl(var(--laundry-bg))];
+  }
+}

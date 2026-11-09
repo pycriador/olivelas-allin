@@ -1,0 +1,1204 @@
+# ServiceForge — Sprint 31
+## Knowledge Platform (Gestão do Conhecimento Técnico, Biblioteca Inteligente, IA e Base Corporativa)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+NÃO alterar a arquitetura da plataforma.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Demo Environment Manager
+
+• Customer Management
+
+• Asset Management
+
+• Service Order Management
+
+• Technical Execution
+
+• Operations Center
+
+A Knowledge Platform será um módulo transversal da plataforma.
+
+Todos os módulos poderão consumir informações desta plataforma.
+
+Nunca duplicar documentos.
+
+Nunca duplicar conhecimento.
+
+Toda informação deverá possuir versionamento.
+
+Toda alteração deverá gerar auditoria.
+
+Toda alteração deverá publicar eventos.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar uma plataforma corporativa de Gestão do Conhecimento Técnico.
+
+Este módulo será responsável por centralizar toda a documentação técnica da empresa.
+
+O objetivo é transformar o conhecimento técnico em um ativo corporativo reutilizável.
+
+Toda informação deverá ser pesquisável.
+
+Toda informação deverá possuir relacionamento automático com:
+
+Equipamentos
+
+Marcas
+
+Modelos
+
+Tipos
+
+Ordens de Serviço
+
+Diagnósticos
+
+Peças
+
+Garantias
+
+Retornos
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Knowledge Platform
+
+↓
+
+Dashboard
+
+Biblioteca Técnica
+
+Categorias
+
+Procedimentos
+
+Manuais
+
+Diagramas
+
+Esquemas
+
+Firmware
+
+Drivers
+
+Tutoriais
+
+Soluções Conhecidas
+
+Defeitos Recorrentes
+
+Códigos de Erro
+
+FAQ
+
+Boletins Técnicos
+
+Alertas Técnicos
+
+Relacionamentos
+
+Pesquisa Inteligente
+
+IA
+
+Analytics
+
+Versionamento
+
+Revisões
+
+Importação
+
+Exportação
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Criar painel executivo.
+
+Mostrar:
+
+Total de documentos
+
+Procedimentos
+
+Manuais
+
+Diagramas
+
+Firmwares
+
+Drivers
+
+Tutoriais
+
+FAQs
+
+Soluções Conhecidas
+
+Defeitos Recorrentes
+
+Códigos de Erro
+
+Marcas cadastradas
+
+Modelos relacionados
+
+Conteúdo publicado
+
+Conteúdo em revisão
+
+Conteúdo arquivado
+
+Documentos mais acessados
+
+Documentos mais utilizados
+
+Conteúdo criado por IA
+
+Conteúdo aguardando aprovação
+
+------------------------------------------------------------------
+
+BIBLIOTECA TÉCNICA
+
+Criar biblioteca corporativa.
+
+Cada documento deverá possuir:
+
+Título
+
+Resumo
+
+Categoria
+
+Subcategoria
+
+Tipo
+
+Fabricante
+
+Marca
+
+Modelo
+
+Tipo de Equipamento
+
+Idioma
+
+Versão
+
+Autor
+
+Revisor
+
+Status
+
+Data
+
+Palavras-chave
+
+Tags
+
+Descrição
+
+Anexos
+
+Relacionamentos
+
+Histórico
+
+------------------------------------------------------------------
+
+CATEGORIAS
+
+Criar categorias independentes.
+
+Procedimentos Técnicos
+
+Manuais
+
+Diagramas Elétricos
+
+Esquemas Eletrônicos
+
+Firmware
+
+Drivers
+
+Tutoriais
+
+Soluções Conhecidas
+
+Defeitos Recorrentes
+
+Códigos de Erro
+
+FAQ
+
+Boletins Técnicos
+
+Alertas Técnicos
+
+Ferramentas Recomendadas
+
+Notas Técnicas
+
+Documentação Interna
+
+Documentação do Fabricante
+
+Permitir criação ilimitada de categorias.
+
+------------------------------------------------------------------
+
+PROCEDIMENTOS TÉCNICOS
+
+CRUD completo.
+
+Cada procedimento deverá possuir:
+
+Título
+
+Descrição
+
+Objetivo
+
+Equipamentos atendidos
+
+Ferramentas necessárias
+
+Peças normalmente utilizadas
+
+Tempo médio
+
+Nível de dificuldade
+
+Pré-requisitos
+
+Checklist
+
+Passo a passo
+
+Fotos
+
+Vídeos (estrutura)
+
+Documentos
+
+Referências
+
+Observações
+
+Versão
+
+Status
+
+------------------------------------------------------------------
+
+MANUAIS
+
+Permitir armazenar:
+
+Manual do Usuário
+
+Manual Técnico
+
+Manual de Serviço
+
+Manual de Instalação
+
+Manual de Manutenção
+
+Manual de Desmontagem
+
+Manual de Calibração
+
+Manual de Diagnóstico
+
+Cada manual deverá possuir:
+
+Versão
+
+Fabricante
+
+Modelo
+
+Idioma
+
+Data
+
+Arquivo
+
+Relacionamentos
+
+------------------------------------------------------------------
+
+DIAGRAMAS
+
+Permitir armazenar:
+
+Diagramas Elétricos
+
+Diagramas Eletrônicos
+
+Layout de PCB
+
+Esquemas
+
+Explodidos Mecânicos
+
+Fluxogramas
+
+Diagramas Hidráulicos
+
+Diagramas Pneumáticos
+
+Preparar visualizador integrado.
+
+------------------------------------------------------------------
+
+FIRMWARE
+
+Cadastrar:
+
+Fabricante
+
+Modelo
+
+Versão
+
+Data
+
+Checksum
+
+Compatibilidade
+
+Descrição
+
+Procedimento de atualização
+
+Arquivos
+
+Observações
+
+Histórico de versões
+
+------------------------------------------------------------------
+
+DRIVERS
+
+Cadastrar:
+
+Sistema Operacional
+
+Versão
+
+Arquitetura
+
+Compatibilidade
+
+Fabricante
+
+Modelo
+
+Arquivos
+
+Procedimento de instalação
+
+Observações
+
+------------------------------------------------------------------
+
+TUTORIAIS
+
+Permitir criar:
+
+Texto
+
+Imagens
+
+Vídeos
+
+Checklists
+
+Fluxogramas
+
+Tempo estimado
+
+Ferramentas
+
+Nível de dificuldade
+
+------------------------------------------------------------------
+
+SOLUÇÕES CONHECIDAS
+
+Criar base de soluções.
+
+Campos:
+
+Problema
+
+Sintomas
+
+Causa
+
+Solução
+
+Equipamentos afetados
+
+Marcas
+
+Modelos
+
+Tempo médio
+
+Peças normalmente utilizadas
+
+Ferramentas
+
+Probabilidade de sucesso
+
+Quantidade de utilizações
+
+Observações
+
+------------------------------------------------------------------
+
+DEFEITOS RECORRENTES
+
+Cadastrar:
+
+Código
+
+Descrição
+
+Categoria
+
+Sintomas
+
+Equipamentos afetados
+
+Modelos
+
+Marcas
+
+Probabilidade
+
+Tempo médio
+
+Solução recomendada
+
+Peças normalmente substituídas
+
+Procedimentos relacionados
+
+------------------------------------------------------------------
+
+CÓDIGOS DE ERRO
+
+Cadastrar:
+
+Código
+
+Descrição
+
+Fabricante
+
+Modelo
+
+Categoria
+
+Gravidade
+
+Causa provável
+
+Solução
+
+Procedimentos relacionados
+
+Documentação
+
+Observações
+
+------------------------------------------------------------------
+
+FAQ TÉCNICO
+
+Cadastrar perguntas frequentes.
+
+Organizar por:
+
+Marca
+
+Modelo
+
+Categoria
+
+Equipamento
+
+Assunto
+
+Palavras-chave
+
+------------------------------------------------------------------
+
+BOLETINS TÉCNICOS
+
+Cadastrar:
+
+Título
+
+Fabricante
+
+Categoria
+
+Equipamentos afetados
+
+Descrição
+
+Data
+
+Validade
+
+Urgência
+
+Procedimentos
+
+Documentos
+
+------------------------------------------------------------------
+
+ALERTAS TÉCNICOS
+
+Permitir criar alertas.
+
+Exemplos:
+
+Recall
+
+Atualização obrigatória
+
+Falha recorrente
+
+Peça descontinuada
+
+Firmware crítico
+
+Boletim urgente
+
+Mostrar automaticamente na Ordem de Serviço.
+
+------------------------------------------------------------------
+
+RELACIONAMENTOS
+
+Todo conteúdo poderá ser relacionado com:
+
+Tipo de Equipamento
+
+Marca
+
+Modelo
+
+Peças
+
+Procedimentos
+
+Defeitos
+
+Ordens de Serviço
+
+Diagnósticos
+
+Garantias
+
+Retornos
+
+Categorias
+
+Fabricantes
+
+------------------------------------------------------------------
+
+PESQUISA INTELIGENTE
+
+Permitir pesquisar por:
+
+Modelo
+
+Marca
+
+Fabricante
+
+Defeito
+
+Sintoma
+
+Código
+
+Peça
+
+Documento
+
+Firmware
+
+Driver
+
+Ferramenta
+
+Categoria
+
+Palavra-chave
+
+Também permitir pesquisa em linguagem natural.
+
+Exemplos:
+
+"Notebook Dell liga mas não apresenta vídeo"
+
+"TV Samsung reinicia sozinha"
+
+"Micro-ondas aquece pouco"
+
+------------------------------------------------------------------
+
+IA
+
+Consumir AI Platform.
+
+Permitir:
+
+Resumir documentos
+
+Criar palavras-chave
+
+Relacionar conteúdos
+
+Gerar diagnóstico sugerido
+
+Responder perguntas
+
+Explicar procedimentos
+
+Resumir PDFs
+
+Extrair texto de imagens
+
+Extrair texto de diagramas
+
+Criar FAQ automaticamente
+
+Criar documentação inicial
+
+Nunca substituir aprovação humana.
+
+------------------------------------------------------------------
+
+INDEXAÇÃO
+
+Sempre que um documento for enviado:
+
+Extrair texto
+
+Criar resumo
+
+Criar índice
+
+Gerar palavras-chave
+
+Relacionar equipamentos
+
+Relacionar modelos
+
+Relacionar marcas
+
+Relacionar defeitos
+
+Relacionar peças
+
+Relacionar procedimentos
+
+Atualizar mecanismo de pesquisa
+
+------------------------------------------------------------------
+
+INTEGRAÇÃO COM ORDEM DE SERVIÇO
+
+Adicionar nova aba:
+
+Conhecimento Técnico
+
+Mostrar automaticamente:
+
+Procedimentos recomendados
+
+Manuais
+
+Diagramas
+
+Firmware
+
+Drivers
+
+Soluções conhecidas
+
+Defeitos recorrentes
+
+Peças normalmente utilizadas
+
+Tempo médio de reparo
+
+Alertas técnicos
+
+Histórico semelhante
+
+Documentação relacionada
+
+Sugestões da IA
+
+------------------------------------------------------------------
+
+VERSIONAMENTO
+
+Nunca sobrescrever documentos.
+
+Cada alteração deverá gerar:
+
+Nova versão
+
+Histórico
+
+Autor
+
+Data
+
+Motivo
+
+Comparação entre versões
+
+Rollback
+
+------------------------------------------------------------------
+
+WORKFLOW
+
+Fluxo padrão:
+
+Rascunho
+
+↓
+
+Em Revisão
+
+↓
+
+Aprovado
+
+↓
+
+Publicado
+
+↓
+
+Obsoleto
+
+↓
+
+Arquivado
+
+Somente conteúdo publicado poderá ser utilizado pelos técnicos.
+
+------------------------------------------------------------------
+
+ANALYTICS
+
+Mostrar:
+
+Documentos mais consultados
+
+Procedimentos mais utilizados
+
+Problemas mais pesquisados
+
+Modelos com maior documentação
+
+Conteúdo desatualizado
+
+Conteúdo sem revisão
+
+Tempo economizado
+
+Taxa de utilização
+
+Eficiência da base
+
+------------------------------------------------------------------
+
+IMPORTAÇÃO
+
+Permitir importar:
+
+PDF
+
+DOCX
+
+TXT
+
+Markdown
+
+CSV
+
+Excel
+
+JSON
+
+Imagens
+
+Preparar estrutura para múltiplos arquivos.
+
+------------------------------------------------------------------
+
+EXPORTAÇÃO
+
+Permitir exportar:
+
+PDF
+
+Markdown
+
+DOCX
+
+JSON
+
+CSV
+
+Excel
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Knowledge.Created
+
+Knowledge.Updated
+
+Knowledge.Published
+
+Knowledge.Archived
+
+Knowledge.VersionCreated
+
+Knowledge.Imported
+
+Knowledge.Exported
+
+Knowledge.Linked
+
+Knowledge.Indexed
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+AUTOMAÇÕES
+
+Novo documento
+
+↓
+
+Extrair conteúdo
+
+↓
+
+Indexar
+
+↓
+
+Criar resumo
+
+↓
+
+Relacionar ativos
+
+↓
+
+Publicar evento
+
+↓
+
+Registrar auditoria
+
+↓
+
+Atualizar Analytics
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Cadastro
+
+Alteração
+
+Publicação
+
+Arquivamento
+
+Importação
+
+Exportação
+
+Downloads
+
+Visualizações
+
+Versionamento
+
+Rollback
+
+Sempre registrar:
+
+Usuário
+
+Empresa
+
+Data
+
+Hora
+
+IP
+
+Resultado
+
+------------------------------------------------------------------
+
+PERMISSÕES
+
+Administrador Global
+
+Controle total.
+
+Administrador da Empresa
+
+Gerencia conteúdos da empresa.
+
+Editor Técnico
+
+Cria e revisa.
+
+Revisor Técnico
+
+Aprova conteúdos.
+
+Técnico
+
+Consulta.
+
+Visualizador
+
+Somente leitura.
+
+------------------------------------------------------------------
+
+DADOS DE DEMONSTRAÇÃO
+
+Integrar ao Demo Environment Manager.
+
+Gerar automaticamente:
+
+Procedimentos técnicos
+
+Manuais
+
+Diagramas
+
+Firmwares
+
+Drivers
+
+Tutoriais
+
+Soluções conhecidas
+
+Defeitos recorrentes
+
+FAQs
+
+Boletins técnicos
+
+Alertas técnicos
+
+Todos relacionados com:
+
+Notebook
+
+Desktop
+
+Smartphone
+
+Televisão
+
+Micro-ondas
+
+Geladeira
+
+Máquina de Lavar
+
+Ar Condicionado
+
+Impressora
+
+Videogame
+
+Utilizar conteúdos estruturados e coerentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Biblioteca moderna.
+
+Pesquisa instantânea.
+
+Filtros avançados.
+
+Preview de documentos.
+
+Versionamento visual.
+
+Comparação entre versões.
+
+Favoritos.
+
+Coleções.
+
+Histórico.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+CRUDs
+
+Pesquisa
+
+Relacionamentos
+
+Versionamento
+
+Workflow
+
+Importação
+
+Exportação
+
+IA
+
+Analytics
+
+Eventos
+
+Auditoria
+
+RBAC
+
+Responsividade
+
+Acessibilidade
+
+Todos os botões
+
+Todos os documentos
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir uma plataforma corporativa de Gestão do Conhecimento Técnico totalmente integrada aos demais módulos, permitindo centralizar, versionar, pesquisar e reutilizar conhecimento técnico de forma estruturada, além de fornecer recomendações automáticas durante o atendimento das Ordens de Serviço.
+
+IMPORTANTE
+
+Toda a arquitetura deverá permanecer preparada para futuras evoluções, incluindo:
+
+• Base vetorial (RAG) para busca semântica.
+
+• Chat técnico especializado utilizando exclusivamente a base corporativa.
+
+• Extração automática de conhecimento de Ordens de Serviço encerradas.
+
+• Sugestão automática de procedimentos baseada em IA.
+
+• Integração futura com fabricantes para atualização de manuais, boletins técnicos, firmware e drivers.
+
+• Avaliação colaborativa dos artigos (utilidade, precisão e eficácia).
+
+• Recomendação automática de peças, ferramentas e procedimentos durante diagnósticos e execuções técnicas.

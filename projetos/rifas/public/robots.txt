@@ -1,0 +1,28 @@
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /campanhas
+Disallow: /usuarios
+Disallow: /arquivos
+Disallow: /auditoria
+Disallow: /configuracoes
+Disallow: /perfil
+Disallow: /auth
+
+User-agent: Googlebot
+Allow: /
+Allow: /r/
+
+User-agent: Bingbot
+Allow: /
+Allow: /r/
+
+User-agent: Twitterbot
+Allow: /
+Allow: /r/
+
+User-agent: facebookexternalhit
+Allow: /
+Allow: /r/
+
+Sitemap: https://olivelas-raffle.lovable.app/sitemap.xml

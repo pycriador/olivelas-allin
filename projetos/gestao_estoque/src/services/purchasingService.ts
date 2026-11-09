@@ -1,0 +1,257 @@
+import { supabase } from '@/lib/supabase/client'
+import { auditService } from '@/services/auditService'
+import { buildAccentRegex } from '@/utils/productUtils'
+import type { PurchaseOrder } from '@/types/purchasing.types'
+
+export interface CreatePurchaseOrderPayload {
+  storeId: string
+  supplierId: string
+  items: {
+    productId: string
+    quantityOrdered: number
+    unitCost: number
+    sellingPrice?: number
+    lotNumber?: string
+    expirationDate?: string
+  }[]
+  shippingCost?: number
+  notes?: string
+}
+
+export interface PurchaseOrderListParams {
+  search?: string
+  supplierId?: string
+  status?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  page?: number
+  pageSize?: number
+}
+
+export const purchasingService = {
+  async listPurchaseOrders(
+    storeId: string,
+    params: PurchaseOrderListParams = {}
+  ): Promise<{ data: PurchaseOrder[]; total: number }> {
+    const {
+      search,
+      supplierId,
+      status,
+      sortBy = 'created_at',
+      sortOrder = 'desc',
+      page = 1,
+      pageSize = 20,
+    } = params
+
+    let query = supabase
+      .from('purchase_orders')
+      .select(
+        `
+        *,
+        suppliers ( corporate_name, trade_name ),
+        purchase_order_items (
+          id,
+          product_id,
+          quantity_ordered,
+          quantity_received,
+          unit_cost,
+          total_cost,
+          lot_number,
+          expiration_date,
+          products ( id, name, sku, cost_price, selling_price )
+        )
+      `,
+        { count: 'exact' }
+      )
+      .eq('store_id', storeId)
+
+    if (search && search.trim()) {
+      const cleanTerm = search.trim().replace(/[%,()]/g, ' ')
+      if (cleanTerm) {
+        const pattern = buildAccentRegex(cleanTerm)
+        const orClauses: string[] = [
+          `order_number.imatch.${pattern}`,
+          `notes.imatch.${pattern}`,
+        ]
+
+        // Resolver fornecedores compativeis
+        const { data: matchedSuppliers } = await supabase
+          .from('suppliers')
+          .select('id')
+          .eq('store_id', storeId)
+          .or(`corporate_name.imatch.${pattern},trade_name.imatch.${pattern}`)
+
+        if (matchedSuppliers && matchedSuppliers.length > 0) {
+          const sIds = matchedSuppliers.map((s: any) => s.id).join(',')
+          orClauses.push(`supplier_id.in.(${sIds})`)
+        }
+
+        query = query.or(orClauses.join(','))
+      }
+    }
+
+    if (supplierId && supplierId !== 'ALL' && supplierId !== 'all') {
+      query = query.eq('supplier_id', supplierId)
+    }
+
+    if (status && status !== 'ALL' && status !== 'all') {
+      query = query.eq('status', status)
+    }
+
+    const orderCol = ['order_number', 'total_amount', 'created_at', 'status'].includes(sortBy)
+      ? sortBy
+      : 'created_at'
+
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    const { data, count, error } = await query
+      .order(orderCol, { ascending: sortOrder === 'asc' })
+      .range(from, to)
+
+    if (error) throw error
+
+    const mapped = (data || []).map((po: any) => {
+      let orderSellingTotal = 0
+
+      const mappedItems = (po.purchase_order_items || []).map((poi: any) => {
+        const prod = Array.isArray(poi.products) ? poi.products[0] : poi.products
+        const unitCost = Number(poi.unit_cost) || 0
+        const sellingPrice = Number(prod?.selling_price) || 0
+        const qty = Number(poi.quantity_ordered) || 0
+        const totalCost = Number(poi.total_cost) || qty * unitCost
+        const totalSelling = qty * sellingPrice
+        const profit = totalSelling - totalCost
+        const marginPercent = totalSelling > 0 ? (profit / totalSelling) * 100 : 0
+
+        orderSellingTotal += totalSelling
+
+        return {
+          ...poi,
+          product_name: prod?.name || 'Produto',
+          product_sku: prod?.sku || '',
+          selling_price: sellingPrice,
+          total_selling_value: totalSelling,
+          profit,
+          margin_percent: marginPercent,
+        }
+      })
+
+      const totalCostAmount = Number(po.total_amount) || 0
+      const orderPotentialProfit = orderSellingTotal - totalCostAmount
+      const orderMarginPercent =
+        orderSellingTotal > 0 ? (orderPotentialProfit / orderSellingTotal) * 100 : 0
+
+      return {
+        ...po,
+        supplier_name: po.suppliers?.trade_name || po.suppliers?.corporate_name || 'Fornecedor',
+        items: mappedItems,
+        total_selling_amount: orderSellingTotal,
+        potential_profit: orderPotentialProfit,
+        margin_percent: orderMarginPercent,
+      }
+    })
+
+    return {
+      data: mapped,
+      total: count || 0,
+    }
+  },
+
+  async createPurchaseOrder(payload: CreatePurchaseOrderPayload): Promise<PurchaseOrder> {
+    const { data: { user } } = await supabase.auth.getUser()
+
+    const subtotal = payload.items.reduce(
+      (acc, item) => acc + item.quantityOrdered * item.unitCost,
+      0
+    )
+    const shipping = payload.shippingCost || 0
+    const total = subtotal + shipping
+    const orderNumber = `OC-${Date.now().toString().slice(-6)}`
+
+    // 1. Create Purchase Order
+    const { data: po, error: poError } = await supabase
+      .from('purchase_orders')
+      .insert({
+        store_id: payload.storeId,
+        supplier_id: payload.supplierId,
+        order_number: orderNumber,
+        status: 'ISSUED',
+        subtotal,
+        shipping_cost: shipping,
+        total_amount: total,
+        notes: payload.notes || null,
+        issued_at: new Date().toISOString(),
+        created_by: user?.id || null,
+      })
+      .select()
+      .single()
+
+    if (poError) throw poError
+
+    // 2. Insert items
+    const items = payload.items.map((item) => ({
+      purchase_order_id: po.id,
+      store_id: payload.storeId,
+      product_id: item.productId,
+      quantity_ordered: item.quantityOrdered,
+      quantity_received: 0,
+      unit_cost: item.unitCost,
+      total_cost: item.quantityOrdered * item.unitCost,
+      lot_number: item.lotNumber || null,
+      expiration_date: item.expirationDate || null,
+    }))
+
+    const { error: itemsError } = await supabase
+      .from('purchase_order_items')
+      .insert(items)
+
+    if (itemsError) throw itemsError
+
+    // 3. Update products' cost_price and selling_price in catalog so it reflects in inventory
+    for (const item of payload.items) {
+      const updates: Record<string, any> = {}
+      if (item.unitCost !== undefined && item.unitCost > 0) {
+        updates.cost_price = item.unitCost
+      }
+      if (item.sellingPrice !== undefined && item.sellingPrice > 0) {
+        updates.selling_price = item.sellingPrice
+      }
+      if (Object.keys(updates).length > 0) {
+        await supabase
+          .from('products')
+          .update({ ...updates, updated_at: new Date().toISOString() })
+          .eq('id', item.productId)
+          .eq('store_id', payload.storeId)
+      }
+    }
+
+    auditService.logAction({
+      storeId: payload.storeId,
+      action: 'PURCHASE_ORDER_CREATED',
+      entity: 'purchase_orders',
+      entityId: po.id,
+      afterData: {
+        orderNumber: po.order_number,
+        totalAmount: po.total_amount,
+        itemCount: payload.items.length,
+      },
+    })
+
+    return po as PurchaseOrder
+  },
+
+  async receivePurchaseOrder(purchaseOrderId: string): Promise<void> {
+    const { error } = await supabase.rpc('receive_purchase_order_stock', {
+      p_purchase_order_id: purchaseOrderId,
+    })
+
+    if (error) throw error
+
+    auditService.logAction({
+      action: 'PURCHASE_ORDER_RECEIVED',
+      entity: 'purchase_orders',
+      entityId: purchaseOrderId,
+    })
+  },
+}

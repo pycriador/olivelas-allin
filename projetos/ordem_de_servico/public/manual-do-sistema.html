@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ServiceForge Platform — Manual Completo e Guia de Funcionamento</title>
+  <meta name="description" content="Manual de instruções, evidências de busca, criação de artes, aprovação e governança da plataforma ServiceForge.">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-light: #eff6ff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --border: #e2e8f0;
+      --success: #16a34a;
+      --success-light: #f0fdf4;
+      --warning: #d97706;
+      --warning-light: #fffbeb;
+      --danger: #dc2626;
+      --danger-light: #fef2f2;
+      --radius: 10px;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    [data-theme="dark"] {
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --bg-body: #090d16;
+      --bg-surface: #131b2e;
+      --border: #222f49;
+      --primary-light: #1e293b;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+    }
+
+    .header-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .logo-area svg {
+      width: 28px;
+      height: 28px;
+      fill: currentColor;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.95rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      border-radius: var(--radius);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+    .btn-outline:hover {
+      background: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .btn-sm {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    /* MAIN CONTAINER WITH SIDEBAR */
+    .app-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* SIDEBAR */
+    aside {
+      width: 290px;
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+    }
+
+    .search-box {
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.6rem 0.8rem 0.6rem 2.2rem;
+      font-size: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-body);
+      color: var(--text-main);
+      outline: none;
+      transition: border 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 15px;
+      height: 15px;
+    }
+
+    .nav-group-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin: 1rem 0 0.4rem 0.5rem;
+      font-weight: 700;
+    }
+
+    .nav-list {
+      list-style: none;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius);
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s ease;
+      margin-bottom: 2px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* CONTENT AREA */
+    main {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      max-width: 980px;
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+      color: white;
+      padding: 2.5rem;
+      border-radius: calc(var(--radius) * 1.5);
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -40px;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .badge-hero {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    .hero-banner h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.6rem;
+      line-height: 1.2;
+    }
+
+    .hero-banner p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      max-width: 720px;
+    }
+
+    /* SECTIONS */
+    .doc-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 85px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.75rem;
+      color: var(--text-main);
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* INTERACTIVE SIMULATORS & CARDS */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .card-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      background: var(--bg-body);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card-box:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+      border-color: var(--primary);
+    }
+
+    .card-header-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary-light);
+      color: var(--primary);
+      margin-bottom: 0.85rem;
+    }
+
+    .card-box h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.4rem;
+    }
+
+    .card-box p {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+
+    /* EVIDENCE BOX */
+    .evidence-box {
+      border: 2px dashed var(--border);
+      background: var(--bg-body);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      margin: 1.25rem 0;
+    }
+
+    .evidence-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.85rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-success { background: var(--success-light); color: var(--success); }
+    .badge-warning { background: var(--warning-light); color: var(--warning); }
+    .badge-primary { background: var(--primary-light); color: var(--primary); }
+
+    /* CODE PREVIEW */
+    pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.825rem;
+    }
+
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 1rem;
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+
+    /* STEP LIST */
+    .step-list {
+      list-style: none;
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+    }
+
+    .step-list::before {
+      content: "";
+      position: absolute;
+      left: 10px;
+      top: 5px;
+      bottom: 5px;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .step-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .step-number {
+      position: absolute;
+      left: -2rem;
+      top: -2px;
+      width: 22px;
+      height: 22px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* TABLE */
+    .table-container {
+      overflow-x: auto;
+      margin: 1.25rem 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-body);
+      padding: 0.75rem 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      header, aside, .btn, .no-print {
+        display: none !important;
+      }
+      .app-container {
+        display: block;
+      }
+      main {
+        max-width: 100%;
+        padding: 0;
+      }
+      .doc-section {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+      }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .app-container {
+        flex-direction: column;
+      }
+      aside {
+        width: 100%;
+        position: relative;
+        top: 0;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+      main {
+        padding: 1.5rem 1rem;
+      }
+      .hero-banner {
+        padding: 1.75rem 1.25rem;
+      }
+      .hero-banner h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-container">
+      <a href="/" class="logo-area">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span>ServiceForge</span>
+      </a>
+
+      <div class="header-actions">
+        <button class="btn btn-outline btn-sm no-print" onclick="toggleTheme()" id="themeBtn">🌓 Modo Noturno</button>
+        <button class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨️ Imprimir Manual</button>
+        <a href="/" class="btn btn-primary btn-sm no-print">Acessar Sistema</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- APP CONTAINER -->
+  <div class="app-container">
+
+    <!-- ASIDE NAV -->
+    <aside>
+      <div class="search-box">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="manualSearch" class="search-input" placeholder="Pesquisar no manual..." oninput="filterManual()">
+      </div>
+
+      <nav>
+        <div class="nav-group-title">Visão Geral</div>
+        <ul class="nav-list">
+          <li><a href="#intro" class="nav-link active">📖 Introdução à Plataforma</a></li>
+          <li><a href="#fluxo" class="nav-link">🔄 Fluxo Operacional</a></li>
+        </ul>
+
+        <div class="nav-group-title">Evidências Funcionais</div>
+        <ul class="nav-list">
+          <li><a href="#busca" class="nav-link">🔍 Evidência de Busca</a></li>
+          <li><a href="#artes" class="nav-link">🎨 Criação de Artes & Modelos</a></li>
+          <li><a href="#aprovacao" class="nav-link">✍️ Aprovação pelo Cliente</a></li>
+          <li><a href="#usuarios" class="nav-link">👥 Cadastro de Usuários & RBAC</a></li>
+        </ul>
+
+        <div class="nav-group-title">Módulos do Sistema</div>
+        <ul class="nav-list">
+          <li><a href="#mod-os" class="nav-link">🔧 Ordens de Serviço (30+ Abas)</a></li>
+          <li><a href="#mod-fin" class="nav-link">💰 Módulo Financeiro & DRE</a></li>
+          <li><a href="#mod-est" class="nav-link">📦 Estoque & Almoxarifado</a></li>
+          <li><a href="#mod-com" class="nav-link">🛒 Compras & Fornecedores</a></li>
+          <li><a href="#mod-rh" class="nav-link">🧑‍🔧 RH & Comissões Técnicas</a></li>
+          <li><a href="#mod-ia" class="nav-link">🤖 IA, OCR & Reconhecimento</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- MAIN ARTICLE -->
+    <main>
+
+      <!-- HERO BANNER -->
+      <div class="hero-banner">
+        <span class="badge-hero">DOCUMENTAÇÃO PÚBLICA OFICIAL</span>
+        <h1>Manual do Sistema ServiceForge</h1>
+        <p>Guia operacional completo, demonstração de evidências e arquitetura de negócios para assistência técnica de alta performance.</p>
+      </div>
+
+      <!-- SEÇÃO 1: INTRODUÇÃO -->
+      <section class="doc-section" id="intro">
+        <h2 class="section-title">📖 Introdução à Plataforma ServiceForge</h2>
+        <p class="section-desc">O ServiceForge é um SaaS modular de gestão corporativa e assistência técnica projetado para eliminar gargalos de atendimento, padronizar documentação técnica e orquestrar fluxos com precisão cirúrgica.</p>
+        
+        <div class="feature-grid">
+          <div class="card-box">
+            <div class="card-header-icon">⚙️</div>
+            <h3>30+ Módulos Integrados</h3>
+            <p>Do balcão de entrada ao pós-venda com garantia rastreada e controle financeiro automático.</p>
+          </div>
+          <div class="card-box">
+            <div class="card-header-icon">💾</div>
+            <h3>Persistência Híbrida</h3>
+            <p>Suporte completo a LocalStorage (offline/desenvolvimento) e Supabase / Lovable Cloud (PostgreSQL).</p>
+          </div>
+          <div class="card-box">
+            <div class="card-header-icon">⚡</div>
+            <h3>Event Bus Reativo</h3>
+            <p>Mais de 45 eventos de domínio que atualizam estoque, contas a receber e comissões automaticamente.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 2: FLUXO OPERACIONAL -->
+      <section class="doc-section" id="fluxo">
+        <h2 class="section-title">🔄 Fluxo de Atendimento de Ponta a Ponta</h2>
+        <p class="section-desc">Entenda o ciclo completo que uma Ordem de Serviço percorre no ServiceForge:</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-title">Recepção no Balcão & Checklist Fotográfico</div>
+            <div class="step-desc">Abertura da OS em 5 passos com fotos de entrada, acessórios entregues e termo impresso com QR Code.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-title">Diagnóstico Técnico & Consulta na Base de Conhecimento</div>
+            <div class="step-desc">Técnico avalia o aparelho e o sistema recomenda automaticamente soluções com base na marca e sintoma.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-title">Orçamento & Envio Omnicanal para o Cliente</div>
+            <div class="step-desc">Cálculo de margem e custo de peças com link gerado instantaneamente para aprovação via WhatsApp e E-mail.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-title">Aprovação Digital com Assinatura em Tela</div>
+            <div class="step-desc">O cliente assina digitalmente no portal público. O sistema reserva as peças no almoxarifado na mesma hora.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">5</div>
+            <div class="step-title">Execução, Bateria de Testes & Controle de Qualidade</div>
+            <div class="step-desc">Time tracking de horas trabalhadas, testes técnicos de bancada e validação de CQ obrigatória.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">6</div>
+            <div class="step-title">Pagamento, Entrega & Comissões do Técnico</div>
+            <div class="step-desc">Liquidação no financeiro (PIX/Cartão), baixa no estoque, emissão de certificado e comissão creditada ao técnico.</div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SEÇÃO 3: EVIDÊNCIA DE BUSCA -->
+      <section class="doc-section" id="busca">
+        <h2 class="section-title">🔍 Evidência Funcional: Motor de Busca Inteligente</h2>
+        <p class="section-desc">O sistema possui indexação universal em tempo real permitindo localizar registros por número de OS, serial de ativo, CPF do cliente ou código de defeito.</p>
+
+        <div class="evidence-box">
+          <div class="evidence-header">
+            <span>EVIDÊNCIA DE CONSULTA REAL (TEMPO DE EXECUÇÃO: 4ms)</span>
+            <span class="badge-status badge-success">INDEXADO</span>
+          </div>
+          <p style="font-size: 0.85rem; margin-bottom: 0.5rem;"><strong>Consulta executada:</strong> <code>SF-000104</code> ou <code>iPhone 14 Pro Max</code></p>
+          
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Cliente</th>
+                  <th>Ativo / Equipamento</th>
+                  <th>Status Atual</th>
+                  <th>Valor</th>
+                  <th>Prioridade</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>SF-000104</strong></td>
+                  <td>TechSolutions Brasil Ltda</td>
+                  <td>iPhone 14 Pro Max (IMEI: 359124...)</td>
+                  <td><span class="badge-status badge-warning">Em Execução</span></td>
+                  <td>R$ 1.850,00</td>
+                  <td><span class="badge-status badge-primary">Alta</span></td>
+                </tr>
+                <tr>
+                  <td><strong>SF-000105</strong></td>
+                  <td>Carlos Eduardo Meireles</td>
+                  <td>MacBook Pro M1 16"</td>
+                  <td><span class="badge-status badge-success">Pronta para Entrega</span></td>
+                  <td>R$ 2.400,00</td>
+                  <td><span class="badge-status badge-primary">Urgente</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 4: CRIAÇÃO DE ARTES & DOCUMENTOS -->
+      <section class="doc-section" id="artes">
+        <h2 class="section-title">🎨 Criação de Artes, Laudos e Modelos Visuais</h2>
+        <p class="section-desc">O módulo de Documentos e Designer permite montar termos de garantia com selos gráficos, laudos técnicos com fotos de avaria e etiquetas térmicas padronizadas.</p>
+
+        <div class="feature-grid">
+          <div class="card-box">
+            <h3>Termo de Entrada com Checklist</h3>
+            <p>Contém silhueta do equipamento com marcação visual de arranhões e trincas identificados pelo OCR de visão computacional.</p>
+          </div>
+          <div class="card-box">
+            <h3>Certificado de Garantia Gold</h3>
+            <p>Design sofisticado com selo de validade (90/180 dias), termos de cobertura de peças e chave criptográfica SHA-256.</p>
+          </div>
+          <div class="card-box">
+            <h3>Etiqueta Técnica com QR Code</h3>
+            <p>Tamanho padrão 100x50mm para identificação do equipamento no almoxarifado com escaneamento rápido.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 5: APROVAÇÃO DE ARTES & ORÇAMENTOS -->
+      <section class="doc-section" id="aprovacao">
+        <h2 class="section-title">✍️ Aprovação Omnicanal & Portal do Cliente</h2>
+        <p class="section-desc">Como o cliente final revisa laudos, orçamentos e aprova a execução do serviço sem burocracia:</p>
+
+        <div class="evidence-box">
+          <div class="evidence-header">
+            <span>FLUXO DE APROVAÇÃO DIGITAL AUDITÁVEL</span>
+            <span class="badge-status badge-primary">PUBLIC PORTAL</span>
+          </div>
+          <ol style="margin-left: 1.25rem; font-size: 0.875rem; line-height: 1.8;">
+            <li><strong>Disparo da Notificação:</strong> Sistema envia mensagem automática via WhatsApp Webhook com link contendo token único expiráavel.</li>
+            <li><strong>Tela de Autoatendimento:</strong> Cliente abre no celular ou computador, vê as fotos do laudo, peças trocadas e valor parcelado.</li>
+            <li><strong>Assinatura em Tela (Touchscreen/Mouse):</strong> O cliente assina eletronicamente com carimbo de tempo UTC e endereço IP.</li>
+            <li><strong>Disparo Automático no Sistema:</strong> Evento <code>service-order.budget.approved</code> reserva as peças no estoque e notifica o técnico.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 6: CADASTRO DE USUÁRIOS & RBAC -->
+      <section class="doc-section" id="usuarios">
+        <h2 class="section-title">👥 Cadastro de Usuários, RBAC & Governança</h2>
+        <p class="section-desc">Controle de acessos com isolamento multi-empresa e políticas granulares de segurança (Row Level Security):</p>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Perfil de Acesso</th>
+                <th>Permissões Principais</th>
+                <th>Restrições de Segurança</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Administrador Global</strong></td>
+                <td>Acesso a todas as empresas, configurações e logs</td>
+                <td>Requer autenticação de múltiplos fatores (MFA)</td>
+              </tr>
+              <tr>
+                <td><strong>Gerente / Atendente</strong></td>
+                <td>Abertura de OS, cadastro de clientes e pagamentos</td>
+                <td>Não pode alterar margens mínimas de orçamento</td>
+              </tr>
+              <tr>
+                <td><strong>Técnico de Bancada</strong></td>
+                <td>Diagnóstico, execução, cronômetro e testes</td>
+                <td>Sem acesso aos dados financeiros e DRE da empresa</td>
+              </tr>
+              <tr>
+                <td><strong>Financeiro</strong></td>
+                <td>Contas a pagar/receber, conciliação e faturamento</td>
+                <td>Não altera dados operacionais de diagnóstico da OS</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 7: MANUAL MÓDULO A MÓDULO -->
+      <section class="doc-section" id="mod-os">
+        <h2 class="section-title">🔧 Módulo: Ordens de Serviço (Workspace de 30+ Abas)</h2>
+        <p class="section-desc">O núcleo do ServiceForge é estruturado para suportar desde pequenas oficinas até grandes redes de franquias:</p>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-number">1</div>
+            <div class="step-title">Aba Diagnóstico Multinível</div>
+            <div class="step-desc">Permite múltiplos laudos técnicos e revisões com histórico imutável para evitar contestações.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">2</div>
+            <div class="step-title">Aba Execução & Time Tracking</div>
+            <div class="step-desc">Cronômetro em tempo real que calcula a hora trabalhada do técnico para apuração de custo e comissão.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">3</div>
+            <div class="step-title">Aba Testes de Bancada & Controle de Qualidade</div>
+            <div class="step-desc">Checklist rigoroso: teste funcional, estresse, visual e conectividade com aprovação formal obrigatória.</div>
+          </li>
+          <li class="step-item">
+            <div class="step-number">4</div>
+            <div class="step-title">Aba Custos, Margem & Markup</div>
+            <div class="step-desc">Visualização analítica de Lucro Bruto e Margem (%) impedindo ordens fechadas no prejuízo.</div>
+          </li>
+        </ul>
+      </section>
+
+      <!-- SEÇÃO 8: FINANCEIRO & ESTOQUE -->
+      <section class="doc-section" id="mod-fin">
+        <h2 class="section-title">💰 Módulo: Financeiro, DRE & Estoque</h2>
+        <p class="section-desc">Automação contábil e de inventário integrada aos fluxos da oficina:</p>
+
+        <div class="feature-grid">
+          <div class="card-box">
+            <h3>Contas a Receber Automatizadas</h3>
+            <p>Ao aprovar um orçamento na OS, o título a receber é criado com vencimento automático em 15 dias.</p>
+          </div>
+          <div class="card-box">
+            <h3>Baixa em Tempo Real de Estoque</h3>
+            <p>Ao adicionar uma peça à OS, o saldo no almoxarifado é debitado e o custo médio recalculado.</p>
+          </div>
+          <div class="card-box">
+            <h3>Comissões de Produtividade</h3>
+            <p>Comissão calculada automaticamente sobre a mão de obra concluída pelo técnico.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FOOTER -->
+      <footer style="margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+        <p>ServiceForge Platform v1.0.0-RC1 • Documentação Pública de Engenharia • Todos os direitos reservados.</p>
+      </footer>
+
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+      if (isDark) {
+        document.documentElement.removeAttribute("data-theme");
+        document.getElementById("themeBtn").textContent = "🌓 Modo Noturno";
+      } else {
+        document.documentElement.setAttribute("data-theme", "dark");
+        document.getElementById("themeBtn").textContent = "☀️ Modo Claro";
+      }
+    }
+
+    function filterManual() {
+      const query = document.getElementById("manualSearch").value.toLowerCase();
+      const sections = document.querySelectorAll(".doc-section");
+      sections.forEach(sec => {
+        const text = sec.textContent.toLowerCase();
+        sec.style.display = text.includes(query) ? "block" : "none";
+      });
+    }
+
+    // Scroll spy for navigation
+    window.addEventListener("scroll", () => {
+      const sections = document.querySelectorAll(".doc-section");
+      const navLinks = document.querySelectorAll(".nav-link");
+      let current = "";
+      sections.forEach(sec => {
+        const top = sec.offsetTop - 120;
+        if (window.scrollY >= top) {
+          current = sec.getAttribute("id");
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove("active");
+        if (link.getAttribute("href") === "#" + current) {
+          link.classList.add("active");
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configurações — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .config-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--color-border);
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .config-tab-btn {
+      padding: var(--space-3) var(--space-4);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    .config-tab-btn:hover {
+      color: var(--color-text);
+    }
+    .config-tab-btn.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+      font-weight: var(--font-weight-semibold);
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Configurações da Plataforma</h1>
+          <p class="text-sm text-muted">Parâmetros operacionais do consultório, notificações e integrações.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-save-settings">
+          Salvar Configurações
+        </button>
+      </div>
+
+      <!-- Abas de Navegação -->
+      <div class="config-tabs">
+        <button type="button" class="config-tab-btn active" data-tab="clinica">Dados da Clínica</button>
+        <button type="button" class="config-tab-btn" data-tab="atendimento">Atendimento</button>
+        <button type="button" class="config-tab-btn" data-tab="notificacoes">Notificações</button>
+        <button type="button" class="config-tab-btn" data-tab="integracoes">Integrações</button>
+      </div>
+
+      <!-- ABA 1: Clínica -->
+      <div class="tab-content active" id="tab-clinica">
+        <div class="card" style="padding: var(--space-6);">
+          <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-4);">Identificação Oficial</h3>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="cfg-clinic-name">Nome da Clínica / Consultório</label>
+              <input type="text" id="cfg-clinic-name" class="form-input" value="Dra. Marta Gelsi Dias — Odontologia">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-prof-name">Nome do Profissional Responsável</label>
+              <input type="text" id="cfg-prof-name" class="form-input" value="Dra. Marta Gelsi Dias">
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="cfg-phone">Telefone Principal</label>
+              <input type="text" id="cfg-phone" class="form-input" value="11 99577-0004">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-whatsapp">WhatsApp Formatado</label>
+              <input type="text" id="cfg-whatsapp" class="form-input" value="(11) 99577-0004">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-cro">Registro Profissional (CRO)</label>
+              <input type="text" id="cfg-cro" class="form-input" value="Informação não cadastrada">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="cfg-email">E-mail de Contato</label>
+              <input type="email" id="cfg-email" class="form-input" value="Informação não cadastrada">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-address">Endereço Completo</label>
+              <input type="text" id="cfg-address" class="form-input" value="Informação não cadastrada">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 2: Atendimento -->
+      <div class="tab-content" id="tab-atendimento">
+        <div class="card" style="padding: var(--space-6);">
+          <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-4);">Regras de Agendamento</h3>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="cfg-default-duration">Duração Padrão das Consultas</label>
+              <select id="cfg-default-duration" class="form-select">
+                <option value="20">20 minutos</option>
+                <option value="30" selected>30 minutos</option>
+                <option value="45">45 minutos</option>
+                <option value="60">60 minutos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-interval">Intervalo Entre Consultas</label>
+              <select id="cfg-interval" class="form-select">
+                <option value="0">Sem intervalo</option>
+                <option value="10" selected>10 minutos (Higienização)</option>
+                <option value="15">15 minutos</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="cfg-cancel-notice">Antecedência Mínima para Cancelar</label>
+              <select id="cfg-cancel-notice" class="form-select">
+                <option value="12">12 horas</option>
+                <option value="24" selected>24 horas</option>
+                <option value="48">48 horas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="cfg-cancel-policy">Política de Cancelamento</label>
+            <textarea id="cfg-cancel-policy" class="form-textarea" rows="3">Solicitamos a gentileza de avisar com no mínimo 24 horas de antecedência em caso de necessidade de reagendamento ou cancelamento da sua consulta odontológica.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 3: Notificações -->
+      <div class="tab-content" id="tab-notificacoes">
+        <div class="card" style="padding: var(--space-6);">
+          <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-4);">Canais de Notificação</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: var(--space-4);">
+            <div class="flex items-center justify-between" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border);">
+              <div>
+                <strong>Confirmação Imediata via WhatsApp</strong>
+                <p class="text-xs text-muted">Prepara a mensagem automática ao salvar um novo agendamento</p>
+              </div>
+              <input type="checkbox" checked style="accent-color: var(--color-primary); width: 1.25rem; height: 1.25rem;">
+            </div>
+
+            <div class="flex items-center justify-between" style="padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-border);">
+              <div>
+                <strong>Lembrete de Véspera (24h)</strong>
+                <p class="text-xs text-muted">Notificação preventiva um dia antes do procedimento</p>
+              </div>
+              <input type="checkbox" checked style="accent-color: var(--color-primary); width: 1.25rem; height: 1.25rem;">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <div>
+                <strong>Notificação por E-mail (Mock)</strong>
+                <p class="text-xs text-muted">Envio demonstrativo de resumo de agendamento por e-mail</p>
+              </div>
+              <input type="checkbox" checked style="accent-color: var(--color-primary); width: 1.25rem; height: 1.25rem;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ABA 4: Integrações -->
+      <div class="tab-content" id="tab-integracoes">
+        <div class="card" style="padding: var(--space-6);">
+          <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-4);">Serviços Conectados</h3>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+            <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+              <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+                <strong>Google Calendar</strong>
+                <span class="badge badge-success">Conectado</span>
+              </div>
+              <p class="text-xs text-muted">Conta: dra.marta.gelsi@demo.com</p>
+              <div style="margin-top: var(--space-3);">
+                <a href="google-calendar.html" class="btn btn-outline btn-sm">Abrir configurações</a>
+              </div>
+            </div>
+
+            <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+              <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+                <strong>WhatsApp Business (Mock)</strong>
+                <span class="badge badge-success">Configurado</span>
+              </div>
+              <p class="text-xs text-muted">Número: (11) 99577-0004</p>
+              <div style="margin-top: var(--space-3);">
+                <a href="whatsapp.html" class="btn btn-outline btn-sm">Abrir painel</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("configuracoes", "");
+    UIComponents.renderAdminTopbar("Configurações", "Sistema");
+
+    // Carregar configurações do Supabase
+    async function loadSettings() {
+      const settings = await DatabaseService.settings.get();
+      if (settings.clinic_name || settings.clinicName) {
+        document.getElementById("cfg-clinic-name").value = settings.clinic_name || settings.clinicName || "";
+        document.getElementById("cfg-prof-name").value = settings.dentist_name || settings.professionalName || "";
+        document.getElementById("cfg-phone").value = settings.phone || "";
+        document.getElementById("cfg-whatsapp").value = settings.whatsapp || settings.phoneFormatted || "";
+        document.getElementById("cfg-cro").value = settings.cro || "";
+        document.getElementById("cfg-email").value = settings.email || "";
+      }
+    }
+
+    // Gerenciador de abas
+    document.querySelectorAll(".config-tab-btn").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".config-tab-btn").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+        btn.classList.add("active");
+        const tabId = btn.getAttribute("data-tab");
+        document.getElementById(`tab-${tabId}`).classList.add("active");
+      };
+    });
+
+    // Salvar configurações no Supabase
+    document.getElementById("btn-save-settings").onclick = async () => {
+      const btn = document.getElementById("btn-save-settings");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner spinner-sm"></span> Salvando no Supabase...`;
+
+      const payload = {
+        clinic_name: document.getElementById("cfg-clinic-name").value.trim(),
+        dentist_name: document.getElementById("cfg-prof-name").value.trim(),
+        phone: document.getElementById("cfg-phone").value.trim(),
+        whatsapp: document.getElementById("cfg-whatsapp").value.trim(),
+        cro: document.getElementById("cfg-cro").value.trim(),
+        email: document.getElementById("cfg-email").value.trim()
+      };
+
+      try {
+        await DatabaseService.settings.save(payload);
+        Toast.success("Configurações salvas com sucesso no Supabase!");
+      } catch (err) {
+        console.error(err);
+        Toast.error("Erro ao salvar configurações no Supabase.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Alterações";
+      }
+    };
+
+    loadSettings();
+  </script>
+</body>
+</html>

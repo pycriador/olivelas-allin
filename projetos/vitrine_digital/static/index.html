@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vitrine Digital — Catálogo de Ofertas & Comércios Locais</title>
+  <meta name="description" content="Descubra produtos, cardápios e serviços de empreendedores locais. Converse e faça pedidos diretamente pelo WhatsApp." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23A88C5A' stroke-width='2'><polygon points='12 2 2 7 12 12 22 7 12 2'></polygon><polyline points='2 17 12 22 22 17'></polyline><polyline points='2 12 12 17 22 12'></polyline></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- CABEÇALHO / NAVBAR ENTERPRISE -->
+  <header class="site-header">
+    <div class="container nav-wrapper">
+      <a href="index.html" class="brand-logo">
+        <div class="logo-capsule">❖</div>
+        <div class="brand-info">
+          <div class="brand-title-wrap">
+            <span class="brand-title">Vitrine Digital</span>
+            <span class="badge-tag">Editorial</span>
+          </div>
+          <span class="brand-subtitle">Catálogo de Ofertas & Comércios</span>
+        </div>
+      </a>
+
+      <!-- Desktop Actions -->
+      <div class="header-actions desktop-only">
+        <a href="../docs/index.html#pt-BR/como-funciona.md" class="btn btn-outline" target="_blank" title="Manual e Como Funciona">
+          <span>📖 Como Funciona</span>
+        </a>
+        <a href="#vitrine" class="btn btn-gold">
+          <span>Explorar Lojas</span>
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button type="button" id="mobile-menu-btn" class="mobile-menu-btn mobile-only" aria-label="Abrir Menu Lateral">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- MENU MOBILE LATERAL (SLIDE-OVER DRAWER) -->
+  <div id="mobile-drawer-overlay" class="drawer-overlay"></div>
+  <aside id="mobile-drawer" class="mobile-drawer">
+    <div class="drawer-header">
+      <div class="brand-logo">
+        <div class="logo-capsule">❖</div>
+        <div class="brand-info">
+          <span class="brand-title">Vitrine Digital</span>
+          <span class="brand-subtitle">Menu de Opções</span>
+        </div>
+      </div>
+      <button type="button" id="close-drawer-btn" class="drawer-close-btn" aria-label="Fechar Menu">
+        ✕
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <div class="drawer-section">
+        <span class="drawer-label">Navegação</span>
+        <a href="#vitrine" class="drawer-link active" onclick="closeMobileDrawer()">
+          <span>🏛️</span> Vitrine de Anunciantes
+        </a>
+        <a href="#beneficios" class="drawer-link" onclick="closeMobileDrawer()">
+          <span>✨</span> Pilares & Vantagens
+        </a>
+        <a href="../docs/index.html#pt-BR/como-funciona.md" class="drawer-link" target="_blank">
+          <span>📖</span> Como Funciona o Sistema
+        </a>
+      </div>
+
+      <div class="drawer-section">
+        <span class="drawer-label">Categorias Rápidas</span>
+        <div id="mobile-categories-list" class="mobile-categories-list">
+          <!-- Preenchido via app.js -->
+        </div>
+      </div>
+    </div>
+
+    <div class="drawer-footer">
+      <p>© 2026 Vitrine Digital</p>
+      <span style="font-size: 0.7rem; color: var(--color-faint);">Design System Olivelas</span>
+    </div>
+  </aside>
+
+  <!-- HERO SECTION EDITORIAL -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-pill">
+        <span>✨</span> Catálogo Inteligente de Comércios Locais
+      </div>
+
+      <h1 class="hero-title">
+        Descubra produtos e serviços de <span>empreendedores locais</span>
+      </h1>
+
+      <p class="hero-description">
+        Navegue pelos estabelecimentos e comércios locais com catálogo consolidado de produtos e cardápios extraídos por IA. Converse e faça pedidos diretamente pelo WhatsApp oficial.
+      </p>
+
+      <div class="hero-tags">
+        <span class="hero-tags-label">Sugestões rápidas:</span>
+        <button type="button" class="tag-btn" data-tag="Cardápio">#Cardápio</button>
+        <button type="button" class="tag-btn" data-tag="Alimentação">#Alimentação</button>
+        <button type="button" class="tag-btn" data-tag="Hotdog">#Hotdog</button>
+        <button type="button" class="tag-btn" data-tag="Pizza">#Pizza</button>
+        <button type="button" class="tag-btn" data-tag="Salgados">#Salgados</button>
+        <button type="button" class="tag-btn" data-tag="Eletrônicos">#Eletrônicos</button>
+        <button type="button" class="tag-btn" data-tag="Conserto">#Conserto</button>
+        <button type="button" class="tag-btn" data-tag="Delivery">#Delivery</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAIXA DE BENEFÍCIOS & PILARES -->
+  <section id="beneficios" class="benefits-strip">
+    <div class="container">
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon gold">✨</div>
+          <div class="benefit-text">
+            <strong>Extração por IA</strong>
+            <span>OCR e dados estruturados</span>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon wpp">💬</div>
+          <div class="benefit-text">
+            <strong>Contato Direto</strong>
+            <span>WhatsApp oficial verificado</span>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon slate">❖</div>
+          <div class="benefit-text">
+            <strong>Catálogo Unificado</strong>
+            <span>Agrupado por anunciante</span>
+          </div>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon terra">🎨</div>
+          <div class="benefit-text">
+            <strong>Artes em Alta Definição</strong>
+            <span>Fotografias originais & recriadas</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SEÇÃO PRINCIPAL: VITRINE DE ANUNCIANTES -->
+  <main id="vitrine" class="catalog-section">
+    <div class="container">
+      <!-- Barra Superior de Controles: Título, Busca, Exibir e Embaralhar -->
+      <div class="catalog-control-header">
+        <div class="catalog-header-text">
+          <span class="catalog-eyebrow">Catálogo de Anunciantes</span>
+          <h2 class="catalog-main-title">Vitrine de Ofertas & Comércios</h2>
+          <p class="catalog-subtitle">Explore os estabelecimentos locais e consulte seus catálogos unificados.</p>
+        </div>
+
+        <div class="catalog-actions-bar">
+          <!-- Campo de Busca -->
+          <div class="search-input-wrapper">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="text"
+              id="search-input"
+              class="search-input"
+              placeholder="Buscar anunciante, produto, preço..."
+            />
+            <button type="button" id="clear-search-btn" class="clear-search-btn hidden" title="Limpar busca">✕</button>
+          </div>
+
+          <!-- Controle de Paginação / Exibir (4, 8, 12, Todos) -->
+          <div class="page-size-selector">
+            <span class="selector-label">Exibir:</span>
+            <div id="page-size-buttons" class="selector-options">
+              <!-- Preenchido via app.js -->
+            </div>
+          </div>
+
+          <!-- Botão Embaralhar -->
+          <button type="button" id="shuffle-btn" class="btn btn-outline" title="Embaralhar ordem dos estabelecimentos">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 3 21 3 21 8"></polyline>
+              <line x1="4" y1="20" x2="21" y2="3"></line>
+              <polyline points="21 16 21 21 16 21"></polyline>
+              <line x1="15" y1="15" x2="21" y2="21"></line>
+              <line x1="4" y1="4" x2="9" y2="9"></line>
+            </svg>
+            <span class="desktop-only">Embaralhar</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Layout 2 Colunas: Sidebar de Categorias à Esquerda + Grid à Direita -->
+      <div class="catalog-layout">
+        <!-- Sidebar Menu Lateral de Categorias -->
+        <aside class="categories-sidebar">
+          <div class="sidebar-header">
+            <h3 class="sidebar-title">
+              <span>🏷️</span> Categorias
+            </h3>
+            <span id="categories-count-badge" class="sidebar-badge">0 opções</span>
+          </div>
+
+          <div id="categories-list" class="sidebar-categories-list">
+            <!-- Preenchido dinamicamente pelo app.js -->
+          </div>
+        </aside>
+
+        <!-- Coluna de Conteúdo Principal -->
+        <div class="catalog-main-content">
+          <!-- Status e Contador de Resultados -->
+          <div class="results-status-bar">
+            <span id="results-count">Carregando estabelecimentos...</span>
+            <span class="badge-tag">Versão Estática Autônoma</span>
+          </div>
+
+          <!-- Grid de Cards de Estabelecimentos -->
+          <div id="advertiser-grid" class="advertiser-grid">
+            <!-- Cards inseridos dinamicamente pelo app.js -->
+          </div>
+
+          <!-- Paginação Inferior -->
+          <div id="pagination-wrapper" class="pagination-wrapper">
+            <!-- Controles de página inseridos dinamicamente pelo app.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RODAPÉ -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>© 2026 Vitrine Digital — Inspirado na identidade visual do <a href="https://pycriador.github.io/site-olivelas/" target="_blank" rel="noopener noreferrer">Site Olivelas</a>.</p>
+      <p style="margin-top: 0.35rem; font-size: 0.72rem; color: var(--color-faint);">
+        Hospedado estaticamente no GitHub Pages. 100% autônomo com fotos locais em /static/images/.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,282 @@
+/**
+ * RESPONSIVE STYLES
+ * Adaptações para Tablet, Notebook e Mobile (sem scroll horizontal)
+ * Dra. Marta Gelsi Dias — Odontologia
+ */
+
+/* ==========================================================================
+   DESKTOPS MÉDIOS & TABLETS EM PAISAGEM (<= 1024px)
+   ========================================================================== */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .hero-photo-img {
+    height: 360px;
+  }
+
+  .about-photo-wrapper img {
+    height: 320px;
+  }
+
+  .floating-hero-pill {
+    left: 12px;
+    bottom: 16px;
+  }
+
+  .admin-main-wrapper {
+    margin-left: 0;
+  }
+
+  .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .sidebar-overlay.open {
+    display: block;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .topbar-toggle-menu {
+    display: flex;
+  }
+
+  .admin-topbar {
+    padding: 0 var(--space-4);
+  }
+
+  .admin-content {
+    padding: var(--space-6) var(--space-4);
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-8);
+  }
+
+  .cta-banner {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
+}
+
+/* ==========================================================================
+   TABLETS EM RETRATO & SMARTPHONES GRANDES (<= 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  :root {
+    --font-size-4xl: 2.25rem;
+    --font-size-3xl: 1.875rem;
+    --font-size-2xl: 1.5rem;
+  }
+
+  /* Cabeçalho ultra-clean da Área Pública no Mobile */
+  .site-header {
+    min-height: 64px;
+  }
+
+  .site-nav {
+    display: none !important;
+  }
+
+  /* Oculta os botões excedentes no topo mobile para manter o cabeçalho 100% clean */
+  .header-actions .header-btn-login,
+  .header-actions .header-btn-agendar,
+  .site-header-actions .header-btn-login,
+  .site-header-actions .header-btn-agendar,
+  .header-btn-desktop {
+    display: none !important;
+  }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-md);
+    background-color: #fff1f3;
+    border: 1px solid #fbcfe8;
+    color: var(--color-burgundy);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+
+  .mobile-menu-btn:hover,
+  .mobile-menu-btn:active {
+    background-color: #fce7f3;
+    color: var(--color-primary);
+  }
+
+  /* Barra superior do Painel Administrativo no Mobile */
+  .admin-topbar {
+    height: 58px;
+    padding: 0 var(--space-3);
+  }
+
+  .topbar-breadcrumb {
+    display: none !important;
+  }
+
+  .topbar-mobile-title {
+    display: block;
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-burgundy);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+  }
+
+  .demo-banner {
+    display: none !important;
+  }
+
+  .topbar-user .user-info {
+    display: none !important;
+  }
+
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    font-size: 0.75rem;
+  }
+
+  .hero-section {
+    padding: var(--space-8) 0 var(--space-12);
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+  }
+
+  .hero-photo-img {
+    height: 300px;
+  }
+
+  .floating-hero-pill {
+    position: static;
+    margin-top: var(--space-3);
+    border-radius: var(--radius-md);
+  }
+
+  .treatments-grid,
+  .plans-grid,
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+
+  .admin-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-dialog {
+    max-width: 100%;
+    margin: var(--space-2);
+    border-radius: var(--radius-lg);
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .toast-container {
+    top: auto;
+    bottom: var(--space-4);
+    left: var(--space-4);
+    right: var(--space-4);
+    max-width: none;
+    width: auto;
+  }
+
+  #whatsapp-split-view,
+  #patient-info-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ==========================================================================
+   SMARTPHONES PEQUENOS (<= 480px)
+   ========================================================================== */
+@media (max-width: 480px) {
+  :root {
+    --font-size-4xl: 1.875rem;
+    --font-size-3xl: 1.45rem;
+  }
+
+  .container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .brand-logo-img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .brand-name-title {
+    font-size: 1rem;
+  }
+
+  .brand-dentista-text {
+    font-size: 1.1rem;
+  }
+
+  .topbar-user .user-info {
+    display: none;
+  }
+
+  .floating-whatsapp {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    width: 52px;
+    height: 52px;
+  }
+
+  .floating-whatsapp svg {
+    width: 28px;
+    height: 28px;
+  }
+}

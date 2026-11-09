@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/calendar.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Agenda Odontológica</h1>
+          <p class="text-sm text-muted">Controle visual de horários da Dra. Marta Gelsi Dias (Mês, Semana e Dia).</p>
+        </div>
+        <div class="flex gap-3">
+          <a href="agendamentos.html" class="btn btn-primary btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Novo Agendamento
+          </a>
+        </div>
+      </div>
+
+      <!-- Legenda de cores por tipo -->
+      <div class="card" style="padding: var(--space-4) var(--space-6); margin-bottom: var(--space-6);">
+        <div class="flex items-center gap-6 flex-wrap">
+          <span class="text-xs text-muted text-bold" style="text-transform: uppercase;">Legenda:</span>
+          <div class="flex items-center gap-2">
+            <span class="event-chip event-consulta" style="display: inline-block;">Consulta</span>
+            <span class="text-xs text-muted">Clínica Geral</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="event-chip event-limpeza" style="display: inline-block;">Limpeza</span>
+            <span class="text-xs text-muted">Profilaxia</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="event-chip event-aparelho" style="display: inline-block;">Aparelho</span>
+            <span class="text-xs text-muted">Ortodontia</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="event-chip event-implante" style="display: inline-block;">Implante</span>
+            <span class="text-xs text-muted">Cirúrgico</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="event-chip event-retorno" style="display: inline-block;">Retorno</span>
+            <span class="text-xs text-muted">Pós-atendimento</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container do Calendário -->
+      <div id="calendar-app-root"></div>
+    </main>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/appointments.js"></script>
+  <script src="../js/calendar.js"></script>
+  <script>
+    AuthGuard.checkAuth();
+
+    UIComponents.renderAdminSidebar("agenda", "");
+    UIComponents.renderAdminTopbar("Agenda", "Planejamento");
+
+    const cal = new CalendarApp("calendar-app-root");
+    cal.init();
+  </script>
+</body>
+</html>

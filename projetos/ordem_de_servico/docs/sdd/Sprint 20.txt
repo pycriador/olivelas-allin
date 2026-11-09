@@ -1,0 +1,876 @@
+# ServiceForge — Sprint 20
+## Administration Platform (Governança Global, Multiempresa, RBAC e Configuração da Plataforma)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+Toda funcionalidade administrativa deverá ser centralizada na Administration Platform.
+
+Nenhuma configuração global poderá ficar distribuída entre módulos.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar a Administration Platform.
+
+Este módulo será responsável pela administração completa da plataforma.
+
+Toda configuração corporativa deverá ser realizada neste módulo.
+
+Toda configuração deverá ser Metadata Driven sempre que possível.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Administration Platform
+
+Estrutura:
+
+Dashboard
+
+Companies
+
+Users
+
+Teams
+
+Groups
+
+RBAC
+
+Permissions
+
+Policies
+
+Metadata Manager
+
+Providers
+
+Connectors
+
+Data Sources
+
+Themes
+
+Languages
+
+Feature Flags
+
+Environment
+
+Settings
+
+Secrets
+
+Audit Center
+
+Health Center
+
+Monitoring
+
+Logs
+
+Jobs
+
+Schedules
+
+License Manager
+
+Tenant Manager
+
+Impersonation
+
+Backup
+
+Restore
+
+Maintenance
+
+System Information
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Criar dashboard administrativo.
+
+Mostrar:
+
+Empresas
+
+Usuários
+
+Conectores
+
+Data Sources
+
+Workflows
+
+Jobs
+
+Eventos
+
+Logs
+
+Alertas
+
+Saúde da Plataforma
+
+Uso de armazenamento
+
+Uso de banco
+
+Uso de IA
+
+Licenças
+
+Versão
+
+------------------------------------------------------------------
+
+MULTIEMPRESA
+
+Criar gerenciamento completo.
+
+Permitir:
+
+Criar empresa
+
+Editar
+
+Duplicar
+
+Arquivar
+
+Excluir
+
+Trocar empresa
+
+Definir empresa padrão
+
+Upload de logo
+
+Tema próprio
+
+Idioma
+
+Timezone
+
+Moeda
+
+Configurações próprias
+
+Cada empresa deverá possuir isolamento completo.
+
+------------------------------------------------------------------
+
+TENANT MANAGER
+
+Criar gerenciamento.
+
+Visualizar:
+
+Empresas
+
+Limites
+
+Recursos
+
+Uso
+
+Licenciamento
+
+Storage
+
+Usuários
+
+Histórico
+
+Eventos
+
+------------------------------------------------------------------
+
+USUÁRIOS
+
+CRUD completo.
+
+Campos:
+
+Nome
+
+Email
+
+Telefone
+
+Idioma
+
+Foto
+
+Empresa
+
+Status
+
+Último acesso
+
+MFA (estrutura)
+
+Sessões
+
+Dispositivos
+
+Preferências
+
+------------------------------------------------------------------
+
+GRUPOS
+
+Criar grupos.
+
+Exemplo:
+
+Administradores
+
+Atendimento
+
+Financeiro
+
+Técnicos
+
+Estoque
+
+Comercial
+
+Personalizados
+
+------------------------------------------------------------------
+
+RBAC
+
+Implementar papéis.
+
+Administrador Global
+
+Administrador Empresa
+
+Supervisor
+
+Editor
+
+Operador
+
+Visualizador
+
+Criar estrutura para papéis personalizados.
+
+------------------------------------------------------------------
+
+PERMISSÕES
+
+Permissões por:
+
+Módulo
+
+Tela
+
+Ação
+
+Campo
+
+Documento
+
+Workflow
+
+Empresa
+
+API
+
+Connector
+
+Provider
+
+Feature Flag
+
+Preparar herança de permissões.
+
+------------------------------------------------------------------
+
+POLICIES
+
+Criar políticas.
+
+Exemplos:
+
+Senha
+
+Sessão
+
+Login
+
+Timeout
+
+Upload
+
+Exportação
+
+Impressão
+
+Auditoria
+
+LGPD
+
+Retenção
+
+------------------------------------------------------------------
+
+IMPERSONATION
+
+Administrador Global poderá:
+
+Entrar como empresa
+
+Entrar como usuário
+
+Visualizar ambiente
+
+Executar ações
+
+Toda impersonação deverá:
+
+Gerar auditoria
+
+Registrar motivo
+
+Registrar data
+
+Registrar duração
+
+Nunca ocultar identidade do Administrador Global.
+
+Toda ação deverá indicar:
+
+"Executado por Administrador Global em modo de impersonação."
+
+------------------------------------------------------------------
+
+FEATURE FLAGS
+
+Criar gerenciamento.
+
+Cada recurso poderá ser:
+
+Global
+
+Por empresa
+
+Por usuário
+
+Por ambiente
+
+Por versão
+
+Permitir ativação gradual.
+
+------------------------------------------------------------------
+
+METADATA MANAGER
+
+Gerenciar:
+
+Campos
+
+Templates
+
+Layouts
+
+Formulários
+
+Relatórios
+
+Documentos
+
+Validações
+
+Regras
+
+Widgets
+
+Todos utilizando Metadata Platform.
+
+------------------------------------------------------------------
+
+PROVIDERS
+
+Gerenciar:
+
+AI Providers
+
+Database Providers
+
+Storage Providers
+
+Mail Providers
+
+Authentication Providers
+
+Connector Providers
+
+Permitir:
+
+Ativar
+
+Desativar
+
+Prioridade
+
+Fallback
+
+Health Check
+
+------------------------------------------------------------------
+
+DATA SOURCES
+
+Consumir Data Platform.
+
+Permitir:
+
+Visualizar
+
+Criar
+
+Editar
+
+Duplicar
+
+Executar testes
+
+Executar sincronizações
+
+Consultar histórico
+
+------------------------------------------------------------------
+
+CONNECTORS
+
+Consumir Integration Platform.
+
+Permitir:
+
+Instalar
+
+Atualizar
+
+Desinstalar
+
+Configurar
+
+Executar
+
+Testar
+
+Monitorar
+
+------------------------------------------------------------------
+
+THEMES
+
+Criar Theme Manager.
+
+Permitir:
+
+Logo
+
+Cores
+
+Fontes
+
+Ícones
+
+Favicons
+
+CSS Tokens
+
+Dark Mode
+
+Light Mode
+
+Tema por empresa
+
+Tema global
+
+------------------------------------------------------------------
+
+IDIOMAS
+
+Criar Language Manager.
+
+Preparar:
+
+Português
+
+Inglês
+
+Espanhol
+
+Arquitetura preparada para novos idiomas.
+
+------------------------------------------------------------------
+
+CONFIGURAÇÕES
+
+Separar:
+
+Globais
+
+Por empresa
+
+Por módulo
+
+Por usuário
+
+Versionar todas as alterações.
+
+------------------------------------------------------------------
+
+AUDIT CENTER
+
+Centralizar toda auditoria.
+
+Pesquisar por:
+
+Usuário
+
+Empresa
+
+Data
+
+Evento
+
+IP
+
+Módulo
+
+Documento
+
+Workflow
+
+Connector
+
+Data Source
+
+Impersonation
+
+Exportar auditoria.
+
+------------------------------------------------------------------
+
+LOG CENTER
+
+Centralizar:
+
+Logs
+
+Eventos
+
+Exceções
+
+Integrações
+
+Workflows
+
+Jobs
+
+Filas
+
+Erros
+
+Pesquisa completa.
+
+------------------------------------------------------------------
+
+HEALTH CENTER
+
+Mostrar:
+
+Banco
+
+Storage
+
+Providers
+
+Conectores
+
+Fila
+
+Eventos
+
+Jobs
+
+Workflows
+
+Performance
+
+Cache
+
+Disponibilidade
+
+------------------------------------------------------------------
+
+LICENSE MANAGER
+
+Preparar arquitetura.
+
+Planos:
+
+Free
+
+Starter
+
+Professional
+
+Enterprise
+
+Controlar:
+
+Usuários
+
+Empresas
+
+Storage
+
+IA
+
+Conectores
+
+Documentos
+
+Workflows
+
+Relatórios
+
+Ainda sem cobrança.
+
+------------------------------------------------------------------
+
+BACKUP
+
+Preparar estrutura.
+
+Backup:
+
+Manual
+
+Agendado
+
+Completo
+
+Incremental
+
+Restauração
+
+Comparação
+
+Histórico
+
+------------------------------------------------------------------
+
+MAINTENANCE
+
+Criar painel.
+
+Permitir:
+
+Modo manutenção
+
+Mensagens
+
+Agendamentos
+
+Versão
+
+Logs
+
+Monitoramento
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Company.Created
+
+Company.Updated
+
+User.Created
+
+User.Updated
+
+Permission.Changed
+
+Role.Updated
+
+FeatureFlag.Enabled
+
+FeatureFlag.Disabled
+
+Impersonation.Started
+
+Impersonation.Ended
+
+Backup.Created
+
+Restore.Executed
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+20 Empresas
+
+300 Usuários
+
+50 Grupos
+
+300 Permissões
+
+100 Feature Flags
+
+80 Temas
+
+50 Idiomas (configurações)
+
+300 Auditorias
+
+500 Logs
+
+Todos consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Menu administrativo.
+
+Dashboard.
+
+Pesquisa Global.
+
+Favoritos.
+
+Comandos rápidos.
+
+Filtros avançados.
+
+Painéis configuráveis.
+
+Layouts persistentes.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar apenas componentes padrão da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todos os CRUDs
+
+Todos os botões
+
+RBAC
+
+Permissões
+
+Impersonation
+
+Auditoria
+
+Feature Flags
+
+Temas
+
+Idiomas
+
+Logs
+
+Health Center
+
+Dashboard
+
+Responsividade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir uma Administration Platform corporativa responsável por toda a governança da aplicação.
+
+Toda administração da plataforma deverá ocorrer exclusivamente através deste módulo.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Cobrança de licenças
+
+• Marketplace online
+
+• Provisionamento automático de empresas
+
+• Multi-região
+
+• Cluster distribuído
+
+Toda a arquitetura deverá permanecer preparada para essas evoluções futuras sem necessidade de refatoração.

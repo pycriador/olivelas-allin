@@ -1,0 +1,53 @@
+# Manifest EN — ServiceForge Platform
+standard: "Documentation Standard v1.0"
+language: "en"
+updated: "2026-10-15"
+
+documents:
+  - id: SF-DOC-OVERVIEW-EN
+    path: project-overview.md
+    title: "ServiceForge Project Overview"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-core
+    updated: "2026-10-15"
+
+  - id: SF-DOC-AI-CONTEXT-EN
+    path: ai-context.md
+    title: "AI Context and Progressive Navigation"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-core
+    updated: "2026-10-15"
+
+  - id: SF-DOC-ARCH-EN
+    path: architecture/architecture.md
+    title: "ServiceForge System Architecture"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-arch
+    updated: "2026-10-15"
+
+  - id: SF-DOC-CONTRACTS-EN
+    path: contracts/contracts.md
+    title: "Data Contracts and APIs"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-backend
+    updated: "2026-10-15"
+
+  - id: SF-DOC-OPS-EN
+    path: operations/operations.md
+    title: "Operations and Deployment Model"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-devops
+    updated: "2026-10-15"
+
+  - id: SF-DOC-SEC-EN
+    path: security/security.md
+    title: "Security Model, RLS and Permissions"
+    status: ACCEPTED
+    authority: Authoritative
+    owner: serviceforge-sec
+    updated: "2026-10-15"

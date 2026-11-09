@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="112" fill="#1b4332" />
+  <circle cx="256" cy="256" r="180" fill="none" stroke="#2d6a4f" stroke-width="8" stroke-dasharray="14 14" />
+  <!-- Olive Leaf Branch Motif -->
+  <path d="M256 122 C306 173 333 240 320 320 C280 325 213 304 181 261 C160 229 170 181 213 144 Z" fill="#52b788" opacity="0.9" />
+  <path d="M192 362 C218 288 256 240 357 218 C352 277 325 330 272 362 C240 384 208 378 192 362 Z" fill="#74c69d" opacity="0.8" />
+  <circle cx="229" cy="309" r="36" fill="#d8f3dc" />
+  <circle cx="229" cy="309" r="18" fill="#1b4332" />
+  <circle cx="256" cy="256" r="198" fill="none" stroke="#d8f3dc" stroke-width="4" opacity="0.3" />
+</svg>

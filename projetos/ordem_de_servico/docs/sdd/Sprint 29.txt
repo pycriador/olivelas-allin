@@ -1,0 +1,852 @@
+# ServiceForge — Sprint 29
+## Service Order Module — Technical Execution (Diagnóstico, Orçamento, Execução Técnica, Peças, Garantia e Retornos)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Public Portal
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Customer Management
+
+• Asset Management
+
+• Service Order Management
+
+Nunca duplicar informações.
+
+Todas as operações deverão ocorrer dentro do Workspace da Ordem de Serviço.
+
+Toda auditoria deverá utilizar Audit Center.
+
+Todos os documentos deverão utilizar Document Platform.
+
+Toda comunicação deverá utilizar Communication Platform.
+
+Todas as alterações deverão gerar eventos.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Implementar o ciclo técnico completo da Ordem de Serviço.
+
+O processo deverá permitir:
+
+Receber
+
+Diagnosticar
+
+Orçar
+
+Aprovar
+
+Executar
+
+Testar
+
+Entregar
+
+Garantir
+
+Registrar Retornos
+
+Tudo mantendo histórico completo.
+
+------------------------------------------------------------------
+
+WORKSPACE
+
+Adicionar novas abas.
+
+Diagnóstico
+
+Orçamentos
+
+Execuções Técnicas
+
+Peças
+
+Testes
+
+Garantias
+
+Retornos
+
+Controle de Qualidade
+
+Custos
+
+Financeiro (estrutura)
+
+Analytics
+
+------------------------------------------------------------------
+
+DIAGNÓSTICO
+
+Criar entidade própria.
+
+Permitir múltiplos diagnósticos.
+
+Cada diagnóstico deverá possuir:
+
+Número
+
+Versão
+
+Data
+
+Hora
+
+Técnico
+
+Descrição técnica
+
+Causa provável
+
+Sintomas
+
+Categoria
+
+Complexidade
+
+Tempo estimado
+
+Necessidade de peças
+
+Necessidade de terceiros
+
+Fotos
+
+Vídeos (estrutura)
+
+Arquivos
+
+Laudos
+
+Observações
+
+Status
+
+Registrar histórico completo.
+
+------------------------------------------------------------------
+
+ORÇAMENTO
+
+Criar entidade própria.
+
+Permitir várias versões.
+
+Cada orçamento deverá possuir:
+
+Versão
+
+Data
+
+Validade
+
+Itens
+
+Peças
+
+Serviços
+
+Mão de obra
+
+Frete
+
+Desconto
+
+Impostos (estrutura)
+
+Subtotal
+
+Total
+
+Observações
+
+Status
+
+Motivo da revisão
+
+Permitir comparação entre versões.
+
+Nunca sobrescrever orçamento anterior.
+
+------------------------------------------------------------------
+
+APROVAÇÃO
+
+Preparar integração com:
+
+Portal Público
+
+WhatsApp
+
+Email
+
+Telegram (estrutura)
+
+Fluxos:
+
+Aprovado
+
+Rejeitado
+
+Solicitar revisão
+
+Aguardando resposta
+
+Expirado
+
+Registrar:
+
+Data
+
+Hora
+
+Canal
+
+Usuário
+
+IP
+
+Dispositivo (estrutura)
+
+------------------------------------------------------------------
+
+EXECUÇÃO TÉCNICA
+
+Criar entidade própria.
+
+Registrar:
+
+Data de início
+
+Hora
+
+Data final
+
+Hora final
+
+Técnico responsável
+
+Equipe (estrutura)
+
+Descrição do serviço executado
+
+Peças utilizadas
+
+Tempo gasto
+
+Observações
+
+Fotos durante o reparo
+
+Vídeos (estrutura)
+
+Checklist de conclusão
+
+Resultado
+
+Permitir várias execuções.
+
+------------------------------------------------------------------
+
+PEÇAS
+
+Preparar integração com futuro módulo de Estoque.
+
+Registrar:
+
+Código
+
+Descrição
+
+Quantidade
+
+Valor unitário
+
+Valor total
+
+Fornecedor (estrutura)
+
+Lote (estrutura)
+
+Garantia da peça
+
+Origem
+
+Situação
+
+Reservada
+
+Utilizada
+
+Devolvida
+
+Registrar movimentação.
+
+------------------------------------------------------------------
+
+TESTES
+
+Criar módulo de testes finais.
+
+Registrar:
+
+Tipo do teste
+
+Resultado
+
+Observações
+
+Data
+
+Hora
+
+Responsável
+
+Checklist
+
+Fotos
+
+Vídeos (estrutura)
+
+Somente permitir entrega após aprovação dos testes.
+
+------------------------------------------------------------------
+
+CONTROLE DE QUALIDADE
+
+Criar etapa obrigatória.
+
+Registrar:
+
+Aprovado
+
+Reprovado
+
+Observações
+
+Responsável
+
+Data
+
+Hora
+
+Assinatura digital (estrutura)
+
+------------------------------------------------------------------
+
+GARANTIA
+
+Criar entidade própria.
+
+Registrar:
+
+Data inicial
+
+Data final
+
+Prazo
+
+Cobertura
+
+Condições
+
+Observações
+
+Status
+
+Motivo de cancelamento
+
+Documentos
+
+Permitir múltiplas garantias.
+
+------------------------------------------------------------------
+
+RETORNOS
+
+Criar entidade própria.
+
+Nunca limitar quantidade.
+
+Cada retorno deverá possuir:
+
+Data
+
+Hora
+
+Motivo
+
+Problema informado
+
+Diagnóstico
+
+Serviço executado
+
+Peças
+
+Garantia aplicada
+
+Cobrança
+
+Resultado
+
+Técnico
+
+Observações
+
+Fotos
+
+Documentos
+
+Timeline
+
+------------------------------------------------------------------
+
+CUSTOS
+
+Preparar estrutura.
+
+Registrar:
+
+Custo das peças
+
+Custo da mão de obra
+
+Custos adicionais
+
+Terceiros
+
+Frete
+
+Margem
+
+Lucro estimado
+
+Lucro realizado
+
+Preparar integração com Financeiro.
+
+------------------------------------------------------------------
+
+ANALYTICS
+
+Mostrar:
+
+Tempo médio de diagnóstico
+
+Tempo médio de execução
+
+Tempo médio por técnico
+
+Equipamentos reincidentes
+
+Defeitos mais comuns
+
+Peças mais utilizadas
+
+Marcas com maior índice de retorno
+
+Garantias acionadas
+
+Retornos por período
+
+Tempo médio de aprovação
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Gerar automaticamente:
+
+Diagnóstico
+
+Orçamento
+
+Comprovante de Aprovação
+
+Laudo Técnico
+
+Garantia
+
+Relatório Técnico
+
+Checklist
+
+Recibo de Entrega
+
+Todos utilizando Document Platform.
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Registrar automaticamente:
+
+Novo diagnóstico
+
+Nova versão do orçamento
+
+Aprovação
+
+Execução
+
+Peças
+
+Testes
+
+Garantia
+
+Retorno
+
+Entrega
+
+Documentos
+
+Eventos
+
+Comunicações
+
+Nunca permitir edição.
+
+------------------------------------------------------------------
+
+AUTOMAÇÕES
+
+Fluxo padrão.
+
+Diagnóstico concluído
+
+↓
+
+Gerar orçamento
+
+↓
+
+Publicar evento
+
+↓
+
+Criar documento
+
+↓
+
+Enviar aprovação
+
+↓
+
+Aguardar resposta
+
+↓
+
+Executar serviço
+
+↓
+
+Realizar testes
+
+↓
+
+Controle de qualidade
+
+↓
+
+Atualizar Portal Público
+
+↓
+
+Gerar garantia
+
+↓
+
+Encerrar OS
+
+Todos configuráveis futuramente na Automation Platform.
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Diagnosis.Created
+
+Diagnosis.Updated
+
+Estimate.Created
+
+Estimate.Approved
+
+Estimate.Rejected
+
+Execution.Started
+
+Execution.Completed
+
+Parts.Used
+
+Warranty.Created
+
+Warranty.Expired
+
+Return.Created
+
+Quality.Approved
+
+Quality.Rejected
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Diagnóstico
+
+Orçamento
+
+Aprovação
+
+Execução
+
+Utilização de peças
+
+Garantia
+
+Retorno
+
+Controle de qualidade
+
+Documentos
+
+Downloads
+
+Uploads
+
+Sempre registrar:
+
+Usuário
+
+Empresa
+
+Data
+
+Hora
+
+IP
+
+Resultado
+
+------------------------------------------------------------------
+
+PORTAL PÚBLICO
+
+Atualizar automaticamente.
+
+Disponibilizar:
+
+Status
+
+Timeline
+
+Orçamento
+
+Aprovação
+
+Garantia
+
+Laudos liberados
+
+Documentos
+
+Histórico permitido
+
+QR Code
+
+Sem duplicar informações.
+
+------------------------------------------------------------------
+
+DADOS DE DEMONSTRAÇÃO
+
+Integrar ao Demo Environment Manager.
+
+Gerar automaticamente:
+
+Diagnósticos
+
+Orçamentos
+
+Execuções
+
+Peças
+
+Garantias
+
+Retornos
+
+Testes
+
+Documentos
+
+Timeline
+
+Todos coerentes com o tipo do equipamento.
+
+Exemplo:
+
+Notebook
+
+↓
+
+Diagnóstico compatível
+
+↓
+
+Peças compatíveis
+
+↓
+
+Tempo de reparo compatível
+
+↓
+
+Garantia compatível
+
+Nunca utilizar textos aleatórios.
+
+------------------------------------------------------------------
+
+UX
+
+Criar Workspace Enterprise.
+
+Timeline lateral.
+
+Abas.
+
+Comparação entre versões do orçamento.
+
+Visualização do histórico técnico.
+
+Indicadores rápidos.
+
+Alertas de garantia.
+
+Alertas de retorno.
+
+Cards de progresso.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Diagnóstico
+
+Versionamento
+
+Orçamentos
+
+Aprovação
+
+Execução
+
+Peças
+
+Garantias
+
+Retornos
+
+Portal Público
+
+Timeline
+
+Eventos
+
+Auditoria
+
+RBAC
+
+Responsividade
+
+Acessibilidade
+
+Todos os botões.
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir um ciclo técnico completo de assistência, com versionamento de diagnósticos e orçamentos, execução detalhada, controle de qualidade, garantias, retornos ilimitados e integração total com a plataforma.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Financeiro completo
+
+• Controle de Estoque
+
+• Compras
+
+• CRM
+
+• Agenda
+
+Esses módulos serão desenvolvidos futuramente utilizando todas as estruturas criadas nesta Sprint.
+
+Toda a implementação deverá permanecer desacoplada, orientada a eventos e preparada para evolução sem necessidade de refatoração estrutural.

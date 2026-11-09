@@ -1,0 +1,265 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Roteiro de Automação de Testes E2E - ServiceForge Platform",
+  "version": "1.0.0",
+  "description": "Especificação formal do fluxo operacional de ponta a ponta para reprodução em ferramentas externas de automação (Olivelas AutoRun, Playwright, Puppeteer).",
+  "environment": {
+    "baseUrl": "http://localhost:8080",
+    "testCompany": {
+      "id": "00000000-0000-0000-0000-000000000001",
+      "name": "ServiceForge Matriz",
+      "legalName": "ServiceForge Tecnologia e Manutenção LTDA",
+      "cnpj": "12.345.678/0001-90",
+      "email": "contato@serviceforge.com.br",
+      "phone": "(11) 4002-8922"
+    },
+    "operatorUser": {
+      "email": "willian.o.jesus@gmail.com",
+      "name": "Willian Oliveira Jesus",
+      "role": "admin"
+    },
+    "database": {
+      "schema": "serviceforge",
+      "type": "supabase_postgresql"
+    }
+  },
+  "testCases": [
+    {
+      "id": "TC-01",
+      "order": 1,
+      "title": "Autenticação e Inicialização do Painel Administrativo",
+      "route": "/login",
+      "action": "login_and_navigate_dashboard",
+      "selectors": {
+        "emailInput": "#email, input[type='email']",
+        "passwordInput": "#password, input[type='password']",
+        "submitButton": "button[type='submit']"
+      },
+      "expectedResults": {
+        "url": "/dashboard",
+        "headerContains": "ServiceForge Matriz"
+      }
+    },
+    {
+      "id": "TC-02",
+      "order": 2,
+      "title": "Cadastro de Novo Cliente PF/PJ com Persistência em Banco",
+      "route": "/service-orders/customers/list",
+      "action": "create_customer",
+      "inputData": {
+        "name": "Cliente QA AutoRun",
+        "type": "individual",
+        "cpf": "123.456.789-99",
+        "email": "cliente.qa@serviceforge.com.br",
+        "phone": "(11) 98765-4321",
+        "whatsapp": "(11) 98765-4321",
+        "status": "active"
+      },
+      "selectors": {
+        "newCustomerButton": "button:has-text('Novo Cliente')",
+        "dialog": "[role='dialog']",
+        "nameInput": "[role='dialog'] input:nth-of-type(1)",
+        "saveButton": "[role='dialog'] button:has-text('Salvar')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.customers",
+        "recordCreated": true
+      }
+    },
+    {
+      "id": "TC-03",
+      "order": 3,
+      "title": "Cadastro de Nova Marca de Equipamentos",
+      "route": "/service-orders/assets/brands",
+      "action": "create_brand",
+      "inputData": {
+        "name": "Marca QA AutoRun",
+        "status": "active"
+      },
+      "selectors": {
+        "newBrandButton": "button:has-text('Nova Marca')",
+        "dialog": "[role='dialog']",
+        "nameInput": "[role='dialog'] input",
+        "saveButton": "[role='dialog'] button:has-text('Criar'), [role='dialog'] button:has-text('Salvar')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.brands",
+        "recordCreated": true
+      }
+    },
+    {
+      "id": "TC-04",
+      "order": 4,
+      "title": "Cadastro de Categoria de Equipamentos",
+      "route": "/service-orders/assets/categories",
+      "action": "create_category",
+      "inputData": {
+        "name": "Categoria QA AutoRun",
+        "description": "Equipamentos testados pelo robô de automação",
+        "status": "active"
+      },
+      "selectors": {
+        "newCategoryButton": "button:has-text('Nova Categoria')",
+        "dialog": "[role='dialog']",
+        "saveButton": "[role='dialog'] button:has-text('Criar'), [role='dialog'] button:has-text('Salvar')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.categories",
+        "recordCreated": true
+      }
+    },
+    {
+      "id": "TC-05",
+      "order": 5,
+      "title": "Cadastro de Equipamento do Cliente",
+      "route": "/service-orders/assets/equipment",
+      "action": "create_equipment",
+      "inputData": {
+        "serialNumber": "SN-QA-AUTORUN-01",
+        "model": "MacBook Pro M3 Max",
+        "color": "Space Black"
+      },
+      "selectors": {
+        "newEquipmentButton": "button:has-text('Novo Equipamento')",
+        "dialog": "[role='dialog']"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.devices",
+        "recordCreated": true
+      }
+    },
+    {
+      "id": "TC-06",
+      "order": 6,
+      "title": "Abertura de Ordem de Serviço com Busca de Cliente (Wizard 5 Passos)",
+      "route": "/service-orders/new",
+      "action": "create_service_order_wizard",
+      "inputData": {
+        "defectDescription": "Equipamento não inicializa vídeo após queda - Teste Automatizado",
+        "priority": "high"
+      },
+      "selectors": {
+        "searchInput": "input[placeholder*='Digite para buscar']",
+        "nextStepButton": "button:has-text('Próximo')",
+        "defectTextarea": "textarea[placeholder*='Descreva o defeito']",
+        "finishButton": "button:has-text('Gerar Ordem')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.service_orders",
+        "orderGenerated": true
+      }
+    },
+    {
+      "id": "TC-07",
+      "order": 7,
+      "title": "Listagem e Ordenação de Ordens de Serviço",
+      "route": "/service-orders",
+      "action": "test_sorting_and_filters",
+      "selectors": {
+        "searchInput": "input[placeholder*='Buscar por número']",
+        "sortHeaderOS": "th:has-text('OS')",
+        "sortHeaderCustomer": "th:has-text('Cliente')",
+        "sortHeaderStatus": "th:has-text('Status')"
+      },
+      "expectedResults": {
+        "tableRendered": true,
+        "sortingWorks": true
+      }
+    },
+    {
+      "id": "TC-08",
+      "order": 8,
+      "title": "Gestão Financeira - Contas Bancárias",
+      "route": "/financial/accounts",
+      "action": "verify_financial_accounts",
+      "selectors": {
+        "newAccountButton": "button:has-text('Nova Conta'), button:has-text('Adicionar')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.fin_accounts",
+        "accountsVisible": true
+      }
+    },
+    {
+      "id": "TC-09",
+      "order": 9,
+      "title": "Gestão Financeira - Contas a Pagar e Contas a Receber",
+      "route": "/financial/payable",
+      "action": "verify_payables_and_receivables",
+      "selectors": {
+        "filterSelect": "select",
+        "table": "table"
+      },
+      "expectedResults": {
+        "tableRendered": true
+      }
+    },
+    {
+      "id": "TC-10",
+      "order": 10,
+      "title": "Catálogo de Produtos, Peças e Estoque",
+      "route": "/inventory/products",
+      "action": "verify_inventory_products",
+      "selectors": {
+        "newProductButton": "button:has-text('Novo Produto'), button:has-text('Adicionar')",
+        "searchInput": "input[placeholder*='Buscar']"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.inv_products",
+        "productsVisible": true
+      }
+    },
+    {
+      "id": "TC-11",
+      "order": 11,
+      "title": "Quadro de Funcionários e Técnicos (RH)",
+      "route": "/hr/employees",
+      "action": "verify_hr_employees",
+      "selectors": {
+        "newEmployeeButton": "button:has-text('Novo Funcionário'), button:has-text('Adicionar')"
+      },
+      "expectedResults": {
+        "databaseTable": "serviceforge.hr_employees",
+        "employeesVisible": true
+      }
+    },
+    {
+      "id": "TC-12",
+      "order": 12,
+      "title": "Base de Conhecimento e Soluções Técnicas",
+      "route": "/knowledge/library",
+      "action": "verify_knowledge_library",
+      "selectors": {
+        "searchInput": "input[placeholder*='Buscar']"
+      },
+      "expectedResults": {
+        "libraryAccessible": true
+      }
+    },
+    {
+      "id": "TC-13",
+      "order": 13,
+      "title": "Alternador de Temas e Cores (Design System)",
+      "route": "/settings",
+      "action": "toggle_themes_and_modes",
+      "selectors": {
+        "themeSelector": "[data-testid='theme-selector'], button:has-text('Tema')"
+      },
+      "expectedResults": {
+        "themeToggled": true
+      }
+    },
+    {
+      "id": "TC-14",
+      "order": 14,
+      "title": "Validação de Integridade do Schema PostgreSQL 'serviceforge'",
+      "route": "direct_sql",
+      "action": "verify_database_isolation",
+      "expectedResults": {
+        "schemaExists": "serviceforge",
+        "totalTables": 40,
+        "isolationGuaranteed": true
+      }
+    }
+  ]
+}

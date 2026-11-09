@@ -1,0 +1,603 @@
+# ServiceForge — Sprint 5
+## Communication Platform
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar nenhuma arquitetura criada nas sprints anteriores.
+
+NÃO remover funcionalidades existentes.
+
+Toda implementação deve respeitar:
+
+- Core Platform
+- Metadata Platform
+- Document Platform
+- Providers
+- Services
+- Repository Pattern
+- Audit Service
+
+O objetivo desta Sprint é criar o módulo de Comunicação.
+
+------------------------------------------------------------------
+
+# Objetivo
+
+Criar uma plataforma centralizada de comunicação.
+
+Todos os módulos futuros deverão utilizar este módulo para enviar mensagens.
+
+Exemplos:
+
+Ordem de Serviço
+
+Financeiro
+
+Garantia
+
+Documentos
+
+Estoque
+
+Administração
+
+Workflows
+
+IA
+
+Nenhum módulo poderá enviar mensagens diretamente.
+
+------------------------------------------------------------------
+
+# Estrutura
+
+Criar módulo:
+
+Communication Platform
+
+Estrutura:
+
+Communication Center
+
+Message Templates
+
+Channels
+
+Message Queue
+
+Rules Engine
+
+Schedules
+
+Preferences
+
+Inbox (estrutura futura)
+
+History
+
+Audit
+
+------------------------------------------------------------------
+
+# Communication Center
+
+Criar uma central administrativa.
+
+Dashboard:
+
+Mensagens enviadas
+
+Mensagens pendentes
+
+Falhas
+
+Agendadas
+
+Taxa de entrega
+
+Canais utilizados
+
+Últimas comunicações
+
+------------------------------------------------------------------
+
+# Canais
+
+Criar arquitetura de canais.
+
+MVP:
+
+Email Mock
+
+WhatsApp Manual
+
+Notificação Interna
+
+Futuros:
+
+WhatsApp Business API
+
+Telegram
+
+SMS
+
+Push Notification
+
+Slack
+
+Microsoft Teams
+
+Cada canal deve implementar uma interface comum.
+
+Exemplo:
+
+CommunicationChannelProvider
+
+Métodos:
+
+send()
+
+validate()
+
+status()
+
+history()
+
+------------------------------------------------------------------
+
+# Message Templates
+
+Criar gerenciador de templates.
+
+Cada template possui:
+
+Nome
+
+Categoria
+
+Canal
+
+Assunto
+
+Conteúdo
+
+Variáveis
+
+Status
+
+Empresa
+
+Versão
+
+Criado por
+
+Atualizado em
+
+------------------------------------------------------------------
+
+# Categorias
+
+Criar:
+
+Ordem de Serviço
+
+Financeiro
+
+Documentos
+
+Garantia
+
+Sistema
+
+Usuários
+
+Marketing
+
+Alertas
+
+------------------------------------------------------------------
+
+# Variáveis Dinâmicas
+
+Utilizar Metadata Platform.
+
+Exemplo:
+
+{{cliente.nome}}
+
+{{cliente.telefone}}
+
+{{os.numero}}
+
+{{os.status}}
+
+{{empresa.nome}}
+
+{{documento.link}}
+
+{{pagamento.valor}}
+
+O editor deverá sugerir variáveis disponíveis.
+
+------------------------------------------------------------------
+
+# Editor de Mensagens
+
+Criar editor visual.
+
+Suportar:
+
+Texto
+
+Negrito
+
+Links
+
+Emojis
+
+Variáveis
+
+Anexos
+
+Pré-visualização
+
+Teste de envio
+
+------------------------------------------------------------------
+
+# Anexos
+
+Integrar com Document Platform.
+
+Permitir:
+
+Anexar documento existente
+
+Gerar documento antes do envio
+
+Enviar múltiplos arquivos
+
+Exemplo:
+
+Enviar orçamento:
+
+↓
+
+Gerar PDF
+
+↓
+
+Anexar
+
+↓
+
+Enviar mensagem
+
+------------------------------------------------------------------
+
+# Message Queue
+
+Criar fila de mensagens.
+
+Estados:
+
+Pendente
+
+Processando
+
+Enviado
+
+Entregue
+
+Visualizado
+
+Falhou
+
+Cancelado
+
+Cada mensagem possui:
+
+ID
+
+Empresa
+
+Cliente
+
+Canal
+
+Template
+
+Conteúdo
+
+Anexos
+
+Criado em
+
+Enviado em
+
+Tentativas
+
+Erro
+
+------------------------------------------------------------------
+
+# Retry Engine
+
+Implementar estrutura para tentativas automáticas.
+
+Configuração:
+
+Quantidade máxima
+
+Intervalo
+
+Motivo do erro
+
+Última tentativa
+
+Próxima tentativa
+
+No MVP apenas simular.
+
+------------------------------------------------------------------
+
+# Regras de Comunicação
+
+Criar Rule Engine simples.
+
+Exemplo:
+
+Quando:
+
+OS.status = APROVADO
+
+Executar:
+
+Enviar WhatsApp
+
+Template:
+
+Orçamento aprovado
+
+------------------------------------------------------------------
+
+Criar estrutura:
+
+CommunicationRule
+
+Campos:
+
+Nome
+
+Evento
+
+Condição
+
+Template
+
+Canal
+
+Ativo
+
+Empresa
+
+------------------------------------------------------------------
+
+# Agendamento
+
+Criar mensagens agendadas.
+
+Exemplos:
+
+Enviar lembrete de retirada amanhã.
+
+Enviar aviso de garantia em 3 dias.
+
+Enviar relatório diário.
+
+Campos:
+
+Data
+
+Hora
+
+Recorrência
+
+Status
+
+------------------------------------------------------------------
+
+# Preferências
+
+Criar preferências de comunicação.
+
+Cliente:
+
+Receber WhatsApp
+
+Receber Email
+
+Receber SMS
+
+Receber notificações
+
+Empresa:
+
+Canal padrão
+
+Horário permitido
+
+Assinatura padrão
+
+------------------------------------------------------------------
+
+# Histórico
+
+Cada cliente deverá possuir histórico de comunicação.
+
+Exemplo:
+
+Cliente João
+
+Timeline:
+
+10/08 10:30
+
+WhatsApp enviado
+
+Orçamento OS 123
+
+10/08 10:45
+
+Documento visualizado
+
+10/08 11:00
+
+Resposta recebida
+
+------------------------------------------------------------------
+
+# Inbox (Preparação)
+
+Criar estrutura futura para mensagens recebidas.
+
+Não implementar integração.
+
+Apenas criar modelo.
+
+Campos:
+
+Remetente
+
+Canal
+
+Mensagem
+
+Data
+
+Status
+
+Relacionamento
+
+Cliente
+
+OS
+
+------------------------------------------------------------------
+
+# Auditoria
+
+Integrar com Audit Service.
+
+Registrar:
+
+Criar template
+
+Editar template
+
+Enviar mensagem
+
+Cancelar envio
+
+Reenviar
+
+Alterar configuração
+
+Alterar canal
+
+Visualizar histórico
+
+------------------------------------------------------------------
+
+# Dados Mock
+
+Criar:
+
+20 templates
+
+50 mensagens
+
+10 regras
+
+15 agendamentos
+
+100 históricos
+
+10 preferências
+
+Dados realistas.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+# UX
+
+Interface Enterprise.
+
+Criar:
+
+Filtros
+
+Pesquisa
+
+Paginação
+
+Status coloridos
+
+Timeline
+
+Preview
+
+Modal de detalhes
+
+Nenhum alert()
+
+Nenhum confirm()
+
+Utilizar componentes reutilizáveis.
+
+------------------------------------------------------------------
+
+# Integrações
+
+Consumir:
+
+Core Platform
+
+Metadata Platform
+
+Document Platform
+
+Audit Service
+
+Configuration Service
+
+Storage Provider
+
+Não acessar dados diretamente de outros módulos.
+
+------------------------------------------------------------------
+
+# Objetivo da Sprint
+
+Ao finalizar esta Sprint o ServiceForge deverá possuir uma plataforma completa de comunicação preparada para:
+
+- enviar mensagens;
+- anexar documentos;
+- criar templates;
+- controlar histórico;
+- gerenciar canais;
+- executar regras;
+- preparar futuras integrações externas.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+- Core Event Bus
+- Workflow Engine completo
+- WhatsApp API real
+- Email real
+- Ordem de Serviço
+- IA

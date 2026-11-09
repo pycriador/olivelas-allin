@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Mensagens — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Central de Mensagens & Automações</h1>
+          <p class="text-sm text-muted">Modelos pré-configurados de comunicação com pacientes e disparos automáticos.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-new-template">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Novo Modelo
+        </button>
+      </div>
+
+      <!-- Seção de Automações -->
+      <div class="card" style="padding: var(--space-6); margin-bottom: var(--space-8); border-left: 4px solid var(--color-primary);">
+        <div class="card-header" style="padding: 0 0 var(--space-4); margin-bottom: var(--space-4);">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Automações de Atendimento</h3>
+            <p class="text-xs text-muted">Ações programadas para agendamentos e pós-consulta</p>
+          </div>
+          <span class="badge badge-success">4 Automações Ativas</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: var(--space-4);">
+          <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+              <strong>Confirmação Automática</strong>
+              <input type="checkbox" checked class="form-checkbox" style="accent-color: var(--color-primary);">
+            </div>
+            <p class="text-xs text-muted">Quando: Novo agendamento criado</p>
+            <p class="text-xs text-secondary" style="margin-top: 2px;">Ação: Preparar mensagem de confirmação</p>
+          </div>
+
+          <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+              <strong>Lembrete de Consulta</strong>
+              <input type="checkbox" checked class="form-checkbox" style="accent-color: var(--color-primary);">
+            </div>
+            <p class="text-xs text-muted">Quando: 24 horas antes</p>
+            <p class="text-xs text-secondary" style="margin-top: 2px;">Ação: Enviar lembrete com horário e data</p>
+          </div>
+
+          <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+              <strong>Acompanhamento Pós-Consulta</strong>
+              <input type="checkbox" checked class="form-checkbox" style="accent-color: var(--color-primary);">
+            </div>
+            <p class="text-xs text-muted">Quando: Consulta concluída</p>
+            <p class="text-xs text-secondary" style="margin-top: 2px;">Ação: Mensagem de cuidado pós-atendimento</p>
+          </div>
+
+          <div class="card" style="padding: var(--space-4); background-color: #f8fafc;">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--space-2);">
+              <strong>Lembrete de Retorno</strong>
+              <input type="checkbox" checked class="form-checkbox" style="accent-color: var(--color-primary);">
+            </div>
+            <p class="text-xs text-muted">Quando: 6 meses após limpeza</p>
+            <p class="text-xs text-secondary" style="margin-top: 2px;">Ação: Convidar paciente para nova avaliação</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Templates de Mensagem -->
+      <h3 style="font-size: var(--font-size-lg); margin-bottom: var(--space-4);">Modelos de Mensagem (Templates)</h3>
+      <div id="templates-container" style="display: flex; flex-direction: column; gap: var(--space-4);">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Criar / Editar Template -->
+  <div class="modal-backdrop" id="template-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="tpl-modal-title">Novo Modelo de Mensagem</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="template-form">
+        <div class="modal-body">
+          <input type="hidden" id="tpl-form-id">
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="tpl-form-title">Título do Modelo</label>
+              <input type="text" id="tpl-form-title" class="form-input" required placeholder="Ex: Lembrete de Consulta">
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="tpl-form-category">Categoria</label>
+              <select id="tpl-form-category" class="form-select">
+                <option value="Confirmação de consulta">Confirmação de consulta</option>
+                <option value="Lembrete">Lembrete</option>
+                <option value="Cancelamento">Cancelamento</option>
+                <option value="Reagendamento">Reagendamento</option>
+                <option value="Pós-consulta">Pós-consulta</option>
+                <option value="Retorno">Retorno</option>
+                <option value="Divulgação">Divulgação</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="flex items-center justify-between">
+              <label class="form-label form-label-required" for="tpl-form-content">Texto da Mensagem</label>
+              <span class="text-xs text-muted">Variáveis: <code>{{nome}}</code>, <code>{{data}}</code>, <code>{{hora}}</code></span>
+            </div>
+            <textarea id="tpl-form-content" class="form-textarea" rows="4" required placeholder="Olá, {{nome}}! Sua consulta com a Dra. Marta Gelsi Dias está agendada para {{data}} às {{hora}}..."></textarea>
+          </div>
+
+          <div class="card" style="padding: var(--space-4); background-color: #f0f9ff; border-color: #bae6fd;">
+            <span class="text-xs text-bold text-primary" style="text-transform: uppercase;">Prévia em tempo real:</span>
+            <p class="text-sm text-secondary" id="tpl-preview-text" style="margin-top: 4px; font-style: italic;">Digite o texto acima para visualizar a prévia.</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Modelo</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/messages.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("mensagens", "");
+    UIComponents.renderAdminTopbar("Mensagens", "Comunicação");
+
+    function renderTemplates() {
+      const templates = MessagesManager.getTemplates();
+      const container = document.getElementById("templates-container");
+
+      if (templates.length === 0) {
+        container.innerHTML = UIComponents.renderEmptyState("Nenhum template cadastrado", "Crie novos modelos para agilizar as mensagens.");
+        return;
+      }
+
+      container.innerHTML = templates.map(t => `
+        <div class="card" style="padding: var(--space-5);">
+          <div class="flex items-start justify-between flex-wrap gap-3" style="margin-bottom: var(--space-3);">
+            <div>
+              <span class="badge badge-info">${t.category}</span>
+              <h4 style="margin-top: 4px;">${t.title}</h4>
+            </div>
+            <div class="flex gap-2">
+              <button type="button" class="btn btn-outline btn-sm btn-edit-tpl" data-id="${t.id}">Editar</button>
+              <button type="button" class="btn btn-ghost btn-sm btn-dup-tpl" data-id="${t.id}">Duplicar</button>
+              <button type="button" class="btn btn-ghost btn-sm btn-toggle-tpl" data-id="${t.id}">
+                ${t.active ? 'Desativar' : 'Ativar'}
+              </button>
+            </div>
+          </div>
+
+          <div style="background-color: #f8fafc; border-radius: var(--radius-md); padding: var(--space-4); border: 1px solid var(--color-border); margin-bottom: var(--space-2);">
+            <p class="text-sm text-secondary" style="white-space: pre-wrap;">${t.content}</p>
+          </div>
+
+          <div class="flex items-center justify-between text-xs text-muted">
+            <span>Variáveis dinâmicas ativas</span>
+            <span class="badge ${t.active ? 'badge-success' : 'badge-neutral'}">${t.active ? 'Ativo para envios' : 'Inativo'}</span>
+          </div>
+        </div>
+      `).join("");
+
+      // Bind botões
+      container.querySelectorAll(".btn-edit-tpl").forEach(btn => {
+        btn.onclick = () => openEditTemplate(btn.getAttribute("data-id"));
+      });
+
+      container.querySelectorAll(".btn-dup-tpl").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-id");
+          MessagesManager.duplicateTemplate(id);
+          Toast.success("Modelo duplicado com sucesso!");
+          renderTemplates();
+        };
+      });
+
+      container.querySelectorAll(".btn-toggle-tpl").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-id");
+          const state = MessagesManager.toggleActive(id);
+          Toast.info(`Modelo ${state ? 'ativado' : 'desativado'}.`);
+          renderTemplates();
+        };
+      });
+    }
+
+    const modalEl = document.getElementById("template-modal");
+    const formEl = document.getElementById("template-form");
+    const contentInput = document.getElementById("tpl-form-content");
+    const previewEl = document.getElementById("tpl-preview-text");
+
+    contentInput.oninput = () => {
+      previewEl.innerText = MessagesManager.replaceVariables(contentInput.value, {
+        name: "Ana Souza",
+        date: "24/09/2026",
+        time: "10:30"
+      }) || "Digite o texto para visualizar a prévia.";
+    };
+
+    document.getElementById("btn-new-template").onclick = () => {
+      formEl.reset();
+      document.getElementById("tpl-form-id").value = "";
+      document.getElementById("tpl-modal-title").innerText = "Novo Modelo de Mensagem";
+      previewEl.innerText = "Digite o texto para visualizar a prévia.";
+      Modal.open(modalEl);
+    };
+
+    function openEditTemplate(id) {
+      const templates = MessagesManager.getTemplates();
+      const t = templates.find(x => x.id === id);
+      if (!t) return;
+      document.getElementById("tpl-form-id").value = t.id;
+      document.getElementById("tpl-modal-title").innerText = `Editar Modelo (${t.title})`;
+      document.getElementById("tpl-form-title").value = t.title;
+      document.getElementById("tpl-form-category").value = t.category;
+      document.getElementById("tpl-form-content").value = t.content;
+      contentInput.oninput();
+      Modal.open(modalEl);
+    }
+
+    formEl.onsubmit = (e) => {
+      e.preventDefault();
+      const id = document.getElementById("tpl-form-id").value;
+      const data = {
+        id: id || undefined,
+        title: document.getElementById("tpl-form-title").value.trim(),
+        category: document.getElementById("tpl-form-category").value,
+        content: document.getElementById("tpl-form-content").value.trim(),
+        active: true
+      };
+
+      MessagesManager.saveTemplate(data);
+      Modal.close(modalEl);
+      Toast.success("Modelo salvo com sucesso!");
+      renderTemplates();
+    };
+
+    renderTemplates();
+  </script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+# ServiceForge — Sprint 4
+## Document Platform
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar nenhuma arquitetura criada anteriormente.
+
+NÃO remover funcionalidades já implementadas.
+
+Toda implementação deverá respeitar exatamente a arquitetura modular existente.
+
+Nesta Sprint será desenvolvido o módulo de Documentos.
+
+Este módulo será responsável por toda geração, armazenamento, impressão, exportação, versionamento e gerenciamento de documentos da plataforma.
+
+IMPORTANTE
+
+Ainda NÃO implementar geração real de PDF.
+
+Ainda NÃO integrar bibliotecas externas.
+
+Toda geração poderá utilizar HTML como representação visual.
+
+A arquitetura deverá estar preparada para PDF futuramente.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar um módulo chamado:
+
+Documents
+
+que será utilizado por toda a plataforma.
+
+Nenhum módulo deverá gerar documentos diretamente.
+
+Todos utilizarão este módulo.
+
+------------------------------------------------------------------
+
+Estrutura
+
+Documents
+
+├── Template Library
+├── Document Designer
+├── Document Generator
+├── Document Storage
+├── Document History
+├── Document Versions
+├── QR Validation
+├── Signature Manager
+├── Print Center
+├── Export Center
+└── Audit
+
+------------------------------------------------------------------
+
+# Template Library
+
+Criar uma biblioteca completa de templates.
+
+Categorias:
+
+Ordem de Serviço
+
+Recibo
+
+Orçamento
+
+Garantia
+
+Comprovante
+
+Etiqueta
+
+Financeiro
+
+Administração
+
+Relatórios
+
+Sistema
+
+Cada template possui:
+
+Nome
+
+Categoria
+
+Descrição
+
+Versão
+
+Status
+
+Empresa
+
+Modelo Global
+
+Criado por
+
+Atualizado por
+
+Criado em
+
+Atualizado em
+
+Tags
+
+Ícone
+
+Cor
+
+Permitir:
+
+Duplicar
+
+Arquivar
+
+Publicar
+
+Restaurar
+
+Versionar
+
+Pré-visualizar
+
+------------------------------------------------------------------
+
+# Document Designer
+
+Criar um editor visual Drag and Drop.
+
+Componentes disponíveis:
+
+Texto
+
+Imagem
+
+Logo
+
+Campo
+
+Tabela
+
+Linha
+
+Retângulo
+
+QRCode
+
+Código de Barras
+
+Assinatura
+
+Data
+
+Hora
+
+Página
+
+Cabeçalho
+
+Rodapé
+
+Expressão
+
+Lista
+
+Repetidor
+
+Espaçador
+
+Cada componente possui propriedades.
+
+Exemplo:
+
+Posição
+
+Tamanho
+
+Fonte
+
+Cor
+
+Margem
+
+Padding
+
+Alinhamento
+
+Visibilidade
+
+Borda
+
+Raio
+
+Plano de fundo
+
+Rotação
+
+Camada
+
+------------------------------------------------------------------
+
+# Campos Dinâmicos
+
+O editor deverá consumir automaticamente os metadados.
+
+Exemplo.
+
+Empresa
+
+Cliente
+
+Aparelho
+
+Pagamento
+
+Técnico
+
+Ordem de Serviço
+
+Usuário
+
+Sistema
+
+Configuração
+
+Todos os campos deverão aparecer organizados por categoria.
+
+Sem código.
+
+------------------------------------------------------------------
+
+# Document Generator
+
+Criar um serviço responsável por montar documentos.
+
+Fluxo
+
+Template
+
+↓
+
+Resolver Metadados
+
+↓
+
+Resolver Dados
+
+↓
+
+Aplicar Componentes
+
+↓
+
+Renderizar Documento
+
+↓
+
+Salvar
+
+↓
+
+Auditar
+
+Neste MVP utilizar HTML.
+
+Arquitetura preparada para:
+
+PDF
+
+DOCX
+
+Imagem
+
+Impressão
+
+------------------------------------------------------------------
+
+# Print Center
+
+Criar central de impressão.
+
+Layouts:
+
+A4
+
+A5
+
+Carta
+
+58mm
+
+80mm
+
+Etiqueta
+
+Orientação:
+
+Retrato
+
+Paisagem
+
+Margens configuráveis.
+
+Zoom.
+
+Pré-visualização.
+
+------------------------------------------------------------------
+
+# Export Center
+
+Preparar arquitetura.
+
+Exportações:
+
+HTML
+
+PDF (placeholder)
+
+DOCX (placeholder)
+
+PNG (placeholder)
+
+JSON
+
+Template
+
+------------------------------------------------------------------
+
+# Document Storage
+
+Criar gerenciamento local.
+
+Cada documento possui:
+
+Nome
+
+Categoria
+
+Empresa
+
+Entidade
+
+Registro
+
+Versão
+
+Hash
+
+Formato
+
+Tamanho
+
+Criado em
+
+Criado por
+
+Status
+
+Neste MVP armazenar tudo localmente.
+
+------------------------------------------------------------------
+
+# Versionamento
+
+Nunca substituir documentos.
+
+Sempre criar nova versão.
+
+Exemplo:
+
+Recibo
+
+v1
+
+↓
+
+v2
+
+↓
+
+v3
+
+Histórico completo.
+
+Comparação preparada.
+
+------------------------------------------------------------------
+
+# Histórico
+
+Cada documento possui timeline.
+
+Criado
+
+Gerado
+
+Visualizado
+
+Impresso
+
+Compartilhado
+
+Exportado
+
+Assinado
+
+Arquivado
+
+Restaurado
+
+------------------------------------------------------------------
+
+# QR Validation
+
+Criar estrutura.
+
+Cada documento possui:
+
+ID Público
+
+Hash
+
+Checksum
+
+Versão
+
+No MVP apenas gerar os dados.
+
+A validação pública será implementada futuramente.
+
+------------------------------------------------------------------
+
+# Signature Manager
+
+Preparar assinaturas.
+
+Tipos:
+
+Cliente
+
+Técnico
+
+Administrador
+
+Empresa
+
+Utilizar assinatura desenhada em Canvas.
+
+Salvar como imagem.
+
+Permitir múltiplas assinaturas.
+
+------------------------------------------------------------------
+
+# Auditoria
+
+Toda ação deverá gerar log.
+
+Eventos:
+
+Criado
+
+Editado
+
+Duplicado
+
+Gerado
+
+Exportado
+
+Impresso
+
+Assinado
+
+Arquivado
+
+Restaurado
+
+Excluir
+
+------------------------------------------------------------------
+
+# Templates Padrão
+
+Criar templates prontos.
+
+Ordem de Serviço Completa
+
+Ordem de Serviço Resumida
+
+Recibo de Entrada
+
+Recibo de Pagamento
+
+Recibo de Retirada
+
+Orçamento
+
+Garantia
+
+Comprovante
+
+Etiqueta
+
+Relatório Administrativo
+
+Todos utilizando dados mockados.
+
+------------------------------------------------------------------
+
+# Dados Mock
+
+Criar documentos consistentes.
+
+Gerar:
+
+40 Templates
+
+120 Documentos
+
+30 Assinaturas
+
+150 Eventos
+
+Tudo relacionado.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+# UX
+
+Interface Enterprise.
+
+Sidebar.
+
+Pesquisa.
+
+Filtros.
+
+Favoritos.
+
+Categorias.
+
+Preview em tempo real.
+
+Histórico lateral.
+
+Versionamento.
+
+Duplicação.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar modais reutilizáveis.
+
+------------------------------------------------------------------
+
+# Integração
+
+Consumir:
+
+Metadata Platform
+
+Core Platform
+
+Database Manager
+
+Storage Provider
+
+Configuration Service
+
+Audit Service
+
+Não consumir diretamente módulos de negócio.
+
+------------------------------------------------------------------
+
+Objetivo da Sprint
+
+Ao finalizar esta Sprint o ServiceForge deverá possuir um módulo completo de gerenciamento de documentos, preparado para atender todos os demais módulos da plataforma.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+Comunicação
+
+Workflow
+
+Event Bus
+
+Ordem de Serviço
+
+IA
+
+O foco desta Sprint é exclusivamente a plataforma de documentos.

@@ -1,0 +1,562 @@
+# ServiceForge — Sprint 7
+## Platform Stabilization, QA e Validação Completa
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO implementar novos módulos de negócio.
+
+NÃO iniciar Ordem de Serviço.
+
+NÃO iniciar Clientes.
+
+NÃO iniciar Financeiro.
+
+NÃO iniciar Estoque.
+
+O objetivo desta Sprint é estabilizar completamente a plataforma construída até agora.
+
+Esta Sprint é obrigatória antes do desenvolvimento dos módulos de negócio.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Executar uma revisão completa de todo o projeto.
+
+Validar funcionamento.
+
+Corrigir inconsistências.
+
+Eliminar código morto.
+
+Eliminar componentes duplicados.
+
+Melhorar UX.
+
+Garantir que toda a plataforma esteja consistente.
+
+------------------------------------------------------------------
+
+MÓDULOS A VALIDAR
+
+Core Platform
+
+Metadata Platform
+
+Document Platform
+
+Communication Platform
+
+Core Event Bus
+
+Workflow Engine
+
+Database Manager
+
+Configuration Service
+
+Audit Service
+
+Storage Providers
+
+Theme Provider
+
+Translation Provider
+
+Todos deverão ser revisados.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE TELAS
+
+Percorrer TODAS as telas existentes.
+
+Para cada tela verificar:
+
+Renderização
+
+Layout
+
+Responsividade
+
+Performance
+
+Consistência visual
+
+Breadcrumb
+
+Header
+
+Sidebar
+
+Footer
+
+Loading
+
+Empty State
+
+Error State
+
+Sem telas quebradas.
+
+Sem componentes desalinhados.
+
+Sem textos cortados.
+
+Sem overflow.
+
+Sem barras de rolagem desnecessárias.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE BOTÕES
+
+Todo botão deverá ser testado.
+
+Sem exceção.
+
+Verificar:
+
+Clique
+
+Estado desabilitado
+
+Loading
+
+Feedback visual
+
+Confirmação
+
+Permissões
+
+Ação executada
+
+Tratamento de erro
+
+Não poderá existir botão sem implementação.
+
+Caso a funcionalidade ainda não exista:
+
+Exibir claramente:
+
+"Funcionalidade disponível em uma próxima versão"
+
+Nunca deixar botões mortos.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE CRUD
+
+Todos os CRUDs existentes deverão ser testados.
+
+Criar
+
+Editar
+
+Duplicar
+
+Arquivar
+
+Excluir
+
+Pesquisar
+
+Filtrar
+
+Ordenar
+
+Paginar
+
+Cancelar
+
+Salvar
+
+Restaurar
+
+Todos funcionando corretamente.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS FORMULÁRIOS
+
+Todos os formulários deverão validar:
+
+Campos obrigatórios
+
+Tipos
+
+Máscaras
+
+Limites
+
+Mensagens
+
+Estados
+
+Botões
+
+Reset
+
+Cancelamento
+
+Sem validações inconsistentes.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DAS TABELAS
+
+Todas as tabelas deverão possuir:
+
+Pesquisa
+
+Filtros
+
+Ordenação
+
+Paginação
+
+Colunas
+
+Estados vazios
+
+Estados de erro
+
+Loading
+
+Exportação preparada
+
+Nenhuma tabela poderá possuir comportamento diferente das demais.
+
+Padronizar.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS MODAIS
+
+Revisar todos.
+
+Verificar:
+
+Abertura
+
+Fechamento
+
+ESC
+
+Clique externo
+
+Botões
+
+Scroll
+
+Responsividade
+
+Animações
+
+Foco
+
+Acessibilidade
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS MENUS
+
+Sidebar
+
+Header
+
+Menus contextuais
+
+Dropdowns
+
+Breadcrumb
+
+Todos os links deverão funcionar.
+
+Nenhum item poderá navegar para páginas inexistentes.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DAS ROTAS
+
+Validar todas as rotas.
+
+Rotas protegidas.
+
+Rotas inexistentes.
+
+404.
+
+Redirecionamentos.
+
+Navegação.
+
+Refresh.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS PROVIDERS
+
+Storage Provider
+
+Configuration Provider
+
+Theme Provider
+
+Translation Provider
+
+Database Provider
+
+Todos funcionando corretamente.
+
+Sem dependências circulares.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS EVENTOS
+
+Testar:
+
+Publicação
+
+Subscribers
+
+Workflow
+
+Histórico
+
+Auditoria
+
+Retry
+
+Erros
+
+Todos os eventos deverão gerar auditoria corretamente.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DOS DOCUMENTOS
+
+Revisar:
+
+Templates
+
+Versionamento
+
+Preview
+
+Designer
+
+Histórico
+
+QR
+
+Assinaturas
+
+Armazenamento
+
+Todos funcionando.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DAS COMUNICAÇÕES
+
+Templates
+
+Fila
+
+Histórico
+
+Agendamento
+
+Preferências
+
+Anexos
+
+Regras
+
+Todos funcionando utilizando dados mockados.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE RESPONSIVIDADE
+
+Desktop
+
+Notebook
+
+Tablet
+
+Mobile
+
+Sem componentes quebrados.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE ACESSIBILIDADE
+
+Labels
+
+ARIA
+
+Tab
+
+Foco
+
+Contraste
+
+Teclado
+
+Mensagens
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE PERFORMANCE
+
+Eliminar:
+
+Re-renderizações
+
+Código morto
+
+Componentes duplicados
+
+Imports desnecessários
+
+Estados duplicados
+
+Criar memoização onde necessário.
+
+------------------------------------------------------------------
+
+PADRONIZAÇÃO
+
+Padronizar:
+
+Cards
+
+Botões
+
+Inputs
+
+Tabelas
+
+Modais
+
+Ícones
+
+Tipografia
+
+Espaçamentos
+
+Cores
+
+Animações
+
+Feedbacks
+
+Todos os componentes deverão utilizar a mesma identidade visual.
+
+------------------------------------------------------------------
+
+REFATORAÇÃO
+
+Eliminar:
+
+TODO
+
+FIXME
+
+Código comentado
+
+Mocks duplicados
+
+Hooks duplicados
+
+Utilitários duplicados
+
+Componentes repetidos
+
+Funções mortas
+
+------------------------------------------------------------------
+
+TESTES FUNCIONAIS
+
+Executar uma validação completa da aplicação simulando um usuário.
+
+Navegar por todas as telas.
+
+Executar todas as ações.
+
+Registrar problemas encontrados.
+
+Corrigir automaticamente todos os problemas identificados.
+
+Reexecutar os testes até que nenhuma inconsistência permaneça.
+
+------------------------------------------------------------------
+
+RELATÓRIO FINAL
+
+Ao finalizar a Sprint gerar um relatório contendo:
+
+Quantidade de telas revisadas
+
+Quantidade de botões testados
+
+Quantidade de formulários revisados
+
+Quantidade de tabelas revisadas
+
+Quantidade de problemas encontrados
+
+Quantidade de problemas corrigidos
+
+Componentes refatorados
+
+Melhorias aplicadas
+
+Itens pendentes
+
+Riscos identificados
+
+Recomendações para a próxima Sprint
+
+------------------------------------------------------------------
+
+DEFINITION OF DONE
+
+Uma Sprint somente poderá ser considerada concluída quando:
+
+✓ Todas as telas renderizarem corretamente
+
+✓ Todos os botões estiverem implementados ou identificados como "Disponível em breve"
+
+✓ Todos os CRUDs estiverem funcionando
+
+✓ Todos os formulários forem validados
+
+✓ Todas as tabelas estiverem padronizadas
+
+✓ Todas as rotas funcionarem
+
+✓ Todos os menus navegarem corretamente
+
+✓ Todos os eventos forem auditados
+
+✓ Não existirem erros visuais
+
+✓ Não existirem erros de navegação
+
+✓ Não existirem erros de console
+
+✓ Não existirem componentes quebrados
+
+✓ O projeto estiver consistente para iniciar os módulos de negócio.
+
+IMPORTANTE
+
+Nenhuma nova funcionalidade deverá ser adicionada nesta Sprint.
+
+O foco é exclusivamente estabilidade, qualidade, padronização, refatoração e validação completa da plataforma.

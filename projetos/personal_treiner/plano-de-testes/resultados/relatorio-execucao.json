@@ -1,0 +1,181 @@
+{
+  "suite": "Roteiro de Automação E2E - Plataforma Rafaela Personal",
+  "executedAt": "2026-10-08T02:45:38.171Z",
+  "totalSteps": 15,
+  "passedSteps": 15,
+  "failedSteps": 0,
+  "successRate": "100%",
+  "durationSeconds": "34.9s",
+  "environment": {
+    "browser": "Microsoft Edge Headless (Chromium)",
+    "resolution": "1440x900",
+    "baseUrl": "http://127.0.0.1:4173"
+  },
+  "steps": [
+    {
+      "id": "STEP-01",
+      "title": "Tela de Login & Quick Login Master",
+      "category": "Autenticação",
+      "description": "Abertura da tela de login e seleção da credencial administrativa de Rafaela Silva.",
+      "filename": "screenshots/01-login-screen.png",
+      "timestamp": "23:45:06",
+      "status": "PASS",
+      "durationSeconds": "0.73s",
+      "validation": "Página /login acessada com seletor de quick login disponível."
+    },
+    {
+      "id": "STEP-02",
+      "title": "Dashboard Inicial do Personal Trainer",
+      "category": "Personal Trainer",
+      "description": "Validação dos indicadores de retenção, alunos ativos e menu lateral unificado.",
+      "filename": "screenshots/02-dashboard-personal.png",
+      "timestamp": "23:45:08",
+      "status": "PASS",
+      "durationSeconds": "0.80s",
+      "validation": "Dashboard carregado com métricas consolidadas."
+    },
+    {
+      "id": "STEP-03",
+      "title": "Modal de Cadastro de Personal Trainer",
+      "category": "Gestão de Personais",
+      "description": "Abertura do formulário de criação de personal com dados técnicos e CREF.",
+      "filename": "screenshots/03-modal-novo-personal.png",
+      "timestamp": "23:45:09",
+      "status": "PASS",
+      "durationSeconds": "0.91s",
+      "validation": "Modal de cadastro exibido com campos obrigatórios."
+    },
+    {
+      "id": "STEP-04",
+      "title": "Novo Personal Trainer Cadastrado e Listado",
+      "category": "Gestão de Personais",
+      "description": "Confirmação do novo personal trainer no grid com CREF e especialidades ativas.",
+      "filename": "screenshots/04-personal-cadastrado-sucesso.png",
+      "timestamp": "23:45:13",
+      "status": "PASS",
+      "durationSeconds": "0.85s",
+      "validation": "Personal \"Rodrigo Personal QA\" persistido e exibido no grid."
+    },
+    {
+      "id": "STEP-05",
+      "title": "Formulário de Cadastro do Aluno",
+      "category": "Gestão de Alunos",
+      "description": "Preenchimento de dados cadastrais, objetivos de hipertrofia e dias semanais.",
+      "filename": "screenshots/05-formulario-cadastro-aluno.png",
+      "timestamp": "23:45:14",
+      "status": "PASS",
+      "durationSeconds": "0.71s",
+      "validation": "Formulário validado com campos de contato e rotina preenchidos."
+    },
+    {
+      "id": "STEP-06",
+      "title": "Confirmação do Aluno na Listagem",
+      "category": "Gestão de Alunos",
+      "description": "Novo aluno Matheus Silva exibido com perfil ativo e dias de treino sincronizados.",
+      "filename": "screenshots/06-aluno-cadastrado-na-lista.png",
+      "timestamp": "23:45:15",
+      "status": "PASS",
+      "durationSeconds": "0.70s",
+      "validation": "Aluno cadastrado com sucesso (ID: user-1791427514624)."
+    },
+    {
+      "id": "STEP-07",
+      "title": "Ficha Geral e Perfil Técnico do Aluno",
+      "category": "Gestão de Alunos",
+      "description": "Visualização das métricas, dias de treino e atalhos de acompanhamento do aluno.",
+      "filename": "screenshots/07-perfil-aluno-detalhes.png",
+      "timestamp": "23:45:19",
+      "status": "PASS",
+      "durationSeconds": "0.69s",
+      "validation": "Perfil do aluno carregado com sucesso (ID: user-1791427514624)."
+    },
+    {
+      "id": "STEP-08",
+      "title": "Parametrização de Plano & Mensalidades",
+      "category": "Financeiro & Mensalidade",
+      "description": "Definição do plano trimestral, vencimento dia 10 e cálculo automático de parcelas.",
+      "filename": "screenshots/08-configuracao-mensalidade-modal.png",
+      "timestamp": "23:45:20",
+      "status": "PASS",
+      "durationSeconds": "0.78s",
+      "validation": "Modal financeiro com opções de plano e parcelamento."
+    },
+    {
+      "id": "STEP-09",
+      "title": "Prescrição Técnica no Construtor de Treinos",
+      "category": "Treinos & Exercícios",
+      "description": "Montagem da divisão de treinamento, séries, repetições, intervalos e foco muscular.",
+      "filename": "screenshots/09-construtor-treinos-prescricao.png",
+      "timestamp": "23:45:23",
+      "status": "PASS",
+      "durationSeconds": "0.72s",
+      "validation": "Construtor com rotina do aluno carregada e pronta para publicação."
+    },
+    {
+      "id": "STEP-10",
+      "title": "Plano Nutricional & Dieta Configurada",
+      "category": "Nutrição & Dietas",
+      "description": "Refeições prescritas com horários, quantidades e alternativas inteligentes.",
+      "filename": "screenshots/10-dieta-aluno-configurada.png",
+      "timestamp": "23:45:25",
+      "status": "PASS",
+      "durationSeconds": "0.68s",
+      "validation": "Plano alimentar salvo e visível no perfil do aluno."
+    },
+    {
+      "id": "STEP-11",
+      "title": "Portal do Aluno - Dashboard & Treino do Dia",
+      "category": "Portal do Aluno",
+      "description": "Acesso do aluno com streak de consistência, atalho para treino e nutrição.",
+      "filename": "screenshots/11-portal-aluno-dashboard.png",
+      "timestamp": "23:45:28",
+      "status": "PASS",
+      "durationSeconds": "0.74s",
+      "validation": "Área do aluno carregada com próximo treino agendado."
+    },
+    {
+      "id": "STEP-12",
+      "title": "Portal do Aluno - Visualização de Dieta & Refeições",
+      "category": "Portal do Aluno",
+      "description": "Visualização das refeições diárias e orientações alimentares pelo aluno.",
+      "filename": "screenshots/12-portal-aluno-nutricao.png",
+      "timestamp": "23:45:29",
+      "status": "PASS",
+      "durationSeconds": "0.75s",
+      "validation": "Guia de alimentação acessível pelo portal do aluno."
+    },
+    {
+      "id": "STEP-13",
+      "title": "Portal do Aluno - Treino Ativo com Séries",
+      "category": "Portal do Aluno",
+      "description": "Execução de séries, cronômetro de descanso e registro de cargas executadas.",
+      "filename": "screenshots/13-portal-aluno-treino-ativo.png",
+      "timestamp": "23:45:31",
+      "status": "PASS",
+      "durationSeconds": "0.88s",
+      "validation": "Treino interativo com série concluída e cronômetro disparado."
+    },
+    {
+      "id": "STEP-14",
+      "title": "Portal do Aluno - Gamificação & Ranking de Pontos",
+      "category": "Gamificação",
+      "description": "Pódio de alunos atualizado em tempo real com pontuação somada pelo treino finalizado.",
+      "filename": "screenshots/14-portal-aluno-ranking-pontos.png",
+      "timestamp": "23:45:35",
+      "status": "PASS",
+      "durationSeconds": "0.81s",
+      "validation": "Classificação geral dos alunos com pontos e sequência atualizada."
+    },
+    {
+      "id": "STEP-15",
+      "title": "Auditoria & Business Intelligence do Personal",
+      "category": "Relatórios & BI",
+      "description": "Gráficos de adesão dos alunos, faturamento acumulado e frequência semanal.",
+      "filename": "screenshots/15-relatorios-bi-auditoria.png",
+      "timestamp": "23:45:37",
+      "status": "PASS",
+      "durationSeconds": "0.80s",
+      "validation": "Relatórios consolidados com métricas de negócios e saúde de carteira."
+    }
+  ]
+}

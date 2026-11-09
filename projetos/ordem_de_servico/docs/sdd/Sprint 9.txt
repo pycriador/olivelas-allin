@@ -1,0 +1,682 @@
+# ServiceForge — Sprint 9
+## Ordem de Serviço — Core
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO alterar:
+
+Core Platform
+
+Metadata Platform
+
+Document Platform
+
+Communication Platform
+
+Workflow Engine
+
+Core Event Bus
+
+Master Data
+
+Todos deverão ser utilizados.
+
+Nenhuma regra deverá ser implementada fora da arquitetura existente.
+
+Toda funcionalidade deverá consumir os serviços da plataforma.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Implementar o núcleo da Ordem de Serviço.
+
+Esta Sprint será responsável apenas pela criação e gerenciamento da OS.
+
+Ainda NÃO implementar:
+
+Retornos
+
+Financeiro
+
+Estoque
+
+IA
+
+Workflow avançado
+
+Todos estes entrarão nas próximas Sprints.
+
+------------------------------------------------------------------
+
+MÓDULO
+
+Criar módulo:
+
+Service Orders
+
+Estrutura:
+
+Dashboard
+
+Listagem
+
+Detalhes
+
+Cadastro
+
+Timeline
+
+Anexos
+
+Histórico
+
+Comentários
+
+Impressão
+
+Documentos
+
+Eventos
+
+------------------------------------------------------------------
+
+CONCEITO
+
+A Ordem de Serviço será o agregador central da plataforma.
+
+Ela deverá relacionar:
+
+Empresa
+
+Cliente
+
+Aparelho
+
+Técnico
+
+Categoria
+
+Defeito
+
+Serviços
+
+Peças (estrutura)
+
+Garantia
+
+Documentos
+
+Comunicações
+
+Eventos
+
+Comentários
+
+Timeline
+
+Histórico
+
+Anexos
+
+Workflows
+
+Auditoria
+
+Nenhum dado deverá ficar duplicado.
+
+------------------------------------------------------------------
+
+NUMERAÇÃO
+
+Criar numeração configurável.
+
+Exemplos:
+
+1
+
+2
+
+3
+
+...
+
+ou
+
+2026-000001
+
+ou
+
+SF-000001
+
+Cada empresa poderá definir:
+
+Prefixo
+
+Sufixo
+
+Quantidade de dígitos
+
+Reinício anual
+
+Reinício mensal
+
+Sequência independente
+
+Toda configuração deverá utilizar o Metadata Platform.
+
+------------------------------------------------------------------
+
+STATUS
+
+Criar estrutura de status.
+
+Status padrão:
+
+Em Aberto
+
+Em Diagnóstico
+
+Aguardando Aprovação
+
+Aprovada
+
+Em Execução
+
+Aguardando Peça
+
+Pronta
+
+Aguardando Retirada
+
+Entregue
+
+Cancelada
+
+Todos deverão ser configuráveis.
+
+O Administrador Global poderá criar novos status.
+
+Cada empresa poderá personalizar seu fluxo.
+
+------------------------------------------------------------------
+
+CAMPOS
+
+A tela deverá utilizar o Metadata Platform.
+
+Não criar formulário hardcoded.
+
+Carregar dinamicamente.
+
+Campos mínimos:
+
+Número
+
+Empresa
+
+Cliente
+
+Aparelho
+
+Técnico
+
+Categoria
+
+Defeito
+
+Descrição
+
+Diagnóstico
+
+Observações
+
+Prioridade
+
+Status
+
+Garantia
+
+Data de Entrada
+
+Previsão
+
+Data de Entrega
+
+Valor Previsto
+
+Valor Final
+
+------------------------------------------------------------------
+
+LAYOUT
+
+Criar interface semelhante a um CRM moderno.
+
+Painel dividido.
+
+Esquerda:
+
+Informações principais.
+
+Centro:
+
+Timeline.
+
+Direita:
+
+Resumo.
+
+Eventos.
+
+Comentários.
+
+Documentos.
+
+Comunicações.
+
+Anexos.
+
+A interface deverá permanecer utilizável em Desktop, Tablet e Mobile.
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Criar timeline completa.
+
+Registrar automaticamente:
+
+OS criada
+
+Cliente alterado
+
+Aparelho alterado
+
+Status alterado
+
+Documento criado
+
+Mensagem enviada
+
+Comentário
+
+Anexo
+
+Alteração de técnico
+
+Atualização
+
+Toda alteração deverá aparecer na timeline.
+
+------------------------------------------------------------------
+
+COMENTÁRIOS
+
+Permitir comentários internos.
+
+Cada comentário possui:
+
+Autor
+
+Empresa
+
+Data
+
+Texto
+
+Anexos
+
+Menções (estrutura)
+
+Editar
+
+Excluir
+
+Histórico
+
+------------------------------------------------------------------
+
+ANEXOS
+
+Permitir anexar:
+
+Fotos
+
+PDF
+
+Vídeos
+
+Áudios
+
+Documentos
+
+Utilizar Document Platform.
+
+Criar preview.
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Integrar:
+
+Recibo
+
+OS
+
+Garantia
+
+Orçamento
+
+Comprovante
+
+Utilizar apenas Document Platform.
+
+Nenhum documento será gerado diretamente.
+
+------------------------------------------------------------------
+
+COMUNICAÇÃO
+
+Integrar:
+
+Communication Platform.
+
+Apenas solicitar envios.
+
+Não implementar envio direto.
+
+------------------------------------------------------------------
+
+WORKFLOW
+
+Toda alteração deverá publicar eventos.
+
+Exemplo:
+
+ServiceOrder.Created
+
+↓
+
+Event Bus
+
+↓
+
+Workflow
+
+↓
+
+Audit
+
+↓
+
+Timeline
+
+↓
+
+Document Platform
+
+↓
+
+Communication Platform
+
+------------------------------------------------------------------
+
+PAINEL DA OS
+
+Criar dashboard.
+
+Indicadores:
+
+Em Aberto
+
+Em Diagnóstico
+
+Aguardando Aprovação
+
+Aguardando Peças
+
+Prontas
+
+Entregues
+
+Canceladas
+
+Tempo Médio
+
+Tempo em Diagnóstico
+
+Tempo em Execução
+
+Todos utilizando dados mockados.
+
+------------------------------------------------------------------
+
+LISTAGEM
+
+Criar listagem completa.
+
+Pesquisa.
+
+Filtros.
+
+Status.
+
+Empresa.
+
+Cliente.
+
+Técnico.
+
+Categoria.
+
+Prioridade.
+
+Período.
+
+Ordenação.
+
+Paginação.
+
+Visualizações:
+
+Tabela
+
+Cards
+
+Kanban
+
+Timeline (estrutura)
+
+------------------------------------------------------------------
+
+VISÃO KANBAN
+
+Criar Kanban utilizando Status.
+
+Drag and Drop.
+
+Ao mover um cartão:
+
+Atualizar Status
+
+Publicar Evento
+
+Atualizar Timeline
+
+Criar Auditoria
+
+------------------------------------------------------------------
+
+FAVORITOS
+
+Permitir:
+
+Fixar OS.
+
+Criar etiquetas.
+
+Salvar pesquisas.
+
+Visualizações favoritas.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Toda alteração deverá registrar:
+
+Antes
+
+Depois
+
+Usuário
+
+Empresa
+
+IP (mock)
+
+Tempo
+
+Evento
+
+Origem
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+ServiceOrder.Created
+
+ServiceOrder.Updated
+
+ServiceOrder.StatusChanged
+
+ServiceOrder.Assigned
+
+ServiceOrder.CommentAdded
+
+ServiceOrder.AttachmentAdded
+
+ServiceOrder.DocumentGenerated
+
+Todos utilizando o Core Event Bus.
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+250 Ordens de Serviço
+
+1000 Eventos
+
+600 Comentários
+
+400 Documentos
+
+900 Alterações
+
+300 Anexos
+
+Todos consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+Utilizar nomes, equipamentos e defeitos realistas.
+
+------------------------------------------------------------------
+
+RESPONSIVIDADE
+
+Desktop
+
+Notebook
+
+Tablet
+
+Mobile
+
+A experiência deverá permanecer excelente em todos os dispositivos.
+
+------------------------------------------------------------------
+
+QUALIDADE
+
+Utilizar:
+
+Metadata Platform
+
+Document Platform
+
+Communication Platform
+
+Workflow
+
+Core Event Bus
+
+Audit Service
+
+Master Data
+
+Nenhuma duplicação de código.
+
+Nenhuma lógica dentro dos componentes.
+
+Separação completa entre:
+
+Domínio
+
+Aplicação
+
+Infraestrutura
+
+UI
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir um módulo completo de Ordem de Serviço capaz de:
+
+✓ Criar OS
+
+✓ Editar OS
+
+✓ Pesquisar OS
+
+✓ Gerenciar Status
+
+✓ Publicar Eventos
+
+✓ Gerar Auditoria
+
+✓ Atualizar Timeline
+
+✓ Integrar Documentos
+
+✓ Integrar Comunicação
+
+✓ Utilizar Metadata Platform
+
+✓ Utilizar Workflows
+
+✓ Utilizar Master Data
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Execução técnica detalhada
+• Controle de retornos
+• Garantias avançadas
+• Financeiro
+• Estoque
+• IA
+• Aprovação do cliente

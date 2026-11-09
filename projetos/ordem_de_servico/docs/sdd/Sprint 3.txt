@@ -1,0 +1,548 @@
+# ServiceForge — Sprint 3
+## Metadata Platform
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar a arquitetura criada nas sprints anteriores.
+
+NÃO substituir componentes existentes.
+
+Todo novo código deverá seguir exatamente os padrões arquiteturais já implementados.
+
+O objetivo desta Sprint é desenvolver o Metadata Platform, que será utilizado por todos os módulos do sistema.
+
+IMPORTANTE
+
+O Metadata Platform NÃO é um construtor de banco de dados.
+
+Ele é responsável pela configuração dinâmica da plataforma.
+
+Toda persistência continua utilizando apenas dados locais.
+
+Nenhum backend.
+
+Nenhuma integração externa.
+
+------------------------------------------------------------------
+
+## Objetivo
+
+Criar um módulo responsável por definir:
+
+• Formulários
+
+• Campos
+
+• Listagens
+
+• Dashboards
+
+• Templates
+
+• Configurações
+
+Todos os demais módulos deverão consumir essas definições.
+
+------------------------------------------------------------------
+
+## Estrutura
+
+Criar um novo módulo:
+
+Metadata Platform
+
+Submódulos:
+
+Entity Manager
+
+Field Manager
+
+Form Designer
+
+View Designer
+
+Dashboard Designer
+
+Configuration Center
+
+Template Registry
+
+Version Manager
+
+------------------------------------------------------------------
+
+# Entity Manager
+
+Criar uma tela para gerenciamento das entidades do sistema.
+
+Cada entidade possui:
+
+Nome
+
+Nome plural
+
+Descrição
+
+Ícone
+
+Categoria
+
+Status
+
+Auditável
+
+Possui Arquivos
+
+Possui Timeline
+
+Possui Comentários
+
+Possui Versionamento
+
+Empresa
+
+Versão
+
+Criado em
+
+Atualizado em
+
+Neste momento criar apenas as entidades padrão:
+
+Empresa
+
+Usuário
+
+Cliente
+
+Aparelho
+
+Técnico
+
+Peça
+
+Fornecedor
+
+Ordem de Serviço
+
+Pagamento
+
+Documento
+
+Comunicação
+
+Todas poderão ser editadas.
+
+------------------------------------------------------------------
+
+# Field Manager
+
+Cada entidade poderá possuir campos.
+
+Campos suportados:
+
+Texto
+
+Texto Longo
+
+Número
+
+Moeda
+
+Boolean
+
+Data
+
+Hora
+
+DataHora
+
+CPF
+
+CNPJ
+
+Telefone
+
+Email
+
+URL
+
+Imagem
+
+Arquivo
+
+Cor
+
+Assinatura
+
+Lookup
+
+Lista
+
+MultiLista
+
+Status
+
+JSON
+
+Markdown
+
+Rich Text
+
+Relacionamento
+
+Cada campo deverá possuir propriedades como:
+
+Nome
+
+Label
+
+Tipo
+
+Obrigatório
+
+Visível
+
+Editável
+
+Pesquisável
+
+Único
+
+Valor padrão
+
+Placeholder
+
+Tooltip
+
+Máscara
+
+Regex
+
+Validação
+
+Grupo
+
+Ordem
+
+Largura
+
+Empresa
+
+Versão
+
+------------------------------------------------------------------
+
+# Form Designer
+
+Criar um editor visual.
+
+Não utilizar código.
+
+Permitir:
+
+Abas
+
+Cards
+
+Seções
+
+Accordion
+
+Grid
+
+Colunas
+
+Separadores
+
+Os campos serão posicionados através de drag-and-drop.
+
+Cada formulário poderá possuir:
+
+Layout Desktop
+
+Layout Tablet
+
+Layout Mobile
+
+Pré-visualização
+
+Duplicação
+
+Versionamento
+
+Publicação
+
+------------------------------------------------------------------
+
+# View Designer
+
+Criar um construtor das listagens.
+
+Permitir configurar:
+
+Colunas
+
+Ordem
+
+Filtros
+
+Pesquisa
+
+Paginação
+
+Ordenação
+
+Exportação
+
+Ações
+
+Visualizações:
+
+Tabela
+
+Cards
+
+Kanban
+
+Timeline
+
+Calendário
+
+Lista
+
+------------------------------------------------------------------
+
+# Dashboard Designer
+
+Criar um editor visual.
+
+Widgets disponíveis:
+
+Indicador
+
+Tabela
+
+Lista
+
+Gráfico
+
+Linha
+
+Barra
+
+Pizza
+
+Gauge
+
+Timeline
+
+Calendário
+
+Cards
+
+Todos utilizando dados mockados.
+
+------------------------------------------------------------------
+
+# Configuration Center
+
+Centralizar configurações dos metadados.
+
+Categorias:
+
+Campos
+
+Formulários
+
+Views
+
+Dashboards
+
+Templates
+
+Versionamento
+
+Publicação
+
+------------------------------------------------------------------
+
+# Template Registry
+
+Criar uma biblioteca.
+
+Registrar:
+
+Templates de Formulários
+
+Templates de Views
+
+Templates de Dashboards
+
+Templates de Documentos (estrutura)
+
+Cada template poderá ser:
+
+Global
+
+Empresa
+
+Personalizado
+
+------------------------------------------------------------------
+
+# Herança
+
+Toda configuração deverá funcionar em níveis.
+
+Global
+
+↓
+
+Empresa
+
+↓
+
+Usuário
+
+O sistema deverá resolver automaticamente a configuração efetiva.
+
+Exemplo:
+
+Campo obrigatório global.
+
+Empresa torna opcional.
+
+Usuário apenas altera posição visual.
+
+------------------------------------------------------------------
+
+# Versionamento
+
+Toda configuração deverá possuir:
+
+Versão
+
+Rascunho
+
+Publicado
+
+Arquivado
+
+Duplicado
+
+Comparação
+
+Histórico
+
+Nunca sobrescrever versões.
+
+------------------------------------------------------------------
+
+# Publicação
+
+Fluxo:
+
+Rascunho
+
+↓
+
+Validação
+
+↓
+
+Publicação
+
+↓
+
+Versão Ativa
+
+Apenas Administradores Globais podem publicar modelos globais.
+
+Administradores de Empresa podem publicar modelos próprios.
+
+------------------------------------------------------------------
+
+# Pesquisa
+
+Criar pesquisa global.
+
+Pesquisar:
+
+Entidades
+
+Campos
+
+Formulários
+
+Templates
+
+Views
+
+Dashboards
+
+------------------------------------------------------------------
+
+# Seeds
+
+Criar dados consistentes.
+
+Gerar:
+
+15 entidades
+
+200 campos
+
+25 formulários
+
+20 views
+
+15 dashboards
+
+40 templates
+
+Todos relacionados entre si.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+# UX
+
+Todas as telas deverão possuir:
+
+Pesquisa
+
+Filtros
+
+Paginação
+
+Ordenação
+
+Modal para exclusão
+
+Preview
+
+Duplicação
+
+Versionamento
+
+Histórico
+
+Layout Enterprise.
+
+------------------------------------------------------------------
+
+# Objetivo desta Sprint
+
+Ao finalizar esta Sprint o sistema deverá possuir um Metadata Platform completo, capaz de gerenciar entidades, campos, formulários, listagens, dashboards e templates, servindo como base para os módulos de Documentos, Comunicação e Ordem de Serviço.
+
+IMPORTANTE
+
+Ainda NÃO implementar geração de documentos.
+
+Ainda NÃO implementar workflows.
+
+Ainda NÃO implementar Event Bus.
+
+O foco desta Sprint é apenas a configuração dinâmica da plataforma.

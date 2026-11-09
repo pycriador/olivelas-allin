@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agendar Consulta — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/landing.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-header-link">
+        <img src="../assets/images/logo.png" alt="Logo Dra. Marta" class="brand-logo-img">
+        <div class="brand-text-block">
+          <span class="brand-name-title">Dra. Marta Gelsi Dias</span>
+          <div class="brand-subrow">
+            <span class="brand-dentista-text">Dentista</span>
+            <span class="brand-cro-inline">• CRO 71482</span>
+          </div>
+        </div>
+      </a>
+      <nav class="site-nav">
+        <a href="../index.html" class="site-nav-link">Início</a>
+        <a href="servicos.html" class="site-nav-link">Tratamentos</a>
+        <a href="contato.html" class="site-nav-link">Contato</a>
+      </nav>
+      <div class="header-actions flex items-center gap-3">
+        <a href="../login.html" class="btn btn-ghost btn-sm header-btn-login">Área administrativa</a>
+        <a href="https://wa.me/5511995770004" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-sm header-btn-agendar">
+          WhatsApp
+        </a>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menu lateral">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container container-narrow">
+      <div class="breadcrumb">
+        <a href="../index.html">Início</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="text-primary">Agendar Consulta</span>
+      </div>
+
+      <div class="card" style="padding: var(--space-8); margin-top: var(--space-4);">
+        <div class="flex items-center justify-between flex-wrap gap-2" style="margin-bottom: var(--space-6);">
+          <div>
+            <span class="section-tag">Agendamento Online</span>
+            <h1 style="font-size: var(--font-size-2xl); margin-top: var(--space-1);">Reserve seu Horário</h1>
+          </div>
+          <span class="demo-banner">Mockup de Agendamento</span>
+        </div>
+
+        <!-- Wizard Steps Indicator -->
+        <div class="wizard-steps" id="wizard-steps">
+          <div class="wizard-step-item active" data-step="1">
+            <div class="wizard-step-circle">1</div>
+            <span class="wizard-step-label">Atendimento</span>
+          </div>
+          <div class="wizard-step-item" data-step="2">
+            <div class="wizard-step-circle">2</div>
+            <span class="wizard-step-label">Data</span>
+          </div>
+          <div class="wizard-step-item" data-step="3">
+            <div class="wizard-step-circle">3</div>
+            <span class="wizard-step-label">Horário</span>
+          </div>
+          <div class="wizard-step-item" data-step="4">
+            <div class="wizard-step-circle">4</div>
+            <span class="wizard-step-label">Seus Dados</span>
+          </div>
+          <div class="wizard-step-item" data-step="5">
+            <div class="wizard-step-circle">5</div>
+            <span class="wizard-step-label">Confirmação</span>
+          </div>
+        </div>
+
+        <!-- ETAPA 1: Escolha o Atendimento -->
+        <section class="wizard-section" id="step-1-content">
+          <h3 style="margin-bottom: var(--space-4);">1. Escolha o tipo de atendimento:</h3>
+          <div class="selectable-grid" id="service-options">
+            <div class="selectable-card selected" data-value="Avaliação Odontológica">
+              <strong style="color: var(--color-primary-dark); font-size: var(--font-size-md);">Avaliação</strong>
+              <span class="text-xs text-muted" style="margin-top: 4px;">Diagnóstico inicial e planejamento</span>
+              <span class="badge badge-neutral" style="margin-top: auto; width: fit-content;">30 min</span>
+            </div>
+            <div class="selectable-card" data-value="Limpeza Dental">
+              <strong style="color: var(--color-primary-dark); font-size: var(--font-size-md);">Limpeza Dental</strong>
+              <span class="text-xs text-muted" style="margin-top: 4px;">Profilaxia e higiene completa</span>
+              <span class="badge badge-neutral" style="margin-top: auto; width: fit-content;">45 min</span>
+            </div>
+            <div class="selectable-card" data-value="Aparelho Ortodôntico">
+              <strong style="color: var(--color-primary-dark); font-size: var(--font-size-md);">Aparelho</strong>
+              <span class="text-xs text-muted" style="margin-top: 4px;">Alinhamento e correção dentária</span>
+              <span class="badge badge-neutral" style="margin-top: auto; width: fit-content;">60 min</span>
+            </div>
+            <div class="selectable-card" data-value="Implante Dentário">
+              <strong style="color: var(--color-primary-dark); font-size: var(--font-size-md);">Implante</strong>
+              <span class="text-xs text-muted" style="margin-top: 4px;">Avaliação para implante dentário</span>
+              <span class="badge badge-neutral" style="margin-top: auto; width: fit-content;">90 min</span>
+            </div>
+            <div class="selectable-card" data-value="Clínica Geral">
+              <strong style="color: var(--color-primary-dark); font-size: var(--font-size-md);">Clínica Geral</strong>
+              <span class="text-xs text-muted" style="margin-top: 4px;">Restaurações e cuidados gerais</span>
+              <span class="badge badge-neutral" style="margin-top: auto; width: fit-content;">45 min</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-primary" id="btn-next-1">Avançar para Data</button>
+          </div>
+        </section>
+
+        <!-- ETAPA 2: Escolha a Data -->
+        <section class="wizard-section" id="step-2-content" style="display: none;">
+          <h3 style="margin-bottom: var(--space-4);">2. Escolha a data desejada:</h3>
+          <div class="form-group" style="max-width: 320px;">
+            <label class="form-label form-label-required" for="appointment-date">Data da consulta</label>
+            <input type="date" id="appointment-date" class="form-input" min="2026-09-22" value="2026-09-23">
+            <span class="form-hint">Atendimento de Segunda a Sábado</span>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-prev-2">Voltar</button>
+            <button type="button" class="btn btn-primary" id="btn-next-2">Avançar para Horário</button>
+          </div>
+        </section>
+
+        <!-- ETAPA 3: Escolha o Horário -->
+        <section class="wizard-section" id="step-3-content" style="display: none;">
+          <h3 style="margin-bottom: var(--space-2);">3. Escolha o melhor horário:</h3>
+          <p class="text-sm text-muted" style="margin-bottom: var(--space-4);">Horários disponíveis para a data selecionada com a Dra. Marta Gelsi Dias:</p>
+          <div class="time-slots-grid" id="time-slots-container">
+            <button type="button" class="time-slot-btn" data-time="08:30">08:30</button>
+            <button type="button" class="time-slot-btn selected" data-time="09:30">09:30</button>
+            <button type="button" class="time-slot-btn" data-time="10:30">10:30</button>
+            <button type="button" class="time-slot-btn" data-time="11:30">11:30</button>
+            <button type="button" class="time-slot-btn" data-time="14:00">14:00</button>
+            <button type="button" class="time-slot-btn" data-time="15:00">15:00</button>
+            <button type="button" class="time-slot-btn" data-time="16:00">16:00</button>
+            <button type="button" class="time-slot-btn" data-time="17:00">17:00</button>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-prev-3">Voltar</button>
+            <button type="button" class="btn btn-primary" id="btn-next-3">Avançar para Seus Dados</button>
+          </div>
+        </section>
+
+        <!-- ETAPA 4: Dados do Paciente -->
+        <section class="wizard-section" id="step-4-content" style="display: none;">
+          <h3 style="margin-bottom: var(--space-4);">4. Informe seus dados para contato:</h3>
+          <form id="public-patient-form">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="patient-name">Nome Completo</label>
+              <input type="text" id="patient-name" class="form-input" placeholder="Ex: Maria Aparecida da Silva" required>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label form-label-required" for="patient-phone">WhatsApp / Telefone</label>
+                <input type="tel" id="patient-phone" class="form-input" placeholder="(11) 90000-0000" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label form-label-required" for="patient-email">E-mail</label>
+                <input type="email" id="patient-email" class="form-input" placeholder="seuemail@exemplo.com" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-notes">Observações ou queixas principais (opcional)</label>
+              <textarea id="patient-notes" class="form-textarea" rows="2" placeholder="Ex: Dor leve no dente posterior, interesse em clareamento..."></textarea>
+            </div>
+          </form>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-prev-4">Voltar</button>
+            <button type="button" class="btn btn-primary" id="btn-next-4">Revisar e Confirmar</button>
+          </div>
+        </section>
+
+        <!-- ETAPA 5: Confirmação -->
+        <section class="wizard-section" id="step-5-content" style="display: none;">
+          <h3 style="margin-bottom: var(--space-4);">5. Confirmação do Agendamento</h3>
+          
+          <div class="card" style="padding: var(--space-6); background-color: #f8fafc; border-color: var(--color-border); margin-bottom: var(--space-6);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase;">Procedimento</span>
+                <p class="text-bold text-primary" id="summary-service">Avaliação Odontológica</p>
+              </div>
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase;">Profissional</span>
+                <p class="text-bold">Dra. Marta Gelsi Dias</p>
+              </div>
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase;">Data</span>
+                <p class="text-bold" id="summary-date">23/09/2026</p>
+              </div>
+              <div>
+                <span class="text-xs text-muted" style="text-transform: uppercase;">Horário</span>
+                <p class="text-bold" id="summary-time">09:30</p>
+              </div>
+              <div style="grid-column: span 2;">
+                <span class="text-xs text-muted" style="text-transform: uppercase;">Paciente</span>
+                <p class="text-bold" id="summary-patient">—</p>
+                <p class="text-xs text-muted" id="summary-contact">—</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="btn-prev-5">Voltar e Ajustar</button>
+            <button type="button" class="btn btn-primary btn-lg" id="btn-confirm-appointment">Confirmar Agendamento</button>
+          </div>
+        </section>
+
+        <!-- SUCESSO: Agendamento Concluído -->
+        <section class="wizard-section" id="step-success-content" style="display: none; text-align: center; padding: var(--space-8) 0;">
+          <div style="width: 64px; height: 64px; border-radius: 50%; background-color: var(--color-success-light); color: var(--color-success); display: inline-flex; align-items: center; justify-content: center; margin-bottom: var(--space-4);">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+          </div>
+          <h2 style="font-size: var(--font-size-2xl); color: var(--color-text); margin-bottom: var(--space-2);">Agendamento Realizado com Sucesso!</h2>
+          <p class="text-secondary" style="max-width: 480px; margin: 0 auto var(--space-6);">
+            Sua solicitação foi registrada no sistema. Nossa equipe entrará em contato via WhatsApp para confirmar os detalhes.
+          </p>
+
+          <div style="max-width: 400px; margin: 0 auto; text-align: left;">
+            <div class="timeline">
+              <div class="timeline-item">
+                <span class="timeline-title">Agendamento criado</span>
+                <span class="timeline-desc">Salvo na base de agendamentos</span>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-title">Horário reservado</span>
+                <span class="timeline-desc">Bloqueado na agenda da Dra. Marta</span>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-title">Evento preparado para Google Calendar</span>
+                <span class="timeline-desc">Sincronização mock registrada</span>
+              </div>
+              <div class="timeline-item">
+                <span class="timeline-title">Mensagem de confirmação preparada</span>
+                <span class="timeline-desc">Pronta para envio via WhatsApp</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex justify-center gap-4 flex-wrap" style="margin-top: var(--space-8);">
+            <a href="../index.html" class="btn btn-outline">Voltar ao Início</a>
+            <a href="https://wa.me/5511995770004" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+              Conversar no WhatsApp
+            </a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2026 Dra. Marta Gelsi Dias — Odontologia. Todos os direitos reservados.</span>
+        <span class="demo-banner">Mockup de Plataforma Odontológica</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    // Lógica do Wizard de Agendamento Público
+    let currentStep = 1;
+    let selectedService = "Avaliação Odontológica";
+    let selectedDate = "2026-09-23";
+    let selectedTime = "09:30";
+
+    function setStep(step) {
+      currentStep = step;
+      document.querySelectorAll(".wizard-step-item").forEach(el => {
+        const s = parseInt(el.getAttribute("data-step"));
+        if (s === step) el.className = "wizard-step-item active";
+        else if (s < step) el.className = "wizard-step-item completed";
+        else el.className = "wizard-step-item";
+      });
+
+      document.querySelectorAll(".wizard-section").forEach(sec => sec.style.display = "none");
+      const currentSec = document.getElementById(`step-${step}-content`);
+      if (currentSec) currentSec.style.display = "block";
+      window.scrollTo({ top: 120, behavior: "smooth" });
+    }
+
+    // Povoar serviços do Supabase se disponíveis
+    async function loadPublicServices() {
+      const services = await DatabaseService.services.getAll();
+      const srvGrid = document.querySelector(".service-selection-grid") || document.getElementById("service-options");
+      if (services && services.length > 0 && srvGrid) {
+        srvGrid.innerHTML = services.map((s, i) => `
+          <div class="selectable-card ${i === 0 ? 'selected' : ''}" data-value="${s.name}">
+            <div class="text-bold">${s.name}</div>
+            <div class="text-xs text-muted" style="margin-top: 2px;">${s.duration || '30 min'} • ${s.price || 'Consultar'}</div>
+          </div>
+        `).join("");
+
+        srvGrid.querySelectorAll(".selectable-card").forEach(card => {
+          card.onclick = () => {
+            srvGrid.querySelectorAll(".selectable-card").forEach(c => c.classList.remove("selected"));
+            card.classList.add("selected");
+            selectedService = card.getAttribute("data-value");
+          };
+        });
+      }
+    }
+    loadPublicServices();
+
+    // Seleção de serviço inicial estática caso exista
+    document.querySelectorAll("#service-options .selectable-card").forEach(card => {
+      card.addEventListener("click", () => {
+        document.querySelectorAll("#service-options .selectable-card").forEach(c => c.classList.remove("selected"));
+        card.classList.add("selected");
+        selectedService = card.getAttribute("data-value");
+      });
+    });
+
+    // Seleção de horário
+    document.querySelectorAll("#time-slots-container .time-slot-btn, .time-slot-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".time-slot-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedTime = btn.getAttribute("data-time");
+      });
+    });
+
+    document.getElementById("btn-next-1").onclick = () => setStep(2);
+    document.getElementById("btn-prev-2").onclick = () => setStep(1);
+    document.getElementById("btn-next-2").onclick = () => setStep(3);
+
+    // Seleção de datas e horários
+    document.querySelectorAll(".date-pill").forEach(pill => {
+      pill.onclick = () => {
+        document.querySelectorAll(".date-pill").forEach(p => p.classList.remove("selected"));
+        pill.classList.add("selected");
+        selectedDate = pill.getAttribute("data-date");
+      };
+    });
+
+    document.querySelectorAll(".time-slot-btn").forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll(".time-slot-btn").forEach(b => b.classList.remove("selected"));
+        btn.classList.add("selected");
+        selectedTime = btn.getAttribute("data-time");
+      };
+    });
+
+    document.getElementById("btn-prev-3").onclick = () => setStep(2);
+    document.getElementById("btn-next-3").onclick = () => setStep(4);
+    document.getElementById("btn-prev-4").onclick = () => setStep(3);
+
+    document.getElementById("btn-next-4").onclick = () => {
+      const name = document.getElementById("patient-name").value.trim();
+      const phone = document.getElementById("patient-phone").value.trim();
+      const email = document.getElementById("patient-email").value.trim();
+
+      if (!name || !phone || !email) {
+        Toast.warning("Preencha seu nome, telefone e e-mail para prosseguir.");
+        return;
+      }
+
+      // Atualizar Resumo
+      document.getElementById("summary-service").innerText = selectedService;
+      document.getElementById("summary-date").innerText = Navigation.formatDate(selectedDate);
+      document.getElementById("summary-time").innerText = selectedTime;
+      document.getElementById("summary-patient").innerText = name;
+      document.getElementById("summary-contact").innerText = `${phone} • ${email}`;
+
+      setStep(5);
+    };
+    document.getElementById("btn-prev-5").onclick = () => setStep(4);
+
+    // Confirmação final e gravação no Supabase
+    document.getElementById("btn-confirm-appointment").onclick = async () => {
+      const confirmBtn = document.getElementById("btn-confirm-appointment");
+      confirmBtn.disabled = true;
+      confirmBtn.innerHTML = `<span class="spinner spinner-sm"></span> Registrando no Supabase...`;
+
+      const name = document.getElementById("patient-name").value.trim();
+      const phone = document.getElementById("patient-phone").value.trim();
+      const email = document.getElementById("patient-email").value.trim();
+      const notes = document.getElementById("patient-notes").value.trim();
+
+      try {
+        // 1. Cadastra ou localiza paciente no Supabase
+        const patientRes = await DatabaseService.patients.save({
+          name,
+          phone,
+          email,
+          status: "active",
+          notes: "Cadastrado via formulário de agendamento do site"
+        });
+
+        const patientId = patientRes.patient?.id || "PAT-WEB";
+
+        // 2. Cria agendamento no Supabase
+        const newAppointment = {
+          patientId,
+          patientName: name,
+          service: selectedService,
+          professional: "Dra. Marta Gelsi Dias",
+          date: selectedDate,
+          time: selectedTime,
+          duration: "45 min",
+          status: "Pendente",
+          origin: "Site",
+          notes: notes || "Agendado pelo site público"
+        };
+
+        await DatabaseService.appointments.save(newAppointment);
+
+        Toast.success("Agendamento gravado com sucesso no Supabase!");
+        document.querySelectorAll(".wizard-section").forEach(s => s.style.display = "none");
+        document.getElementById("wizard-steps").style.display = "none";
+        document.getElementById("step-success-content").style.display = "block";
+      } catch (err) {
+        console.error("Erro no agendamento:", err);
+        Toast.error("Erro ao registrar no Supabase. Tente novamente.");
+        confirmBtn.disabled = false;
+        confirmBtn.innerText = "Confirmar Agendamento";
+      }
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contato & Localização — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/landing.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-header-link">
+        <img src="../assets/images/logo.png" alt="Logo Dra. Marta" class="brand-logo-img">
+        <div class="brand-text-block">
+          <span class="brand-name-title">Dra. Marta Gelsi Dias</span>
+          <div class="brand-subrow">
+            <span class="brand-dentista-text">Dentista</span>
+            <span class="brand-cro-inline">• CRO 71482</span>
+          </div>
+        </div>
+      </a>
+      <nav class="site-nav" id="site-nav">
+        <a href="../index.html" class="site-nav-link">Início</a>
+        <a href="servicos.html" class="site-nav-link">Tratamentos</a>
+        <a href="aparelho-ortodontico.html" class="site-nav-link">Aparelhos</a>
+        <a href="clinica-geral.html" class="site-nav-link">Clínica Geral</a>
+        <a href="limpeza.html" class="site-nav-link">Limpeza</a>
+        <a href="implantes.html" class="site-nav-link">Implantes</a>
+        <a href="contato.html" class="site-nav-link text-primary text-bold">Contato</a>
+      </nav>
+      <div class="header-actions flex items-center gap-3">
+        <a href="../login.html" class="btn btn-ghost btn-sm header-btn-login">Área administrativa</a>
+        <a href="agendar.html" class="btn btn-primary btn-sm header-btn-agendar">Agendar consulta</a>
+        <button type="button" class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Abrir menu lateral">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container container-narrow">
+      <div class="breadcrumb">
+        <a href="../index.html">Início</a>
+        <span class="breadcrumb-separator">/</span>
+        <span class="text-primary">Contato</span>
+      </div>
+
+      <div class="section-header" style="text-align: left; margin-bottom: var(--space-8);">
+        <span class="section-tag">Canais Oficiais</span>
+        <h1 class="section-title">Entre em Contato</h1>
+        <p class="section-description">
+          O WhatsApp é o nosso canal prioritário para agendamentos rápidos, confirmações de consulta e orientações.
+        </p>
+      </div>
+
+      <div class="card" style="padding: var(--space-8); margin-bottom: var(--space-8);">
+        <div class="flex items-center justify-between flex-wrap gap-4" style="margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: 1px solid var(--color-border);">
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">Canal Principal</span>
+            <h3 style="margin-top: 2px;">WhatsApp Oficial</h3>
+            <p class="text-primary text-lg text-bold" style="margin-top: 4px;">(11) 99577-0004</p>
+          </div>
+          <a href="https://wa.me/5511995770004" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp btn-lg">
+            Iniciar Conversa no WhatsApp
+          </a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6);">
+          <div>
+            <h4 style="font-size: var(--font-size-sm); color: var(--color-text-muted); text-transform: uppercase; margin-bottom: var(--space-1);">Localização</h4>
+            <p class="text-secondary">São Paulo - SP</p>
+            <span class="text-xs text-muted">Atendimento mediante agendamento prévio com hora marcada</span>
+          </div>
+
+          <div>
+            <h4 style="font-size: var(--font-size-sm); color: var(--color-text-muted); text-transform: uppercase; margin-bottom: var(--space-1);">Registro Profissional (CRO)</h4>
+            <p class="text-bold text-burgundy">CRO 71482</p>
+            <span class="text-xs text-muted">Dra. Marta Gelsi Dias • Cirurgiã-Dentista</span>
+          </div>
+
+          <div>
+            <h4 style="font-size: var(--font-size-sm); color: var(--color-text-muted); text-transform: uppercase; margin-bottom: var(--space-1);">Convênios Odontológicos</h4>
+            <span class="convenio-pill">✓ Atendemos convênios</span>
+            <p class="text-xs text-muted" style="margin-top: 4px;">Consulte a cobertura do seu plano via WhatsApp</p>
+          </div>
+
+          <div>
+            <h4 style="font-size: var(--font-size-sm); color: var(--color-text-muted); text-transform: uppercase; margin-bottom: var(--space-1);">Horário de Atendimento</h4>
+            <div id="contact-hours-container" class="text-secondary"><!-- CONTACT_HOURS --><div><strong>Segunda a Sexta:</strong> 08:00 às 18:00</div><div><strong>Sábado:</strong> 08:00 às 12:00</div><div><strong>Domingo:</strong> Fechado</div><!-- /CONTACT_HOURS --></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="padding: var(--space-8); text-align: center; background-color: #f8fafc;">
+        <h3>Prefere agendar online?</h3>
+        <p class="text-muted" style="margin-top: var(--space-2); margin-bottom: var(--space-6);">
+          Escolha o serviço, a data e o horário ideal através do nosso fluxo de agendamento online.
+        </p>
+        <a href="agendar.html" class="btn btn-primary btn-lg">Iniciar Agendamento Online</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span>© 2026 Dra. Marta Gelsi Dias — Odontologia. Todos os direitos reservados.</span>
+        <span class="demo-banner">Mockup de Plataforma Odontológica</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/landing-sync.js"></script>
+  <script>UIComponents.addFloatingWhatsApp();</script>
+</body>
+</html>

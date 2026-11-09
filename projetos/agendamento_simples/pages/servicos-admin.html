@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Serviços Odontológicos — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Catálogo de Serviços</h1>
+          <p class="text-sm text-muted">Gerenciamento dos procedimentos e tempos de atendimento da clínica.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-new-service">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Novo Serviço
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Serviço</th>
+                <th>Categoria</th>
+                <th>Duração</th>
+                <th>Preço</th>
+                <th>Status</th>
+                <th class="text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="services-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Criar / Editar Serviço -->
+  <div class="modal-backdrop" id="service-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="service-modal-title">Novo Serviço</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="service-form">
+        <div class="modal-body">
+          <input type="hidden" id="service-form-id">
+
+          <div class="form-group">
+            <label class="form-label form-label-required" for="service-form-name">Nome do Procedimento</label>
+            <input type="text" id="service-form-name" class="form-input" required placeholder="Ex: Avaliação Odontológica">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="service-form-category">Categoria</label>
+              <select id="service-form-category" class="form-select" required>
+                <option value="Ortodontia">Ortodontia</option>
+                <option value="Clínica Geral">Clínica Geral</option>
+                <option value="Prevenção">Prevenção</option>
+                <option value="Implantodontia">Implantodontia</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="service-form-duration">Duração</label>
+              <select id="service-form-duration" class="form-select" required>
+                <option value="20 min">20 min</option>
+                <option value="30 min">30 min</option>
+                <option value="45 min">45 min</option>
+                <option value="60 min">60 min</option>
+                <option value="90 min">90 min</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="service-form-price">Preço / Valor</label>
+              <input type="text" id="service-form-price" class="form-input" value="Consultar" placeholder="Consultar">
+              <span class="form-hint">Conforme regra: padrão "Consultar"</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="service-form-status">Status</label>
+              <select id="service-form-status" class="form-select">
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="service-form-description">Descrição Técnica</label>
+            <textarea id="service-form-description" class="form-textarea" rows="3" placeholder="Detalhes do procedimento..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Serviço</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("servicos", "");
+    UIComponents.renderAdminTopbar("Serviços", "Configurações Clínicas");
+
+    async function renderServices() {
+      const services = await DatabaseService.services.getAll();
+      const tbody = document.getElementById("services-tbody");
+
+      if (services.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6">${UIComponents.renderEmptyState("Nenhum serviço cadastrado", "Cadastre um novo serviço para exibir na recepção.")}</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = services.map(s => `
+        <tr>
+          <td>
+            <div class="text-bold">${s.name}</div>
+            <span class="text-xs text-muted">${s.description || "—"}</span>
+          </td>
+          <td><span class="badge badge-neutral">${s.category}</span></td>
+          <td>${s.duration}</td>
+          <td><strong class="text-primary">${s.price || "Consultar"}</strong></td>
+          <td>${UIComponents.renderStatusBadge(s.status === 'active' ? 'Ativo' : 'Inativo')}</td>
+          <td class="text-right">
+            <div class="flex justify-end gap-1">
+              <button type="button" class="btn btn-ghost btn-sm btn-edit-srv" data-id="${s.id}" title="Editar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm btn-toggle-srv" data-id="${s.id}" title="Alternar Ativo/Inativo">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm btn-delete-srv" data-id="${s.id}" data-name="${s.name}" title="Excluir" style="color: var(--color-danger);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      // Bind edição
+      tbody.querySelectorAll(".btn-edit-srv").forEach(btn => {
+        btn.onclick = () => openEditService(btn.getAttribute("data-id"));
+      });
+
+      // Bind alternar status no Supabase
+      tbody.querySelectorAll(".btn-toggle-srv").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-id");
+          const list = await DatabaseService.services.getAll();
+          const s = list.find(x => x.id === id);
+          if (s) {
+            s.status = s.status === "active" ? "inactive" : "active";
+            await DatabaseService.services.save(s);
+            Toast.info(`Status do serviço alterado para ${s.status === 'active' ? 'Ativo' : 'Inativo'} no Supabase.`);
+            await renderServices();
+          }
+        };
+      });
+
+      // Bind exclusão no Supabase
+      tbody.querySelectorAll(".btn-delete-srv").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-id");
+          const name = btn.getAttribute("data-name");
+          Modal.confirm({
+            title: "Excluir serviço?",
+            message: `Deseja remover permanentemente o serviço "${name}" (${id}) do Supabase?`,
+            confirmText: "Sim, excluir",
+            cancelText: "Cancelar",
+            danger: true,
+            onConfirm: async () => {
+              await DatabaseService.services.delete(id);
+              Toast.success("Serviço excluído do Supabase com sucesso.");
+              await renderServices();
+            }
+          });
+        };
+      });
+    }
+
+    const modalEl = document.getElementById("service-modal");
+    const formEl = document.getElementById("service-form");
+
+    document.getElementById("btn-new-service").onclick = () => {
+      formEl.reset();
+      document.getElementById("service-form-id").value = "";
+      document.getElementById("service-modal-title").innerText = "Novo Serviço";
+      document.getElementById("service-form-price").value = "Consultar";
+      Modal.open(modalEl);
+    };
+
+    async function openEditService(id) {
+      const services = await DatabaseService.services.getAll();
+      const s = services.find(x => x.id === id);
+      if (!s) return;
+      document.getElementById("service-form-id").value = s.id;
+      document.getElementById("service-modal-title").innerText = `Editar Serviço (${s.name})`;
+      document.getElementById("service-form-name").value = s.name;
+      document.getElementById("service-form-category").value = s.category;
+      document.getElementById("service-form-duration").value = s.duration;
+      document.getElementById("service-form-price").value = s.price || "Consultar";
+      document.getElementById("service-form-status").value = s.status || "active";
+      document.getElementById("service-form-description").value = s.description || "";
+      Modal.open(modalEl);
+    }
+
+    // Salvar serviço no Supabase
+    formEl.onsubmit = async (e) => {
+      e.preventDefault();
+      const submitBtn = formEl.querySelector("button[type='submit']");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner spinner-sm"></span> Salvando no Supabase...`;
+
+      const id = document.getElementById("service-form-id").value;
+      const data = {
+        id: id || undefined,
+        name: document.getElementById("service-form-name").value.trim(),
+        category: document.getElementById("service-form-category").value,
+        duration: document.getElementById("service-form-duration").value,
+        price: document.getElementById("service-form-price").value.trim() || "Consultar",
+        status: document.getElementById("service-form-status").value,
+        description: document.getElementById("service-form-description").value.trim()
+      };
+
+      try {
+        await DatabaseService.services.save(data);
+        Modal.close(modalEl);
+        Toast.success("Serviço salvo com sucesso no Supabase!");
+        await renderServices();
+      } catch (err) {
+        console.error(err);
+        Toast.error("Erro ao salvar serviço no Supabase.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Salvar Serviço";
+      }
+    };
+
+    renderServices();
+  </script>
+</body>
+</html>

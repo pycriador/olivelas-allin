@@ -1,0 +1,816 @@
+# ServiceForge — Sprint 26
+## Service Order Module — Customer Management (Clientes, Endereços, Contatos e Histórico)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+NÃO alterar a arquitetura da plataforma.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Public Portal
+
+• Workflow Engine
+
+• Core Event Bus
+
+Todo o módulo deverá consumir os serviços já existentes.
+
+Nunca duplicar lógica.
+
+Nunca criar CRUDs isolados.
+
+Todos os formulários deverão utilizar Metadata Platform.
+
+Toda auditoria deverá utilizar Audit Center.
+
+Toda comunicação deverá utilizar Communication Platform.
+
+Todos os documentos deverão utilizar Document Platform.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Implementar o módulo completo de Gestão de Clientes.
+
+Este módulo será responsável por todo o cadastro de clientes da plataforma.
+
+Os clientes poderão ser compartilhados entre empresas através do Administrador Global.
+
+Toda Ordem de Serviço utilizará obrigatoriamente este cadastro.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Service Order Module
+
+↓
+
+Customer Management
+
+Estrutura:
+
+Dashboard
+
+Clientes
+
+Endereços
+
+Contatos
+
+Documentos
+
+Observações
+
+Histórico
+
+Timeline
+
+Equipamentos
+
+Ordens de Serviço
+
+Garantias
+
+Comunicações
+
+Anexos
+
+Relacionamentos
+
+Importação
+
+Exportação
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Criar painel.
+
+Mostrar:
+
+Total de Clientes
+
+Clientes Ativos
+
+Clientes Inativos
+
+Clientes Novos
+
+Clientes por Empresa
+
+Clientes Compartilhados
+
+Clientes com Garantia
+
+Clientes com Retorno
+
+Clientes com OS em Aberto
+
+Últimos Cadastros
+
+Últimas Alterações
+
+------------------------------------------------------------------
+
+TIPOS DE CLIENTE
+
+Preparar arquitetura.
+
+Pessoa Física
+
+Pessoa Jurídica
+
+Todos utilizando a mesma entidade.
+
+------------------------------------------------------------------
+
+CADASTRO
+
+Criar CRUD completo.
+
+Campos mínimos:
+
+Nome
+
+Nome Fantasia (PJ)
+
+Razão Social
+
+CPF
+
+CNPJ
+
+RG (estrutura)
+
+Inscrição Estadual (estrutura)
+
+Inscrição Municipal (estrutura)
+
+Data de Nascimento
+
+Email Principal
+
+Email Secundário
+
+Telefone
+
+Celular
+
+WhatsApp
+
+Site
+
+Profissão (estrutura)
+
+Empresa
+
+Status
+
+Observações
+
+Tags
+
+Origem
+
+Responsável pelo Cadastro
+
+------------------------------------------------------------------
+
+VALIDAÇÕES
+
+Validar:
+
+CPF
+
+CNPJ
+
+Email
+
+Telefone
+
+WhatsApp
+
+Duplicidade
+
+Campos obrigatórios
+
+Máscaras
+
+Todos utilizando Metadata Platform.
+
+------------------------------------------------------------------
+
+ENDEREÇOS
+
+Permitir múltiplos.
+
+Tipos:
+
+Residencial
+
+Comercial
+
+Entrega
+
+Cobrança
+
+Outro
+
+Campos:
+
+CEP
+
+Logradouro
+
+Número
+
+Complemento
+
+Bairro
+
+Cidade
+
+Estado
+
+País
+
+Principal
+
+------------------------------------------------------------------
+
+CONTATOS
+
+Permitir múltiplos.
+
+Campos:
+
+Nome
+
+Cargo
+
+Telefone
+
+Celular
+
+WhatsApp
+
+Email
+
+Observações
+
+Principal
+
+------------------------------------------------------------------
+
+ANEXOS
+
+Permitir anexar:
+
+Documentos
+
+Contratos
+
+Fotos
+
+Comprovantes
+
+PDF
+
+Todos utilizando Document Platform.
+
+------------------------------------------------------------------
+
+OBSERVAÇÕES
+
+Criar histórico.
+
+Registrar:
+
+Data
+
+Usuário
+
+Texto
+
+Categoria
+
+Privada
+
+Pública
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Mostrar automaticamente:
+
+Cadastro
+
+Alterações
+
+Ordens de Serviço
+
+Garantias
+
+Retornos
+
+Comunicações
+
+Documentos
+
+Uploads
+
+Downloads
+
+Compartilhamentos
+
+Eventos
+
+------------------------------------------------------------------
+
+HISTÓRICO
+
+Exibir:
+
+Ordens de Serviço
+
+Equipamentos
+
+Pagamentos
+
+Garantias
+
+Retornos
+
+Documentos
+
+Relatórios
+
+Comunicações
+
+Auditorias
+
+Tudo em uma única timeline.
+
+------------------------------------------------------------------
+
+COMPARTILHAMENTO
+
+Administrador Global poderá:
+
+Compartilhar cliente entre empresas
+
+Remover vínculo
+
+Criar vínculo em lote
+
+Migrar clientes entre empresas
+
+Duplicar clientes
+
+Mesclar clientes duplicados
+
+Registrar auditoria completa.
+
+------------------------------------------------------------------
+
+IMPORTAÇÃO
+
+Permitir importar:
+
+CSV
+
+Excel
+
+JSON
+
+Consumindo Data Platform.
+
+Validar:
+
+Duplicidades
+
+CPF
+
+CNPJ
+
+Emails
+
+Relacionamentos
+
+Gerar relatório da importação.
+
+------------------------------------------------------------------
+
+EXPORTAÇÃO
+
+Permitir exportar:
+
+Excel
+
+CSV
+
+JSON
+
+PDF
+
+Consumindo Reporting & BI Platform.
+
+------------------------------------------------------------------
+
+PESQUISA
+
+Criar pesquisa global.
+
+Pesquisar por:
+
+Nome
+
+CPF
+
+CNPJ
+
+Telefone
+
+WhatsApp
+
+Email
+
+Cidade
+
+Empresa
+
+Equipamento
+
+Número da OS
+
+Tags
+
+------------------------------------------------------------------
+
+FILTROS
+
+Status
+
+Empresa
+
+Cidade
+
+Estado
+
+Pessoa Física
+
+Pessoa Jurídica
+
+Clientes Compartilhados
+
+Clientes com Garantia
+
+Clientes com Retorno
+
+Clientes sem OS
+
+Clientes Ativos
+
+Clientes Inativos
+
+------------------------------------------------------------------
+
+ORDENS DE SERVIÇO
+
+Exibir listagem.
+
+Mostrar:
+
+Número
+
+Data
+
+Status
+
+Equipamento
+
+Valor
+
+Garantia
+
+Técnico
+
+Empresa
+
+Permitir abrir diretamente a Ordem de Serviço.
+
+------------------------------------------------------------------
+
+EQUIPAMENTOS
+
+Exibir todos os equipamentos do cliente.
+
+Mostrar:
+
+Tipo
+
+Marca
+
+Modelo
+
+Número de Série
+
+Status
+
+Garantia
+
+Última OS
+
+Quantidade de Reparos
+
+Preparar integração com Sprint 27.
+
+------------------------------------------------------------------
+
+COMUNICAÇÕES
+
+Mostrar histórico.
+
+Email
+
+WhatsApp
+
+SMS (estrutura)
+
+Telegram (estrutura)
+
+Notificações
+
+Tudo consumindo Communication Platform.
+
+------------------------------------------------------------------
+
+PERMISSÕES
+
+Administrador Global
+
+Administrador Empresa
+
+Editor
+
+Visualizador
+
+Respeitar integralmente o RBAC da plataforma.
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Customer.Created
+
+Customer.Updated
+
+Customer.Deleted
+
+Customer.Shared
+
+Customer.Merged
+
+Customer.Imported
+
+Customer.Exported
+
+Customer.LinkedToCompany
+
+Customer.UnlinkedFromCompany
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+AUTOMAÇÕES
+
+Criar exemplos.
+
+Novo Cliente
+
+↓
+
+Criar Timeline
+
+↓
+
+Registrar Auditoria
+
+↓
+
+Publicar Evento
+
+↓
+
+Atualizar Dashboard
+
+↓
+
+Enviar Comunicação de Boas-vindas (estrutura)
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Cadastro
+
+Alteração
+
+Exclusão
+
+Importação
+
+Exportação
+
+Compartilhamento
+
+Mesclagem
+
+Migração
+
+Visualização
+
+Downloads
+
+Uploads
+
+Sempre registrando:
+
+Usuário
+
+Empresa
+
+Data
+
+Hora
+
+IP
+
+Resultado
+
+------------------------------------------------------------------
+
+DADOS DE DEMONSTRAÇÃO
+
+Integrar ao Demo Environment Manager.
+
+Gerar automaticamente:
+
+100 Clientes (Pequena)
+
+600 Clientes (Média)
+
+15.000 Clientes (Grande)
+
+Todos deverão possuir:
+
+Dados completos
+
+Endereços
+
+Contatos
+
+Histórico
+
+Comunicações
+
+Equipamentos vinculáveis
+
+Nenhum dado poderá utilizar Lorem Ipsum ou informações aleatórias inconsistentes.
+
+Utilizar nomes brasileiros, cidades reais, telefones em formato nacional e documentos de demonstração válidos para testes.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Lista em Grid.
+
+Cards.
+
+Visualização em tabela.
+
+Visualização em cartões.
+
+Pesquisa instantânea.
+
+Filtros avançados.
+
+Favoritos.
+
+Colunas configuráveis.
+
+Ordenação.
+
+Paginação.
+
+Persistência de preferências do usuário.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar apenas componentes padrão da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todos os CRUDs
+
+Todos os botões
+
+Pesquisa
+
+Filtros
+
+Importação
+
+Exportação
+
+Compartilhamento
+
+Migração entre empresas
+
+Mesclagem
+
+RBAC
+
+Auditoria
+
+Timeline
+
+Eventos
+
+Responsividade
+
+Acessibilidade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir um módulo corporativo de Gestão de Clientes totalmente integrado à plataforma, permitindo o cadastro, compartilhamento entre empresas, histórico completo, auditoria, importação, exportação e integração com todos os demais módulos.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Cadastro de Equipamentos (Sprint 27)
+
+• Ordem de Serviço (Sprint 28)
+
+• Diagnóstico Técnico (Sprint 29)
+
+Toda a arquitetura deverá permanecer preparada para essas próximas Sprints sem necessidade de refatoração estrutural.

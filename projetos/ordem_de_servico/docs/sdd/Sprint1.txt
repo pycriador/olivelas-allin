@@ -1,0 +1,364 @@
+# ServiceForge — Sprint 1
+## Foundation Platform (Arquitetura Base)
+
+Vamos iniciar um novo projeto chamado **ServiceForge**.
+
+O objetivo é construir uma plataforma SaaS moderna para gestão de Assistências Técnicas, utilizando arquitetura modular e preparada para crescimento.
+
+IMPORTANTE:
+
+Neste momento NÃO utilizar Lovable Cloud.
+
+NÃO utilizar Supabase do Lovable.
+
+Toda persistência deverá funcionar localmente através de uma camada de abstração.
+
+O objetivo desta sprint é construir apenas a fundação da plataforma.
+
+------------------------------------------------------------------
+
+## Stack
+
+Utilizar:
+
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- TanStack Router
+- TanStack Query
+- React Hook Form
+- Zod
+- Zustand
+
+Não utilizar Next.js.
+
+------------------------------------------------------------------
+
+## Arquitetura
+
+Organizar o projeto por módulos.
+
+Exemplo:
+
+/src
+
+/core
+/components
+/modules
+/services
+/repositories
+/providers
+/hooks
+/lib
+/utils
+/layouts
+/types
+
+Cada módulo deverá possuir isolamento de responsabilidades.
+
+------------------------------------------------------------------
+
+## Persistência
+
+NÃO utilizar LocalStorage diretamente dentro dos componentes.
+
+Criar uma camada de persistência.
+
+Exemplo:
+
+StorageProvider
+
+com interface semelhante a:
+
+create()
+
+update()
+
+delete()
+
+find()
+
+findAll()
+
+count()
+
+clear()
+
+transaction()
+
+No MVP criar apenas um provider chamado:
+
+LocalStorageProvider
+
+Toda a aplicação deve consumir apenas a interface.
+
+Nunca acessar LocalStorage diretamente.
+
+No futuro existirão:
+
+SupabaseProvider
+
+PostgreSQLProvider
+
+MariaDBProvider
+
+SQLiteProvider
+
+Todos implementando exatamente a mesma interface.
+
+------------------------------------------------------------------
+
+## Database Manager
+
+Criar um módulo chamado:
+
+Database Manager
+
+Responsável por:
+
+- listar conexões
+- conexão ativa
+- criar conexão
+- editar conexão
+- excluir conexão
+- testar conexão
+
+Neste MVP todas as conexões serão mockadas.
+
+Tipos suportados:
+
+• Local Storage
+• Supabase
+• PostgreSQL
+• MariaDB
+• SQLite
+
+Ainda não conectar em nenhum banco.
+
+Apenas preparar toda a arquitetura.
+
+------------------------------------------------------------------
+
+## Sistema de Configuração
+
+Criar um Configuration Service.
+
+Ele será responsável por:
+
+- configurações globais
+- tema
+- idioma
+- banco ativo
+- preferências
+
+Tudo armazenado através do Storage Provider.
+
+------------------------------------------------------------------
+
+## Autenticação
+
+Criar autenticação totalmente mockada.
+
+Usuário padrão:
+
+Administrador Global
+
+com login automático.
+
+Não criar tela de login definitiva.
+
+Somente um MockAuthProvider.
+
+No futuro será substituído.
+
+------------------------------------------------------------------
+
+## Multiempresa
+
+Criar apenas a estrutura.
+
+Empresa
+
+Logo
+
+Nome
+
+CNPJ
+
+Telefone
+
+Endereço
+
+Sem backend.
+
+Dados mockados.
+
+Caso exista mais de uma empresa, apresentar tela de seleção.
+
+------------------------------------------------------------------
+
+## Tema
+
+Implementar:
+
+Dark
+
+Light
+
+System
+
+Preparar Theme Provider.
+
+------------------------------------------------------------------
+
+## Idiomas
+
+Preparar internacionalização.
+
+PT-BR
+
+EN
+
+ES
+
+Todo texto deverá utilizar arquivos de tradução.
+
+Nunca textos fixos dentro dos componentes.
+
+------------------------------------------------------------------
+
+## Layout
+
+Criar um layout Enterprise.
+
+Sidebar recolhível.
+
+Header.
+
+Área central.
+
+Breadcrumb.
+
+Footer.
+
+Responsivo.
+
+Inspirado em:
+
+Linear
+
+Notion
+
+Stripe
+
+Vercel
+
+Não copiar nenhuma interface.
+
+Apenas utilizar como referência de qualidade.
+
+------------------------------------------------------------------
+
+## Dashboard
+
+Criar dashboard temporário.
+
+Mostrar:
+
+Nome da empresa
+
+Usuário logado
+
+Banco ativo
+
+Provider ativo
+
+Quantidade de módulos carregados
+
+Versão do sistema
+
+------------------------------------------------------------------
+
+## Módulos
+
+Preparar estrutura para:
+
+Core Platform
+
+Metadata Platform
+
+Documentos
+
+Comunicação
+
+Cadastros
+
+Ordem de Serviço
+
+Financeiro
+
+Estoque
+
+Administração
+
+Todos apenas como placeholders.
+
+Sem implementação.
+
+------------------------------------------------------------------
+
+## Qualidade
+
+Todo código deverá utilizar:
+
+TypeScript Strict
+
+Componentes reutilizáveis
+
+Hooks reutilizáveis
+
+Sem código duplicado.
+
+Separação clara entre:
+
+UI
+
+Domínio
+
+Persistência
+
+Configuração
+
+------------------------------------------------------------------
+
+## Objetivo desta Sprint
+
+Ao finalizar esta sprint o sistema deverá possuir:
+
+✔ Arquitetura pronta
+
+✔ Layout completo
+
+✔ Navegação
+
+✔ Providers
+
+✔ Persistência desacoplada
+
+✔ Sistema de configurações
+
+✔ Multiempresa mockada
+
+✔ Database Manager
+
+✔ Dashboard inicial
+
+✔ Estrutura preparada para os próximos módulos
+
+IMPORTANTE
+
+Esta sprint NÃO deve implementar nenhuma funcionalidade de Ordem de Serviço.
+
+Todo o foco deve estar na construção de uma base extremamente sólida, escalável e desacoplada para suportar a evolução das próximas sprints.

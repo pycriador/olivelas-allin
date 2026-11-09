@@ -1,0 +1,654 @@
+# ServiceForge — Sprint 10
+## Ordem de Serviço — Execução Técnica
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO alterar:
+
+• Core Platform
+• Metadata Platform
+• Document Platform
+• Communication Platform
+• Core Event Bus
+• Workflow Engine
+• Master Data
+
+Todo o desenvolvimento deverá utilizar os serviços já existentes.
+
+Nenhuma lógica de negócio poderá ser implementada diretamente na interface.
+
+Toda alteração deverá publicar eventos.
+
+Toda alteração deverá gerar auditoria.
+
+Toda alteração deverá atualizar a Timeline.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Expandir o módulo de Ordem de Serviço.
+
+Implementar toda a operação técnica da assistência.
+
+Esta Sprint será responsável pelo ciclo operacional do reparo.
+
+Ainda NÃO implementar:
+
+• Financeiro completo
+
+• Estoque completo
+
+• IA
+
+• Integrações externas
+
+------------------------------------------------------------------
+
+MÓDULOS
+
+Implementar:
+
+Diagnóstico
+
+Execução Técnica
+
+Checklist
+
+Timeline Avançada
+
+Retornos
+
+Garantias
+
+Controle de Tempo
+
+Histórico Técnico
+
+Fotos
+
+Anexos
+
+------------------------------------------------------------------
+
+WORKSPACE DA ORDEM DE SERVIÇO
+
+Transformar definitivamente a OS em um Workspace.
+
+Criar abas:
+
+Resumo
+
+Diagnóstico
+
+Execução
+
+Serviços
+
+Peças
+
+Retornos
+
+Garantia
+
+Timeline
+
+Comentários
+
+Documentos
+
+Comunicações
+
+Anexos
+
+Auditoria
+
+Eventos
+
+Cada aba deverá carregar sob demanda (lazy loading).
+
+------------------------------------------------------------------
+
+DIAGNÓSTICO
+
+Criar módulo específico.
+
+Campos:
+
+Defeito informado pelo cliente
+
+Defeito encontrado
+
+Causa
+
+Solução proposta
+
+Complexidade
+
+Prioridade
+
+Risco
+
+Observações
+
+Valor estimado
+
+Tempo estimado
+
+Fotos
+
+Arquivos
+
+Assinatura do técnico
+
+Permitir múltiplas revisões.
+
+Nunca sobrescrever versões.
+
+------------------------------------------------------------------
+
+CHECKLIST
+
+Criar checklist configurável.
+
+Exemplos:
+
+☐ Equipamento liga
+
+☐ Tela funcionando
+
+☐ Áudio funcionando
+
+☐ Carregador recebido
+
+☐ Controle remoto recebido
+
+☐ Tampa íntegra
+
+☐ Sem oxidação
+
+☐ Sem riscos
+
+Cada empresa poderá criar seus próprios checklists.
+
+Consumir Metadata Platform.
+
+------------------------------------------------------------------
+
+EXECUÇÃO TÉCNICA
+
+Registrar todas as atividades.
+
+Cada atividade possui:
+
+Nome
+
+Descrição
+
+Responsável
+
+Data
+
+Hora
+
+Tempo gasto
+
+Status
+
+Observações
+
+Anexos
+
+Fotos
+
+Comentários
+
+Permitir:
+
+Criar
+
+Editar
+
+Duplicar
+
+Cancelar
+
+Concluir
+
+Cada alteração deverá gerar eventos.
+
+------------------------------------------------------------------
+
+CONTROLE DE TEMPO
+
+Registrar:
+
+Hora início
+
+Hora pausa
+
+Hora retorno
+
+Hora conclusão
+
+Tempo total
+
+Tempo produtivo
+
+Tempo parado
+
+Tempo aguardando peças
+
+Gerar indicadores posteriormente.
+
+------------------------------------------------------------------
+
+SERVIÇOS EXECUTADOS
+
+Adicionar serviços na OS.
+
+Cada serviço possui:
+
+Descrição
+
+Categoria
+
+Quantidade
+
+Valor sugerido
+
+Valor aplicado
+
+Garantia
+
+Tempo
+
+Responsável
+
+Observações
+
+Consumir Master Data.
+
+------------------------------------------------------------------
+
+PEÇAS UTILIZADAS
+
+Criar estrutura.
+
+Ainda sem controle de estoque.
+
+Campos:
+
+Peça
+
+Quantidade
+
+Valor de custo
+
+Valor aplicado
+
+Fornecedor
+
+Observações
+
+Preparar integração futura com Estoque.
+
+------------------------------------------------------------------
+
+RETORNOS
+
+Criar estrutura completa.
+
+Uma Ordem de Serviço poderá possuir retornos ilimitados.
+
+Cada retorno possui:
+
+Número
+
+Data
+
+Motivo
+
+Defeito relatado
+
+Diagnóstico
+
+Solução
+
+Garantia aplicada
+
+Cobrado
+
+Responsável
+
+Data de entrega
+
+Fotos
+
+Documentos
+
+Timeline
+
+Comentários
+
+Nunca limitar quantidade.
+
+------------------------------------------------------------------
+
+GARANTIAS
+
+Criar gerenciamento.
+
+Campos:
+
+Tipo
+
+Dias
+
+Data início
+
+Data fim
+
+Cobertura
+
+Observações
+
+Status
+
+Relacionar aos serviços executados.
+
+------------------------------------------------------------------
+
+FOTOS
+
+Criar galeria.
+
+Categorias:
+
+Entrada
+
+Diagnóstico
+
+Execução
+
+Saída
+
+Retorno
+
+Garantia
+
+Permitir:
+
+Upload múltiplo
+
+Visualização
+
+Zoom
+
+Legenda
+
+Ordem
+
+Favoritos
+
+Preview
+
+------------------------------------------------------------------
+
+ANEXOS
+
+Organizar por categorias.
+
+PDF
+
+Imagem
+
+Vídeo
+
+Áudio
+
+Documento
+
+Laudo
+
+Garantia
+
+Todos integrados ao Document Platform.
+
+------------------------------------------------------------------
+
+TIMELINE AVANÇADA
+
+Registrar automaticamente:
+
+Entrada
+
+Diagnóstico
+
+Mudança de técnico
+
+Serviço executado
+
+Peça adicionada
+
+Comentário
+
+Documento
+
+Mensagem
+
+Garantia
+
+Retorno
+
+Entrega
+
+Cancelar
+
+Reabrir
+
+Permitir filtros.
+
+------------------------------------------------------------------
+
+PAINEL DO TÉCNICO
+
+Criar dashboard.
+
+Mostrar:
+
+OS atribuídas
+
+Em execução
+
+Aguardando peça
+
+Concluídas hoje
+
+Tempo médio
+
+Retornos
+
+Pendências
+
+Agenda (estrutura)
+
+------------------------------------------------------------------
+
+HISTÓRICO DO APARELHO
+
+Criar timeline específica.
+
+Mostrar:
+
+Todas as OS
+
+Todos os retornos
+
+Todos os defeitos
+
+Todos os serviços
+
+Todas as garantias
+
+Todas as peças utilizadas
+
+Toda a vida útil do equipamento.
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Diagnostic.Created
+
+Diagnostic.Updated
+
+Checklist.Completed
+
+Execution.Started
+
+Execution.Paused
+
+Execution.Resumed
+
+Execution.Completed
+
+Service.Added
+
+Part.Added
+
+Warranty.Created
+
+Return.Created
+
+Timeline.Created
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Diagnóstico concluído
+
+↓
+
+Publicar Evento
+
+↓
+
+Atualizar Timeline
+
+↓
+
+Criar Auditoria
+
+↓
+
+Notificar responsável (estrutura)
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Preparar geração de:
+
+Laudo Técnico
+
+Checklist
+
+Garantia
+
+Relatório Técnico
+
+Todos utilizando Document Platform.
+
+------------------------------------------------------------------
+
+COMUNICAÇÃO
+
+Preparar:
+
+Aviso de diagnóstico concluído
+
+Aviso aguardando aprovação
+
+Aviso aguardando peça
+
+Aviso equipamento pronto
+
+Todos utilizando Communication Platform.
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+500 diagnósticos
+
+1.500 atividades técnicas
+
+2.000 eventos
+
+800 checklists
+
+600 retornos
+
+1.000 serviços executados
+
+1.500 fotos
+
+800 garantias
+
+Todos consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todas as abas
+
+Todos os botões
+
+Todos os CRUDs
+
+Todos os filtros
+
+Todas as pesquisas
+
+Todos os uploads
+
+Timeline
+
+Eventos
+
+Auditoria
+
+Comentários
+
+Histórico
+
+Responsividade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+Nenhuma funcionalidade poderá permanecer parcialmente implementada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint o ServiceForge deverá possuir um módulo completo de execução técnica da Ordem de Serviço, permitindo acompanhar toda a vida útil do atendimento, desde o diagnóstico até os retornos em garantia, totalmente integrado ao Core Platform, Metadata Platform, Document Platform, Communication Platform, Workflow Engine e Core Event Bus.

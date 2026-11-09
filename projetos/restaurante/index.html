@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>Olivelas - Gestão de Restaurantes & KDS</title>
+    <meta name="description" content="Gerencie mesas, cardápio, pedidos, cozinha e equipe em um único sistema, criado para funcionar tanto online quanto offline." />
+    
+    <!-- Theme & Color Scheme -->
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#1b4332" />
+    
+    <!-- Icons & Favicon -->
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+
+    <!-- Script to prevent Flash of Unstyled Content (FOUC) and decode GitHub Pages SPA redirect -->
+    <script>
+      (function() {
+        // Theme initialization
+        try {
+          var stored = localStorage.getItem('olivelas_theme');
+          var isDark = stored === 'dark' || (!stored && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (isDark) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+
+        // GitHub Pages SPA path decoding
+        (function(l) {
+          if (l.search[1] === '/' ) {
+            var decoded = l.search.slice(1).split('&').map(function(s) { 
+              return s.replace(/~and~/g, '&') 
+            }).join('?');
+            window.history.replaceState(null, null,
+                l.pathname.slice(0, -1) + decoded + l.hash
+            );
+          }
+        }(window.location))
+      })();
+    </script>
+  </head>
+  <body class="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
+    <div id="root"></div>
+    <script type="module" src="./src/main.tsx"></script>
+  </body>
+</html>

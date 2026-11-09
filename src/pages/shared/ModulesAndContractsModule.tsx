@@ -60,12 +60,18 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         subtitle="Gerencie preços, categorias, limites de utilização, dependências técnicas e versões dos módulos contratáveis."
         scopeBadge={t('scope.global')}
         actions={
-          hasPermission('modules', 'create') && (
-            <Link to="/app/global/modulos/novo" className="btn btn-primary btn-sm">
-              <Plus size={14} />
-              Cadastrar Módulo Comercial
+          <div className="flex items-center gap-2">
+            <Link to="/app/global/ecossistema" className="btn btn-secondary btn-sm">
+              <Package size={14} />
+              16 Plataformas Olivelas (Schemas Supabase)
             </Link>
-          )
+            {hasPermission('modules', 'create') && (
+              <Link to="/app/global/modulos/novo" className="btn btn-primary btn-sm">
+                <Plus size={14} />
+                Cadastrar Módulo Comercial
+              </Link>
+            )}
+          </div>
         }
       />
 
@@ -675,6 +681,12 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         title={`Catálogo & Assinaturas Modulares — ${company.tradeName}`}
         subtitle="Contrate novos módulos sob demanda ou gerencie os módulos atualmente ativos no ambiente da sua empresa."
         scopeBadge={company.tradeName}
+        actions={
+          <Link to={`/app/empresa/${company.id}/ecossistema`} className="btn btn-primary btn-sm">
+            <Package size={14} />
+            Abrir 16 Plataformas Olivelas (Supabase)
+          </Link>
+        }
       />
 
       <div

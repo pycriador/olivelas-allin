@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 154 44% 25%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 150 14% 94%;
+    --secondary-foreground: 154 44% 18%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 150 14% 92%;
+    --accent-foreground: 154 44% 18%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
+    --ring: 154 44% 25%;
+    --radius: 0.5rem;
+    color-scheme: light;
+  }
+
+  .dark {
+    --background: 222 20% 7%;
+    --foreground: 210 20% 98%;
+    --card: 222 20% 9.5%;
+    --card-foreground: 210 20% 98%;
+    --popover: 222 20% 9.5%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 151 55% 45%;
+    --primary-foreground: 222 25% 6%;
+    --secondary: 222 15% 15%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 222 14% 13%;
+    --muted-foreground: 217 10% 64%;
+    --accent: 222 14% 16%;
+    --accent-foreground: 210 20% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+    --border: 222 14% 17%;
+    --input: 222 14% 17%;
+    --ring: 151 55% 45%;
+    color-scheme: dark;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary;
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.25);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.45);
+}
+
+/* ==============================================================================
+   RESPONSIVE TABLE TO MOBILE CARDS PATTERN (from ui-mobile.md)
+   ============================================================================== */
+.responsive-table-shell {
+  width: 100%;
+  min-width: 0;
+}
+
+.mobile-table-sort {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-table-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid hsl(var(--border));
+    background: hsl(var(--card));
+  }
+
+  .responsive-mobile-cards {
+    display: block;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .responsive-mobile-cards thead {
+    display: none;
+  }
+
+  .responsive-mobile-cards tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    padding: 0.5rem;
+  }
+
+  .responsive-mobile-cards tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    min-width: 0;
+    padding: 0.75rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.625rem;
+    background: hsl(var(--card));
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .responsive-mobile-cards tbody td {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.2rem;
+    padding: 0.4rem 0.35rem;
+    border: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+
+  .responsive-mobile-cards tbody td::before {
+    content: attr(data-mobile-label);
+    color: hsl(var(--muted-foreground));
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .responsive-mobile-cards tbody td:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .responsive-mobile-cards tbody td.mobile-table-actions {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+    margin-top: 0.25rem;
+    border-top: 1px solid hsl(var(--border) / 0.6);
+  }
+}
+

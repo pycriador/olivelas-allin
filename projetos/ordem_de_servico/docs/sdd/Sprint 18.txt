@@ -1,0 +1,1076 @@
+# ServiceForge — Sprint 18.5
+## Data Platform (Data Connectivity, Data Sources, ETL e Governança de Dados)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar a arquitetura existente.
+
+NÃO remover funcionalidades implementadas nas Sprints anteriores.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Integration Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Administration Platform
+
+Todo acesso a dados deverá passar pela Data Platform.
+
+Nenhum módulo deverá acessar diretamente fontes externas de dados.
+
+Toda comunicação deverá utilizar Providers, Connectors e Services.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar a Data Platform.
+
+Este módulo será responsável por toda a conectividade, descoberta, catalogação, importação, exportação, transformação e governança de dados da plataforma.
+
+A Data Platform será a camada oficial entre o ServiceForge e qualquer fonte de dados.
+
+Nenhum módulo deverá implementar acesso direto a banco de dados ou arquivos externos.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Data Platform
+
+Estrutura:
+
+Data Sources
+
+Connection Manager
+
+Database Providers
+
+File Providers
+
+REST Providers
+
+Schema Discovery
+
+Metadata Mapper
+
+Data Catalog
+
+Data Lineage
+
+Data Explorer
+
+Query Builder
+
+Import Engine
+
+Export Engine
+
+Transformation Engine
+
+Validation Engine
+
+ETL Engine
+
+Jobs
+
+Schedules
+
+Snapshots
+
+Audit
+
+History
+
+Configuration
+
+------------------------------------------------------------------
+
+DATABASE PROVIDERS
+
+Criar arquitetura baseada em Providers.
+
+Interface comum:
+
+DatabaseProvider
+
+Métodos:
+
+connect()
+
+disconnect()
+
+testConnection()
+
+discover()
+
+listSchemas()
+
+listTables()
+
+listViews()
+
+listColumns()
+
+listIndexes()
+
+listConstraints()
+
+execute()
+
+beginTransaction()
+
+commit()
+
+rollback()
+
+health()
+
+------------------------------------------------------------------
+
+BANCOS SUPORTADOS
+
+Implementar Providers para:
+
+PostgreSQL
+
+MariaDB
+
+MySQL
+
+SQLite
+
+SQL Server
+
+Oracle (estrutura preparada)
+
+Supabase
+
+Cada Provider deverá implementar exatamente a mesma interface.
+
+Nenhum código específico deverá ficar espalhado pela aplicação.
+
+------------------------------------------------------------------
+
+FILE PROVIDERS
+
+Criar Providers para arquivos.
+
+Suportar:
+
+CSV
+
+Excel (.xlsx)
+
+JSON
+
+XML
+
+Preparar estrutura para:
+
+Parquet
+
+ODS
+
+TXT
+
+Cada formato deverá utilizar interface comum.
+
+------------------------------------------------------------------
+
+REST PROVIDERS
+
+Criar Provider para APIs.
+
+Preparar suporte para:
+
+REST
+
+OpenAPI
+
+Swagger
+
+JSON
+
+XML
+
+Métodos:
+
+GET
+
+POST
+
+PUT
+
+PATCH
+
+DELETE
+
+HEAD
+
+OPTIONS
+
+Preparar autenticação:
+
+Bearer
+
+Basic
+
+API Key
+
+OAuth2 (estrutura)
+
+JWT
+
+------------------------------------------------------------------
+
+DATA SOURCES
+
+Criar cadastro completo de fontes de dados.
+
+Campos:
+
+Nome
+
+Descrição
+
+Categoria
+
+Tipo
+
+Provider
+
+Empresa
+
+Global
+
+Host
+
+Porta
+
+Database
+
+Schema
+
+Usuário
+
+Senha (criptografada)
+
+SSL
+
+Timeout
+
+Status
+
+Health
+
+Observações
+
+Tags
+
+Ambiente
+
+Produção
+
+Homologação
+
+Desenvolvimento
+
+Local
+
+------------------------------------------------------------------
+
+TIPOS DE DATA SOURCE
+
+Banco de Dados
+
+Arquivo
+
+API
+
+Webhook
+
+Cloud Storage
+
+FTP (estrutura)
+
+SFTP (estrutura)
+
+Message Queue (estrutura)
+
+------------------------------------------------------------------
+
+CONNECTION MANAGER
+
+Criar gerenciador central.
+
+Permitir:
+
+Criar conexão
+
+Editar
+
+Duplicar
+
+Arquivar
+
+Excluir
+
+Testar conexão
+
+Verificar latência
+
+Verificar disponibilidade
+
+Registrar histórico
+
+------------------------------------------------------------------
+
+TESTE DE CONEXÃO
+
+Executar:
+
+Conectividade
+
+Autenticação
+
+Permissões
+
+Versão
+
+Schemas disponíveis
+
+Tempo de resposta
+
+Resultado
+
+Salvar histórico dos testes.
+
+------------------------------------------------------------------
+
+SCHEMA DISCOVERY
+
+Criar descoberta automática.
+
+Detectar:
+
+Schemas
+
+Tabelas
+
+Views
+
+Colunas
+
+Primary Keys
+
+Foreign Keys
+
+Índices
+
+Constraints
+
+Triggers (estrutura)
+
+Procedures (estrutura)
+
+Functions (estrutura)
+
+Nunca alterar estruturas externas.
+
+Apenas leitura.
+
+------------------------------------------------------------------
+
+METADATA MAPPER
+
+Mapear automaticamente:
+
+Banco
+
+↓
+
+Metadata Platform
+
+↓
+
+Campos internos
+
+Permitir:
+
+Mapeamento manual
+
+Mapeamento automático
+
+Validação
+
+Versionamento
+
+Comparação
+
+------------------------------------------------------------------
+
+DATA CATALOG
+
+Criar catálogo completo.
+
+Registrar:
+
+Tabela
+
+Campo
+
+Tipo
+
+Descrição
+
+Origem
+
+Relacionamentos
+
+Responsável
+
+Data
+
+Versão
+
+Empresa
+
+Tags
+
+Pesquisa
+
+------------------------------------------------------------------
+
+DATA LINEAGE
+
+Criar rastreabilidade.
+
+Mostrar:
+
+Origem
+
+Transformações
+
+Workflows
+
+Destino
+
+Documentos
+
+Relatórios
+
+Eventos
+
+Exemplo:
+
+PostgreSQL
+
+↓
+
+Importação
+
+↓
+
+Metadata Platform
+
+↓
+
+Workflow
+
+↓
+
+Ordem de Serviço
+
+↓
+
+Relatório
+
+------------------------------------------------------------------
+
+DATA EXPLORER
+
+Criar explorador visual.
+
+Permitir:
+
+Navegar por schemas
+
+Visualizar tabelas
+
+Visualizar registros
+
+Pesquisar
+
+Filtrar
+
+Ordenar
+
+Visualizar relacionamentos
+
+Preview de dados
+
+Sem alterar dados externos.
+
+------------------------------------------------------------------
+
+QUERY BUILDER
+
+Criar construtor visual.
+
+Sem SQL manual.
+
+Permitir:
+
+Selecionar fontes
+
+Selecionar tabelas
+
+JOIN
+
+LEFT JOIN
+
+INNER JOIN
+
+RIGHT JOIN
+
+Filtros
+
+Agrupamentos
+
+Ordenação
+
+Limite
+
+Preview
+
+Salvar consultas
+
+Versionar consultas
+
+Exportar consultas
+
+------------------------------------------------------------------
+
+IMPORT ENGINE
+
+Criar motor de importação.
+
+Origens:
+
+PostgreSQL
+
+MariaDB
+
+SQLite
+
+MySQL
+
+SQL Server
+
+Oracle
+
+Supabase
+
+CSV
+
+Excel
+
+JSON
+
+XML
+
+REST API
+
+Permitir:
+
+Mapeamento
+
+Pré-visualização
+
+Validação
+
+Transformação
+
+Confirmação
+
+Rollback
+
+------------------------------------------------------------------
+
+EXPORT ENGINE
+
+Exportar para:
+
+CSV
+
+Excel
+
+JSON
+
+XML
+
+PDF (estrutura)
+
+REST API
+
+Banco de Dados
+
+Cloud Storage (estrutura)
+
+------------------------------------------------------------------
+
+TRANSFORMATION ENGINE
+
+Criar pipeline de transformação.
+
+Permitir:
+
+Renomear campos
+
+Converter tipos
+
+Concatenar
+
+Separar
+
+Normalizar
+
+Limpar espaços
+
+Uppercase
+
+Lowercase
+
+Trim
+
+Substituição
+
+Expressões
+
+Campos calculados
+
+Regras reutilizáveis.
+
+------------------------------------------------------------------
+
+VALIDATION ENGINE
+
+Validar:
+
+Campos obrigatórios
+
+Duplicidades
+
+CPF
+
+CNPJ
+
+Email
+
+Telefone
+
+Datas
+
+Tipos
+
+Integridade
+
+Relacionamentos
+
+Valores mínimos
+
+Valores máximos
+
+Expressões
+
+Registrar todos os erros.
+
+------------------------------------------------------------------
+
+ETL ENGINE
+
+Criar estrutura completa.
+
+Fluxo:
+
+Origem
+
+↓
+
+Extração
+
+↓
+
+Transformação
+
+↓
+
+Validação
+
+↓
+
+Pré-visualização
+
+↓
+
+Confirmação
+
+↓
+
+Carga
+
+↓
+
+Auditoria
+
+↓
+
+Eventos
+
+↓
+
+Histórico
+
+------------------------------------------------------------------
+
+SCHEDULER
+
+Permitir:
+
+Execução manual
+
+Agendada
+
+Diária
+
+Semanal
+
+Mensal
+
+Cron (estrutura)
+
+Dependências entre Jobs
+
+------------------------------------------------------------------
+
+DATA SNAPSHOTS
+
+Criar snapshots.
+
+Permitir:
+
+Criar
+
+Restaurar
+
+Comparar
+
+Versionar
+
+Excluir
+
+Registrar histórico.
+
+------------------------------------------------------------------
+
+CACHE
+
+Preparar arquitetura.
+
+Interface:
+
+CacheProvider
+
+Preparar para:
+
+Memory
+
+Redis
+
+Disk
+
+Sem implementação obrigatória nesta Sprint.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Criação de conexão
+
+Alteração
+
+Teste
+
+Importação
+
+Exportação
+
+Transformação
+
+Consulta
+
+Execução de Job
+
+Erro
+
+Rollback
+
+Toda operação deverá gerar auditoria completa.
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar eventos.
+
+Exemplos:
+
+DataSource.Created
+
+Connection.Tested
+
+Schema.Discovered
+
+Import.Started
+
+Import.Completed
+
+Export.Completed
+
+Transformation.Executed
+
+Validation.Completed
+
+Snapshot.Created
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Nova conexão criada
+
+↓
+
+Testar conexão
+
+↓
+
+Descobrir Schema
+
+↓
+
+Atualizar Metadata
+
+↓
+
+Publicar Evento
+
+↓
+
+Criar Auditoria
+
+------------------------------------------------------------------
+
+SEGURANÇA
+
+Nunca armazenar senhas em texto puro.
+
+Criptografar credenciais.
+
+Permitir rotação de credenciais.
+
+Preparar integração futura com Vault.
+
+Controlar permissões por empresa.
+
+Controlar permissões por Data Source.
+
+------------------------------------------------------------------
+
+ADMINISTRAÇÃO
+
+Administrador Global poderá:
+
+Criar Data Sources globais
+
+Criar Providers
+
+Gerenciar conexões
+
+Executar testes
+
+Executar importações
+
+Visualizar auditoria
+
+Gerenciar permissões
+
+Administrador da Empresa poderá:
+
+Criar conexões da própria empresa
+
+Executar importações autorizadas
+
+Criar consultas
+
+Criar exportações
+
+Visualizar histórico da própria empresa
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar dados consistentes.
+
+15 Data Sources
+
+8 Bancos
+
+10 APIs
+
+20 Arquivos
+
+50 Jobs
+
+40 Consultas
+
+80 Importações
+
+60 Exportações
+
+100 Transformações
+
+150 Auditorias
+
+Nunca utilizar Lorem Ipsum.
+
+Utilizar nomes técnicos realistas.
+
+------------------------------------------------------------------
+
+UX
+
+Interface Enterprise.
+
+Criar:
+
+Dashboard
+
+Catálogo
+
+Explorer
+
+Query Builder
+
+Connection Manager
+
+Assistente de Importação
+
+Assistente de Exportação
+
+Timeline
+
+Histórico
+
+Monitor
+
+Filtros
+
+Pesquisa Global
+
+Favoritos
+
+Layouts salvos
+
+Dark Mode
+
+Responsividade completa
+
+Nenhum alert()
+
+Nenhum confirm()
+
+Utilizar apenas componentes padrão da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todos os Providers
+
+Todas as conexões
+
+Todos os assistentes
+
+Todos os botões
+
+Todos os CRUDs
+
+Todos os Jobs
+
+Todas as transformações
+
+Todos os mapeamentos
+
+Todos os eventos
+
+Toda auditoria
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir uma Data Platform corporativa, totalmente desacoplada, responsável por toda conectividade, descoberta de esquemas, catalogação, ETL, transformação, validação, importação e exportação de dados.
+
+A Data Platform deverá tornar-se a única camada autorizada para acesso a fontes de dados externas, garantindo padronização, segurança, auditoria, escalabilidade e reutilização por todos os módulos da plataforma.
+
+IMPORTANTE
+
+NÃO implementar ainda:
+
+• Sincronização em tempo real (CDC)
+
+• Replicação entre bancos
+
+• Data Warehouse
+
+• Data Lake
+
+• Streaming de eventos
+
+• Conectores proprietários específicos (SAP, Totvs, Salesforce, etc.)
+
+Toda a arquitetura deverá permanecer preparada para essas evoluções futuras sem necessidade de refatoração estrutural.

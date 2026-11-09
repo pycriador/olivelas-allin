@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Paciente — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <div class="breadcrumb">
+            <a href="pacientes.html">Pacientes</a>
+            <span class="breadcrumb-separator">/</span>
+            <span class="text-primary" id="patient-crumb-name">Prontuário</span>
+          </div>
+          <h1 style="font-size: var(--font-size-2xl);" id="patient-header-name">Carregando paciente...</h1>
+        </div>
+
+        <div class="flex gap-3 flex-wrap" id="patient-actions-top">
+          <!-- Ações rápidas -->
+        </div>
+      </div>
+
+      <!-- Grid com Dados Pessoais e Próximos Agendamentos -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-6);" id="patient-info-grid">
+        <!-- Card Dados Pessoais -->
+        <div class="card" style="padding: var(--space-6);">
+          <div class="card-header" style="padding: 0 0 var(--space-4); margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--font-size-md);">Dados Pessoais</h3>
+            <span class="badge badge-success" id="patient-badge-status">Ativo</span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4);">
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase;">Telefone / WhatsApp</span>
+              <p class="text-bold" id="patient-phone">—</p>
+            </div>
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase;">E-mail</span>
+              <p class="text-bold" id="patient-email">—</p>
+            </div>
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase;">CPF</span>
+              <p class="text-bold" id="patient-cpf">—</p>
+            </div>
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase;">Código</span>
+              <p class="text-bold text-primary" id="patient-id">—</p>
+            </div>
+            <div style="grid-column: span 2;">
+              <span class="text-xs text-muted" style="text-transform: uppercase;">Endereço Residencial</span>
+              <p class="text-secondary" id="patient-address">—</p>
+            </div>
+            <div style="grid-column: span 2;">
+              <span class="text-xs text-muted" style="text-transform: uppercase;">Observações Clínicas</span>
+              <p class="text-secondary" id="patient-notes" style="font-style: italic;">—</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Próximos Agendamentos -->
+        <div class="card" style="padding: var(--space-6);">
+          <div class="card-header" style="padding: 0 0 var(--space-4); margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--font-size-md);">Próximos Agendamentos</h3>
+            <a href="agendamentos.html" class="btn btn-outline btn-sm">Novo Agendamento</a>
+          </div>
+
+          <div id="patient-upcoming-appointments" style="display: flex; flex-direction: column; gap: var(--space-3);">
+            <!-- Renderizado dinamicamente -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de Histórico de Atendimentos -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Histórico Odontológico Demonstrativo</h3>
+            <p class="text-xs text-muted">Procedimentos registrados no prontuário do paciente</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Procedimento</th>
+                <th>Profissional</th>
+                <th>Status</th>
+                <th>Observações Clínicas</th>
+              </tr>
+            </thead>
+            <tbody id="patient-history-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/patients.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("pacientes", "");
+    UIComponents.renderAdminTopbar("Detalhes do Paciente", "Prontuário");
+
+    async function loadPatientDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const patientId = urlParams.get("id") || "PAT-001";
+      const patient = await DatabaseService.patients.getById(patientId);
+
+      if (!patient) {
+        document.querySelector(".admin-content").innerHTML = `
+          <div class="card" style="padding: var(--space-12); text-align: center;">
+            ${UIComponents.renderEmptyState("Paciente não localizado", "O código de paciente informado não foi encontrado no banco de dados.", '<a href="pacientes.html" class="btn btn-primary">Voltar para a lista</a>')}
+          </div>
+        `;
+        return;
+      }
+      document.getElementById("patient-crumb-name").innerText = patient.name;
+      document.getElementById("patient-header-name").innerText = patient.name;
+      document.getElementById("patient-id").innerText = patient.id;
+      document.getElementById("patient-phone").innerText = patient.phone;
+      document.getElementById("patient-email").innerText = patient.email;
+      document.getElementById("patient-cpf").innerText = patient.cpf;
+      document.getElementById("patient-badge-status").innerText = patient.status === "active" ? "Ativo" : "Inativo";
+      document.getElementById("patient-badge-status").className = patient.status === "active" ? "badge badge-success" : "badge badge-neutral";
+
+      const addr = patient.address || {};
+      const fullAddr = [addr.street, addr.number, addr.complement, addr.neighborhood, addr.city, addr.state, addr.zipCode].filter(Boolean).join(", ");
+      document.getElementById("patient-address").innerText = fullAddr || "Endereço não informado";
+      document.getElementById("patient-notes").innerText = patient.notes || "Sem observações cadastradas.";
+
+      // Ações rápidas no topo
+      document.getElementById("patient-actions-top").innerHTML = `
+        <a href="agendamentos.html?newFor=${patient.id}" class="btn btn-primary btn-sm">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line></svg>
+          Novo Agendamento
+        </a>
+        <a href="whatsapp.html?phone=${encodeURIComponent(patient.phone)}&name=${encodeURIComponent(patient.name)}" class="btn btn-whatsapp btn-sm">
+          Enviar WhatsApp
+        </a>
+        <a href="pacientes.html" class="btn btn-outline btn-sm">Voltar</a>
+      `;
+
+      // Carregar agendamentos associados a este paciente
+      const allAppointments = StorageService.get("appointments", []);
+      const patientApts = allAppointments.filter(a => a.patientId === patient.id || a.patientName === patient.name);
+
+      const upcomingEl = document.getElementById("patient-upcoming-appointments");
+      if (patientApts.length === 0) {
+        upcomingEl.innerHTML = `<p class="text-sm text-muted">Nenhum agendamento futuro encontrado para este paciente.</p>`;
+      } else {
+        upcomingEl.innerHTML = patientApts.map(apt => `
+          <div class="card" style="padding: var(--space-4); background-color: #f8fafc; border-color: #e2e8f0;">
+            <div class="flex items-center justify-between">
+              <div>
+                <strong class="text-primary">${apt.service}</strong>
+                <div class="text-xs text-muted" style="margin-top: 2px;">Data: ${Navigation.formatDate(apt.date)} às ${apt.time} (${apt.duration})</div>
+              </div>
+              <div>${UIComponents.renderStatusBadge(apt.status)}</div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Histórico simulado
+      const historyTbody = document.getElementById("patient-history-tbody");
+      historyTbody.innerHTML = `
+        <tr>
+          <td>${Navigation.formatDate(patient.lastAppointment || "2026-09-14")}</td>
+          <td><strong>Avaliação e Profilaxia</strong></td>
+          <td>Dra. Marta Gelsi Dias</td>
+          <td>${UIComponents.renderStatusBadge("Concluído")}</td>
+          <td>Realizada profilaxia completa com jato de bicarbonato e aplicação de flúor.</td>
+        </tr>
+        <tr>
+          <td>15/06/2026</td>
+          <td><strong>Restauração em Resina</strong></td>
+          <td>Dra. Marta Gelsi Dias</td>
+          <td>${UIComponents.renderStatusBadge("Concluído")}</td>
+          <td>Procedimento realizado no dente 16 sem intercorrências.</td>
+        </tr>
+      `;
+    }
+
+    loadPatientDetails();
+  </script>
+</body>
+</html>

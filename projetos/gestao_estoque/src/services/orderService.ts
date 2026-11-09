@@ -1,0 +1,393 @@
+import { supabase } from '@/lib/supabase/client'
+import { auditService } from '@/services/auditService'
+import { customerService } from '@/services/customerService'
+import { buildAccentRegex } from '@/utils/productUtils'
+import type { Order } from '@/types/order.types'
+import type { OrderChannel, OrderStatus, PaymentMethod } from '@/types/database.types'
+
+export interface CreateOrderPayload {
+  storeId: string
+  customerId?: string | null
+  channel: OrderChannel
+  items: {
+    productId: string
+    quantity: number
+    unitPrice: number
+    unitCost?: number
+    discount?: number
+    batchId?: string
+  }[]
+  discountAmount?: number
+  shippingAmount?: number
+  notes?: string
+  paymentMethod?: PaymentMethod
+  replaceOrderId?: string
+  orderNumber?: string
+}
+
+export interface OrderListParams {
+  search?: string
+  status?: string
+  channel?: string
+  sortBy?: string
+  sortOrder?: 'asc' | 'desc'
+  page?: number
+  pageSize?: number
+}
+
+export const orderService = {
+  async listOrders(
+    storeId: string,
+    params: OrderListParams = {}
+  ): Promise<{ data: Order[]; total: number }> {
+    const {
+      search,
+      status,
+      channel,
+      sortBy = 'created_at',
+      sortOrder = 'desc',
+      page = 1,
+      pageSize = 20,
+    } = params
+
+    let query = supabase
+      .from('orders')
+      .select(
+        `
+        *,
+        customers ( name, phone, email ),
+        order_items (
+          id,
+          product_id,
+          quantity,
+          unit_price,
+          total_price,
+          products ( * )
+        ),
+        payments ( id, method, amount, status )
+      `,
+        { count: 'exact' }
+      )
+      .eq('store_id', storeId)
+      .not('order_number', 'like', '%-SUB-%')
+
+    if (search?.trim()) {
+      const q = search.trim()
+      const pattern = buildAccentRegex(q)
+
+      // 1. Clientes com nome, documento ou telefone compatíveis
+      const { data: matchedCustomers } = await supabase
+        .from('customers')
+        .select('id')
+        .eq('store_id', storeId)
+        .or(`name.imatch.${pattern},document.imatch.${pattern},phone.imatch.${pattern}`)
+
+      const matchedCustomerIds = (matchedCustomers || []).map((c: any) => c.id)
+
+      // 2. Produtos com nome ou SKU compatíveis nos itens do pedido
+      const { data: matchedProducts } = await supabase
+        .from('products')
+        .select('id')
+        .eq('store_id', storeId)
+        .or(`name.imatch.${pattern},sku.imatch.${pattern}`)
+
+      const matchedProductIds = (matchedProducts || []).map((p: any) => p.id)
+
+      let productOrderIds: string[] = []
+      if (matchedProductIds.length > 0) {
+        const { data: matchedItems } = await supabase
+          .from('order_items')
+          .select('order_id')
+          .eq('store_id', storeId)
+          .in('product_id', matchedProductIds)
+        productOrderIds = (matchedItems || []).map((i: any) => i.order_id)
+      }
+
+      const orConditions: string[] = [
+        `order_number.imatch.${pattern}`,
+        `notes.imatch.${pattern}`,
+      ]
+
+      if (matchedCustomerIds.length > 0) {
+        orConditions.push(`customer_id.in.(${matchedCustomerIds.join(',')})`)
+      }
+
+      if (productOrderIds.length > 0) {
+        orConditions.push(`id.in.(${productOrderIds.join(',')})`)
+      }
+
+      query = query.or(orConditions.join(','))
+    }
+
+    if (status && status !== 'ALL') {
+      query = query.eq('status', status)
+    }
+
+    if (channel && channel !== 'ALL') {
+      query = query.eq('channel', channel)
+    }
+
+    const orderCol = ['order_number', 'total_amount', 'created_at', 'status', 'channel'].includes(sortBy)
+      ? sortBy
+      : 'created_at'
+
+    const from = (page - 1) * pageSize
+    const to = from + pageSize - 1
+
+    const { data, count, error } = await query
+      .order(orderCol, { ascending: sortOrder === 'asc' })
+      .range(from, to)
+
+    if (error) throw error
+
+    const mapped = (data || []).map((o: any) => ({
+      ...o,
+      customer_name: o.customers?.name || o.customer_name || 'Cliente Genérico',
+      customer_phone: o.customers?.phone || o.customer_phone,
+      customer_email: o.customers?.email || o.customer_email,
+      items: (o.order_items || []).map((oi: any) => ({
+        ...oi,
+        product: oi.products,
+        product_name: oi.products?.name || 'Produto',
+        product_sku: oi.products?.sku || '',
+      })),
+      payments: o.payments || [],
+    }))
+
+    return {
+      data: mapped,
+      total: count || 0,
+    }
+  },
+
+  async createOrder(payload: CreateOrderPayload): Promise<Order> {
+    let orderNumber = payload.orderNumber || `PED-${Date.now().toString().slice(-6)}`
+
+    // Cadastro de cliente obrigatório no PDV: se não informado, vincula ao Cliente Genérico da loja
+    let resolvedCustomerId = payload.customerId ? payload.customerId.trim() : ''
+    if (!resolvedCustomerId) {
+      const genericCustomer = await customerService.getOrCreateGenericCustomer(payload.storeId)
+      resolvedCustomerId = genericCustomer.id
+    }
+
+    // Se estamos editando/substituindo um pedido existente ou reutilizando um orderNumber
+    if (payload.replaceOrderId || payload.orderNumber) {
+      const orFilters: string[] = []
+      if (payload.replaceOrderId) {
+        orFilters.push(`id.eq.${payload.replaceOrderId}`)
+      }
+      if (orderNumber) {
+        orFilters.push(`order_number.eq.${orderNumber}`)
+      }
+
+      const { data: conflictingOrders } = await supabase
+        .from('orders')
+        .select('id, status, order_number')
+        .eq('store_id', payload.storeId)
+        .or(orFilters.join(','))
+
+      for (const existingOrder of conflictingOrders || []) {
+        // Garante que o estoque do pedido substituído foi estornado caso ainda não esteja CANCELLED
+        if (existingOrder.status !== 'CANCELLED') {
+          try {
+            await this.cancelOrder(
+              existingOrder.id,
+              `Substituição por edição no PDV (${existingOrder.order_number || orderNumber})`
+            )
+          } catch (cancelErr: any) {
+            const msg = String(cancelErr?.message || '')
+            if (!msg.toLowerCase().includes('já foi cancelado')) {
+              throw cancelErr
+            }
+          }
+        }
+
+        // 1. Tenta remover diretamente o registro do pedido cancelado substituído
+        const { data: deletedRows, error: delErr } = await supabase
+          .from('orders')
+          .delete()
+          .eq('id', existingOrder.id)
+          .eq('store_id', payload.storeId)
+          .select('id')
+
+        const wasDeleted = !delErr && Array.isArray(deletedRows) && deletedRows.length > 0
+
+        // 2. Se o registro antigo ainda existir no banco (ex: RLS sem policy DELETE aplicada no ambiente),
+        // renomeia o order_number do pedido cancelado antigo para liberar o número original
+        // sem violar a constraint uq_order_store_number.
+        if (!wasDeleted) {
+          const archivedOrderNumber = `${existingOrder.order_number}-SUB-${Date.now().toString().slice(-4)}-${existingOrder.id.slice(0, 4)}`
+          await supabase
+            .from('orders')
+            .update({
+              order_number: archivedOrderNumber,
+              notes: `[SUBSTITUÍDO NA EDIÇÃO] ${payload.notes || ''}`.trim(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', existingOrder.id)
+            .eq('store_id', payload.storeId)
+        }
+      }
+    }
+
+    // Verificação preventiva (pre-flight) de unicidade de (store_id, order_number) antes de chamar a RPC:
+    // se por qualquer restrição de permissão ainda houver um registro ocupando este order_number na loja,
+    // gera um número único imediatamente para nunca disparar erro 23505 ("Registro duplicado").
+    const { data: stillOccupying } = await supabase
+      .from('orders')
+      .select('id')
+      .eq('store_id', payload.storeId)
+      .eq('order_number', orderNumber)
+      .limit(1)
+
+    if (stillOccupying && stillOccupying.length > 0) {
+      orderNumber = `PED-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 90 + 10)}`
+    }
+
+    const rpcItems = payload.items.map((item) => ({
+      productId: item.productId,
+      batchId: item.batchId || null,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      unitCost:
+        typeof item.unitCost === 'number' && !Number.isNaN(item.unitCost)
+          ? item.unitCost
+          : null,
+      discount: item.discount || 0,
+    }))
+
+    // Tudo em uma transacao no servidor: pedido, itens, pagamento, baixa de
+    // estoque e auditoria. A RPC trava a linha de saldo de cada produto
+    // (FOR UPDATE) e recusa com "Estoque insuficiente para ..." quando o
+    // disponivel nao cobre o carrinho, entao nao existe venda acima do
+    // estoque nem pedido orfao por insert parcial.
+    let { data: orderId, error } = await supabase.rpc('create_order_with_stock', {
+      p_store_id: payload.storeId,
+      p_customer_id: resolvedCustomerId,
+      p_channel: payload.channel,
+      p_order_number: orderNumber,
+      p_items: rpcItems,
+      p_discount_amount: payload.discountAmount || 0,
+      p_shipping_amount: payload.shippingAmount || 0,
+      p_notes: payload.notes || null,
+      p_payment_method: payload.paymentMethod || null,
+    })
+
+    // Fallback de segurança caso ainda ocorra colisão de número de pedido (23505 / uq_order_store_number)
+    if (error) {
+      const errBlob = `${error.code || ''} ${error.message || ''} ${(error as any).details || ''} ${(error as any).hint || ''}`.toLowerCase()
+      if (
+        errBlob.includes('23505') ||
+        errBlob.includes('duplicate') ||
+        errBlob.includes('unique') ||
+        errBlob.includes('uq_order_store_number') ||
+        errBlob.includes('duplicad')
+      ) {
+        orderNumber = `PED-${Date.now().toString().slice(-6)}-${Math.floor(Math.random() * 90 + 10)}`
+        const retry = await supabase.rpc('create_order_with_stock', {
+          p_store_id: payload.storeId,
+          p_customer_id: resolvedCustomerId,
+          p_channel: payload.channel,
+          p_order_number: orderNumber,
+          p_items: rpcItems,
+          p_discount_amount: payload.discountAmount || 0,
+          p_shipping_amount: payload.shippingAmount || 0,
+          p_notes: payload.notes || null,
+          p_payment_method: payload.paymentMethod || null,
+        })
+        orderId = retry.data
+        error = retry.error
+      }
+    }
+
+    if (error) throw error
+    if (!orderId) throw new Error('O pedido não foi criado.')
+
+    const { data: order, error: fetchError } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single()
+
+    if (fetchError) throw fetchError
+
+    return order as Order
+  },
+
+  async cancelOrder(orderId: string, reason: string): Promise<void> {
+    const { error } = await supabase.rpc('restore_sale_stock', {
+      p_order_id: orderId,
+      p_reason: reason,
+    })
+
+    if (error) throw error
+
+    auditService.logAction({
+      action: 'ORDER_CANCELLED',
+      entity: 'orders',
+      entityId: orderId,
+      afterData: { reason },
+    })
+  },
+
+  async updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {
+    const { error } = await supabase
+      .from('orders')
+      .update({
+        status,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', orderId)
+
+    if (error) throw error
+
+    auditService.logAction({
+      action: 'ORDER_STATUS_UPDATED',
+      entity: 'orders',
+      entityId: orderId,
+      afterData: { status },
+    })
+  },
+
+  async getOrder(orderId: string): Promise<Order | null> {
+    const { data, error } = await supabase
+      .from('orders')
+      .select(`
+        *,
+        customers ( id, name, phone, email, document ),
+        order_items (
+          id,
+          order_id,
+          store_id,
+          product_id,
+          batch_id,
+          quantity,
+          unit_price,
+          unit_cost,
+          discount,
+          total_price,
+          products ( * )
+        ),
+        payments ( id, method, amount, status )
+      `)
+      .eq('id', orderId)
+      .maybeSingle()
+
+    if (error) throw error
+    if (!data) return null
+
+    return {
+      ...data,
+      customer_name: data.customers?.name || data.customer_name || 'Cliente Genérico',
+      customer_phone: data.customers?.phone || data.customer_phone,
+      customer_email: data.customers?.email || data.customer_email,
+      items: (data.order_items || []).map((oi: any) => ({
+        ...oi,
+        product: oi.products,
+        product_name: oi.products?.name || 'Produto',
+        product_sku: oi.products?.sku || '',
+      })),
+      payments: data.payments || [],
+    } as unknown as Order
+  },
+}

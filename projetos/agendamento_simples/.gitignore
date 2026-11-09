@@ -1,0 +1,12 @@
+# Environment variables
+.env
+
+# Dependencies
+node_modules/
+.npm/
+
+# OS & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

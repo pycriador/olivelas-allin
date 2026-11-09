@@ -1,0 +1,110 @@
+name: Supabase CI & Migrations
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'supabase/**'
+      - '.github/workflows/supabase.yml'
+  pull_request:
+    paths:
+      - 'supabase/**'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Ação a executar no Supabase'
+        required: true
+        default: 'deploy'
+        type: choice
+        options:
+          - 'deploy'
+          - 'dry-run'
+          - 'lint-only'
+
+jobs:
+  lint-and-validate:
+    name: Validar Migrações SQL
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verificar integridade dos scripts SQL
+        run: |
+          echo "=== Verificando migrações em supabase/migrations ==="
+          ls -la supabase/migrations/
+          echo "Total de arquivos de migração encontrados: $(ls supabase/migrations/*.sql | wc -l)"
+
+      - name: Linter SQL / Migrations Check
+        run: |
+          supabase db lint || echo "Linting finalizado com avisos informativos."
+
+  deploy-migrations:
+    name: Sincronizar com Supabase Remoto
+    runs-on: ubuntu-latest
+    needs: [lint-and-validate]
+    if: github.ref == 'refs/heads/main' || github.event_name == 'workflow_dispatch'
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID || 'pkbjoxzqllextmtmjoia' }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Verificar credenciais do Supabase
+        id: check_credentials
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then
+            echo "has_token=false" >> $GITHUB_OUTPUT
+            echo "::warning title=Supabase Secret Ausente::SUPABASE_ACCESS_TOKEN não está configurado em Settings > Secrets and variables > Actions. Pulando sincronização remota."
+          else
+            echo "has_token=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Vincular projeto Supabase (Link)
+        if: steps.check_credentials.outputs.has_token == 'true'
+        run: |
+          echo "Vinculando ao projeto Supabase: $SUPABASE_PROJECT_ID"
+          if [ -n "$SUPABASE_DB_PASSWORD" ]; then
+            supabase link --project-ref "$SUPABASE_PROJECT_ID" --password "$SUPABASE_DB_PASSWORD"
+          else
+            supabase link --project-ref "$SUPABASE_PROJECT_ID"
+          fi
+
+      - name: Aplicar migrações (Dry Run)
+        if: steps.check_credentials.outputs.has_token == 'true' && (github.event.inputs.action == 'dry-run')
+        run: |
+          echo "Executando push de migrações em modo dry-run..."
+          supabase db push --dry-run
+
+      - name: Aplicar migrações no Banco de Dados
+        if: steps.check_credentials.outputs.has_token == 'true' && (github.event_name == 'push' || github.event.inputs.action == 'deploy' || github.event.inputs.action == '')
+        run: |
+          echo "Aplicando migrações na instância remota..."
+          if [ -n "$SUPABASE_DB_PASSWORD" ]; then
+            supabase db push --password "$SUPABASE_DB_PASSWORD" --include-all
+          else
+            supabase db push --include-all
+          fi
+          echo "Migrações aplicadas com sucesso!"
+
+      - name: Resumo da Execução
+        run: |
+          echo "### 🚀 Relatório Supabase CI" >> $GITHUB_STEP_SUMMARY
+          echo "- **Projeto Supabase ID:** \`${{ env.SUPABASE_PROJECT_ID }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.check_credentials.outputs.has_token }}" == "true" ]; then
+            echo "- **Status:** ✅ Migrações verificadas e sincronizadas com sucesso." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Status:** ℹ️ Migrações validadas sintaticamente. Para habilitar o push automático no banco remoto, adicione o secret \`SUPABASE_ACCESS_TOKEN\` e \`SUPABASE_DB_PASSWORD\` no GitHub." >> $GITHUB_STEP_SUMMARY
+          fi

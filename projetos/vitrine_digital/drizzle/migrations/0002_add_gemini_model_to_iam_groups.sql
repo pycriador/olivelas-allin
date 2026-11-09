@@ -1,0 +1,1 @@
+ALTER TABLE public.iam_groups ADD COLUMN IF NOT EXISTS gemini_model text NOT NULL DEFAULT 'gemini-2.5-flash';

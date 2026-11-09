@@ -1,0 +1,726 @@
+# ServiceForge — Sprint 23
+## Public Portal (Portal do Cliente, Portal de Garantia, Compartilhamento Seguro e Experiência Externa)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar a arquitetura existente.
+
+NÃO remover funcionalidades implementadas nas Sprints anteriores.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+O Public Portal deverá consumir todos os módulos existentes.
+
+Nenhuma regra de negócio deverá ser duplicada.
+
+Todo acesso deverá ocorrer através dos Services da plataforma.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar o Public Portal.
+
+O Portal será a interface pública do ServiceForge para clientes, parceiros e terceiros.
+
+Todo acesso externo deverá ocorrer através deste módulo.
+
+O Portal deverá ser totalmente White Label.
+
+Cada empresa poderá personalizar sua identidade visual.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Public Portal
+
+Estrutura:
+
+Portal Home
+
+Portal Login (estrutura)
+
+Consulta Pública
+
+Portal Cliente
+
+Portal Garantia
+
+Portal Aprovações
+
+Portal Documentos
+
+Portal Compartilhamento
+
+Portal Upload
+
+Portal Assinaturas
+
+Portal Timeline
+
+Portal Downloads
+
+Portal Configuração
+
+Portal Branding
+
+Portal Segurança
+
+Portal Analytics
+
+------------------------------------------------------------------
+
+CONSULTA PÚBLICA
+
+Permitir localizar uma Ordem de Serviço utilizando:
+
+Número da OS
+
+Código Público
+
+QR Code
+
+Token
+
+Link Compartilhado
+
+A consulta deverá apresentar somente informações autorizadas.
+
+Nunca expor informações internas.
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Mostrar:
+
+Recebimento
+
+Diagnóstico
+
+Aguardando Aprovação
+
+Aprovada
+
+Execução
+
+Teste
+
+Finalizada
+
+Pronta para Retirada
+
+Entregue
+
+Retorno
+
+Garantia
+
+Cada evento deverá apresentar:
+
+Data
+
+Hora
+
+Descrição
+
+Responsável (quando permitido)
+
+Status
+
+------------------------------------------------------------------
+
+PORTAL DO CLIENTE
+
+Visualizar:
+
+Dados da Ordem de Serviço
+
+Equipamento
+
+Defeito informado
+
+Diagnóstico
+
+Peças utilizadas
+
+Serviços realizados
+
+Valor
+
+Status
+
+Prazo
+
+Garantia
+
+Histórico
+
+Documentos
+
+------------------------------------------------------------------
+
+PORTAL DE APROVAÇÕES
+
+Permitir:
+
+Aprovar orçamento
+
+Rejeitar orçamento
+
+Solicitar revisão
+
+Aprovar serviços adicionais
+
+Aceitar termos
+
+Assinar digitalmente
+
+Registrar:
+
+IP
+
+Data
+
+Hora
+
+Navegador
+
+Dispositivo
+
+Geolocalização (estrutura)
+
+------------------------------------------------------------------
+
+PORTAL DE DOCUMENTOS
+
+Disponibilizar:
+
+Ordem de Serviço
+
+Orçamento
+
+Garantia
+
+Recibo de Entrada
+
+Recibo de Retirada
+
+Recibo de Pagamento
+
+Laudo Técnico
+
+Termos
+
+Declarações
+
+Todos utilizando Document Platform.
+
+------------------------------------------------------------------
+
+COMPARTILHAMENTO
+
+Permitir gerar links públicos.
+
+Configurar:
+
+Expiração
+
+Quantidade máxima de acessos
+
+Senha opcional
+
+Revogação
+
+Registro de acessos
+
+QR Code
+
+------------------------------------------------------------------
+
+UPLOAD
+
+Permitir envio de:
+
+Fotos
+
+Vídeos
+
+PDF
+
+Documentos
+
+Comprovantes
+
+Arquivos deverão utilizar Document Platform.
+
+Registrar auditoria.
+
+------------------------------------------------------------------
+
+ASSINATURA DIGITAL
+
+Consumir Document Platform.
+
+Permitir:
+
+Assinatura na entrega
+
+Aceite de orçamento
+
+Aceite de garantia
+
+Aceite de termos
+
+Nunca implementar assinatura diretamente neste módulo.
+
+------------------------------------------------------------------
+
+PORTAL DE GARANTIA
+
+Permitir:
+
+Consultar garantia
+
+Visualizar prazo
+
+Visualizar histórico
+
+Consultar reparos
+
+Solicitar retorno
+
+Registrar evidências
+
+------------------------------------------------------------------
+
+DOWNLOADS
+
+Permitir download de:
+
+PDF
+
+Imagens
+
+Documentos
+
+Garantias
+
+Relatórios autorizados
+
+Registrar todos os downloads.
+
+------------------------------------------------------------------
+
+NOTIFICAÇÕES
+
+Consumir Communication Platform.
+
+Enviar:
+
+Email
+
+SMS (estrutura)
+
+WhatsApp (estrutura)
+
+Telegram (estrutura)
+
+Push (estrutura)
+
+Sempre utilizando templates.
+
+------------------------------------------------------------------
+
+QR CODE
+
+Gerar QR Code para:
+
+Consulta
+
+Documentos
+
+Garantias
+
+Compartilhamento
+
+Portal Cliente
+
+Nunca armazenar dados sensíveis no QR Code.
+
+------------------------------------------------------------------
+
+WHITE LABEL
+
+Cada empresa poderá configurar:
+
+Logo
+
+Nome
+
+Tema
+
+Cores
+
+Favicon
+
+Domínio (estrutura)
+
+Rodapé
+
+Links
+
+Idioma
+
+------------------------------------------------------------------
+
+RESPONSIVIDADE
+
+Interface Mobile First.
+
+Compatível com:
+
+Desktop
+
+Tablet
+
+Celular
+
+Preparar estrutura para PWA.
+
+------------------------------------------------------------------
+
+SEGURANÇA
+
+Todo acesso deverá utilizar:
+
+Token temporário
+
+Links assinados
+
+Expiração
+
+Permissões
+
+Auditoria
+
+Rate Limit
+
+Proteção contra força bruta
+
+Proteção contra enumeração
+
+Nunca permitir acesso direto ao banco.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Consulta
+
+Download
+
+Upload
+
+Aprovação
+
+Rejeição
+
+Assinatura
+
+Compartilhamento
+
+Login (estrutura)
+
+Erro
+
+IP
+
+Usuário
+
+Empresa
+
+Token
+
+Tempo
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Portal.Accessed
+
+Portal.DocumentDownloaded
+
+Portal.FileUploaded
+
+Portal.ApprovalAccepted
+
+Portal.ApprovalRejected
+
+Portal.SignatureCompleted
+
+Portal.LinkGenerated
+
+Portal.LinkExpired
+
+Portal.GuaranteeRequested
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Cliente aprova orçamento
+
+↓
+
+Atualizar Status
+
+↓
+
+Gerar Documento
+
+↓
+
+Publicar Evento
+
+↓
+
+Atualizar Dashboard
+
+↓
+
+Enviar Comunicação
+
+↓
+
+Registrar Auditoria
+
+Outro exemplo:
+
+Cliente solicita retorno
+
+↓
+
+Criar Retorno
+
+↓
+
+Notificar Técnico
+
+↓
+
+Atualizar Timeline
+
+↓
+
+Registrar Evento
+
+------------------------------------------------------------------
+
+ADMINISTRAÇÃO
+
+Administrador Global poderá:
+
+Configurar Portal Global
+
+Criar Templates
+
+Gerenciar Branding
+
+Visualizar Analytics
+
+Gerenciar Links Públicos
+
+Administradores das Empresas poderão:
+
+Configurar Portal
+
+Personalizar Tema
+
+Criar Páginas
+
+Gerenciar Compartilhamentos
+
+Visualizar Auditoria
+
+------------------------------------------------------------------
+
+ANALYTICS
+
+Criar painel.
+
+Mostrar:
+
+Acessos
+
+Downloads
+
+Uploads
+
+Aprovações
+
+Tempo médio
+
+Dispositivos
+
+Navegadores
+
+Origem dos acessos
+
+Documentos mais acessados
+
+QR Codes utilizados
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+80 Ordens Públicas
+
+200 Compartilhamentos
+
+300 Downloads
+
+100 Uploads
+
+150 Aprovações
+
+100 Garantias
+
+250 Eventos
+
+400 Auditorias
+
+Todos consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface moderna.
+
+Visual semelhante a aplicações SaaS.
+
+Design limpo.
+
+Tema claro e escuro.
+
+Animações suaves.
+
+Pesquisa.
+
+Timeline.
+
+Cards.
+
+Preview de documentos.
+
+QR Code.
+
+Compartilhamento rápido.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar exclusivamente os componentes da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todas as telas
+
+Todos os botões
+
+Todos os formulários
+
+Todos os uploads
+
+Todos os downloads
+
+Todas as aprovações
+
+Todos os QR Codes
+
+Todos os compartilhamentos
+
+Todos os eventos
+
+Toda auditoria
+
+Responsividade completa
+
+Acessibilidade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir um Portal Público corporativo, totalmente integrado à plataforma, permitindo que clientes acompanhem Ordens de Serviço, aprovem orçamentos, consultem garantias, baixem documentos, enviem anexos e assinem documentos digitalmente, tudo de forma segura, auditável, responsiva e totalmente personalizável por empresa.
+
+IMPORTANTE
+
+NÃO implementar ainda:
+
+• Login completo do cliente
+
+• Chat em tempo real
+
+• Pagamentos online
+
+• Notificações Push
+
+• Aplicativo Mobile
+
+Toda a arquitetura deverá permanecer preparada para essas evoluções futuras sem necessidade de refatoração estrutural.

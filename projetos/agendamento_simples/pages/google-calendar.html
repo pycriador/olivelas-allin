@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google Calendar — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .sync-progress-box {
+      background-color: #f8fafc;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      margin-top: var(--space-4);
+      font-size: var(--font-size-xs);
+      font-family: monospace;
+      color: var(--color-text-secondary);
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+  </style>
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Integração Google Calendar</h1>
+          <p class="text-sm text-muted">Sincronização bidirecional mock entre a plataforma e o calendário oficial.</p>
+        </div>
+        <div class="flex gap-3">
+          <button type="button" class="btn btn-outline" id="btn-toggle-connection">
+            Gerenciar Conexão
+          </button>
+          <button type="button" class="btn btn-primary" id="btn-sync-now">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+            Sincronizar Agora
+          </button>
+        </div>
+      </div>
+
+      <!-- Card de Status da Integração -->
+      <div class="card" style="padding: var(--space-6); margin-bottom: var(--space-8);">
+        <div class="flex items-center justify-between flex-wrap gap-4" style="margin-bottom: var(--space-6); padding-bottom: var(--space-6); border-bottom: 1px solid var(--color-border);">
+          <div class="flex items-center gap-4">
+            <div style="width: 54px; height: 54px; border-radius: var(--radius-lg); background-color: var(--color-primary-light); color: var(--color-primary); display: flex; align-items: center; justify-content: center;">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line><circle cx="12" cy="15" r="2"></circle></svg>
+            </div>
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase;">Status do Serviço</span>
+              <h3 style="font-size: var(--font-size-xl); margin-top: 2px;" id="gcal-status-text">Google Calendar Conectado</h3>
+              <p class="text-xs text-muted">Autenticação mock autorizada para a clínica</p>
+            </div>
+          </div>
+          <div>
+            <span class="badge badge-success" id="gcal-badge" style="font-size: var(--font-size-sm); padding: var(--space-2) var(--space-4);">
+              ✓ Conectado & Ativo
+            </span>
+          </div>
+        </div>
+
+        <!-- Metadados da Conexão -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-6);">
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Conta Conectada</span>
+            <p class="text-bold" id="gcal-account">dra.marta.gelsi@demo.com</p>
+          </div>
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Calendário Principal</span>
+            <p class="text-bold">Consultório Dra. Marta (primary)</p>
+          </div>
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Última Sincronização</span>
+            <p class="text-bold text-primary" id="gcal-last-sync">Hoje às 08:30</p>
+          </div>
+          <div>
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Eventos Sincronizados</span>
+            <p class="text-bold" id="gcal-event-count">8 eventos</p>
+          </div>
+        </div>
+
+        <!-- Terminal / Log Visual de Sincronização -->
+        <div id="sync-animation-area" style="display: none; margin-top: var(--space-6);">
+          <span class="text-xs text-bold text-primary" style="text-transform: uppercase;">Etapas da Sincronização em Tempo Real:</span>
+          <div class="sync-progress-box" id="sync-console-output">
+            <!-- Linhas de progresso adicionadas via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Estrutura de Dados Compatível (Documentação Técnica Mock) -->
+      <div class="card" style="padding: var(--space-6); margin-bottom: var(--space-8);">
+        <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-2);">Estrutura de Dados da Integração Futura</h3>
+        <p class="text-xs text-muted" style="margin-bottom: var(--space-4);">
+          O modelo de dados abaixo é mantido para cada agendamento, preparado para a futura integração com a API oficial do Google Calendar:
+        </p>
+
+        <pre style="background-color: #0f172a; color: #38bdf8; padding: var(--space-4); border-radius: var(--radius-md); font-size: var(--font-size-xs); overflow-x: auto;">
+{
+  "localAppointmentId": "APT-001",
+  "googleEventId": "mock-google-event-001",
+  "calendarId": "primary",
+  "lastSyncedAt": "2026-09-21T08:30:00Z",
+  "syncStatus": "synced"
+}</pre>
+      </div>
+
+      <!-- Tabela de Eventos Sincronizados -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Eventos Vinculados à Agenda</h3>
+            <p class="text-xs text-muted">Consultas locais vinculadas a identificadores do Google Calendar</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Cód. Local</th>
+                <th>Paciente</th>
+                <th>Procedimento</th>
+                <th>Data & Hora</th>
+                <th>ID Google Calendar</th>
+                <th>Status Sinc.</th>
+              </tr>
+            </thead>
+            <tbody id="gcal-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Conexão / Autorização Mock -->
+  <div class="modal-backdrop" id="gcal-auth-modal">
+    <div class="modal-dialog modal-dialog-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">Conectar Google Calendar</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="text-sm text-secondary" style="margin-bottom: var(--space-4);">
+          Esta é uma <strong>integração demonstrativa</strong>. Nenhum token de autenticação real será solicitado.
+        </p>
+        <div class="card" style="padding: var(--space-4); background-color: #f8fafc; border-color: var(--color-border); margin-bottom: var(--space-4);">
+          <span class="text-xs text-muted" style="text-transform: uppercase;">Escopo da Permissão Mock:</span>
+          <p class="text-xs text-secondary" style="margin-top: 2px;">
+            https://www.googleapis.com/auth/calendar.events (Leitura e gravação de eventos de consulta)
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm-gcal-mock">Autorizar Conexão Mock</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    // Proteger rota com AuthGuard
+    AuthGuard.checkAuth();
+
+    UIComponents.renderAdminSidebar("google-calendar", "");
+    UIComponents.renderAdminTopbar("Google Calendar", "Integrações");
+
+    async function renderGcalTable() {
+      const appointments = await DatabaseService.appointments.getAll();
+      const tbody = document.getElementById("gcal-tbody");
+
+      tbody.innerHTML = appointments.map(a => `
+        <tr>
+          <td><strong class="text-primary">${a.id}</strong></td>
+          <td>${a.patientName}</td>
+          <td>${a.service}</td>
+          <td>${Navigation.formatDate(a.date)} às ${a.time}</td>
+          <td><code>${a.googleEventId || 'mock-google-event-' + a.id}</code></td>
+          <td><span class="badge badge-success">✓ Sincronizado</span></td>
+        </tr>
+      `).join("");
+
+      document.getElementById("gcal-event-count").innerText = `${appointments.length} eventos`;
+    }
+
+    // Abertura do modal de autenticação mock
+    document.getElementById("btn-toggle-connection").onclick = () => {
+      Modal.open(document.getElementById("gcal-auth-modal"));
+    };
+
+    document.getElementById("btn-confirm-gcal-mock").onclick = () => {
+      Modal.close(document.getElementById("gcal-auth-modal"));
+      Toast.success("Google Calendar conectado em modo demonstrativo!");
+      document.getElementById("gcal-status-text").innerText = "Google Calendar Conectado";
+      document.getElementById("gcal-badge").className = "badge badge-success";
+      document.getElementById("gcal-badge").innerText = "✓ Conectado & Ativo";
+      StorageService.logActivity("GCAL_AUTH", "Conexão mock revalidada com sucesso", "GCAL-AUTH");
+    };
+
+    // Animação de Sincronização Passo a Passo conforme Seção 22
+    document.getElementById("btn-sync-now").onclick = () => {
+      const syncBtn = document.getElementById("btn-sync-now");
+      syncBtn.disabled = true;
+
+      const animArea = document.getElementById("sync-animation-area");
+      const consoleOut = document.getElementById("sync-console-output");
+      animArea.style.display = "block";
+      consoleOut.innerHTML = "";
+
+      const steps = [
+        "Conectando ao Google Calendar...",
+        "Buscando eventos...",
+        "Comparando alterações...",
+        "Atualizando agenda...",
+        "Sincronização concluída com sucesso."
+      ];
+
+      let stepIndex = 0;
+      const interval = setInterval(() => {
+        if (stepIndex < steps.length) {
+          const line = document.createElement("div");
+          line.innerText = `> ${steps[stepIndex]}`;
+          consoleOut.appendChild(line);
+          stepIndex++;
+        } else {
+          clearInterval(interval);
+          syncBtn.disabled = false;
+          document.getElementById("gcal-last-sync").innerText = "Agora";
+          StorageService.logActivity("SYNC_CALENDAR", "Sincronização da agenda executada manualmente", "GCAL-MANUAL");
+          Toast.success("Sincronização com Google Calendar concluída!");
+          renderGcalTable();
+        }
+      }, 500);
+    };
+
+    renderGcalTable();
+  </script>
+</body>
+</html>

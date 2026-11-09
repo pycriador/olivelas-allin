@@ -1,0 +1,341 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Roteiro de Automação de Testes E2E - Olivelas Restaurant Platform",
+  "version": "1.0.0",
+  "description": "Especificação formal do fluxo operacional de ponta a ponta para reprodução em ferramentas externas de automação (Playwright, Cypress, Selenium, Postman).",
+  "environment": {
+    "baseUrl": "http://localhost:5173",
+    "testRestaurant": {
+      "id": "rest-qa-lab",
+      "name": "Bistrô QA Lab - Test Restaurant",
+      "legalName": "Bistrô QA Lab Gastronomia e Tecnologia Ltda",
+      "document": "99.888.777/0001-66",
+      "email": "contato@qalab.olivelas.com.br",
+      "phone": "(11) 98888-7777",
+      "city": "São Paulo",
+      "state": "SP"
+    },
+    "operatorUser": {
+      "id": "usr-qa-admin",
+      "name": "QA Lead Tester",
+      "email": "qa.tester@olivelas.com.br",
+      "role": "admin"
+    }
+  },
+  "testCases": [
+    {
+      "id": "TC-01",
+      "order": 1,
+      "title": "Inicialização do Restaurante de Testes (Tenant QA)",
+      "route": "/app",
+      "action": "setup_and_authenticate",
+      "selectors": {
+        "restaurantSwitcher": "[data-testid='restaurant-switcher'], button:has-text('Olivelas')",
+        "dashboardHeader": "h1, [data-testid='page-header-title']"
+      },
+      "expectedResults": {
+        "activeRestaurantId": "rest-qa-lab",
+        "displayedRestaurantName": "Bistrô QA Lab - Test Restaurant",
+        "url": "/app"
+      }
+    },
+    {
+      "id": "TC-02",
+      "order": 2,
+      "title": "Cadastro de Categoria Gastronômica",
+      "route": "/app/menu/categories",
+      "action": "create_category",
+      "inputData": {
+        "name": "Grelhados & Cortes Nobres",
+        "description": "Cortes selecionados de alta qualidade preparados na brasa com temperos artesanais.",
+        "sortOrder": 1,
+        "status": "active"
+      },
+      "selectors": {
+        "newCategoryButton": "button:has-text('Nova Categoria')",
+        "nameInput": "input[name='name'], input#category-name, input[placeholder*='Ex: Entradas']",
+        "descInput": "textarea[name='description'], textarea#category-desc",
+        "submitButton": "button[type='submit']:has-text('Salvar')"
+      },
+      "expectedResults": {
+        "toastMessage": "Categoria criada com sucesso",
+        "tableRowContains": "Grelhados & Cortes Nobres"
+      }
+    },
+    {
+      "id": "TC-03",
+      "order": 3,
+      "title": "Cadastro do Grupo de Adicionais (Pontos da Carne)",
+      "route": "/app/menu/add-ons?tab=groups",
+      "action": "create_addon_group",
+      "inputData": {
+        "groupName": "Ponto da Carne (Cortes Nobres)",
+        "description": "Selecione o ponto exato da carne para a cozinha",
+        "required": true,
+        "minSelections": 1,
+        "maxSelections": 1,
+        "options": [
+          { "name": "Mal Passado", "price": 0.00 },
+          { "name": "Ao Ponto para Mal", "price": 0.00 },
+          { "name": "Ao Ponto", "price": 0.00 },
+          { "name": "Bem Passado", "price": 0.00 }
+        ]
+      },
+      "selectors": {
+        "newGroupButton": "button:has-text('Novo Grupo')",
+        "groupNameInput": "input[name='group-name']",
+        "submitButton": "button[type='submit']"
+      },
+      "expectedResults": {
+        "toastMessage": "Grupo salvo com sucesso",
+        "groupVisible": "Ponto da Carne (Cortes Nobres)"
+      }
+    },
+    {
+      "id": "TC-04",
+      "order": 4,
+      "title": "Cadastro de Produto Prato Principal (Tomahawk Prime Rib)",
+      "route": "/app/menu/products",
+      "action": "create_product",
+      "inputData": {
+        "name": "Tomahawk Prime Rib na Brasa (600g)",
+        "category": "Grelhados & Cortes Nobres",
+        "price": 139.90,
+        "description": "Corte nobre com osso longo, grelhado no fogo forte e finalizado com manteiga de ervas e flor de sal.",
+        "status": "active",
+        "available": true
+      },
+      "selectors": {
+        "newProductButton": "button:has-text('Novo Produto')",
+        "nameInput": "input[name='name'], input#product-name",
+        "priceInput": "input[name='price'], input#product-price",
+        "submitButton": "button[type='submit']:has-text('Salvar Produto')"
+      },
+      "expectedResults": {
+        "toastMessage": "Produto cadastrado com sucesso",
+        "productRowContains": "Tomahawk Prime Rib na Brasa (600g)"
+      }
+    },
+    {
+      "id": "TC-05",
+      "order": 5,
+      "title": "Cadastro de Produto Bebida (Cerveja Artesanal IPA)",
+      "route": "/app/menu/products",
+      "action": "create_product",
+      "inputData": {
+        "name": "Cerveja Artesanal IPA Puro Malte (500ml)",
+        "category": "Bebidas & Coquetéis",
+        "price": 26.00,
+        "description": "Cerveja aromática com lúpulo fresco e notas cítricas marcantes.",
+        "status": "active",
+        "available": true
+      },
+      "selectors": {
+        "newProductButton": "button:has-text('Novo Produto')",
+        "nameInput": "input[name='name']",
+        "priceInput": "input[name='price']",
+        "submitButton": "button[type='submit']"
+      },
+      "expectedResults": {
+        "toastMessage": "Produto cadastrado com sucesso",
+        "productRowContains": "Cerveja Artesanal IPA"
+      }
+    },
+    {
+      "id": "TC-06",
+      "order": 6,
+      "title": "Cadastro de Setor Personalizado no Salão",
+      "route": "/app/tables/areas",
+      "action": "create_table_area",
+      "inputData": {
+        "name": "Deck Panorâmico",
+        "code": "deck_panoramico",
+        "description": "Espaço ao ar livre com vista para o jardim e iluminação acolhedora",
+        "color": "cyan",
+        "sortOrder": 1
+      },
+      "selectors": {
+        "newAreaButton": "button:has-text('Novo Setor')",
+        "nameInput": "input#area-name, input[placeholder*='Nome do setor']",
+        "submitButton": "button[type='submit']:has-text('Salvar Setor')"
+      },
+      "expectedResults": {
+        "toastMessage": "Setor criado com sucesso",
+        "areaCardContains": "Deck Panorâmico"
+      }
+    },
+    {
+      "id": "TC-07",
+      "order": 7,
+      "title": "Cadastro de Nova Mesa no Salão (Mesa 12)",
+      "route": "/app/tables",
+      "action": "create_table",
+      "inputData": {
+        "number": 12,
+        "label": "Mesa 12",
+        "area": "deck_panoramico",
+        "capacity": 4,
+        "notes": "Mesa redonda de madeira com vista para o jardim"
+      },
+      "selectors": {
+        "newTableButton": "button:has-text('Nova Mesa')",
+        "numberInput": "input#table-number, input[name='number']",
+        "capacityInput": "input#table-capacity, input[name='capacity']",
+        "areaSelect": "select#table-area, select[name='area']",
+        "submitButton": "button[type='submit']:has-text('Salvar Mesa')"
+      },
+      "expectedResults": {
+        "toastMessage": "Mesa cadastrada com sucesso",
+        "tableCardVisible": "Mesa 12",
+        "initialStatus": "available"
+      }
+    },
+    {
+      "id": "TC-08",
+      "order": 8,
+      "title": "Abertura de Comanda na Mesa 12",
+      "route": "/app/tables/table-12",
+      "action": "open_comanda",
+      "inputData": {
+        "customerName": "Dra. Carolina Mendes",
+        "waiterName": "Roberto Alves",
+        "partySize": 4,
+        "notes": "Comemoração especial • Mesa preferencial"
+      },
+      "selectors": {
+        "openComandaButton": "button:has-text('Abrir Comanda')",
+        "customerNameInput": "input#customer-name, input[name='customer_name']",
+        "waiterNameInput": "input#waiter-name, input[name='waiter_name']",
+        "confirmButton": "button[type='submit']:has-text('Confirmar e Abrir')"
+      },
+      "expectedResults": {
+        "toastMessage": "Comanda aberta com sucesso",
+        "tableStatusBadge": "Ocupada",
+        "activeCustomer": "Dra. Carolina Mendes"
+      }
+    },
+    {
+      "id": "TC-09",
+      "order": 9,
+      "title": "Lançamento de Itens com Seleção de Ponto da Carne",
+      "route": "/app/tables/table-12",
+      "action": "add_order_items",
+      "inputData": {
+        "items": [
+          {
+            "product": "Tomahawk Prime Rib na Brasa (600g)",
+            "quantity": 1,
+            "doneness": "Ao Ponto",
+            "notes": "Ponto exato: crosta selada na brasa e centro rosado quente."
+          },
+          {
+            "product": "Cerveja Artesanal IPA Puro Malte (500ml)",
+            "quantity": 2,
+            "notes": "Copos bem gelados com gelo à parte."
+          }
+        ]
+      },
+      "selectors": {
+        "addItemButton": "button:has-text('Adicionar Item')",
+        "productSelect": "select, input[placeholder*='Buscar produto']",
+        "quantityInput": "input[type='number']",
+        "notesTextarea": "textarea[placeholder*='Observações']",
+        "confirmItemButton": "button:has-text('Adicionar ao Pedido')"
+      },
+      "expectedResults": {
+        "subtotalCalculated": 191.90,
+        "serviceFeeCalculated": 19.19,
+        "totalCalculated": 211.09,
+        "itemsCount": 3
+      }
+    },
+    {
+      "id": "TC-10",
+      "order": 10,
+      "title": "Transmissão da Comanda para a Cozinha",
+      "route": "/app/tables/table-12",
+      "action": "send_to_kitchen",
+      "selectors": {
+        "sendKitchenButton": "button:has-text('Enviar para Cozinha')"
+      },
+      "expectedResults": {
+        "toastMessage": "enviado para a cozinha",
+        "statusBadge": "Em Preparação",
+        "itemStatus": "Na Fila da Cozinha"
+      }
+    },
+    {
+      "id": "TC-11",
+      "order": 11,
+      "title": "Monitor KDS: Recepção do Ticket e Preparo na Grelha",
+      "route": "/app/kds",
+      "action": "kitchen_start_preparation",
+      "selectors": {
+        "ticketCard": "[data-testid*='kds-ticket']:has-text('Mesa 12')",
+        "ticketDonenessBadge": "span:has-text('Ao Ponto')",
+        "startPreparationButton": "button:has-text('Iniciar Preparo')"
+      },
+      "expectedResults": {
+        "ticketVisible": true,
+        "ticketTableNumber": 12,
+        "ticketItemContains": "Tomahawk Prime Rib",
+        "donenessConfirmed": "Ao Ponto",
+        "status": "in_preparation"
+      }
+    },
+    {
+      "id": "TC-12",
+      "order": 12,
+      "title": "Finalização no KDS e Entrega do Prato ao Garçom",
+      "route": "/app/kds",
+      "action": "kitchen_complete_and_deliver",
+      "selectors": {
+        "markReadyButton": "button:has-text('Marcar Pronto')",
+        "deliverToWaiterButton": "button:has-text('Entregar ao Garçom')"
+      },
+      "expectedResults": {
+        "toastMessage": "Prato pronto / entregue",
+        "ticketStatusTransition": "ready -> delivered",
+        "completedTicketsCountIncrement": 1
+      }
+    },
+    {
+      "id": "TC-13",
+      "order": 13,
+      "title": "Autoatendimento: Comanda Digital Mobile com QR Code PIX",
+      "route": "/comanda/table-12?restaurant=rest-qa-lab",
+      "action": "customer_check_and_request_bill",
+      "selectors": {
+        "comandaTitle": "h1:has-text('Mesa 12')",
+        "pixQrCodeCanvas": "canvas, img[alt*='QR Code']",
+        "requestBillButton": "button:has-text('Pedir a Conta')"
+      },
+      "expectedResults": {
+        "customerTotal": "R$ 211,09",
+        "pixEmvPayloadGenerated": true,
+        "tableStatusUpdated": "bill_requested"
+      }
+    },
+    {
+      "id": "TC-14",
+      "order": 14,
+      "title": "Caixa & PDV: Liquidação e Liberação da Mesa",
+      "route": "/app/cashier",
+      "action": "cashier_settle_and_release",
+      "inputData": {
+        "paymentMethod": "pix",
+        "amountPaid": 211.09
+      },
+      "selectors": {
+        "orderItemInCashier": "tr:has-text('Mesa 12'), div:has-text('Mesa 12')",
+        "settleButton": "button:has-text('Liquidar'), button:has-text('Receber')",
+        "confirmPaymentButton": "button:has-text('Confirmar Pagamento')"
+      },
+      "expectedResults": {
+        "toastMessage": "Pagamento confirmado com sucesso",
+        "tableFinalStatus": "available",
+        "orderStatus": "paid"
+      }
+    }
+  ]
+}

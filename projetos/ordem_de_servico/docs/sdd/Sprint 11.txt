@@ -1,0 +1,658 @@
+# ServiceForge — Sprint 11
+## Ordem de Serviço — Aprovação, Pagamentos, Entrega e Encerramento
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura criada nas Sprints anteriores deverá ser preservada.
+
+NÃO remover funcionalidades existentes.
+
+Toda implementação deverá utilizar:
+
+• Core Platform
+
+• Metadata Platform
+
+• Document Platform
+
+• Communication Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Master Data
+
+Toda alteração deverá:
+
+Publicar Eventos
+
+Gerar Auditoria
+
+Atualizar Timeline
+
+Criar Histórico
+
+Executar Workflows
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Finalizar todo o ciclo operacional da Ordem de Serviço.
+
+Implementar:
+
+Aprovação
+
+Orçamento
+
+Pagamento
+
+Entrega
+
+Recibos
+
+Encerramento
+
+Assinaturas
+
+Portal de Consulta (estrutura)
+
+------------------------------------------------------------------
+
+WORKSPACE
+
+Adicionar novas abas.
+
+Orçamento
+
+Aprovação
+
+Pagamentos
+
+Entrega
+
+Recibos
+
+Assinaturas
+
+Histórico Financeiro
+
+Portal
+
+------------------------------------------------------------------
+
+ORÇAMENTO
+
+Criar editor completo.
+
+Permitir:
+
+Adicionar serviços
+
+Adicionar peças
+
+Descontos
+
+Acréscimos
+
+Impostos
+
+Frete
+
+Observações
+
+Validade
+
+Prazo
+
+Garantia
+
+Valor Final
+
+Resumo automático.
+
+------------------------------------------------------------------
+
+ITENS DO ORÇAMENTO
+
+Cada item possui:
+
+Tipo
+
+Serviço
+
+Peça
+
+Descrição
+
+Quantidade
+
+Valor Unitário
+
+Desconto
+
+Acréscimo
+
+Total
+
+Garantia
+
+Responsável
+
+Observações
+
+Calcular automaticamente.
+
+------------------------------------------------------------------
+
+DESCONTOS
+
+Permitir:
+
+Percentual
+
+Valor
+
+Desconto máximo configurável
+
+Motivo obrigatório
+
+Autorização (estrutura)
+
+Toda alteração deverá gerar auditoria.
+
+------------------------------------------------------------------
+
+APROVAÇÃO
+
+Criar módulo completo.
+
+Status:
+
+Pendente
+
+Enviado
+
+Visualizado
+
+Aprovado
+
+Reprovado
+
+Expirado
+
+Cancelado
+
+Registrar:
+
+Data
+
+Hora
+
+Usuário
+
+Origem
+
+Observações
+
+------------------------------------------------------------------
+
+MENSAGENS
+
+Integrar com Communication Platform.
+
+Criar templates:
+
+Solicitação de aprovação
+
+Orçamento
+
+Equipamento pronto
+
+Cobrança
+
+Retirada
+
+Garantia
+
+Ainda utilizando canais mockados.
+
+------------------------------------------------------------------
+
+PAGAMENTOS
+
+Criar estrutura completa.
+
+Permitir múltiplos pagamentos.
+
+Campos:
+
+Forma
+
+Valor
+
+Parcelas
+
+Data
+
+Hora
+
+Observações
+
+Responsável
+
+Status
+
+Documento
+
+Comprovante
+
+Integração preparada.
+
+------------------------------------------------------------------
+
+FORMAS DE PAGAMENTO
+
+Consumir Master Data.
+
+Suportar:
+
+PIX
+
+Dinheiro
+
+Cartão Crédito
+
+Cartão Débito
+
+Transferência
+
+Boleto
+
+Cheque
+
+Vale
+
+Outros
+
+Cada forma poderá possuir configurações específicas.
+
+------------------------------------------------------------------
+
+PARCELAMENTO
+
+Preparar arquitetura.
+
+Quantidade
+
+Valor
+
+Vencimento
+
+Situação
+
+Ainda sem integração financeira.
+
+------------------------------------------------------------------
+
+COMPROVANTES
+
+Integrar ao Document Platform.
+
+Gerar:
+
+Recibo de Entrada
+
+Recibo de Pagamento
+
+Recibo de Retirada
+
+Comprovante
+
+Garantia
+
+Todos deverão ser versionados.
+
+------------------------------------------------------------------
+
+ASSINATURAS
+
+Permitir:
+
+Cliente
+
+Técnico
+
+Responsável
+
+Empresa
+
+Utilizar Signature Manager.
+
+Salvar histórico.
+
+Nunca substituir assinaturas.
+
+------------------------------------------------------------------
+
+ENTREGA
+
+Criar fluxo.
+
+Checklist de saída.
+
+Fotos finais.
+
+Assinatura.
+
+Documentos entregues.
+
+Garantia entregue.
+
+Pagamento confirmado.
+
+Responsável.
+
+Data.
+
+Hora.
+
+Observações.
+
+------------------------------------------------------------------
+
+CHECKLIST DE ENTREGA
+
+Itens configuráveis.
+
+Exemplos:
+
+☐ Equipamento ligado
+
+☐ Cliente conferiu funcionamento
+
+☐ Acessórios entregues
+
+☐ Garantia entregue
+
+☐ Recibo entregue
+
+☐ Pagamento confirmado
+
+☐ Assinatura coletada
+
+Consumir Metadata Platform.
+
+------------------------------------------------------------------
+
+PORTAL DO CLIENTE
+
+Preparar estrutura.
+
+Ainda sem autenticação pública.
+
+Criar modelo.
+
+Consulta por:
+
+Número da OS
+
+Código Público
+
+QR Code
+
+Hash
+
+Situação
+
+Timeline resumida
+
+Documentos disponíveis
+
+Garantia
+
+------------------------------------------------------------------
+
+QR CODE
+
+Integrar Document Platform.
+
+Cada OS deverá possuir:
+
+Código Público
+
+Hash
+
+QR
+
+URL pública (placeholder)
+
+------------------------------------------------------------------
+
+ENCERRAMENTO
+
+Criar fluxo.
+
+Validações:
+
+Pagamento
+
+Entrega
+
+Assinatura
+
+Garantia
+
+Documentos
+
+Checklist
+
+Somente após todas as validações permitir encerramento.
+
+------------------------------------------------------------------
+
+REABERTURA
+
+Criar fluxo.
+
+Registrar:
+
+Motivo
+
+Responsável
+
+Data
+
+Hora
+
+Gerar auditoria.
+
+Atualizar Timeline.
+
+Publicar Evento.
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Criar indicadores.
+
+Orçamentos pendentes
+
+Aprovações
+
+OS prontas
+
+Aguardando retirada
+
+Valor total
+
+Recebimentos
+
+Tempo médio para aprovação
+
+Tempo médio até retirada
+
+Todos utilizando dados mockados.
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Budget.Created
+
+Budget.Updated
+
+Budget.Approved
+
+Budget.Rejected
+
+Payment.Created
+
+Payment.Confirmed
+
+Receipt.Generated
+
+Delivery.Completed
+
+ServiceOrder.Closed
+
+ServiceOrder.Reopened
+
+Signature.Collected
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Orçamento aprovado
+
+↓
+
+Gerar Documento
+
+↓
+
+Atualizar Timeline
+
+↓
+
+Enviar Comunicação
+
+↓
+
+Atualizar Status
+
+↓
+
+Publicar Evento
+
+↓
+
+Auditar
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+600 orçamentos
+
+800 pagamentos
+
+700 recibos
+
+500 entregas
+
+900 assinaturas
+
+1.500 eventos
+
+Dados totalmente consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todos os botões
+
+Todas as abas
+
+Todos os cálculos
+
+Fluxo de aprovação
+
+Fluxo de pagamento
+
+Fluxo de entrega
+
+Fluxo de encerramento
+
+Documentos
+
+Assinaturas
+
+Eventos
+
+Timeline
+
+Auditoria
+
+Responsividade
+
+Corrigir automaticamente toda inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir o ciclo completo de atendimento:
+
+✓ Entrada
+
+✓ Diagnóstico
+
+✓ Execução
+
+✓ Orçamento
+
+✓ Aprovação
+
+✓ Pagamento
+
+✓ Entrega
+
+✓ Assinatura
+
+✓ Garantia
+
+✓ Encerramento
+
+Todo o processo deverá estar integrado ao Core Platform, Metadata Platform, Document Platform, Communication Platform, Workflow Engine e Core Event Bus.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Controle avançado de Estoque
+
+• Financeiro completo
+
+• Inteligência Artificial
+
+• Integrações reais com WhatsApp, PIX ou gateways de pagamento

@@ -1,0 +1,47 @@
+import { Notification } from '../types';
+
+export const initialNotifications: Notification[] = [
+  {
+    id: 'notif-1',
+    recipientId: 'user-rafaela',
+    recipientRole: 'personal',
+    title: 'Carga alterada',
+    message: 'Lucas aumentou a carga no Supino Reto Barra para 75 kg.',
+    read: false,
+    timestamp: '2026-09-23T10:20:00',
+    type: 'alert',
+    link: '/personal/students/student-1',
+  },
+  {
+    id: 'notif-2',
+    recipientId: 'user-rafaela',
+    recipientRole: 'personal',
+    title: 'Exercício pulado',
+    message: 'Camila pulou o exercício Agachamento Búlgaro.',
+    read: false,
+    timestamp: '2026-09-22T19:30:00',
+    type: 'warning',
+    link: '/personal/students/student-2',
+  },
+  {
+    id: 'notif-3',
+    recipientId: 'user-student-1',
+    recipientRole: 'student',
+    title: 'Treino de hoje pronto',
+    message: 'Seu Treino A de Peito, Tríceps & Ombro está disponível para hoje!',
+    read: false,
+    timestamp: '2026-09-23T06:00:00',
+    type: 'info',
+    link: '/student/workout/today',
+  },
+  {
+    id: 'notif-4',
+    recipientId: 'user-student-2',
+    recipientRole: 'student',
+    title: 'Lembrete de hidratação e descanso',
+    message: 'Mantenha-se hidratada antes do seu treino de amanhã.',
+    read: true,
+    timestamp: '2026-09-22T10:00:00',
+    type: 'info',
+  },
+];

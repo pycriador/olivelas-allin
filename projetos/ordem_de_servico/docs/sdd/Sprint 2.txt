@@ -1,0 +1,538 @@
+# ServiceForge — Sprint 2
+## Core Platform
+
+Continuar o desenvolvimento do projeto ServiceForge utilizando exatamente a arquitetura criada na Sprint 1.
+
+NÃO alterar a estrutura existente.
+
+NÃO remover nenhum componente já criado.
+
+Toda implementação deve seguir os padrões arquiteturais existentes.
+
+O objetivo desta sprint é desenvolver o Core Platform.
+
+------------------------------------------------------------------
+
+## Módulos desta Sprint
+
+Implementar:
+
+Core Platform
+
+com os seguintes submódulos:
+
+• Administração Global
+
+• Empresas
+
+• Usuários
+
+• Papéis (RBAC)
+
+• Auditoria
+
+• Configurações
+
+• Database Manager
+
+Todos totalmente funcionais utilizando dados locais.
+
+Nenhum backend.
+
+Nenhuma integração externa.
+
+------------------------------------------------------------------
+
+# Administração Global
+
+Criar um painel exclusivo chamado:
+
+Global Administration
+
+Este painel ficará disponível apenas para usuários do tipo:
+
+Administrador Global
+
+Ele será responsável por administrar toda a plataforma.
+
+Menu lateral:
+
+Dashboard
+
+Empresas
+
+Usuários
+
+Papéis
+
+Permissões
+
+Banco de Dados
+
+Configurações
+
+Logs
+
+Auditoria
+
+Sistema
+
+------------------------------------------------------------------
+
+# Dashboard Global
+
+Criar um dashboard administrativo.
+
+Exibir:
+
+Quantidade de empresas
+
+Quantidade de usuários
+
+Quantidade de administradores
+
+Banco ativo
+
+Provider ativo
+
+Versão
+
+Quantidade de módulos
+
+Quantidade de logs
+
+Último backup (mock)
+
+Tempo de atividade (mock)
+
+------------------------------------------------------------------
+
+# Empresas
+
+CRUD completo.
+
+Campos:
+
+Logo
+
+Razão Social
+
+Nome Fantasia
+
+CNPJ
+
+Inscrição Estadual
+
+Telefone
+
+WhatsApp
+
+Email
+
+Website
+
+CEP
+
+Endereço
+
+Número
+
+Complemento
+
+Cidade
+
+Estado
+
+País
+
+Status
+
+Observações
+
+Cada empresa possui:
+
+Tema
+
+Idioma
+
+Banco utilizado
+
+Logo
+
+Cor principal
+
+Cor secundária
+
+Rodapé dos documentos
+
+Mensagem padrão
+
+Todos os dados mockados.
+
+------------------------------------------------------------------
+
+# Usuários
+
+CRUD completo.
+
+Campos:
+
+Foto
+
+Nome
+
+Email
+
+Telefone
+
+CPF
+
+Cargo
+
+Status
+
+Idioma
+
+Tema
+
+Empresa principal
+
+Empresas vinculadas
+
+Papéis
+
+Permissões especiais
+
+Último acesso
+
+Criado em
+
+Atualizado em
+
+------------------------------------------------------------------
+
+# Papéis
+
+Criar inicialmente:
+
+Administrador Global
+
+Administrador
+
+Editor
+
+Visualizador
+
+Cada papel possui:
+
+Nome
+
+Descrição
+
+Cor
+
+Ícone
+
+Permissões
+
+Status
+
+------------------------------------------------------------------
+
+# Permissões
+
+Criar estrutura preparada para permissões granulares.
+
+Categorias:
+
+Visualizar
+
+Criar
+
+Editar
+
+Excluir
+
+Imprimir
+
+Exportar
+
+Importar
+
+Publicar
+
+Administrar
+
+Mesmo utilizando apenas os quatro papéis fixos nesta fase, toda arquitetura deve estar preparada para evoluir para permissões individuais por recurso.
+
+------------------------------------------------------------------
+
+# Database Manager
+
+Expandir o módulo criado anteriormente.
+
+Criar interface completa.
+
+Cada conexão possui:
+
+Nome
+
+Tipo
+
+Host
+
+Porta
+
+Banco
+
+Usuário
+
+Senha
+
+SSL
+
+Descrição
+
+Status
+
+Conexão padrão
+
+Tipos:
+
+Local Storage
+
+Supabase
+
+PostgreSQL
+
+MariaDB
+
+SQLite
+
+Botões:
+
+Nova conexão
+
+Editar
+
+Duplicar
+
+Excluir
+
+Testar conexão
+
+Definir como padrão
+
+Exportar configuração
+
+Importar configuração
+
+No MVP todas as conexões serão simuladas.
+
+------------------------------------------------------------------
+
+# Configurações Globais
+
+Criar um módulo de configurações.
+
+Categorias:
+
+Sistema
+
+Empresas
+
+Usuários
+
+Documentos
+
+Comunicação
+
+Metadados
+
+Banco
+
+Logs
+
+Tema
+
+Idioma
+
+Backup
+
+Cada categoria deverá possuir uma tela própria.
+
+Utilizar formulários totalmente reutilizáveis.
+
+------------------------------------------------------------------
+
+# Sistema de Auditoria
+
+Implementar um Audit Service.
+
+Toda ação executada pela aplicação deve gerar um log.
+
+Estrutura:
+
+Data
+
+Hora
+
+Usuário
+
+Empresa
+
+Módulo
+
+Tela
+
+Ação
+
+Entidade
+
+Registro
+
+Descrição
+
+IP (mock)
+
+Navegador (mock)
+
+Sistema Operacional (mock)
+
+Session ID
+
+Resultado
+
+Duração
+
+Origem
+
+Os logs deverão ficar armazenados localmente.
+
+------------------------------------------------------------------
+
+# Impersonação
+
+Implementar a estrutura.
+
+Administrador Global poderá:
+
+Entrar em uma empresa
+
+Sair da empresa
+
+Toda impersonação deve criar registros de auditoria.
+
+Durante a impersonação exibir um banner permanente informando:
+
+Empresa atual
+
+Usuário original
+
+Horário de início
+
+Botão:
+
+Encerrar impersonação
+
+Neste MVP a troca será apenas visual utilizando dados mockados.
+
+------------------------------------------------------------------
+
+# Histórico
+
+Toda entidade deverá possuir:
+
+Criado por
+
+Criado em
+
+Atualizado por
+
+Atualizado em
+
+Excluído por
+
+Excluído em
+
+Mesmo que ainda não exista exclusão lógica.
+
+------------------------------------------------------------------
+
+# Logs do Sistema
+
+Criar um visualizador.
+
+Filtros:
+
+Período
+
+Usuário
+
+Empresa
+
+Módulo
+
+Tipo
+
+Resultado
+
+Pesquisa
+
+Tabela paginada.
+
+Exportação preparada.
+
+------------------------------------------------------------------
+
+# Seeds
+
+Gerar dados realistas.
+
+Criar:
+
+5 empresas
+
+30 usuários
+
+4 papéis
+
+100 registros de auditoria
+
+20 conexões de banco
+
+Todos consistentes entre si.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+# UX
+
+Toda exclusão deve utilizar modal.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar componentes reutilizáveis.
+
+Todas as tabelas devem possuir:
+
+Pesquisa
+
+Filtros
+
+Ordenação
+
+Paginação
+
+Colunas configuráveis
+
+Exportação preparada
+
+------------------------------------------------------------------
+
+# Objetivo desta Sprint
+
+Ao finalizar esta Sprint o sistema deverá possuir um Core Platform completamente funcional, permitindo administrar empresas, usuários, papéis, permissões, bancos de dados, configurações e auditoria utilizando apenas persistência local, mantendo toda a arquitetura preparada para integração futura com Supabase externo, PostgreSQL, MariaDB e SQLite sem necessidade de refatoração dos módulos de negócio.

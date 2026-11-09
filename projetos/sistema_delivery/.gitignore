@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+.env
+.env.*
+!.env.example
+*.tsbuildinfo
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+backend/olivelas.db
+backend/test_olivelas.db
+*.sqlite
+*.sqlite3
+.DS_Store

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel WhatsApp — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .chat-bubble-preview {
+      background-color: #dcf8c6;
+      color: #0f172a;
+      border-radius: var(--radius-lg) var(--radius-lg) 2px var(--radius-lg);
+      padding: var(--space-4);
+      max-width: 460px;
+      font-size: var(--font-size-sm);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+      position: relative;
+      line-height: var(--line-height-normal);
+    }
+    .chat-bubble-preview::after {
+      content: "10:32 ✓✓";
+      display: block;
+      font-size: 0.625rem;
+      color: #64748b;
+      text-align: right;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Painel de WhatsApp</h1>
+          <p class="text-sm text-muted">Comunicação direta, mensagens rápidas e campanhas promocionais.</p>
+        </div>
+        <button type="button" class="btn btn-whatsapp" id="btn-new-campaign">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          Nova Campanha
+        </button>
+      </div>
+
+      <!-- Aviso Obrigatório de Modo Demonstração -->
+      <div class="card" style="background-color: #fffbeb; border-color: #fde68a; padding: var(--space-4) var(--space-6); margin-bottom: var(--space-6); border-left: 4px solid var(--color-warning);">
+        <div class="flex items-center gap-3">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+          <div>
+            <strong style="color: #92400e;">Modo demonstração</strong>
+            <p class="text-xs text-secondary" style="margin-top: 2px;">
+              Nenhum WhatsApp real será enviado a partir deste ambiente demonstrativo. Todas as interações e disparos são simulados localmente.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Status do WhatsApp -->
+      <div class="card" style="padding: var(--space-6); margin-bottom: var(--space-8);">
+        <div class="flex items-center justify-between flex-wrap gap-4">
+          <div class="flex items-center gap-4">
+            <div style="width: 52px; height: 52px; border-radius: 50%; background-color: #25d366; color: #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.35);">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.784 2.796.784 3.182 0 5.768-2.587 5.768-5.766.001-3.181-2.585-5.77-5.768-5.77zm3.397 8.256c-.145.407-.841.776-1.169.824-.316.046-.713.064-2.222-.562-1.808-.75-2.956-2.614-3.045-2.733-.089-.12-0.722-.962-.722-1.834 0-.872.457-1.302.62-1.48.163-.178.356-.223.475-.223.119 0 .237.001.341.006.11.005.258-.042.404.308.148.356.505 1.233.549 1.322.044.089.074.193.015.312-.059.119-.089.193-.178.297-.089.104-.187.233-.267.312-.089.089-.182.186-.078.364.104.178.461.761.99 1.233.682.608 1.258.796 1.436.885.178.089.282.074.386-.044.104-.119.445-.519.564-.697.119-.178.237-.148.396-.089.159.059 1.009.475 1.182.562.173.087.288.132.332.206.044.074.044.43-.101.837z"/></svg>
+            </div>
+            <div>
+              <span class="text-xs text-muted" style="text-transform: uppercase; font-weight: 600;">Canal Oficial Cadastrado</span>
+              <h3 style="font-size: var(--font-size-xl); margin-top: 2px;">(11) 99577-0004</h3>
+              <p class="text-xs text-muted">Dra. Marta Gelsi Dias — Odontologia</p>
+            </div>
+          </div>
+          <div>
+            <span class="badge badge-success" style="font-size: var(--font-size-sm); padding: var(--space-2) var(--space-4);">
+              ✓ Status: Configurado
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mensagens Rápidas & Simulador de Conversa -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-bottom: var(--space-8);" id="whatsapp-split-view">
+        <!-- Coluna: Botões de Mensagem Rápida -->
+        <div class="card" style="padding: var(--space-6);">
+          <h3 style="font-size: var(--font-size-md); margin-bottom: var(--space-3);">Mensagens Rápidas</h3>
+          <p class="text-xs text-muted" style="margin-bottom: var(--space-4);">Clique em um botão para carregar e simular o envio imediato:</p>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3);">
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="confirm">Confirmar consulta</button>
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="remind">Lembrar consulta</button>
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="reschedule">Reagendar</button>
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="cancel">Cancelar</button>
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="location">Enviar localização</button>
+            <button type="button" class="btn btn-outline btn-quick-msg" data-key="support">Falar com atendimento</button>
+          </div>
+        </div>
+
+        <!-- Coluna: Prévia Visual e Simulação de Disparo -->
+        <div class="card" style="padding: var(--space-6); background: #ece5dd; display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span class="text-xs text-bold" style="text-transform: uppercase; color: #475569;">Prévia da Conversa (WhatsApp):</span>
+            <div style="margin-top: var(--space-4);" id="chat-preview-container">
+              <div class="chat-bubble-preview" id="chat-bubble-text">
+                Olá, Ana Souza! Sua consulta com a Dra. Marta Gelsi Dias está confirmada para 24/09/2026 às 10:30. Em caso de dúvidas, responda a esta mensagem.
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between" style="margin-top: var(--space-6); background-color: rgba(255,255,255,0.9); padding: var(--space-3); border-radius: var(--radius-md);">
+            <span class="text-xs text-muted">Destinatário: Paciente demonstrativo</span>
+            <button type="button" class="btn btn-whatsapp btn-sm" id="btn-simulate-send">
+              Simular Envio Mock
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campanhas de Divulgação -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Campanhas de Divulgação Mock</h3>
+            <p class="text-xs text-muted">Envios programados em lote para públicos selecionados</p>
+          </div>
+        </div>
+
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome da Campanha</th>
+                <th>Público Alvo</th>
+                <th>Mensagem</th>
+                <th>Data Programada</th>
+                <th>Status</th>
+                <th class="text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody id="campaigns-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Nova Campanha -->
+  <div class="modal-backdrop" id="campaign-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">Nova Campanha de Divulgação</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="campaign-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label form-label-required" for="cmp-form-name">Nome da Campanha</label>
+            <input type="text" id="cmp-form-name" class="form-input" required placeholder="Ex: Campanha de Aparelho Ortodôntico">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="cmp-form-audience">Público Selecionado</label>
+              <select id="cmp-form-audience" class="form-select">
+                <option value="Pacientes sem retorno há 6 meses">Pacientes sem retorno há 6 meses</option>
+                <option value="Pacientes em acompanhamento ortodôntico">Pacientes em acompanhamento ortodôntico</option>
+                <option value="Interessados em avaliação odontológica">Interessados em avaliação odontológica</option>
+                <option value="Todos os pacientes cadastrados">Todos os pacientes cadastrados</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="cmp-form-date">Data de Envio</label>
+              <input type="date" id="cmp-form-date" class="form-input" required value="2026-09-24">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label form-label-required" for="cmp-form-msg">Mensagem da Campanha</label>
+            <textarea id="cmp-form-msg" class="form-textarea" rows="3" required placeholder="Olá, {{nome}}! Que tal cuidar do seu sorriso com a Dra. Marta Gelsi Dias?..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+          <button type="submit" class="btn btn-whatsapp">Salvar Campanha</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/whatsapp.js"></script>
+  <script>
+    // Proteger rota com AuthGuard
+    AuthGuard.checkAuth();
+
+    UIComponents.renderAdminSidebar("whatsapp", "");
+    UIComponents.renderAdminTopbar("WhatsApp", "Comunicação");
+
+    const quickMessages = {
+      confirm: "Olá, Ana Souza! Sua consulta com a Dra. Marta Gelsi Dias está confirmada para 24/09/2026 às 10:30. Em caso de dúvidas, responda a esta mensagem.",
+      remind: "Olá, Ana Souza! Lembramos que sua consulta com a Dra. Marta Gelsi Dias será amanhã, 24/09/2026 às 10:30. Por favor, chegue com 10 minutos de antecedência.",
+      reschedule: "Olá, Ana Souza! Sua consulta com a Dra. Marta Gelsi Dias foi reagendada para 28/09/2026 às 14:00. Ficamos à disposição caso precise de outro dia.",
+      cancel: "Olá, Ana Souza. O agendamento para 24/09/2026 às 10:30 foi cancelado com sucesso. Para escolher uma nova data, entre em contato conosco por este canal.",
+      location: "Olá! Segue a localização do nosso consultório: Informação não cadastrada (configure no painel). Atendimento mediante agendamento prévio.",
+      support: "Olá! Nossa equipe da Dra. Marta Gelsi Dias está à disposição para esclarecer suas dúvidas sobre tratamentos e agendamentos. Como podemos ajudar?"
+    };
+
+    const bubbleEl = document.getElementById("chat-bubble-text");
+
+    document.querySelectorAll(".btn-quick-msg").forEach(btn => {
+      btn.onclick = () => {
+        const key = btn.getAttribute("data-key");
+        bubbleEl.innerText = quickMessages[key] || "Mensagem selecionada.";
+        Toast.info("Mensagem rápida carregada no simulador.");
+      };
+    });
+
+    document.getElementById("btn-simulate-send").onclick = () => {
+      const btn = document.getElementById("btn-simulate-send");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner spinner-sm"></span> Simulando envio...`;
+
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.innerText = "Simular Envio Mock";
+        StorageService.logActivity("WHATSAPP_SIMULATED", "Envio simulado de mensagem WhatsApp para paciente demonstrativo", "WPP-SIM");
+        Toast.success("Mensagem mock processada com sucesso! (Modo demonstração)");
+      }, 700);
+    };
+
+    function renderCampaigns() {
+      const campaigns = WhatsAppManager.getCampaigns();
+      const tbody = document.getElementById("campaigns-tbody");
+
+      tbody.innerHTML = campaigns.map(c => `
+        <tr>
+          <td><strong class="text-primary">${c.name}</strong></td>
+          <td><span class="text-xs text-muted">${c.audience}</span></td>
+          <td><p class="text-xs text-secondary" style="max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.message}</p></td>
+          <td>${Navigation.formatDate(c.date)}</td>
+          <td>${UIComponents.renderStatusBadge(c.status)}</td>
+          <td class="text-right">
+            <button type="button" class="btn btn-outline btn-sm" onclick="Toast.info('Campanha em modo demonstração.')">Detalhes</button>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    const modalEl = document.getElementById("campaign-modal");
+    const formEl = document.getElementById("campaign-form");
+
+    document.getElementById("btn-new-campaign").onclick = () => {
+      formEl.reset();
+      Modal.open(modalEl);
+    };
+
+    formEl.onsubmit = (e) => {
+      e.preventDefault();
+      const data = {
+        name: document.getElementById("cmp-form-name").value.trim(),
+        audience: document.getElementById("cmp-form-audience").value,
+        date: document.getElementById("cmp-form-date").value,
+        message: document.getElementById("cmp-form-msg").value.trim(),
+        status: "Agendada"
+      };
+
+      WhatsAppManager.saveCampaign(data);
+      Modal.close(modalEl);
+      Toast.success("Campanha mock criada com sucesso!");
+      renderCampaigns();
+    };
+
+    renderCampaigns();
+  </script>
+</body>
+</html>

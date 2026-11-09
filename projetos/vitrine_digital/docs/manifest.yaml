@@ -1,0 +1,17 @@
+standard: "Documentation Standard v1.0"
+updated: "2026-09-11"
+description: "Machine-readable pointer to per-language documentation manifests."
+
+languages:
+  - code: "en"
+    name: "English"
+    manifest: "en/manifest.yaml"
+    index: "en/README.md"
+    ai_entry: "en/ai-context.md"
+  - code: "pt-BR"
+    name: "Português (Brasil)"
+    manifest: "pt-BR/manifest.yaml"
+    index: "pt-BR/README.md"
+    ai_entry: "pt-BR/contexto-ia.md"
+
+default_language: "en"

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pacientes — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <!-- Sidebar Container -->
+  <div id="admin-sidebar-container"></div>
+
+  <!-- Main Content Wrapper -->
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Pacientes</h1>
+          <p class="text-sm text-muted">Gestão cadastral, prontuários demonstrativos e histórico de atendimentos.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-open-patient-modal">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Novo Paciente
+        </button>
+      </div>
+
+      <!-- Filtros de Busca -->
+      <div class="card" style="padding: var(--space-5); margin-bottom: var(--space-6);">
+        <div class="form-grid">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-search">Buscar Paciente</label>
+            <input type="text" id="filter-search" class="form-input" placeholder="Filtrar por nome, CPF ou e-mail...">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-phone">Telefone</label>
+            <input type="text" id="filter-phone" class="form-input" placeholder="(11) 9...">
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="filter-status">Status Cadastral</label>
+            <select id="filter-status" class="form-select">
+              <option value="">Todos os status</option>
+              <option value="active">Ativo</option>
+              <option value="inactive">Inativo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela de Pacientes -->
+      <div class="card">
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Paciente</th>
+                <th>Telefone</th>
+                <th>E-mail</th>
+                <th>CPF</th>
+                <th>Última Consulta</th>
+                <th>Status</th>
+                <th class="text-right">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="patients-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginação Mock -->
+        <div class="card-footer justify-between">
+          <span class="text-xs text-muted" id="pagination-info">Mostrando pacientes cadastrados</span>
+          <div class="flex gap-2">
+            <button type="button" class="btn btn-outline btn-sm" disabled>Anterior</button>
+            <button type="button" class="btn btn-primary btn-sm">1</button>
+            <button type="button" class="btn btn-outline btn-sm" disabled>Próxima</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Cadastro e Edição de Paciente -->
+  <div class="modal-backdrop" id="patient-modal">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="patient-modal-title">Novo Paciente</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="patient-form">
+        <div class="modal-body">
+          <input type="hidden" id="patient-form-id">
+          
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="patient-form-name">Nome Completo</label>
+              <input type="text" id="patient-form-name" class="form-input" required placeholder="Ex: Ana Souza">
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="patient-form-cpf">CPF</label>
+              <input type="text" id="patient-form-cpf" class="form-input" required placeholder="000.000.000-00">
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label form-label-required" for="patient-form-phone">Telefone / WhatsApp</label>
+              <input type="tel" id="patient-form-phone" class="form-input" required placeholder="(11) 90000-0000">
+            </div>
+            <div class="form-group">
+              <label class="form-label form-label-required" for="patient-form-email">E-mail</label>
+              <input type="email" id="patient-form-email" class="form-input" required placeholder="ana@exemplo.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-form-status">Status</label>
+              <select id="patient-form-status" class="form-select">
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select>
+            </div>
+          </div>
+
+          <h4 style="font-size: var(--font-size-sm); margin: var(--space-4) 0 var(--space-2); color: var(--color-text-muted); text-transform: uppercase;">Endereço</h4>
+          
+          <div class="form-grid-3">
+            <div class="form-group" style="grid-column: span 2;">
+              <label class="form-label" for="patient-form-street">Logradouro / Rua</label>
+              <input type="text" id="patient-form-street" class="form-input" placeholder="Rua Demonstrativa">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-form-number">Número</label>
+              <input type="text" id="patient-form-number" class="form-input" placeholder="100">
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="patient-form-complement">Complemento</label>
+              <input type="text" id="patient-form-complement" class="form-input" placeholder="Apto 42">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-form-neighborhood">Bairro</label>
+              <input type="text" id="patient-form-neighborhood" class="form-input" placeholder="Centro">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-form-cep">CEP</label>
+              <input type="text" id="patient-form-cep" class="form-input" placeholder="00000-000">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="patient-form-city">Cidade</label>
+              <input type="text" id="patient-form-city" class="form-input" value="São Paulo">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="patient-form-state">Estado</label>
+              <input type="text" id="patient-form-state" class="form-input" value="SP">
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="patient-form-notes">Observações Clínicas / Preferências</label>
+            <textarea id="patient-form-notes" class="form-textarea" rows="2" placeholder="Informações relevantes sobre histórico odontológico..."></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-patient">Salvar Paciente</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Menu Dropdown Flutuante de Ações dos Pacientes -->
+  <div id="patient-actions-dropdown" class="action-dropdown-menu" role="menu" aria-hidden="true"></div>
+
+  <!-- Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script src="../js/patients.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("pacientes", "");
+    UIComponents.renderAdminTopbar("Pacientes", "Gestão Clínica");
+
+    async function renderTable() {
+      // Busca atualizada do banco Supabase
+      await PatientsManager.fetchPatients();
+
+      const search = document.getElementById("filter-search").value;
+      const phone = document.getElementById("filter-phone").value;
+      const status = document.getElementById("filter-status").value;
+
+      let list = PatientsManager.filterPatients({ search, status });
+      if (phone) {
+        list = list.filter(p => p.phone && p.phone.includes(phone));
+      }
+
+      closePatientDropdown();
+      const tbody = document.getElementById("patients-tbody");
+      const info = document.getElementById("pagination-info");
+      info.innerText = `Mostrando ${list.length} paciente(s)`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              ${UIComponents.renderEmptyState("Nenhum paciente encontrado", "Ajuste os filtros de busca ou cadastre um novo paciente.")}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(p => `
+        <tr>
+          <td>
+            <div class="text-bold">${p.name}</div>
+            <span class="text-xs text-muted">${p.id}</span>
+          </td>
+          <td>${p.phone}</td>
+          <td>${p.email}</td>
+          <td>${p.cpf}</td>
+          <td>${Navigation.formatDate(p.lastAppointment)}</td>
+          <td>${UIComponents.renderStatusBadge(p.status === 'active' ? 'Ativo' : 'Inativo')}</td>
+          <td class="text-right">
+            <div class="dropdown-wrapper">
+              <button type="button" class="btn-patient-actions" data-id="${p.id}" aria-expanded="false" title="Opções para ${p.name}">
+                <span>Ações</span>
+                <svg class="dropdown-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      // Bind botões de ação dropdown dos pacientes
+      tbody.querySelectorAll(".btn-patient-actions").forEach(btn => {
+        btn.onclick = (e) => {
+          e.stopPropagation();
+          const id = btn.getAttribute("data-id");
+          openPatientDropdown(btn, id);
+        };
+      });
+    }
+
+    // Modal de criação / edição
+    const modalEl = document.getElementById("patient-modal");
+    const formEl = document.getElementById("patient-form");
+
+    document.getElementById("btn-open-patient-modal").onclick = () => {
+      formEl.reset();
+      document.getElementById("patient-form-id").value = "";
+      document.getElementById("patient-modal-title").innerText = "Novo Paciente";
+      Modal.open(modalEl);
+    };
+
+    async function openEditModal(id) {
+      const p = await PatientsManager.fetchPatientById(id);
+      if (!p) return;
+      document.getElementById("patient-form-id").value = p.id;
+      document.getElementById("patient-modal-title").innerText = `Editar Paciente (${p.id})`;
+      document.getElementById("patient-form-name").value = p.name || "";
+      document.getElementById("patient-form-cpf").value = p.cpf || "";
+      document.getElementById("patient-form-phone").value = p.phone || "";
+      document.getElementById("patient-form-email").value = p.email || "";
+      document.getElementById("patient-form-status").value = p.status || "active";
+      document.getElementById("patient-form-street").value = p.address?.street || "";
+      document.getElementById("patient-form-number").value = p.address?.number || "";
+      document.getElementById("patient-form-complement").value = p.address?.complement || "";
+      document.getElementById("patient-form-neighborhood").value = p.address?.neighborhood || "";
+      document.getElementById("patient-form-cep").value = p.address?.zipCode || "";
+      document.getElementById("patient-form-city").value = p.address?.city || "São Paulo";
+      document.getElementById("patient-form-state").value = p.address?.state || "SP";
+      document.getElementById("patient-form-notes").value = p.notes || "";
+      Modal.open(modalEl);
+    }
+
+    // Salvar paciente no Supabase
+    formEl.onsubmit = async (e) => {
+      e.preventDefault();
+      const saveBtn = document.getElementById("btn-save-patient");
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = `<span class="spinner spinner-sm"></span> Salvando no Supabase...`;
+
+      const id = document.getElementById("patient-form-id").value;
+      const patientData = {
+        id: id || undefined,
+        name: document.getElementById("patient-form-name").value.trim(),
+        cpf: document.getElementById("patient-form-cpf").value.trim(),
+        phone: document.getElementById("patient-form-phone").value.trim(),
+        email: document.getElementById("patient-form-email").value.trim(),
+        status: document.getElementById("patient-form-status").value,
+        address: {
+          street: document.getElementById("patient-form-street").value.trim(),
+          number: document.getElementById("patient-form-number").value.trim(),
+          complement: document.getElementById("patient-form-complement").value.trim(),
+          neighborhood: document.getElementById("patient-form-neighborhood").value.trim(),
+          zipCode: document.getElementById("patient-form-cep").value.trim(),
+          city: document.getElementById("patient-form-city").value.trim(),
+          state: document.getElementById("patient-form-state").value.trim()
+        },
+        notes: document.getElementById("patient-form-notes").value.trim()
+      };
+
+      try {
+        const res = await PatientsManager.savePatient(patientData);
+        Modal.close(modalEl);
+        Toast.success(res.isNew ? "Paciente cadastrado no Supabase com sucesso!" : "Dados do paciente atualizados no Supabase!");
+        await renderTable();
+      } catch (err) {
+        console.error(err);
+        Toast.error("Erro ao salvar dados no Supabase.");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = "Salvar Paciente";
+      }
+    };
+
+    // Eventos de filtro
+    document.getElementById("filter-search").oninput = renderTable;
+    document.getElementById("filter-phone").oninput = renderTable;
+    document.getElementById("filter-status").onchange = renderTable;
+
+    // Gerenciador do Menu Dropdown Flutuante de Ações dos Pacientes
+    function getDropdownMenu() {
+      let menu = document.getElementById("patient-actions-dropdown");
+      if (!menu) {
+        menu = document.createElement("div");
+        menu.id = "patient-actions-dropdown";
+        menu.className = "action-dropdown-menu";
+        menu.setAttribute("role", "menu");
+        menu.setAttribute("aria-hidden", "true");
+        document.body.appendChild(menu);
+      }
+      return menu;
+    }
+
+    let activeDropdownBtn = null;
+
+    function closePatientDropdown() {
+      const menu = getDropdownMenu();
+      if (!menu) return;
+      menu.classList.remove("show", "drop-up");
+      menu.setAttribute("aria-hidden", "true");
+      if (activeDropdownBtn) {
+        activeDropdownBtn.classList.remove("active");
+        activeDropdownBtn.setAttribute("aria-expanded", "false");
+        activeDropdownBtn = null;
+      }
+    }
+
+    async function openPatientDropdown(btn, patientId) {
+      let p = PatientsManager.getPatientById(patientId);
+      if (!p) {
+        p = await PatientsManager.fetchPatientById(patientId);
+      }
+      if (!p) return;
+
+      if (activeDropdownBtn === btn) {
+        closePatientDropdown();
+        return;
+      }
+
+      closePatientDropdown();
+
+      activeDropdownBtn = btn;
+      btn.classList.add("active");
+      btn.setAttribute("aria-expanded", "true");
+
+      const phoneDigits = (p.phone || "").replace(/\D/g, "");
+      const waLink = phoneDigits 
+        ? `https://wa.me/55${phoneDigits}?text=${encodeURIComponent(`Olá ${p.name}, tudo bem? Aqui é do consultório da Dra. Marta Gelsi Dias.`)}`
+        : `whatsapp.html`;
+
+      const dropdownMenu = getDropdownMenu();
+      dropdownMenu.innerHTML = `
+        <div class="action-dropdown-header">${p.name} • ${p.id}</div>
+        <a href="paciente-detalhes.html?id=${p.id}" class="action-dropdown-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          <span>Ver Prontuário</span>
+        </a>
+        <button type="button" class="action-dropdown-item" id="dropdown-action-edit">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          <span>Editar Cadastro</span>
+        </button>
+        <a href="agendamentos.html?newFor=${p.id}" class="action-dropdown-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          <span>Agendar Consulta</span>
+        </a>
+        <a href="${waLink}" target="_blank" rel="noopener noreferrer" class="action-dropdown-item item-whatsapp">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+          <span>Conversar no WhatsApp</span>
+        </a>
+        <div class="action-dropdown-divider"></div>
+        <button type="button" class="action-dropdown-item item-danger" id="dropdown-action-delete">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          <span>Excluir Paciente</span>
+        </button>
+      `;
+
+      // Eventos dos botões internos do dropdown
+      document.getElementById("dropdown-action-edit").onclick = () => {
+        closePatientDropdown();
+        openEditModal(p.id);
+      };
+
+      document.getElementById("dropdown-action-delete").onclick = () => {
+        closePatientDropdown();
+        Modal.confirm({
+          title: "Excluir paciente?",
+          message: `Esta ação removerá o paciente "${p.name}" (${p.id}) permanentemente do banco de dados.`,
+          confirmText: "Sim, excluir",
+          cancelText: "Cancelar",
+          danger: true,
+          onConfirm: async () => {
+            await PatientsManager.deletePatient(p.id);
+            Toast.success("Paciente excluído do Supabase com sucesso.");
+            await renderTable();
+          }
+        });
+      };
+
+      // Exibe temporariamente para posicionamento dinâmico
+      dropdownMenu.classList.add("show");
+      dropdownMenu.setAttribute("aria-hidden", "false");
+
+      const rect = btn.getBoundingClientRect();
+      const menuHeight = dropdownMenu.offsetHeight || 230;
+      const menuWidth = dropdownMenu.offsetWidth || 220;
+
+      // Se não houver espaço embaixo, abre para cima (drop-up)
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < menuHeight + 12 && rect.top > menuHeight) {
+        dropdownMenu.classList.add("drop-up");
+        dropdownMenu.style.top = `${rect.top - menuHeight - 6}px`;
+      } else {
+        dropdownMenu.classList.remove("drop-up");
+        dropdownMenu.style.top = `${rect.bottom + 6}px`;
+      }
+
+      // Alinhamento horizontal: alinhado à direita do botão, respeitando a tela
+      let rightPos = window.innerWidth - rect.right;
+      if (rightPos < 10) rightPos = 10;
+      if (rect.right - menuWidth < 10) {
+        dropdownMenu.style.left = "10px";
+        dropdownMenu.style.right = "auto";
+      } else {
+        dropdownMenu.style.right = `${rightPos}px`;
+        dropdownMenu.style.left = "auto";
+      }
+    }
+
+    // Fechar ao clicar fora, rolar ou pressionar ESC
+    document.addEventListener("click", (e) => {
+      const menu = getDropdownMenu();
+      if (!menu) return;
+      if (menu.contains(e.target)) return;
+      if (e.target.closest(".btn-patient-actions")) return;
+      closePatientDropdown();
+    });
+
+    window.addEventListener("scroll", closePatientDropdown, true);
+    window.addEventListener("resize", closePatientDropdown);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closePatientDropdown();
+    });
+
+    // Carga inicial
+    renderTable();
+  </script>
+</body>
+</html>

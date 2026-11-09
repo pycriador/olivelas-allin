@@ -1,0 +1,225 @@
+{
+  "suite": "Olivelas Restaurant E2E QA Test Plan Execution",
+  "executedAt": "2026-10-08T00:32:31.984Z",
+  "totalDurationMs": 62698,
+  "summary": {
+    "total": 16,
+    "passed": 16,
+    "failed": 0,
+    "successRate": "100%"
+  },
+  "environment": {
+    "baseUrl": "http://localhost:5173",
+    "browser": "Google Chrome Headless",
+    "viewport": "1440x900 (1.5x scale)",
+    "restaurantId": "rest-qa-lab",
+    "restaurantName": "Bistrô QA Lab - Test Restaurant"
+  },
+  "results": [
+    {
+      "id": "TC-01",
+      "title": "Inicialização do Tenant de Testes (Bistrô QA Lab)",
+      "route": "/app",
+      "status": "PASSED",
+      "durationMs": 8333,
+      "details": {
+        "screenshot": "01-setup-test-restaurant.png",
+        "restaurant": "Bistrô QA Lab - Test Restaurant"
+      },
+      "timestamp": "2026-10-08T00:31:38.755Z"
+    },
+    {
+      "id": "TC-02",
+      "title": "Criação de Categoria Gastronômica (Grelhados & Cortes Nobres)",
+      "route": "/app/menu/categories",
+      "status": "PASSED",
+      "durationMs": 6350,
+      "details": {
+        "screenshot": "02-create-category-grelhados.png",
+        "category": "Grelhados & Cortes Nobres"
+      },
+      "timestamp": "2026-10-08T00:31:45.106Z"
+    },
+    {
+      "id": "TC-03",
+      "title": "Configuração dos Pontos da Carne e Adicionais",
+      "route": "/app/menu/add-ons?tab=groups",
+      "status": "PASSED",
+      "durationMs": 3213,
+      "details": {
+        "screenshot": "03-create-addon-group-ponto-carne.png",
+        "group": "Ponto da Carne (Cortes Nobres)"
+      },
+      "timestamp": "2026-10-08T00:31:48.320Z"
+    },
+    {
+      "id": "TC-04",
+      "title": "Cadastro de Produto Prato Principal (Tomahawk Prime Rib)",
+      "route": "/app/menu/products",
+      "status": "PASSED",
+      "durationMs": 2926,
+      "details": {
+        "screenshot": "04-create-product-tomahawk.png",
+        "product": "Tomahawk Prime Rib na Brasa (600g)",
+        "price": 139.9
+      },
+      "timestamp": "2026-10-08T00:31:51.246Z"
+    },
+    {
+      "id": "TC-05",
+      "title": "Cadastro de Bebida Artesanal (Cerveja IPA 500ml)",
+      "route": "/app/menu/products",
+      "status": "PASSED",
+      "durationMs": 2818,
+      "details": {
+        "screenshot": "05-create-product-craft-beer.png",
+        "product": "Cerveja Artesanal IPA Puro Malte (500ml)",
+        "price": 26
+      },
+      "timestamp": "2026-10-08T00:31:54.064Z"
+    },
+    {
+      "id": "TC-06",
+      "title": "Cadastro de Setor Personalizado (Deck Panorâmico)",
+      "route": "/app/tables/areas",
+      "status": "PASSED",
+      "durationMs": 3030,
+      "details": {
+        "screenshot": "06-create-area-deck-panoramico.png",
+        "area": "Deck Panorâmico",
+        "code": "deck_panoramico"
+      },
+      "timestamp": "2026-10-08T00:31:57.094Z"
+    },
+    {
+      "id": "TC-07",
+      "title": "Cadastro de Nova Mesa no Salão (Mesa 12)",
+      "route": "/app/tables",
+      "status": "PASSED",
+      "durationMs": 2990,
+      "details": {
+        "screenshot": "07-create-table-12.png",
+        "table": "Mesa 12",
+        "capacity": 4,
+        "area": "Deck Panorâmico"
+      },
+      "timestamp": "2026-10-08T00:32:00.084Z"
+    },
+    {
+      "id": "TC-08",
+      "title": "Abertura de Comanda no Salão (Mesa 12)",
+      "route": "/app/tables/table-12",
+      "status": "PASSED",
+      "durationMs": 6803,
+      "details": {
+        "screenshot": "08-open-comanda-mesa-12.png",
+        "customer": "Dra. Carolina Mendes",
+        "waiter": "Roberto Alves"
+      },
+      "timestamp": "2026-10-08T00:32:06.887Z"
+    },
+    {
+      "id": "TC-09",
+      "title": "Lançamento de Itens com Ponto da Carne (Tomahawk + 2x Cerveja IPA)",
+      "route": "/app/tables/table-12",
+      "status": "PASSED",
+      "durationMs": 3455,
+      "details": {
+        "screenshot": "09-add-items-with-doneness.png",
+        "subtotal": 191.9,
+        "total": 211.09,
+        "itemsCount": 3
+      },
+      "timestamp": "2026-10-08T00:32:10.343Z"
+    },
+    {
+      "id": "TC-10",
+      "title": "Transmissão da Comanda para a Cozinha (KDS)",
+      "route": "/app/tables/table-12",
+      "status": "PASSED",
+      "durationMs": 2967,
+      "details": {
+        "screenshot": "10-comanda-sent-to-kitchen.png",
+        "status": "in_preparation"
+      },
+      "timestamp": "2026-10-08T00:32:13.310Z"
+    },
+    {
+      "id": "TC-11",
+      "title": "Monitor KDS da Cozinha: Ticket Recebido e Preparo",
+      "route": "/app/kds",
+      "status": "PASSED",
+      "durationMs": 3026,
+      "details": {
+        "screenshot": "11-kds-ticket-in-preparation.png",
+        "station": "Grelha & Brasa",
+        "cook": "Chef Marcelo Oliveira"
+      },
+      "timestamp": "2026-10-08T00:32:16.336Z"
+    },
+    {
+      "id": "TC-12",
+      "title": "Monitor KDS: Prato Pronto e Entregue ao Garçom",
+      "route": "/app/kds",
+      "status": "PASSED",
+      "durationMs": 2644,
+      "details": {
+        "screenshot": "12-kds-dish-delivered-to-waiter.png",
+        "waiter": "Roberto Alves",
+        "prepTime": "12m 45s"
+      },
+      "timestamp": "2026-10-08T00:32:18.980Z"
+    },
+    {
+      "id": "TC-13",
+      "title": "Autoatendimento: Comanda Digital Mobile com QR Code PIX",
+      "route": "/comanda/table-12",
+      "status": "PASSED",
+      "durationMs": 3426,
+      "details": {
+        "screenshot": "13-customer-comanda-pix-emv.png",
+        "total": 211.09,
+        "pixGenerated": true
+      },
+      "timestamp": "2026-10-08T00:32:22.406Z"
+    },
+    {
+      "id": "TC-14",
+      "title": "Salão: Pedido Entregue e Conta Solicitada",
+      "route": "/app/tables/table-12",
+      "status": "PASSED",
+      "durationMs": 2748,
+      "details": {
+        "screenshot": "14-table-bill-requested.png",
+        "status": "bill_requested"
+      },
+      "timestamp": "2026-10-08T00:32:25.155Z"
+    },
+    {
+      "id": "TC-15",
+      "title": "Frente de Caixa & PDV: Liquidação Financeira",
+      "route": "/app/cashier",
+      "status": "PASSED",
+      "durationMs": 3482,
+      "details": {
+        "screenshot": "15-cashier-checkout-payment.png",
+        "operator": "Aline Santos",
+        "paymentMethod": "PIX",
+        "amount": 211.09
+      },
+      "timestamp": "2026-10-08T00:32:28.637Z"
+    },
+    {
+      "id": "TC-16",
+      "title": "Salão: Liberação da Mesa 12 para Nova Ocupação",
+      "route": "/app/tables",
+      "status": "PASSED",
+      "durationMs": 3087,
+      "details": {
+        "screenshot": "16-table-released-available.png",
+        "finalStatus": "available"
+      },
+      "timestamp": "2026-10-08T00:32:31.724Z"
+    }
+  ]
+}

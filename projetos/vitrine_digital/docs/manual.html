@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Como Funciona o Sistema — Manual Completo & Evidências · AI WPP Analyzer</title>
+  <meta name="description" content="Manual completo do AI WhatsApp Image Analyzer com evidências do sistema de busca, fluxo de criação de artes, moderação, governança IAM e guia do usuário." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23A88C5A'/%3E%3Cstop offset='1' stop-color='%23C4A468'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='url(%23g)'/%3E%3Ctext x='32' y='44' font-family='Georgia, serif' font-size='36' font-weight='700' fill='%23151413' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #121110;
+      --surface: #181716;
+      --surface-card: #201E1C;
+      --surface-hover: #2A2724;
+      --border: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(168, 140, 90, 0.35);
+      --ink: #FBF9F5;
+      --ink-muted: #A8A199;
+      --ink-faint: #78716A;
+      --gold: #A88C5A;
+      --gold-light: #C4A468;
+      --gold-bg: rgba(168, 140, 90, 0.12);
+      --emerald: #25D366;
+      --emerald-bg: rgba(37, 211, 102, 0.12);
+      --cyan: #4EA8DE;
+      --cyan-bg: rgba(78, 168, 222, 0.12);
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --max-w: 1200px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Topbar Navigation */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(21, 20, 19, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .topbar-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.25rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: var(--ink);
+    }
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: var(--gold-bg);
+      border: 1px solid var(--border-accent);
+      color: var(--gold-light);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-text strong {
+      display: block;
+      font-size: 0.95rem;
+      font-family: var(--font-display);
+      letter-spacing: 0.05em;
+    }
+    .brand-text small {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: var(--font-mono);
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 0.9rem;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-btn-gold {
+      background: var(--gold);
+      color: #151413;
+      border: 1px solid var(--gold);
+    }
+    .nav-btn-gold:hover {
+      background: var(--gold-light);
+    }
+    .nav-btn-outline {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--ink-muted);
+      border: 1px solid var(--border);
+    }
+    .nav-btn-outline:hover {
+      color: var(--ink);
+      border-color: var(--border-accent);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Layout */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 5rem;
+    }
+    .hero {
+      text-align: center;
+      padding: 3rem 1rem 3.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+    }
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.9rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      background: var(--gold-bg);
+      border: 1px solid var(--border-accent);
+      color: var(--gold-light);
+      margin-bottom: 1.25rem;
+    }
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--ink);
+      margin-bottom: 1rem;
+    }
+    .hero h1 span {
+      color: var(--gold-light);
+      font-style: italic;
+    }
+    .hero p {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--ink-muted);
+      font-size: 1.05rem;
+      line-height: 1.6;
+    }
+
+    /* Table of contents quick bar */
+    .toc-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 2rem;
+    }
+    .toc-chip {
+      padding: 0.4rem 0.85rem;
+      border-radius: 8px;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      color: var(--ink-muted);
+      font-size: 0.78rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .toc-chip:hover {
+      color: var(--ink);
+      border-color: var(--gold);
+      background: var(--surface-hover);
+    }
+
+    /* Content Sections */
+    .section {
+      padding: 3.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-header {
+      margin-bottom: 2rem;
+    }
+    .section-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold-light);
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.25;
+    }
+    .section-lead {
+      color: var(--ink-muted);
+      font-size: 0.95rem;
+      margin-top: 0.5rem;
+      max-width: 820px;
+    }
+
+    /* Cards & Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: border-color 0.2s ease;
+    }
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.18);
+    }
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .card-icon.gold { background: var(--gold-bg); border: 1px solid var(--border-accent); color: var(--gold-light); }
+    .card-icon.emerald { background: var(--emerald-bg); border: 1px solid rgba(37, 211, 102, 0.3); color: var(--emerald); }
+    .card-icon.cyan { background: var(--cyan-bg); border: 1px solid rgba(78, 168, 222, 0.3); color: var(--cyan); }
+
+    .card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+    .card p {
+      font-size: 0.85rem;
+      color: var(--ink-muted);
+      line-height: 1.6;
+    }
+
+    /* Evidence Table */
+    .table-wrapper {
+      overflow-x: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin-top: 1.5rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+    thead {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--ink);
+      vertical-align: middle;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+    .badge-ok {
+      background: var(--emerald-bg);
+      border: 1px solid rgba(37, 211, 102, 0.3);
+      color: var(--emerald);
+    }
+    .badge-gold {
+      background: var(--gold-bg);
+      border: 1px solid var(--border-accent);
+      color: var(--gold-light);
+    }
+
+    /* Code & Callout */
+    .callout {
+      padding: 1.25rem;
+      border-radius: 12px;
+      background: rgba(168, 140, 90, 0.08);
+      border: 1px solid var(--border-accent);
+      margin: 1.5rem 0;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .callout-icon { font-size: 1.4rem; line-height: 1; shrink-0; }
+    .callout-body strong { display: block; font-size: 0.9rem; color: var(--gold-light); margin-bottom: 0.25rem; }
+    .callout-body p { font-size: 0.82rem; color: var(--ink-muted); margin: 0; line-height: 1.55; }
+
+    /* Step flow */
+    .steps-container {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .step-item {
+      display: flex;
+      gap: 1.25rem;
+      background: var(--surface-card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+    .step-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gold-bg);
+      border: 1px solid var(--border-accent);
+      color: var(--gold-light);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .step-content h4 {
+      font-size: 0.95rem;
+      color: var(--ink);
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .step-content p {
+      font-size: 0.82rem;
+      color: var(--ink-muted);
+      line-height: 1.55;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2.5rem 1.25rem;
+      text-align: center;
+      color: var(--ink-faint);
+      font-size: 0.78rem;
+    }
+    footer a { color: var(--gold-light); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero { padding: 2rem 0.5rem 2.5rem; }
+      .nav-btn .desktop-only { display: none; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .step-item { flex-direction: column; gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#topo">
+        <div class="brand-icon">❖</div>
+        <div class="brand-text">
+          <strong>AI WhatsApp Image Analyzer</strong>
+          <small>Manual Oficial & Evidências</small>
+        </div>
+      </a>
+
+      <div class="nav-actions">
+        <a href="index.html" class="nav-btn nav-btn-outline" title="Abrir Navegador de Documentação Técnica">
+          <span>📚 Docs</span>
+        </a>
+        <a href="../static/index.html" class="nav-btn nav-btn-outline" target="_blank" title="Abrir Vitrine Estática">
+          <span>🛍️ Vitrine</span>
+        </a>
+        <a href="../" class="nav-btn nav-btn-gold" title="Abrir Aplicação Principal">
+          <span>🚀 Abrir Sistema</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container" id="topo">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-pill">
+        <span>✨</span> Manual Completo da Aplicação & Evidências Técnicas
+      </div>
+      <h1>
+        Como Funciona a Plataforma <span>AI WPP Analyzer</span>
+      </h1>
+      <p>
+        Guia operacional ilustrado de ponta a ponta: motor de busca inteligente com normalização NFD, fluxo de criação de flyers por comerciantes, fila de moderação de artes e governança corporativa IAM com cotas em Reais.
+      </p>
+
+      <nav class="toc-bar" aria-label="Sumário rápido">
+        <a href="#arquitetura" class="toc-chip">🏛️ Arquitetura</a>
+        <a href="#busca" class="toc-chip">🔍 Sistema de Busca & Evidências</a>
+        <a href="#criacao" class="toc-chip">🎨 Criação de Artes</a>
+        <a href="#aprovacao" class="toc-chip">🛡️ Moderação & Aprovação</a>
+        <a href="#iam" class="toc-chip">👥 Usuários & Governança IAM</a>
+        <a href="#papeis" class="toc-chip">📖 Guia por Perfil</a>
+        <a href="#estatica" class="toc-chip">⚡ Versão Estática</a>
+      </nav>
+    </section>
+
+    <!-- SEÇÃO 1: ARQUITETURA -->
+    <section class="section" id="arquitetura">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 01</span>
+        <h2 class="section-title">Arquitetura Dual & Visão Geral</h2>
+        <p class="section-lead">
+          O ecossistema foi projetado para alta disponibilidade combinando uma aplicação web reativa completa com uma vitrine estática autônoma de ultra-baixa latência.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon gold">⚡</div>
+          <h3>Aplicação Web Enterprise</h3>
+          <p>
+            Construída com React 19, Tailwind CSS e Vite. Responsável pela autenticação corporativa, interface de gestão IAM, monitoramento financeiro de tokens em BRL e integração com a Google Gemini API.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon emerald">🤖</div>
+          <h3>Motor Multimodal Gemini Vision</h3>
+          <p>
+            Processa folhetos, cardápios e imagens de anúncios. Extrai texto via OCR, reconhece produtos, preços, telefones, redes sociais e gera resumos descritivos automatizados.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon cyan">📦</div>
+          <h3>Vitrine Estática Autônoma</h3>
+          <p>
+            Arquitetura 100% client-side hospedada em <code>/static</code>. Carrega <code>anuncios.json</code> com 48 fotografias locais em <code>/images/</code>, dispensando bancos de dados para o público final.
+          </p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong>Integração Direta com WhatsApp Oficial:</strong>
+          <p>Todos os anúncios publicados contam com link direto formatado <code>wa.me/55...</code> que preenche automaticamente o texto com a identificação do anúncio visualizado, garantindo conversão imediata para os comerciantes locais.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: BUSCA & EVIDÊNCIAS -->
+    <section class="section" id="busca">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 02</span>
+        <h2 class="section-title">Sistema de Busca Inteligente & Evidências Reais</h2>
+        <p class="section-lead">
+          O motor de busca executa varredura profunda em 7 dimensões com normalização NFD (remoção de acentos e minúsculas), respondendo em menos de 10 milissegundos sem requisições adicionais de servidor.
+        </p>
+      </div>
+
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-icon gold">🏷️</div>
+          <h3>Razão Comercial & Título</h3>
+          <p>Localiza pelo nome fantasia do comerciante (ex: <em>JBL</em>, <em>Márcio Das Máquinas</em>, <em>PMG</em>).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon gold">📋</div>
+          <h3>Produtos & Preços</h3>
+          <p>Varre itens de cardápio e preços numéricos (ex: <em>hotdog</em>, <em>caldo verde</em>, <em>R$ 1.250</em>).</p>
+        </div>
+        <div class="card">
+          <div class="card-icon gold">🔍</div>
+          <h3>OCR & Visão Computacional</h3>
+          <p>Encontra palavras que estavam contidas no interior da imagem (flyer) analisada pela IA.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon gold">📱</div>
+          <h3>Telefone & WhatsApp</h3>
+          <p>Permite localizar estabelecimentos pesquisando pelos dígitos do telefone ou DDD.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--ink);">
+        📊 Evidências de Teste Automatizado com Palavras-Chave Reais
+      </h3>
+      <p style="color: var(--ink-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+        Testes executados contra a base ativa de 43 anúncios catalogados no sistema:
+      </p>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Palavra-Chave</th>
+              <th>Resultados</th>
+              <th>Status</th>
+              <th>Exemplos de Estabelecimentos Retornados</th>
+              <th>Dimensão de Coincidência</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>JBL</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>JBL (Produto)</td>
+              <td>Nome do anúncio, tags de áudio, resumo e catálogo</td>
+            </tr>
+            <tr>
+              <td><code>Márcio</code></td>
+              <td><strong>2 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Márcio Das Máquinas, A Engenharia</td>
+              <td>Nome fantasia e contato técnico</td>
+            </tr>
+            <tr>
+              <td><code>máquina de lavar</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Márcio Das Máquinas</td>
+              <td>Texto OCR do flyer e descrição de conserto</td>
+            </tr>
+            <tr>
+              <td><code>cardápio</code></td>
+              <td><strong>3 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira, Salgados do Tchuco, Analu Gastronomia</td>
+              <td>Título, categoria de alimentação e itens de menu</td>
+            </tr>
+            <tr>
+              <td><code>hotdog</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira</td>
+              <td>Item específico de produto extraído por IA</td>
+            </tr>
+            <tr>
+              <td><code>caldo verde</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira</td>
+              <td>Item de produto e tags alimentares</td>
+            </tr>
+            <tr>
+              <td><code>cuscuz</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira</td>
+              <td>Prato regional com preço tabelado</td>
+            </tr>
+            <tr>
+              <td><code>pizza</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>PMG Alimentos e Bebidas</td>
+              <td>Lista de produtos do catálogo consolidado</td>
+            </tr>
+            <tr>
+              <td><code>hambúrguer</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>PMG Alimentos e Bebidas</td>
+              <td>Itens de lanchonete e ingredientes</td>
+            </tr>
+            <tr>
+              <td><code>conserto</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Márcio Das Máquinas</td>
+              <td>Serviço de manutenção especializado</td>
+            </tr>
+            <tr>
+              <td><code>eletrônicos</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>JBL (Produto)</td>
+              <td>Categoria comercial e segmento</td>
+            </tr>
+            <tr>
+              <td><code>alimentação</code></td>
+              <td><strong>7 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira, Clara Doces, Salgados do Tchuco, Sushi</td>
+              <td>Categoria ampla e estabelecimentos do setor</td>
+            </tr>
+            <tr>
+              <td><code>assistência técnica</code></td>
+              <td><strong>1 anúncio</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Márcio Das Máquinas</td>
+              <td>Categoria comercial no banco de dados</td>
+            </tr>
+            <tr>
+              <td><code>salgados</code></td>
+              <td><strong>4 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Clara Doces e Salgados, Salgados do Tchuco</td>
+              <td>Palavras-chave de buffet e festas</td>
+            </tr>
+            <tr>
+              <td><code>doces</code></td>
+              <td><strong>2 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Clara Doces e Salgados, PMG Alimentos</td>
+              <td>Sobremesas e produtos confeitados</td>
+            </tr>
+            <tr>
+              <td><code>delivery</code></td>
+              <td><strong>3 anúncios</strong></td>
+              <td><span class="badge badge-ok">✅ Sucesso</span></td>
+              <td>Cardápio de Quinta-Feira, Gato de Botas Sushi, PMG Alimentos</td>
+              <td>Palavras-chave de tele-entrega</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: CRIAÇÃO DE ARTES -->
+    <section class="section" id="criacao">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 03</span>
+        <h2 class="section-title">Criação & Envio de Artes por Lojistas</h2>
+        <p class="section-lead">
+          Permite que qualquer comerciante ou consumidor submeta panfletos, fotos de fachada e cardápios para inserção no catálogo digital.
+        </p>
+      </div>
+
+      <div class="steps-container">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h4>Abertura do Modal de Submissão</h4>
+            <p>O comerciante clica no botão <strong>"Enviar Arte / Flyer para Divulgação"</strong> presente no topo e no hero da vitrine. Se não estiver conectado, o sistema solicita um login rápido sem senha complexa.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h4>Upload Seguro do Arquivo Visual</h4>
+            <p>O lojista anexa o arquivo original (PNG, JPG, WebP). A imagem é enviada para o bucket <code>images</code> do Supabase Storage com chave única e sanitização automática de nome.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h4>Preenchimento de Metadados Comerciais</h4>
+            <p>Informam-se: Nome do Estabelecimento, Telefone/WhatsApp oficial (para geração do botão de compras), Categoria do negócio e Observações adicionais.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h4>Geração de Prompt Criativo com IA ("Refazer com IA")</h4>
+            <p>Através do gerador integrado <code>ArtPromptGenerator.tsx</code>, a IA examina o panfleto e gera um prompt profissional para renderizar uma arte em ultra-alta definição no Midjourney ou DALL-E 3.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: MODERAÇÃO & APROVAÇÃO -->
+    <section class="section" id="aprovacao">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 04</span>
+        <h2 class="section-title">Aprovação de Artes & Fila de Moderação</h2>
+        <p class="section-lead">
+          Nenhuma arte entra diretamente na vitrine pública sem passar pelo crivo de moderadores ou administradores globais, assegurando a qualidade da vitrine.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon emerald">🛡️</div>
+          <h3>Contador em Tempo Real na Navbar</h3>
+          <p>
+            Moderadores autenticados visualizam uma pílula dourada na aba <strong>Moderação</strong> informando a quantidade exata de artes aguardando revisão (ex: <em>3 pendentes</em>).
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon gold">⚖️</div>
+          <h3>Deck de Inspeção Lado a Lado</h3>
+          <p>
+            O moderador visualiza a arte em alta resolução, o número de contato verificado e os dados enviados antes de tomar a decisão de publicação.
+          </p>
+        </div>
+      </div>
+
+      <div class="steps-container" style="margin-top: 1.5rem;">
+        <div class="step-item">
+          <div class="step-num">✓</div>
+          <div class="step-content">
+            <h4>Ao Clicar em "Aprovar Arte"</h4>
+            <p>O sistema dispara a análise multimodal da Google Gemini Vision API, extrai o texto integral via OCR, detecta os produtos e preços, insere o registro na tabela <code>image_analysis</code> e publica o estabelecimento na vitrine imediatamente.</p>
+          </div>
+        </div>
+
+        <div class="step-item">
+          <div class="step-num">✕</div>
+          <div class="step-content">
+            <h4>Ao Clicar em "Rejeitar Arte"</h4>
+            <p>A submissão é marcada como rejeitada e arquivada, permitindo inclusão de motivo auditável (ex: <em>imagem com baixa resolução</em>, <em>número de WhatsApp inexistente</em>).</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5: IAM & USUÁRIOS -->
+    <section class="section" id="iam">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 05</span>
+        <h2 class="section-title">Cadastro de Usuários & Governança IAM</h2>
+        <p class="section-lead">
+          Controle de acesso granular baseado em papéis (RBAC) com gerenciamento de cotas orçamentárias de IA em Reais (BRL) e seleção de modelos por Workspace.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon gold">👑</div>
+          <h3>Administrador Global</h3>
+          <p>
+            Acesso total: gerencia usuários, altera papéis, cadastra chaves corporativas do Gemini, redefine cotas financeiras e oculta/exibe anúncios na vitrine pública com um clique.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon cyan">🛡️</div>
+          <h3>Analista / Moderador</h3>
+          <p>
+            Acesso operacional: executa análises de OCR no módulo analítico, aprova ou rejeita submissões na fila de artes e monitora a vitrine.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon emerald">👤</div>
+          <h3>Cliente / Anunciante</h3>
+          <p>
+            Acesso comercial: navega na vitrine de produtos, envia novos panfletos para divulgação e acompanha o status de aprovação.
+          </p>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem; font-size: 1.15rem; color: var(--ink);">
+        🏢 Workspaces & Gestão de Cotas Financeiras (Gemini)
+      </h3>
+      <p style="color: var(--ink-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+        Recursos configuráveis por grupo no módulo <code>IamGroupsCrud.tsx</code>:
+      </p>
+
+      <div class="grid-2" style="margin-top: 1rem;">
+        <div class="card">
+          <h3>💰 Cotas Orçamentárias em R$</h3>
+          <p>Cada workspace possui limite mensal em Reais (ex: R$ 50,00) e limite de requisições diárias (ex: 500 req/dia), com barra de progresso visual colorida e botão de reset rápido de consumo.</p>
+        </div>
+        <div class="card">
+          <h3>🔑 Chave de API Própria & Modelos</h3>
+          <p>Cada filial pode cadastrar sua chave Google Gemini gravada com segurança no banco de dados, com botão para <strong>testar e listar todos os modelos suportados</strong> (ex: <code>gemini-2.5-flash</code>, <code>gemini-1.5-pro</code>).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 6: GUIA POR PERFIL -->
+    <section class="section" id="papeis">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 06</span>
+        <h2 class="section-title">Manual Operacional por Perfil de Usuário</h2>
+        <p class="section-lead">
+          Passo a passo rápido para operar a aplicação de acordo com a sua função no sistema.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-icon emerald">🛍️</div>
+          <h3>Como Consumidor / Visitante</h3>
+          <p>
+            <strong>1.</strong> Acesse a vitrine na página inicial.<br/>
+            <strong>2.</strong> Digite o que procura no campo de busca (ex: <em>pizza</em>, <em>hotdog</em>, <em>conserto</em>) ou clique nas tags rápidas.<br/>
+            <strong>3.</strong> Nos cards de estabelecimentos com múltiplas fotos, use os botões <code>‹</code> e <code>›</code> para folhear o catálogo.<br/>
+            <strong>4.</strong> Clique em <strong>"Conversar no WhatsApp"</strong> para ser direcionado ao lojista com o anúncio referenciado.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon gold">🏪</div>
+          <h3>Como Lojista / Anunciante</h3>
+          <p>
+            <strong>1.</strong> Clique no botão <strong>"Entrar"</strong> no topo da tela.<br/>
+            <strong>2.</strong> Clique em <strong>"Enviar Arte / Flyer para Divulgação"</strong>.<br/>
+            <strong>3.</strong> Anexe o panfleto da sua promoção, informe seu WhatsApp e confirme.<br/>
+            <strong>4.</strong> Assim que o moderador aprovar, seu estabelecimento ganha um card completo na vitrine com produtos e preços.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon cyan">🛡️</div>
+          <h3>Como Moderador / Analista</h3>
+          <p>
+            <strong>1.</strong> Acesse a aba <strong>Moderação</strong> (verifique o contador de pendências).<br/>
+            <strong>2.</strong> Examine a imagem do flyer, a nitidez e os dados informados.<br/>
+            <strong>3.</strong> Clique em <strong>"Aprovar"</strong> para o Gemini extrair o cardápio e publicar automaticamente na vitrine.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon gold">⚙️</div>
+          <h3>Como Administrador de TI</h3>
+          <p>
+            <strong>1.</strong> Acesse o <strong>Centro de Gestão & Governança</strong> (aba IAM).<br/>
+            <strong>2.</strong> Monitore o painel de telemetria de custos e erros da IA.<br/>
+            <strong>3.</strong> Ajuste as cotas em R$ e alterne os modelos padrão do Gemini por grupo.<br/>
+            <strong>4.</strong> Na vitrine, use o botão <strong>"Exportar Estático"</strong> para atualizar o <code>anuncios.json</code> da versão pública autônoma.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 7: VERSÃO ESTÁTICA -->
+    <section class="section" id="estatica">
+      <div class="section-header">
+        <span class="section-eyebrow">Seção 07</span>
+        <h2 class="section-title">Versão Estática Autônoma (/static)</h2>
+        <p class="section-lead">
+          Totalmente independente de servidores, compatível com qualquer hospedagem estática e otimizada para conexões móveis 3G/4G.
+        </p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon gold">🚀</div>
+          <h3>Zero Dependências de Backend</h3>
+          <p>Roda 100% no navegador do usuário. Utiliza o script <code>static/js/app.js</code> para paginação, categorização e busca rápida instantânea.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon emerald">🖼️</div>
+          <h3>48 Imagens Locais Otimizadas</h3>
+          <p>Todas as fotos do catálogo ficam armazenadas em <code>/static/images/</code>, garantindo que o catálogo nunca quebre mesmo sem internet externa ou Supabase.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon cyan">📱</div>
+          <h3>Drawer Lateral no Mobile</h3>
+          <p>Em smartphones, a navegação de categorias é convertida em um slide-over drawer com efeito backdrop-blur e fechamento por toque.</p>
+        </div>
+      </div>
+
+      <div style="margin-top: 2rem; text-align: center;">
+        <a href="../static/index.html" class="nav-btn nav-btn-gold" target="_blank" style="padding: 0.75rem 1.75rem; font-size: 0.95rem;">
+          <span>🛍️ Abrir Versão Estática Agora</span>
+        </a>
+      </div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2026 AI WhatsApp Image Analyzer · Desenvolvido com Design System Olivelas Editorial.</p>
+    <p style="margin-top: 0.4rem;">Documentação técnica bilíngue em <a href="index.html">/docs</a> · Vitrine autônoma em <a href="../static/index.html">/static</a></p>
+  </footer>
+
+</body>
+</html>

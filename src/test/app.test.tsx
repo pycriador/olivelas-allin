@@ -29,6 +29,14 @@ import {
   findThemePreset,
   LIGHT_THEMES,
 } from '../styles/themes';
+import {
+  createModuleSchemaRecord,
+  findEcosystemModuleBySlug,
+  listModuleSchemaRecords,
+  OLIVELAS_ECOSYSTEM_MODULES,
+  toggleArchiveModuleSchemaRecord,
+} from '../services/olivelasEcosystemService';
+import { getProjectSchemaClient, getUnifiedProfilesTable, isSupabaseConfigured } from '../lib/supabase/client';
 
 const testActor = {
   userId: 'usr-super-admin',
@@ -448,5 +456,64 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
 
     const restored = await repositories.operationalItems.restore('op-test-crm-lead', testActor);
     expect(restored?.archiveMetadata.isArchived).toBe(false);
+  });
+
+  it('10. Olivelas Ecosystem 16 Modules & Multi-Schema Supabase Architecture: standardizes all 16 platforms with dedicated PostgreSQL schemas and unified login in public.profiles', async () => {
+    expect(OLIVELAS_ECOSYSTEM_MODULES.length).toBe(16);
+    expect(typeof isSupabaseConfigured).toBe('boolean');
+    expect(getUnifiedProfilesTable()).toBeDefined();
+
+    const expectedSchemas = [
+      'agendamento_simples',
+      'agendamentos',
+      'app_condominio',
+      'art_hub',
+      'casa_organizada',
+      'contratos',
+      'especificacoes',
+      'gestao_estoque',
+      'ordem_de_servico',
+      'personal_treiner',
+      'restaurante',
+      'rifas',
+      'sistema_delivery',
+      'sistema_mercado',
+      'suite_rifa',
+      'vitrine_digital',
+    ];
+
+    for (const schemaName of expectedSchemas) {
+      const mod = findEcosystemModuleBySlug(schemaName);
+      expect(mod).toBeDefined();
+      expect(mod?.brandName).toMatch(/^Olivelas - /);
+      expect(mod?.dbSchema).toBe(schemaName);
+      expect(mod?.tables.length).toBeGreaterThanOrEqual(2);
+      expect(getProjectSchemaClient(schemaName)).toBeDefined();
+    }
+
+    const personalTrainer = findEcosystemModuleBySlug('allin_personal_trainer')!;
+    expect(personalTrainer.brandName).toBe('Olivelas - Personal Trainer');
+    expect(personalTrainer.dbSchema).toBe('personal_treiner');
+
+    const initialList = await listModuleSchemaRecords(personalTrainer, 'emp-olivelas-matriz');
+    expect(initialList.records.length).toBeGreaterThanOrEqual(1);
+
+    const created = await createModuleSchemaRecord(personalTrainer, 'emp-olivelas-matriz', {
+      full_name: 'Aluno Teste Automatizado Olivelas',
+      goal: 'Força & Condicionamento',
+      plan_name: 'Consultoria Olivelas Pro',
+      monthly_fee: 550,
+      weight_kg: 79.5,
+      status: 'active',
+    });
+    expect(created.record.full_name).toBe('Aluno Teste Automatizado Olivelas');
+
+    await toggleArchiveModuleSchemaRecord(
+      personalTrainer,
+      String(created.record.id),
+      true,
+      'Arquivamento lógico em teste automatizado',
+      'clara.monteiro@olivelas-allin.demo',
+    );
   });
 });

@@ -1,0 +1,634 @@
+# ServiceForge — Sprint 12
+## AI Platform (OCR, IA e Automação Inteligente)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades existentes.
+
+Toda implementação deverá utilizar:
+
+• Core Platform
+
+• Metadata Platform
+
+• Document Platform
+
+• Communication Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Master Data
+
+• Ordem de Serviço
+
+O objetivo desta Sprint é criar a AI Platform da aplicação.
+
+A IA deverá ser um módulo independente, reutilizável por toda a plataforma.
+
+IMPORTANTE
+
+NÃO acoplar IA diretamente ao módulo de Ordem de Serviço.
+
+Toda comunicação com IA deverá ocorrer através de serviços próprios.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar uma plataforma de Inteligência Artificial.
+
+Estrutura:
+
+AI Platform
+
+├── AI Providers
+├── OCR Engine
+├── Vision Engine
+├── Prompt Manager
+├── Prompt Library
+├── AI Workflows
+├── AI Queue
+├── AI History
+├── AI Audit
+├── AI Playground
+└── AI Configuration
+
+------------------------------------------------------------------
+
+AI PROVIDERS
+
+Criar arquitetura baseada em Providers.
+
+Criar interface comum.
+
+Exemplo:
+
+AIProvider
+
+Métodos:
+
+analyze()
+
+extract()
+
+classify()
+
+summarize()
+
+generate()
+
+chat()
+
+vision()
+
+ocr()
+
+validate()
+
+No MVP utilizar apenas Mock Provider.
+
+Preparar arquitetura para:
+
+OpenAI
+
+Google Gemini
+
+Anthropic Claude
+
+Ollama
+
+OpenRouter
+
+Azure OpenAI
+
+AWS Bedrock
+
+Modelos locais
+
+Nunca acoplar o sistema a um fornecedor específico.
+
+------------------------------------------------------------------
+
+OCR ENGINE
+
+Criar um motor de OCR.
+
+Entrada:
+
+Imagem
+
+PDF
+
+Scanner
+
+Saída:
+
+Texto estruturado
+
+Posições
+
+Confiança
+
+Campos identificados
+
+No MVP utilizar dados simulados.
+
+Arquitetura preparada para OCR real.
+
+------------------------------------------------------------------
+
+VISION ENGINE
+
+Criar estrutura para análise de imagens.
+
+Preparar recursos para:
+
+Reconhecimento de documentos
+
+Reconhecimento de aparelhos
+
+Leitura de etiquetas
+
+Leitura de números de série
+
+Identificação de marcas
+
+Leitura de QR Code
+
+Leitura de Código de Barras
+
+Detecção de qualidade da imagem
+
+Rotação automática
+
+Correção de perspectiva
+
+Detecção de documentos múltiplos
+
+------------------------------------------------------------------
+
+PROMPT MANAGER
+
+Criar um módulo completo.
+
+Cada Prompt possui:
+
+Nome
+
+Categoria
+
+Descrição
+
+Modelo
+
+Versão
+
+Empresa
+
+Global
+
+Status
+
+Variáveis
+
+Temperatura
+
+Modelo sugerido
+
+Tags
+
+Histórico
+
+Versionamento
+
+Permitir:
+
+Duplicar
+
+Arquivar
+
+Comparar versões
+
+Publicar
+
+Restaurar
+
+------------------------------------------------------------------
+
+PROMPT LIBRARY
+
+Categorias:
+
+OCR
+
+Ordem de Serviço
+
+Clientes
+
+Aparelhos
+
+Financeiro
+
+Documentos
+
+Comunicação
+
+Resumos
+
+Classificação
+
+Extração
+
+Validação
+
+Todos reutilizáveis.
+
+------------------------------------------------------------------
+
+OCR DA ORDEM DE SERVIÇO
+
+Implementar fluxo.
+
+Usuário fotografa uma OS impressa.
+
+↓
+
+Imagem enviada para OCR.
+
+↓
+
+Texto extraído.
+
+↓
+
+IA interpreta os dados.
+
+↓
+
+Mapeamento para os campos internos.
+
+↓
+
+Apresentar tela de conferência.
+
+↓
+
+Usuário corrige informações.
+
+↓
+
+Salvar Ordem de Serviço.
+
+Nunca salvar automaticamente.
+
+Sempre exigir confirmação humana.
+
+------------------------------------------------------------------
+
+MAPEAMENTO INTELIGENTE
+
+Criar mecanismo.
+
+Campo OCR
+
+↓
+
+Campo Metadata Platform
+
+↓
+
+Campo Ordem de Serviço
+
+Permitir configurar regras.
+
+------------------------------------------------------------------
+
+VALIDAÇÃO
+
+Cada campo extraído deverá possuir:
+
+Valor
+
+Confiança
+
+Origem
+
+Observações
+
+Status
+
+Campos com baixa confiança deverão ser destacados.
+
+Nunca preencher automaticamente campos críticos quando a confiança for baixa.
+
+Exemplos:
+
+CPF
+
+CNPJ
+
+Valor
+
+Telefone
+
+Número da OS
+
+Número de Série
+
+IMEI
+
+------------------------------------------------------------------
+
+TELA DE CONFERÊNCIA
+
+Criar interface.
+
+Lado esquerdo:
+
+Imagem original.
+
+Centro:
+
+Campos identificados.
+
+Direita:
+
+Campos internos.
+
+Permitir:
+
+Editar
+
+Aceitar
+
+Ignorar
+
+Reprocessar
+
+Comparar
+
+Salvar
+
+------------------------------------------------------------------
+
+AI PLAYGROUND
+
+Criar ambiente para testes.
+
+Permitir:
+
+Escolher Provider
+
+Escolher Modelo
+
+Executar Prompt
+
+Visualizar Resposta
+
+Tempo
+
+Tokens (mock)
+
+Histórico
+
+Comparação
+
+Nenhum acesso a APIs reais.
+
+------------------------------------------------------------------
+
+AI HISTORY
+
+Registrar:
+
+Prompt
+
+Resposta
+
+Modelo
+
+Tempo
+
+Tokens
+
+Usuário
+
+Empresa
+
+Resultado
+
+Erro
+
+Data
+
+Nunca perder histórico.
+
+------------------------------------------------------------------
+
+AI QUEUE
+
+Preparar fila.
+
+Estados:
+
+Pendente
+
+Processando
+
+Concluído
+
+Erro
+
+Cancelado
+
+Retry
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Imagem adicionada
+
+↓
+
+OCR
+
+↓
+
+Extração
+
+↓
+
+Validação
+
+↓
+
+Tela de Conferência
+
+↓
+
+Salvar
+
+↓
+
+Publicar Evento
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Integrar ao Document Platform.
+
+Permitir OCR em:
+
+OS
+
+Recibos
+
+Garantias
+
+Orçamentos
+
+Laudos
+
+Notas
+
+------------------------------------------------------------------
+
+MASTER DATA
+
+Durante a importação tentar localizar:
+
+Cliente existente
+
+Aparelho existente
+
+Marca
+
+Modelo
+
+Fabricante
+
+Técnico
+
+Caso encontre:
+
+Sugerir vínculo.
+
+Nunca criar automaticamente.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Prompt utilizado
+
+Provider
+
+Modelo
+
+Tempo
+
+Usuário
+
+Empresa
+
+Resultado
+
+Confiança
+
+------------------------------------------------------------------
+
+CONFIGURAÇÕES
+
+Criar módulo.
+
+Configurar:
+
+Provider padrão
+
+Modelo padrão
+
+Temperatura
+
+OCR
+
+Vision
+
+Limite de arquivos
+
+Limite de páginas
+
+Tamanho máximo
+
+Timeout
+
+Retry
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+80 Prompts
+
+200 OCRs
+
+300 Históricos
+
+100 Filas
+
+150 Processamentos
+
+Todos consistentes.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Prompt Manager
+
+Prompt Library
+
+OCR
+
+Vision
+
+Playground
+
+Histórico
+
+Fila
+
+Tela de Conferência
+
+Eventos
+
+Auditoria
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint o ServiceForge deverá possuir uma AI Platform completamente desacoplada da aplicação, preparada para múltiplos provedores de IA e capaz de realizar OCR inteligente, interpretação de documentos, gerenciamento de prompts e revisão humana antes da persistência dos dados.
+
+IMPORTANTE
+
+Ainda NÃO integrar APIs reais de IA.
+
+Toda arquitetura deverá estar preparada para integração futura sem necessidade de refatoração.

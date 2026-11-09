@@ -1,0 +1,760 @@
+# ServiceForge — Sprint 27
+## Service Order Module — Asset Management (Tipos, Marcas, Modelos e Equipamentos)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Public Portal
+
+• Workflow Engine
+
+• Core Event Bus
+
+Todo o módulo deverá consumir os serviços existentes.
+
+Nunca duplicar lógica.
+
+Nunca criar informações redundantes.
+
+Toda auditoria deverá utilizar Audit Center.
+
+Todos os formulários deverão utilizar Metadata Platform.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Implementar o módulo completo de gerenciamento de ativos (Equipamentos).
+
+Separar completamente:
+
+• Catálogo Técnico
+
+• Equipamentos pertencentes aos clientes
+
+Todo equipamento utilizado em Ordens de Serviço deverá obrigatoriamente estar cadastrado neste módulo.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Service Order Module
+
+↓
+
+Asset Management
+
+Estrutura:
+
+Dashboard
+
+Tipos de Equipamentos
+
+Marcas
+
+Modelos
+
+Categorias Técnicas
+
+Equipamentos
+
+Fotos
+
+Acessórios
+
+Garantias
+
+Documentos
+
+Histórico
+
+Timeline
+
+Importação
+
+Exportação
+
+Analytics
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Criar painel.
+
+Mostrar:
+
+Equipamentos cadastrados
+
+Equipamentos ativos
+
+Equipamentos em manutenção
+
+Equipamentos entregues
+
+Equipamentos por empresa
+
+Equipamentos por categoria
+
+Marcas mais utilizadas
+
+Modelos mais cadastrados
+
+Equipamentos com garantia
+
+Equipamentos com retorno
+
+------------------------------------------------------------------
+
+TIPOS DE EQUIPAMENTO
+
+CRUD completo.
+
+Exemplos:
+
+Notebook
+
+Desktop
+
+Servidor
+
+Monitor
+
+Televisão
+
+Smartphone
+
+Tablet
+
+Impressora
+
+Micro-ondas
+
+Geladeira
+
+Máquina de Lavar
+
+Ar Condicionado
+
+Home Theater
+
+Som Automotivo
+
+Videogame
+
+Roteador
+
+Nobreak
+
+Outro
+
+Permitir criação de novos tipos.
+
+------------------------------------------------------------------
+
+MARCAS
+
+CRUD completo.
+
+Exemplos:
+
+Samsung
+
+LG
+
+Sony
+
+Philips
+
+Panasonic
+
+Dell
+
+Lenovo
+
+HP
+
+Acer
+
+Asus
+
+Apple
+
+Motorola
+
+Xiaomi
+
+Canon
+
+Epson
+
+Brother
+
+Electrolux
+
+Brastemp
+
+Consul
+
+Midea
+
+Permitir cadastro ilimitado.
+
+------------------------------------------------------------------
+
+MODELOS
+
+CRUD completo.
+
+Cada modelo deverá possuir:
+
+Marca
+
+Tipo
+
+Nome
+
+Código interno
+
+Código do fabricante (estrutura)
+
+Ano (estrutura)
+
+Descrição
+
+Status
+
+Observações
+
+Preparar relacionamento com futuras peças compatíveis.
+
+------------------------------------------------------------------
+
+EQUIPAMENTOS
+
+CRUD completo.
+
+Campos mínimos:
+
+Cliente
+
+Empresa
+
+Tipo
+
+Marca
+
+Modelo
+
+Número de Série
+
+IMEI (estrutura)
+
+Patrimônio
+
+Cor
+
+Data de Compra (opcional)
+
+Número da Nota Fiscal (estrutura)
+
+Garantia do Fabricante (estrutura)
+
+Observações
+
+Status
+
+Tags
+
+------------------------------------------------------------------
+
+CHECKLIST DE RECEBIMENTO
+
+Criar checklist configurável.
+
+Itens:
+
+Liga?
+
+Tela quebrada?
+
+Oxidação?
+
+Carcaça danificada?
+
+Teclado funcionando?
+
+Bateria presente?
+
+Fonte entregue?
+
+Controle remoto?
+
+Cabos?
+
+Manual?
+
+Caixa?
+
+Observações
+
+Todos os itens deverão ser configuráveis futuramente através da Metadata Platform.
+
+------------------------------------------------------------------
+
+FOTOS
+
+Permitir upload.
+
+Categorias:
+
+Frente
+
+Traseira
+
+Laterais
+
+Etiqueta
+
+Número de Série
+
+Defeito
+
+Acessórios
+
+Foto Geral
+
+Consumir Document Platform.
+
+------------------------------------------------------------------
+
+ACESSÓRIOS
+
+Permitir registrar:
+
+Fonte
+
+Carregador
+
+Controle
+
+Mouse
+
+Teclado
+
+HDMI
+
+USB
+
+Adaptadores
+
+Bolsa
+
+Caixa
+
+Outros
+
+Quantidade.
+
+Observações.
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Permitir anexar:
+
+Nota Fiscal
+
+Garantia
+
+Laudos
+
+Fotos
+
+Comprovantes
+
+Documentos diversos
+
+Consumindo Document Platform.
+
+------------------------------------------------------------------
+
+HISTÓRICO
+
+Registrar:
+
+Cadastro
+
+Alterações
+
+Ordens de Serviço
+
+Garantias
+
+Retornos
+
+Troca de proprietário
+
+Documentos
+
+Uploads
+
+Downloads
+
+Comunicações
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Mostrar todos os eventos relacionados ao equipamento.
+
+------------------------------------------------------------------
+
+CLIENTE
+
+Cada equipamento deverá possuir um proprietário.
+
+Permitir:
+
+Transferência para outro cliente.
+
+Registrar auditoria.
+
+Registrar histórico.
+
+------------------------------------------------------------------
+
+IMPORTAÇÃO
+
+Permitir importar:
+
+CSV
+
+Excel
+
+JSON
+
+Consumindo Data Platform.
+
+------------------------------------------------------------------
+
+EXPORTAÇÃO
+
+Permitir:
+
+Excel
+
+CSV
+
+JSON
+
+PDF
+
+Consumindo Reporting & BI Platform.
+
+------------------------------------------------------------------
+
+PESQUISA
+
+Pesquisar por:
+
+Número de Série
+
+Patrimônio
+
+Cliente
+
+Marca
+
+Modelo
+
+Tipo
+
+IMEI
+
+Empresa
+
+Tags
+
+------------------------------------------------------------------
+
+FILTROS
+
+Tipo
+
+Marca
+
+Modelo
+
+Empresa
+
+Cliente
+
+Status
+
+Garantia
+
+Retorno
+
+Ano
+
+------------------------------------------------------------------
+
+ANALYTICS
+
+Mostrar:
+
+Equipamentos por marca
+
+Equipamentos por tipo
+
+Equipamentos por modelo
+
+Quantidade de reparos
+
+Tempo médio em manutenção
+
+Equipamentos reincidentes
+
+Modelos com maior índice de defeito
+
+------------------------------------------------------------------
+
+AUTOMAÇÕES
+
+Criar exemplos.
+
+Novo Equipamento
+
+↓
+
+Registrar Timeline
+
+↓
+
+Registrar Auditoria
+
+↓
+
+Atualizar Dashboard
+
+↓
+
+Publicar Evento
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Asset.Created
+
+Asset.Updated
+
+Asset.Deleted
+
+Asset.Transferred
+
+Asset.PhotoUploaded
+
+Asset.DocumentAttached
+
+Asset.Imported
+
+Asset.Exported
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Cadastro
+
+Alteração
+
+Transferência
+
+Importação
+
+Exportação
+
+Uploads
+
+Downloads
+
+Visualizações
+
+Sempre registrando:
+
+Usuário
+
+Empresa
+
+Data
+
+Hora
+
+IP
+
+Resultado
+
+------------------------------------------------------------------
+
+DADOS DE DEMONSTRAÇÃO
+
+Integrar ao Demo Environment Manager.
+
+Gerar automaticamente:
+
+Pequena Assistência
+
+150 Equipamentos
+
+Assistência Média
+
+1.000 Equipamentos
+
+Grande Rede
+
+28.000 Equipamentos
+
+Distribuir entre clientes.
+
+Gerar:
+
+Marcas reais
+
+Modelos reais
+
+Números de série fictícios
+
+Acessórios
+
+Fotos simuladas
+
+Histórico consistente
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Grid.
+
+Cards.
+
+Pesquisa instantânea.
+
+Filtros avançados.
+
+Visualização em tabela.
+
+Visualização em cartões.
+
+Colunas configuráveis.
+
+Favoritos.
+
+Paginação.
+
+Persistência das preferências.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+CRUDs
+
+Pesquisa
+
+Filtros
+
+Importação
+
+Exportação
+
+Uploads
+
+Transferência de proprietário
+
+Timeline
+
+Eventos
+
+RBAC
+
+Auditoria
+
+Responsividade
+
+Acessibilidade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir um módulo corporativo completo para gerenciamento de equipamentos, com catálogo técnico reutilizável, cadastro de ativos dos clientes, histórico completo, documentação, auditoria e integração com toda a plataforma.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Abertura da Ordem de Serviço (Sprint 28)
+
+• Diagnóstico Técnico (Sprint 29)
+
+Toda a arquitetura deverá permanecer preparada para essas próximas Sprints sem necessidade de refatoração estrutural.

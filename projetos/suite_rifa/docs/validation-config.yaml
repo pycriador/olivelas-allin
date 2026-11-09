@@ -1,0 +1,50 @@
+# Documentation Validation Configuration
+# Based on Documentation Standard v1.0
+
+validation_roots:
+  - docs/en
+  - docs/pt-BR
+
+allowed_statuses:
+  - DRAFT
+  - REVIEW
+  - ACCEPTED
+  - DEPRECATED
+  - ARCHIVED
+
+required_frontmatter:
+  - title
+  - status
+  - owner
+  - updated
+
+recommended_frontmatter:
+  - created
+  - version
+
+link_checking:
+  enabled: true
+  check_internal: true
+  check_external: false
+
+freshness:
+  enabled: true
+  stale_after_days: 365
+
+secret_detection:
+  enabled: true
+  patterns:
+    - "sk-[a-zA-Z0-9]{20,}"
+    - "pk_[a-zA-Z0-9]{20,}"
+    - "-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+    - "ghp_[a-zA-Z0-9]{36}"
+    - "SUPABASE_SERVICE_ROLE_KEY.*=.*[a-zA-Z0-9]{20,}"
+
+manifest:
+  required: true
+  path: docs/en/manifest.yaml
+
+exit_codes:
+  0: pass
+  1: validation_failure
+  2: tool_error

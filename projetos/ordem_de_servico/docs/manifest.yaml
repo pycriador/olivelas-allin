@@ -1,0 +1,18 @@
+# Documentation Standard v1.0 — language chooser for documentation manifests
+# Paths are relative to docs/
+standard: "Documentation Standard v1.0"
+updated: "2026-10-15"
+purpose: |
+  Machine-readable pointer to per-language manifests for ServiceForge Platform.
+languages:
+  - id: pt-BR
+    name: Português (Brasil)
+    manifest: pt-BR/manifest.yaml
+    index: pt-BR/README.md
+    ai_entry: pt-BR/ai-context.md
+  - id: en
+    name: English
+    manifest: en/manifest.yaml
+    index: en/README.md
+    ai_entry: en/ai-context.md
+default_language: pt-BR

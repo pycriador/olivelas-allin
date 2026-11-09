@@ -1,0 +1,561 @@
+# ServiceForge — Sprint 6
+## Core Event Bus + Workflow Engine
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+NÃO alterar a arquitetura existente.
+
+NÃO remover funcionalidades já implementadas.
+
+Todos os módulos existentes deverão passar a utilizar o Core Event Bus para comunicação interna.
+
+Esta Sprint é responsável por criar a infraestrutura de eventos da plataforma.
+
+IMPORTANTE
+
+Ainda NÃO implementar Ordem de Serviço.
+
+Ainda NÃO implementar IA.
+
+O objetivo é criar o motor responsável por integrar todos os módulos da plataforma.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar dois módulos:
+
+Core Event Bus
+
+Workflow Engine
+
+Eles serão responsáveis pela orquestração de toda a plataforma.
+
+Nenhum módulo deverá chamar outro diretamente.
+
+Toda comunicação ocorrerá através de eventos.
+
+------------------------------------------------------------------
+
+Arquitetura
+
+Core
+
+├── Event Bus
+├── Event Store
+├── Event Dispatcher
+├── Event Subscribers
+├── Event History
+├── Workflow Engine
+├── Workflow Designer
+├── Workflow Executor
+├── Rules Engine
+└── Scheduler
+
+------------------------------------------------------------------
+
+# Core Event Bus
+
+Criar um barramento interno.
+
+Interface:
+
+publish()
+
+subscribe()
+
+unsubscribe()
+
+dispatch()
+
+register()
+
+remove()
+
+clear()
+
+history()
+
+Todos os módulos deverão publicar eventos.
+
+------------------------------------------------------------------
+
+# Eventos
+
+Criar estrutura:
+
+Event
+
+Campos:
+
+ID
+
+Nome
+
+Categoria
+
+Origem
+
+Empresa
+
+Usuário
+
+Data
+
+Payload
+
+Metadata
+
+Versão
+
+Status
+
+Correlation ID
+
+Causation ID
+
+Priority
+
+------------------------------------------------------------------
+
+Categorias
+
+Sistema
+
+Usuário
+
+Empresa
+
+Documento
+
+Comunicação
+
+Workflow
+
+Financeiro
+
+Estoque
+
+Ordem de Serviço
+
+Auditoria
+
+IA
+
+------------------------------------------------------------------
+
+# Event Store
+
+Todos os eventos deverão ser armazenados.
+
+Campos:
+
+Evento
+
+Payload
+
+Data
+
+Tempo
+
+Resultado
+
+Origem
+
+Status
+
+Usuário
+
+Empresa
+
+Tentativas
+
+------------------------------------------------------------------
+
+# Event History
+
+Criar timeline completa.
+
+Filtros:
+
+Período
+
+Categoria
+
+Origem
+
+Usuário
+
+Empresa
+
+Resultado
+
+Pesquisa
+
+------------------------------------------------------------------
+
+# Subscribers
+
+Criar sistema de inscrição.
+
+Cada módulo poderá registrar consumidores.
+
+Exemplo:
+
+Document Platform
+
+↓
+
+Escuta
+
+Document.Generate
+
+Communication Platform
+
+↓
+
+Escuta
+
+Message.Send
+
+Audit Service
+
+↓
+
+Escuta
+
+Todos os Eventos
+
+------------------------------------------------------------------
+
+# Workflow Engine
+
+Criar motor de workflows.
+
+Estrutura:
+
+Workflow
+
+Trigger
+
+Condição
+
+Ações
+
+Status
+
+Empresa
+
+Versão
+
+Categoria
+
+------------------------------------------------------------------
+
+# Workflow Designer
+
+Criar editor visual.
+
+Permitir:
+
+Criar
+
+Duplicar
+
+Versionar
+
+Publicar
+
+Arquivar
+
+Desativar
+
+Pré-visualizar
+
+------------------------------------------------------------------
+
+# Triggers
+
+Criar estrutura.
+
+Tipos:
+
+Evento
+
+Manual
+
+Agendamento
+
+Mudança de Campo
+
+Criação
+
+Atualização
+
+Exclusão
+
+Importação
+
+Exportação
+
+------------------------------------------------------------------
+
+# Condições
+
+Operadores:
+
+=
+
+!=
+
+>
+
+<
+
+>=
+
+<=
+
+Contém
+
+Não contém
+
+Está vazio
+
+Não está vazio
+
+Entre
+
+IN
+
+NOT IN
+
+AND
+
+OR
+
+------------------------------------------------------------------
+
+# Ações
+
+Preparar arquitetura.
+
+Ações:
+
+Criar Documento
+
+Enviar Comunicação
+
+Atualizar Registro
+
+Criar Evento
+
+Executar Script (placeholder)
+
+Adicionar Timeline
+
+Criar Auditoria
+
+Criar Notificação
+
+Atualizar Status
+
+Esperar
+
+Fim
+
+------------------------------------------------------------------
+
+# Executor
+
+Criar Workflow Executor.
+
+Fluxo:
+
+Recebe Evento
+
+↓
+
+Avalia Trigger
+
+↓
+
+Avalia Condições
+
+↓
+
+Executa Ações
+
+↓
+
+Publica Novos Eventos
+
+------------------------------------------------------------------
+
+# Scheduler
+
+Criar agendador.
+
+Tipos:
+
+Uma vez
+
+Diário
+
+Semanal
+
+Mensal
+
+Anual
+
+Cron (placeholder)
+
+------------------------------------------------------------------
+
+# Retry Engine
+
+Workflow poderá falhar.
+
+Criar:
+
+Tentativas
+
+Intervalo
+
+Erro
+
+Reprocessamento
+
+------------------------------------------------------------------
+
+# Event Monitor
+
+Criar dashboard.
+
+Mostrar:
+
+Eventos por minuto
+
+Eventos processados
+
+Eventos com erro
+
+Tempo médio
+
+Workflow mais utilizado
+
+Eventos pendentes
+
+Fila
+
+Subscribers ativos
+
+------------------------------------------------------------------
+
+# Auditoria
+
+Toda execução deverá gerar logs.
+
+Registrar:
+
+Evento criado
+
+Workflow iniciado
+
+Workflow concluído
+
+Workflow cancelado
+
+Subscriber executado
+
+Erro
+
+Retry
+
+------------------------------------------------------------------
+
+# Integração
+
+Integrar:
+
+Core Platform
+
+Metadata Platform
+
+Document Platform
+
+Communication Platform
+
+Audit Service
+
+Configuration Service
+
+Todos deverão publicar eventos.
+
+Nenhum deverá chamar outro módulo diretamente.
+
+------------------------------------------------------------------
+
+# Seeds
+
+Criar:
+
+300 Eventos
+
+40 Workflows
+
+120 Execuções
+
+80 Subscribers
+
+20 Triggers
+
+100 Históricos
+
+Todos consistentes.
+
+------------------------------------------------------------------
+
+# UX
+
+Interface Enterprise.
+
+Timeline
+
+Pesquisa
+
+Filtros
+
+Fluxograma
+
+Cards
+
+Dashboard
+
+Paginação
+
+Modais
+
+Sem alert()
+
+Sem confirm()
+
+------------------------------------------------------------------
+
+# Objetivo da Sprint
+
+Ao finalizar esta Sprint o ServiceForge deverá possuir um barramento de eventos completamente funcional e um Workflow Engine capaz de responder a eventos publicados pelos módulos existentes.
+
+A plataforma deverá estar preparada para que todos os futuros módulos utilizem eventos internos como principal mecanismo de integração.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Ordem de Serviço
+• Clientes
+• Aparelhos
+• Técnicos
+• Financeiro
+• Estoque
+• IA

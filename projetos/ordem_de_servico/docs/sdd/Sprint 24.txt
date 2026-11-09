@@ -1,0 +1,872 @@
+# ServiceForge — Sprint 24
+## Platform Hardening & Release Candidate (Qualidade, Segurança, Performance e Preparação para Produção)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Esta é a Sprint final da versão 1.0 da plataforma.
+
+NÃO implementar novos módulos de negócio.
+
+NÃO iniciar Financeiro.
+
+NÃO iniciar Estoque.
+
+NÃO iniciar Compras.
+
+NÃO iniciar CRM.
+
+NÃO iniciar Agenda.
+
+NÃO alterar a arquitetura da plataforma.
+
+NÃO remover funcionalidades existentes.
+
+O objetivo desta Sprint é estabilizar completamente a plataforma para disponibilização da versão ServiceForge Platform v1.0 RC1.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Realizar uma revisão completa da plataforma.
+
+Eliminar inconsistências.
+
+Padronizar toda a aplicação.
+
+Garantir estabilidade.
+
+Garantir qualidade.
+
+Garantir segurança.
+
+Garantir desempenho.
+
+Garantir acessibilidade.
+
+Garantir experiência do usuário.
+
+Toda funcionalidade existente deverá permanecer operacional.
+
+Nenhuma regressão será aceita.
+
+------------------------------------------------------------------
+
+MÓDULOS A VALIDAR
+
+Executar validação completa em todos os módulos.
+
+Foundation Platform
+
+Core Platform
+
+Metadata Platform
+
+Master Data Platform
+
+Document Platform
+
+Communication Platform
+
+AI Platform
+
+Workflow Engine
+
+Core Event Bus
+
+Data Platform
+
+Integration Platform
+
+Administration Platform
+
+Reporting & BI Platform
+
+Automation Platform
+
+Public Portal
+
+Ordem de Serviço
+
+------------------------------------------------------------------
+
+REVISÃO DE CÓDIGO
+
+Revisar integralmente:
+
+Arquitetura
+
+Organização
+
+Nomenclaturas
+
+Imports
+
+Dependências
+
+Interfaces
+
+Tipos
+
+Serviços
+
+Hooks
+
+Contextos
+
+Stores
+
+Repositories
+
+Providers
+
+Factories
+
+Middlewares
+
+DTOs
+
+Eventos
+
+Remover:
+
+Código morto
+
+Código duplicado
+
+TODO esquecidos
+
+FIXME
+
+Comentários desnecessários
+
+Arquivos órfãos
+
+Imports não utilizados
+
+Dependências sem uso
+
+------------------------------------------------------------------
+
+PADRONIZAÇÃO
+
+Garantir padrão único para:
+
+Componentes
+
+Formulários
+
+CRUDs
+
+Botões
+
+Ícones
+
+Modais
+
+Drawer
+
+Menus
+
+Breadcrumb
+
+Cards
+
+Grid
+
+Tipografia
+
+Espaçamentos
+
+Mensagens
+
+Validações
+
+Loading
+
+Skeleton
+
+Estados vazios
+
+Estados de erro
+
+Estados de sucesso
+
+------------------------------------------------------------------
+
+QUALIDADE
+
+Executar revisão completa.
+
+Verificar:
+
+Todos os CRUDs
+
+Todos os formulários
+
+Todos os filtros
+
+Todas as pesquisas
+
+Todas as tabelas
+
+Todas as ações
+
+Todas as permissões
+
+Todos os Workflows
+
+Todos os Eventos
+
+Todos os Dashboards
+
+Todos os Relatórios
+
+Todos os Documentos
+
+Todos os Templates
+
+Todos os Connectors
+
+Todos os Data Sources
+
+Todas as Integrações
+
+Todos os Uploads
+
+Todos os Downloads
+
+------------------------------------------------------------------
+
+VALIDAÇÃO DE INTERFACE
+
+Entrar em todas as telas.
+
+Validar:
+
+Todos os botões
+
+Todos os links
+
+Todos os menus
+
+Todas as abas
+
+Todos os atalhos
+
+Todos os modais
+
+Todos os drawers
+
+Todos os selects
+
+Todos os checkboxes
+
+Todos os radios
+
+Todos os inputs
+
+Todos os uploads
+
+Todos os downloads
+
+Todos os previews
+
+Todos os QR Codes
+
+Todos os gráficos
+
+Todos os widgets
+
+Todos os dashboards
+
+Todos os relatórios
+
+Toda navegação
+
+Nenhum botão poderá permanecer sem implementação.
+
+Nenhuma ação poderá ficar incompleta.
+
+Nenhuma tela poderá conter elementos sem funcionalidade.
+
+------------------------------------------------------------------
+
+RESPONSIVIDADE
+
+Validar:
+
+Desktop
+
+Notebook
+
+Tablet
+
+Celular
+
+Landscape
+
+Portrait
+
+Garantir funcionamento completo.
+
+------------------------------------------------------------------
+
+ACESSIBILIDADE
+
+Validar:
+
+Navegação por teclado
+
+Focus
+
+ARIA
+
+Labels
+
+Contraste
+
+Leitura por Screen Readers
+
+Ordem lógica
+
+Mensagens acessíveis
+
+------------------------------------------------------------------
+
+PERFORMANCE
+
+Revisar:
+
+Lazy Loading
+
+Code Splitting
+
+Memoization
+
+Virtualização
+
+Renderizações
+
+Re-renders
+
+Bundle
+
+Componentes pesados
+
+Consultas
+
+Paginação
+
+Filtros
+
+Cache
+
+------------------------------------------------------------------
+
+SEGURANÇA
+
+Executar revisão completa.
+
+Validar:
+
+RBAC
+
+Permissões
+
+Autenticação
+
+Autorização
+
+Sessões
+
+Tokens
+
+Headers
+
+Sanitização
+
+XSS
+
+CSRF
+
+SQL Injection
+
+Rate Limit
+
+LGPD
+
+Criptografia
+
+Segredos
+
+Auditoria
+
+Impersonation
+
+Links públicos
+
+Uploads
+
+Downloads
+
+Nenhum dado sensível poderá ser exposto.
+
+------------------------------------------------------------------
+
+LGPD
+
+Validar:
+
+Consentimento
+
+Retenção
+
+Anonimização (estrutura)
+
+Exclusão
+
+Exportação de dados
+
+Auditoria
+
+Permissões
+
+Proteção de documentos
+
+Proteção de anexos
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Garantir que todas as operações relevantes gerem auditoria.
+
+Criar
+
+Editar
+
+Excluir
+
+Visualizar
+
+Exportar
+
+Importar
+
+Download
+
+Upload
+
+Workflow
+
+Evento
+
+Integração
+
+Login
+
+Logout
+
+Impersonation
+
+Erro
+
+------------------------------------------------------------------
+
+CORE EVENT BUS
+
+Validar:
+
+Todos os eventos
+
+Subscribers
+
+Publishers
+
+Retry
+
+Dead Letter (estrutura)
+
+Histórico
+
+Auditoria
+
+Ordem de execução
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Executar todos os workflows padrão.
+
+Garantir:
+
+Execução
+
+Rollback
+
+Retry
+
+Logs
+
+Auditoria
+
+Performance
+
+------------------------------------------------------------------
+
+RELATÓRIOS
+
+Executar todos.
+
+Validar:
+
+PDF
+
+Excel
+
+CSV
+
+Impressão
+
+Filtros
+
+KPIs
+
+Widgets
+
+Datasets
+
+Templates
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Validar:
+
+Ordem de Serviço
+
+Recibos
+
+Garantias
+
+Laudos
+
+Etiquetas
+
+QR Codes
+
+Assinaturas
+
+Compartilhamentos
+
+------------------------------------------------------------------
+
+BANCO DE DADOS
+
+Revisar:
+
+Relacionamentos
+
+Índices
+
+Constraints
+
+Migrations
+
+Seeds
+
+Metadata
+
+Integridade
+
+Versionamento
+
+------------------------------------------------------------------
+
+LOGS
+
+Revisar:
+
+Logs de aplicação
+
+Logs de auditoria
+
+Logs de integração
+
+Logs de Workflow
+
+Logs de Eventos
+
+Remover informações redundantes.
+
+Nunca registrar informações sensíveis.
+
+------------------------------------------------------------------
+
+CONFIGURAÇÕES
+
+Revisar:
+
+Variáveis
+
+Providers
+
+Feature Flags
+
+Temas
+
+Idiomas
+
+Permissões
+
+Conectores
+
+Data Sources
+
+Metadados
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar testes completos.
+
+Testes Unitários
+
+Testes de Integração
+
+Testes Funcionais
+
+Testes E2E
+
+Testes de Regressão
+
+Testes de Performance
+
+Testes de Responsividade
+
+Testes de Segurança
+
+Testes de Usabilidade
+
+Testes de Acessibilidade
+
+Corrigir automaticamente todos os problemas encontrados.
+
+Reexecutar os testes após cada correção.
+
+------------------------------------------------------------------
+
+CHECKLIST DE PRODUÇÃO
+
+Gerar checklist.
+
+Validar:
+
+Arquitetura
+
+Banco
+
+Segurança
+
+Performance
+
+UX
+
+UI
+
+Responsividade
+
+Auditoria
+
+Eventos
+
+Integrações
+
+Metadados
+
+Relatórios
+
+Documentos
+
+Portal Público
+
+Administração
+
+Workflow
+
+Automação
+
+Nenhum item poderá permanecer pendente.
+
+------------------------------------------------------------------
+
+DOCUMENTAÇÃO
+
+Atualizar completamente.
+
+Arquitetura
+
+Módulos
+
+Banco
+
+Eventos
+
+Workflow
+
+Metadados
+
+Permissões
+
+Administração
+
+Integrações
+
+Data Platform
+
+Automation Platform
+
+Reporting
+
+Portal Público
+
+Guia de Instalação
+
+Guia do Administrador
+
+Guia do Usuário
+
+Guia do Desenvolvedor
+
+------------------------------------------------------------------
+
+SEEDS
+
+Gerar base consistente.
+
+Empresas
+
+Usuários
+
+Clientes
+
+Equipamentos
+
+Técnicos
+
+Ordens de Serviço
+
+Documentos
+
+Relatórios
+
+Dashboards
+
+Workflows
+
+Integrações
+
+Eventos
+
+Auditorias
+
+Nunca utilizar Lorem Ipsum.
+
+Todos os dados deverão ser consistentes e realistas.
+
+------------------------------------------------------------------
+
+DEMONSTRAÇÃO
+
+Preparar ambiente demonstrativo.
+
+Todas as funcionalidades deverão possuir dados suficientes para apresentação.
+
+Toda navegação deverá funcionar imediatamente após iniciar a aplicação.
+
+------------------------------------------------------------------
+
+VERSÃO
+
+Gerar versão:
+
+ServiceForge Platform
+
+Version:
+
+v1.0.0-RC1
+
+Atualizar changelog.
+
+Atualizar número da versão.
+
+Atualizar documentação.
+
+------------------------------------------------------------------
+
+CRITÉRIOS DE ACEITAÇÃO
+
+A Sprint somente poderá ser considerada concluída quando:
+
+✓ Nenhuma tela possuir erros visuais.
+
+✓ Nenhum botão estiver sem implementação.
+
+✓ Nenhum CRUD possuir falhas.
+
+✓ Nenhum Workflow apresentar erro.
+
+✓ Nenhuma integração apresentar inconsistência.
+
+✓ Todos os documentos forem gerados corretamente.
+
+✓ Todos os relatórios funcionarem.
+
+✓ Todas as permissões forem respeitadas.
+
+✓ Todos os eventos forem publicados corretamente.
+
+✓ Toda auditoria estiver funcionando.
+
+✓ Toda aplicação for totalmente responsiva.
+
+✓ Toda aplicação atender aos requisitos mínimos de acessibilidade.
+
+✓ Não existirem erros de console.
+
+✓ Não existirem warnings críticos.
+
+✓ Não existirem exceções não tratadas.
+
+✓ Toda documentação estiver atualizada.
+
+✓ A plataforma estiver pronta para iniciar os módulos Financeiro, Estoque, Compras, CRM e Agenda sem necessidade de refatoração estrutural.
+
+------------------------------------------------------------------
+
+OBJETIVO FINAL
+
+Ao concluir esta Sprint, o ServiceForge deverá ser uma plataforma enterprise completa, modular, orientada a metadados, preparada para produção e pronta para servir como base para todos os futuros módulos de negócio.
+
+Esta Sprint marca o encerramento da versão ServiceForge Platform v1.0 RC1.
+
+IMPORTANTE
+
+Antes de considerar a Sprint concluída, realizar uma auditoria final completa da aplicação, simulando o uso por:
+
+• Administrador Global
+
+• Administrador da Empresa
+
+• Editor
+
+• Técnico
+
+• Visualizador
+
+• Cliente (Portal Público)
+
+Validar integralmente todos os fluxos ponta a ponta, corrigindo automaticamente qualquer inconsistência identificada antes da entrega final.

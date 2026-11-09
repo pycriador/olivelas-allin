@@ -1,0 +1,7 @@
+languages:
+  - id: en
+    label: English
+    path: en/
+  - id: pt-BR
+    label: Portugues (Brasil)
+    path: pt-BR/

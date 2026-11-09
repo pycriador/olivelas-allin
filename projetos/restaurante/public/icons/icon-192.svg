@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#1b4332" />
+  <circle cx="96" cy="96" r="68" fill="none" stroke="#2d6a4f" stroke-width="4" stroke-dasharray="6 6" />
+  <!-- Olive Leaf Branch Motif -->
+  <path d="M96 46 C115 65 125 90 120 120 C105 122 80 114 68 98 C60 86 64 68 80 54 Z" fill="#52b788" opacity="0.9" />
+  <path d="M72 136 C82 108 96 90 134 82 C132 104 122 124 102 136 C90 144 78 142 72 136 Z" fill="#74c69d" opacity="0.8" />
+  <circle cx="86" cy="116" r="14" fill="#d8f3dc" />
+  <circle cx="86" cy="116" r="7" fill="#1b4332" />
+  <!-- Ring Accent -->
+  <circle cx="96" cy="96" r="74" fill="none" stroke="#d8f3dc" stroke-width="2" opacity="0.3" />
+</svg>

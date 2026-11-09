@@ -1,0 +1,79 @@
+- id: REF-PROJ-001
+  path: project-overview.md
+  title: "Project Overview"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  tags: [ai-ready]
+
+- id: REF-ARCH-001
+  path: architecture.md
+  title: "Architecture"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  tags: [ai-ready]
+  related: [REF-STACK-001, REF-SEC-001, REF-DB-001]
+
+- id: REF-STACK-001
+  path: stack.md
+  title: "Technology Stack"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  tags: [ai-ready]
+
+- id: REF-SEC-001
+  path: security.md
+  title: "Security"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  tags: [ai-ready]
+  related: [REF-ARCH-001]
+
+- id: REF-DB-001
+  path: database.md
+  title: "Database Schema"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  tags: [ai-ready]
+
+- id: REF-ROUTES-001
+  path: routes.md
+  title: "Application Routes"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+
+- id: REF-FEAT-001
+  path: features.md
+  title: "Feature Catalog"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified
+  related: [REF-ROUTES-001]
+
+- id: REF-DEPL-001
+  path: deployment.md
+  title: "Deployment"
+  type: Reference
+  status: ACCEPTED
+  owner: rafflehub-team
+  updated: 2026-08-16
+  authority: Verified

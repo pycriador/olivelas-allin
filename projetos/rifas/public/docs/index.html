@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual do Sistema & Documentação Completa — RaffleHub</title>
+  <meta name="description" content="Manual oficial, fluxos de busca, criação e aprovação de artes, gestão de usuários e guia operacional completo do RaffleHub.">
+  <style>
+    :root {
+      --bg: #090d16;
+      --card-bg: #111726;
+      --card-border: #1e293b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --primary-light: rgba(16, 185, 129, 0.15);
+      --accent: #38bdf8;
+      --amber: #f59e0b;
+      --danger: #ef4444;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "Fira Code", monospace, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      font-size: 15px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Top Bar */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .brand-badge {
+      background: var(--primary);
+      color: #000;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+    }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--primary);
+      color: #000;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--primary-hover);
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+    .btn-outline:hover {
+      background: var(--card-bg);
+      border-color: var(--text-muted);
+    }
+
+    /* Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2.5rem;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 5rem;
+      height: calc(100vh - 7rem);
+      overflow-y: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.25rem;
+    }
+
+    .sidebar-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .nav-link {
+      display: block;
+      color: var(--text-muted);
+      padding: 0.4rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: var(--primary-light);
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    /* Main Content */
+    .content {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .hero-box {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(56, 189, 248, 0.05));
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 2.5rem 2rem;
+    }
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      max-width: 700px;
+      line-height: 1.6;
+    }
+
+    .section-header {
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-badge {
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .card-mini {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 1rem;
+    }
+
+    .card-mini h4 {
+      font-size: 0.9rem;
+      margin-bottom: 0.35rem;
+      color: var(--text);
+    }
+
+    .card-mini p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Mockup Visual Box */
+    .mockup {
+      background: #0b1120;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 1.25rem 0;
+    }
+
+    .mockup-bar {
+      background: rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid var(--card-border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .dots {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--card-border);
+    }
+
+    .mockup-body {
+      padding: 1.25rem;
+    }
+
+    .code-pill {
+      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.85em;
+      color: var(--accent);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .badge-paid { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-waiting { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-draft { background: rgba(148, 163, 184, 0.15); color: #cbd5e1; border: 1px solid rgba(148, 163, 184, 0.3); }
+
+    /* Tables */
+    .table-custom {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+    }
+    .table-custom th {
+      text-align: left;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--card-border);
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+    .table-custom td {
+      padding: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    /* Print styling */
+    @media print {
+      body { background: #fff; color: #000; }
+      .topbar, .sidebar, .btn { display: none !important; }
+      .container { grid-template-columns: 1fr; padding: 0; }
+      .card, .hero-box, .mockup { border: 1px solid #ccc; background: #fff; color: #000; }
+      .section-title { color: #000; }
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 900px) {
+      .container { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .hero-title { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-badge">RH</span>
+      <span>RaffleHub</span>
+      <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">— Manual do Sistema</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-outline" onclick="window.print()">
+        🖨️ Imprimir / Salvar PDF
+      </button>
+      <a href="/" class="btn">
+        Ir para a Plataforma →
+      </a>
+    </div>
+  </header>
+
+  <!-- Layout Container -->
+  <div class="container">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="sidebar-title">Índice do Manual</div>
+      <ul class="nav-list">
+        <li><a href="#visao-geral" class="nav-link">1. Visão Geral & Arquitetura</a></li>
+        <li><a href="#busca" class="nav-link">2. Evidências de Busca</a></li>
+        <li><a href="#artes" class="nav-link">3. Criação de Artes & SEO</a></li>
+        <li><a href="#aprovacao" class="nav-link">4. Fluxo de Aprovação</a></li>
+        <li><a href="#usuarios" class="nav-link">5. Gestão de Usuários (RBAC)</a></li>
+        <li><a href="#manual" class="nav-link">6. Manual Operacional</a></li>
+        <li><a href="#faq" class="nav-link">7. Perguntas Frequentes</a></li>
+      </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="content">
+
+      <!-- Hero Section -->
+      <div class="hero-box">
+        <span class="badge badge-paid" style="margin-bottom: 0.75rem;">Documentação Pública Oficial</span>
+        <h1 class="hero-title">Manual Completo da Plataforma RaffleHub</h1>
+        <p class="hero-sub">
+          Guia técnico e operacional completo contendo evidências visuais dos motores de busca, esteira de criação e aprovação de artes, gestão de usuários, controle de concorrência com locks no PostgreSQL e fluxos de vendas via WhatsApp.
+        </p>
+      </div>
+
+      <!-- 1. Visão Geral -->
+      <section id="visao-geral">
+        <div class="section-header">
+          <span class="section-badge">Módulo 01</span>
+          <h2 class="section-title">1. Visão Geral & Invariantes de Negócio</h2>
+        </div>
+        <div class="card">
+          <p>
+            O <strong>RaffleHub</strong> é uma plataforma SaaS profissional para criação, divulgação, auditoria e gestão de rifas digitais em tempo real.
+          </p>
+          <div class="card-grid">
+            <div class="card-mini">
+              <h4>Invariante de Pedidos (Orders)</h4>
+              <p>Toda venda — seja manual, online ou iniciada pelo WhatsApp — gera obrigatoriamente um registro na tabela <span class="code-pill">orders</span>. Não há alteração direta no estado dos números sem um pedido associado.</p>
+            </div>
+            <div class="card-mini">
+              <h4>Prevenção de Duplicidades</h4>
+              <p>O sistema utiliza <span class="code-pill">pg_advisory_xact_lock</span> no PostgreSQL, garantindo que dois compradores nunca reservem a mesma cota simultaneamente.</p>
+            </div>
+            <div class="card-mini">
+              <h4>Sincronização em Tempo Real</h4>
+              <p>Comunicação reativa via Supabase Realtime Channels: status de cotas e novos pedidos refletem na tela sem necessidade de recarregar a página.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Evidências de Busca -->
+      <section id="busca">
+        <div class="section-header">
+          <span class="section-badge">Módulo 02</span>
+          <h2 class="section-title">2. Evidências dos Motores de Busca & Filtros Inteligentes</h2>
+        </div>
+        <div class="card">
+          <p>A plataforma conta com algoritmos de busca velozes para 3 fluxos essenciais:</p>
+
+          <div class="mockup">
+            <div class="mockup-bar">
+              <div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+              <span>Interpretação Inteligente de Cotas</span>
+            </div>
+            <div class="mockup-body">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem;">
+                Exemplo de entrada aceita: <span class="code-pill">1-10, 50, 70-90</span>
+              </p>
+              <div style="background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--primary);">
+                ✓ 32 números identificados: 001, 002, 003, ..., 010, 050, 070, ..., 090
+              </div>
+            </div>
+          </div>
+
+          <div class="card-grid">
+            <div class="card-mini">
+              <h4>Busca Instantânea por Telefone</h4>
+              <p>No CRM e na venda manual, digitar o DDD e telefone do cliente localiza instantaneamente compras passadas e dados cadastrais sem duplicar registros.</p>
+            </div>
+            <div class="card-mini">
+              <h4>Filtros Avançados de Pedidos</h4>
+              <p>Filtre pedidos simultaneamente por Status (Aguardando Contato, Pago, Cancelado), Origem (WhatsApp, Manual, Online), Campanha e Intervalo de Datas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Criação de Artes -->
+      <section id="artes">
+        <div class="section-header">
+          <span class="section-badge">Módulo 03</span>
+          <h2 class="section-title">3. Criação de Artes, Galeria de Fotos e Metatags SEO</h2>
+        </div>
+        <div class="card">
+          <p>
+            O módulo de artes e mídias permite que os organizadores publiquem fotos profissionais dos prêmios com alta performance de carregamento:
+          </p>
+
+          <div class="card-grid">
+            <div class="card-mini">
+              <h4>Galeria com Drag & Drop</h4>
+              <p>Arraste e reordene imagens com facilidade. A primeira foto da galeria é automaticamente definida como a Capa Oficial da campanha.</p>
+            </div>
+            <div class="card-mini">
+              <h4>Cards OpenGraph (WhatsApp / Redes)</h4>
+              <p>Metatags geradas dinamicamente: ao compartilhar o link da rifa no WhatsApp, a imagem de capa, título e valor da cota aparecem em destaque.</p>
+            </div>
+            <div class="card-mini">
+              <h4>Armazenamento em Nuvem Seguro</h4>
+              <p>Arquivos gravados no Supabase Storage com compressão inteligente para visualização rápida até em conexões móveis lentas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Fluxo de Aprovação -->
+      <section id="aprovacao">
+        <div class="section-header">
+          <span class="section-badge">Módulo 04</span>
+          <h2 class="section-title">4. Fluxo de Aprovação de Artes & Ciclo de Vida da Rifa</h2>
+        </div>
+        <div class="card">
+          <p>As campanhas transitam de forma segura através da máquina de estados auditada:</p>
+
+          <table class="table-custom">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Descrição Operacional</th>
+                <th>Permissões</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="badge badge-draft">DRAFT</span></td>
+                <td>Rascunho. O organizador insere artes, regras, precificação e dados de contato.</td>
+                <td>ORGANIZER, ADMIN</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-waiting">PENDING_REVIEW</span></td>
+                <td>Em Revisão. Validação das artes e termos antes da liberação pública.</td>
+                <td>ADMIN</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-paid">ACTIVE</span></td>
+                <td>No ar. Vendas liberadas no link público <span class="code-pill">/r/slug</span> e atendimento WhatsApp ativo.</td>
+                <td>PÚBLICO</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-draft">PAUSED</span></td>
+                <td>Pausada. Vendas temporariamente suspensas para ajustes de estoque.</td>
+                <td>ADMIN</td>
+              </tr>
+              <tr>
+                <td><span class="badge badge-paid">COMPLETED</span></td>
+                <td>Finalizada. Sorteio concluído e ganhador anunciado.</td>
+                <td>ADMIN</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- 5. Gestão de Usuários -->
+      <section id="usuarios">
+        <div class="section-header">
+          <span class="section-badge">Módulo 05</span>
+          <h2 class="section-title">5. Cadastro de Usuários, Roles (Perfis) e RBAC</h2>
+        </div>
+        <div class="card">
+          <p>
+            O RaffleHub possui controle de acesso baseado em papéis (Role-Based Access Control) integrado ao Supabase Auth e RLS:
+          </p>
+
+          <div class="card-grid">
+            <div class="card-mini">
+              <h4>GLOBAL_ADMIN</h4>
+              <p>Acesso irrestrito: criar rifas, aprovar campanhas, gerenciar operadores, consultar relatórios financeiros e logs de auditoria.</p>
+            </div>
+            <div class="card-mini">
+              <h4>SUPPORT_OPERATOR</h4>
+              <p>Operação diária: atendimento aos pedidos via WhatsApp, registro de vendas manuais de balcão e conferência de comprovantes.</p>
+            </div>
+            <div class="card-mini">
+              <h4>FINANCE_MANAGER</h4>
+              <p>Gestão financeira: conciliação de receitas, exportação de relatórios e conferência de pagamentos.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Manual Operacional -->
+      <section id="manual">
+        <div class="section-header">
+          <span class="section-badge">Módulo 06</span>
+          <h2 class="section-title">6. Manual Operacional Passo a Passo</h2>
+        </div>
+        <div class="card">
+          <h3 style="margin-bottom: 0.75rem; font-size: 1.1rem;">Como Operar o Dia a Dia da Campanha:</h3>
+          
+          <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--primary); padding: 1rem; border-radius: 0 8px 8px 0;">
+              <strong>1. Grade Visual e Venda Manual de Balcão</strong>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                Acesse o detalhe da campanha e abra a aba <em>Grade Visual</em>. Selecione os números clicando diretamente ou digitando intervalos no botão <em>Nova Venda Manual</em>.
+              </p>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--accent); padding: 1rem; border-radius: 0 8px 8px 0;">
+              <strong>2. Atendimento ao Pedido via WhatsApp</strong>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                Ao receber a mensagem do comprador no WhatsApp, confira o comprovante Pix. Em <em>Pedidos</em>, localize o pedido pelo nome ou número e marque como <em>PAID (Pago)</em>.
+              </p>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); border-left: 3px solid var(--amber); padding: 1rem; border-radius: 0 8px 8px 0;">
+              <strong>3. Troca de Cotas Solicitada pelo Comprador</strong>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                Abra o pedido e clique em <em>Trocar Número</em>. Selecione a cota antiga e a nova cota livre: a troca ocorre atomicamente sem risco de conflito.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. FAQ -->
+      <section id="faq">
+        <div class="section-header">
+          <span class="section-badge">Módulo 07</span>
+          <h2 class="section-title">7. Perguntas Frequentes & Respostas Rápidas</h2>
+        </div>
+        <div class="card">
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <strong>Como o sistema garante que dois compradores não peguem o mesmo número?</strong>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                O PostgreSQL aplica travas transacionais (<span class="code-pill">pg_advisory_xact_lock</span>) em toda reserva ou venda, bloqueando conflitos em nível de banco de dados.
+              </p>
+            </div>
+            <div style="border-top: 1px solid var(--card-border); pt-2;">
+              <strong style="margin-top: 0.5rem; display: block;">É possível anexar comprovantes aos pedidos?</strong>
+              <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                Sim. Fotos de comprovantes Pix e PDFs podem ser carregados e ficam anexados diretamente à ficha do pedido no bucket seguro.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <footer style="border-top: 1px solid var(--card-border); padding: 2rem 1.5rem; text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 4rem;">
+    <p>© 2026 RaffleHub. Documentação Oficial do Sistema. Todos os direitos reservados.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,812 @@
+# ServiceForge — Sprint 25
+## Demo Environment Manager (Ambiente de Demonstração, Seeds, Cenários e Gerenciamento de Dados)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Public Portal
+
+• Workflow Engine
+
+• Core Event Bus
+
+O Demo Environment Manager será um módulo da Administration Platform.
+
+Toda geração de dados deverá ocorrer exclusivamente através deste módulo.
+
+Nenhum outro módulo poderá criar dados de demonstração diretamente.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar uma plataforma completa de gerenciamento de ambientes de demonstração.
+
+Este módulo será responsável por:
+
+• Restaurar ambiente demo
+
+• Limpar dados operacionais
+
+• Gerar cenários completos
+
+• Gerar dados personalizados
+
+• Executar Seeds
+
+• Exportar ambientes
+
+• Importar ambientes
+
+• Estatísticas
+
+• Diagnóstico
+
+• Integridade dos dados
+
+Todo o ambiente deverá ser reproduzível.
+
+------------------------------------------------------------------
+
+LOCALIZAÇÃO
+
+Administration Platform
+
+↓
+
+Configurações
+
+↓
+
+Demo Environment
+
+------------------------------------------------------------------
+
+TELAS
+
+Criar:
+
+Dashboard
+
+Gerador de Cenários
+
+Gerador Personalizado
+
+Seeds
+
+Exportação
+
+Importação
+
+Estatísticas
+
+Histórico
+
+Logs
+
+Diagnóstico
+
+Integridade
+
+------------------------------------------------------------------
+
+PAINEL
+
+Mostrar:
+
+Total de Empresas
+
+Total de Usuários
+
+Total de Clientes
+
+Total de Equipamentos
+
+Total de Técnicos
+
+Total de Ordens de Serviço
+
+Total de Retornos
+
+Total de Garantias
+
+Total de Pagamentos
+
+Total de Documentos
+
+Total de Eventos
+
+Total de Workflows
+
+Total de Auditorias
+
+Total de Integrações
+
+Total de Relatórios
+
+Total de Dashboards
+
+Data da última geração
+
+Última limpeza
+
+Última importação
+
+Última exportação
+
+------------------------------------------------------------------
+
+AÇÃO
+
+RESTAURAR AMBIENTE
+
+Botão:
+
+"Restaurar Ambiente Demo"
+
+Ao executar:
+
+Apagar todos os dados operacionais.
+
+Recriar automaticamente todo o ambiente de demonstração.
+
+Não remover:
+
+Metadados
+
+Templates
+
+Workflows
+
+Providers
+
+Feature Flags
+
+Configurações
+
+Usuário Administrador Global
+
+Conectores
+
+Data Sources
+
+Temas
+
+Idiomas
+
+Permissões
+
+Papéis
+
+Ao finalizar:
+
+Executar validação automática.
+
+------------------------------------------------------------------
+
+AÇÃO
+
+LIMPAR DADOS OPERACIONAIS
+
+Botão:
+
+"Limpar Dados"
+
+Remover:
+
+Clientes
+
+Equipamentos
+
+Ordens de Serviço
+
+Documentos Operacionais
+
+Histórico
+
+Timeline
+
+Pagamentos
+
+Retornos
+
+Garantias
+
+Uploads
+
+Downloads
+
+Eventos Operacionais
+
+Auditorias Operacionais
+
+Relatórios gerados
+
+Dashboards personalizados
+
+Nunca remover:
+
+Estrutura da plataforma
+
+Metadados
+
+Templates
+
+Usuários administrativos
+
+Configurações
+
+------------------------------------------------------------------
+
+CENÁRIOS
+
+Criar cenários prontos.
+
+----------------------------------------------------------
+
+Pequena Assistência
+
+Empresas:
+
+1
+
+Usuários:
+
+8
+
+Clientes:
+
+80
+
+Equipamentos:
+
+150
+
+Ordens:
+
+120
+
+Técnicos:
+
+3
+
+Retornos:
+
+10
+
+Garantias:
+
+20
+
+Documentos:
+
+300
+
+----------------------------------------------------------
+
+Assistência Média
+
+Empresas:
+
+3
+
+Usuários:
+
+40
+
+Clientes:
+
+600
+
+Equipamentos:
+
+1000
+
+Ordens:
+
+1500
+
+Técnicos:
+
+20
+
+Retornos:
+
+120
+
+Garantias:
+
+250
+
+Documentos:
+
+3000
+
+----------------------------------------------------------
+
+Grande Rede
+
+Empresas:
+
+12
+
+Usuários:
+
+350
+
+Clientes:
+
+15000
+
+Equipamentos:
+
+28000
+
+Ordens:
+
+50000
+
+Técnicos:
+
+220
+
+Retornos:
+
+3500
+
+Garantias:
+
+8000
+
+Documentos:
+
+120000
+
+Eventos:
+
+500000
+
+------------------------------------------------------------------
+
+GERADOR PERSONALIZADO
+
+Permitir configurar:
+
+Quantidade de Empresas
+
+Quantidade de Usuários
+
+Quantidade de Clientes
+
+Quantidade de Equipamentos
+
+Quantidade de Técnicos
+
+Quantidade de Ordens
+
+Quantidade de Pagamentos
+
+Quantidade de Garantias
+
+Quantidade de Retornos
+
+Quantidade de Eventos
+
+Quantidade de Auditorias
+
+Quantidade de Workflows
+
+Quantidade de Documentos
+
+Quantidade de Relatórios
+
+Quantidade de Dashboards
+
+Executar geração automática.
+
+------------------------------------------------------------------
+
+GERAÇÃO DOS DADOS
+
+Todos os dados deverão ser consistentes.
+
+Nunca utilizar:
+
+Lorem Ipsum
+
+Empresa X
+
+Cliente Teste
+
+Nome Teste
+
+Texto Aleatório
+
+Utilizar:
+
+Nomes brasileiros
+
+Endereços brasileiros
+
+Cidades reais
+
+Estados reais
+
+Telefones em formato brasileiro
+
+CEP válido de demonstração
+
+CPFs de demonstração
+
+CNPJs de demonstração
+
+Marcas reais de equipamentos
+
+Modelos reais
+
+Defeitos coerentes
+
+Diagnósticos coerentes
+
+Orçamentos coerentes
+
+Peças compatíveis
+
+Técnicos especializados
+
+Timeline completa
+
+Histórico consistente
+
+Relacionamentos íntegros
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar gerenciamento.
+
+Botões:
+
+Executar Seeds
+
+Executar Todos
+
+Executar Individualmente
+
+Reexecutar
+
+Atualizar
+
+Validar
+
+Mostrar:
+
+Status
+
+Tempo
+
+Quantidade de registros
+
+Erros
+
+Logs
+
+------------------------------------------------------------------
+
+EXPORTAÇÃO
+
+Permitir exportar ambiente completo.
+
+Formato:
+
+JSON
+
+Estrutura:
+
+Empresas
+
+Usuários
+
+Clientes
+
+Equipamentos
+
+OS
+
+Retornos
+
+Garantias
+
+Pagamentos
+
+Documentos
+
+Eventos
+
+Relatórios
+
+Dashboards
+
+Configurações opcionais
+
+Permitir download.
+
+------------------------------------------------------------------
+
+IMPORTAÇÃO
+
+Permitir importar ambiente.
+
+Validar:
+
+Versão
+
+Integridade
+
+Relacionamentos
+
+Duplicidades
+
+Metadados
+
+Executar pré-validação.
+
+Somente importar após confirmação.
+
+Gerar relatório da importação.
+
+------------------------------------------------------------------
+
+ESTATÍSTICAS
+
+Criar painel.
+
+Mostrar:
+
+Volume de dados
+
+Uso do banco
+
+Distribuição por empresa
+
+OS por Status
+
+Clientes
+
+Equipamentos
+
+Técnicos
+
+Pagamentos
+
+Eventos
+
+Workflows
+
+Relatórios
+
+Documentos
+
+Timeline
+
+Garantias
+
+------------------------------------------------------------------
+
+DIAGNÓSTICO
+
+Executar validações.
+
+Verificar:
+
+Relacionamentos quebrados
+
+Documentos órfãos
+
+Eventos inválidos
+
+Referências inválidas
+
+Auditorias inconsistentes
+
+Metadados inválidos
+
+Templates quebrados
+
+Workflows inválidos
+
+Conectores
+
+Data Sources
+
+Gerar relatório.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Restauração
+
+Limpeza
+
+Importação
+
+Exportação
+
+Execução de Seeds
+
+Geração personalizada
+
+Alterações
+
+Tempo
+
+Usuário
+
+Empresa
+
+Resultado
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Demo.Restored
+
+Demo.Cleaned
+
+Demo.Generated
+
+Demo.Imported
+
+Demo.Exported
+
+Seed.Executed
+
+Scenario.Generated
+
+Scenario.Deleted
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Cards.
+
+Gráficos.
+
+Assistentes.
+
+Barras de progresso.
+
+Estimativa de tempo.
+
+Confirmações em modal.
+
+Preview dos cenários.
+
+Pesquisa.
+
+Histórico.
+
+Logs.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+------------------------------------------------------------------
+
+SEGURANÇA
+
+Somente Administrador Global poderá:
+
+Restaurar
+
+Excluir
+
+Importar
+
+Exportar
+
+Executar Seeds
+
+Gerar Cenários
+
+Registrar toda operação na auditoria.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Todos os botões
+
+Todos os cenários
+
+Importação
+
+Exportação
+
+Seeds
+
+Limpeza
+
+Restauração
+
+Estatísticas
+
+Logs
+
+Eventos
+
+Auditoria
+
+Integridade
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir um Demo Environment Manager corporativo capaz de criar, restaurar, limpar, exportar, importar e validar ambientes completos de demonstração, permitindo testes, treinamentos, apresentações e validações técnicas sem necessidade de cadastramento manual.
+
+IMPORTANTE
+
+Esta implementação deverá ser totalmente reutilizável por todos os módulos atuais e futuros da plataforma.
+
+Financeiro, Estoque, CRM, Agenda, Compras e demais módulos deverão utilizar exatamente este mesmo mecanismo para geração e gerenciamento de dados de demonstração.
+
+Não duplicar código.
+
+Não duplicar Seeds.
+
+Não criar geradores específicos por módulo.
+
+Toda a geração de dados deverá ser centralizada nesta plataforma.

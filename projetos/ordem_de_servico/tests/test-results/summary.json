@@ -1,0 +1,95 @@
+{
+  "platform": "ServiceForge Platform v1.0.0-RC1",
+  "timestamp": "2026-10-16T01:53:46.134Z",
+  "durationMs": 130974,
+  "totalSteps": 14,
+  "passedSteps": 14,
+  "failedSteps": 0,
+  "successRate": "100%",
+  "testResults": [
+    {
+      "id": "TC-01",
+      "title": "Autenticação e Inicialização do Painel Administrativo",
+      "status": "passed",
+      "durationMs": 20427
+    },
+    {
+      "id": "TC-02",
+      "title": "Cadastro de Novo Cliente PF/PJ com Persistência em Banco",
+      "status": "passed",
+      "durationMs": 12449
+    },
+    {
+      "id": "TC-03",
+      "title": "Cadastro de Nova Marca de Equipamentos",
+      "status": "passed",
+      "durationMs": 11330
+    },
+    {
+      "id": "TC-04",
+      "title": "Cadastro de Categoria de Equipamentos",
+      "status": "passed",
+      "durationMs": 10474
+    },
+    {
+      "id": "TC-05",
+      "title": "Cadastro de Equipamento do Cliente",
+      "status": "passed",
+      "durationMs": 6933
+    },
+    {
+      "id": "TC-06",
+      "title": "Abertura de Ordem de Serviço com Busca de Cliente (Wizard 5 Passos)",
+      "status": "passed",
+      "durationMs": 17610
+    },
+    {
+      "id": "TC-07",
+      "title": "Listagem e Ordenação de Ordens de Serviço",
+      "status": "passed",
+      "durationMs": 7527
+    },
+    {
+      "id": "TC-08",
+      "title": "Gestão Financeira - Contas Bancárias",
+      "status": "passed",
+      "durationMs": 6772
+    },
+    {
+      "id": "TC-09",
+      "title": "Gestão Financeira - Contas a Pagar e Receber",
+      "status": "passed",
+      "durationMs": 6581
+    },
+    {
+      "id": "TC-10",
+      "title": "Catálogo de Produtos, Peças e Estoque",
+      "status": "passed",
+      "durationMs": 7228
+    },
+    {
+      "id": "TC-11",
+      "title": "Quadro de Funcionários e Técnicos (RH)",
+      "status": "passed",
+      "durationMs": 6907
+    },
+    {
+      "id": "TC-12",
+      "title": "Base de Conhecimento e Soluções Técnicas",
+      "status": "passed",
+      "durationMs": 6845
+    },
+    {
+      "id": "TC-13",
+      "title": "Alternador de Temas e Cores (Design System)",
+      "status": "passed",
+      "durationMs": 7507
+    },
+    {
+      "id": "TC-14",
+      "title": "Validação de Integridade do Schema PostgreSQL serviceforge",
+      "status": "passed",
+      "durationMs": 156
+    }
+  ]
+}

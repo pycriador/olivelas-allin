@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horários de Atendimento — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Horários & Disponibilidade</h1>
+          <p class="text-sm text-muted">Configuração semanal da grade de atendimento da Dra. Marta Gelsi Dias.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-save-all-schedules">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Salvar Alterações
+        </button>
+      </div>
+
+      <div class="card" style="padding: var(--space-6);">
+        <p class="text-sm text-muted" style="margin-bottom: var(--space-6);">
+          Defina os dias da semana em que o consultório atende pacientes, o expediente diário e o intervalo para almoço.
+        </p>
+
+        <div id="schedules-container" style="display: flex; flex-direction: column; gap: var(--space-4);">
+          <!-- Renderizado dinamicamente com inputs de horário para cada dia -->
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("horarios", "");
+    UIComponents.renderAdminTopbar("Horários", "Configurações de Atendimento");
+
+    async function loadSchedules() {
+      const settings = await DatabaseService.settings.get();
+      if (settings && settings.business_hours && Array.isArray(settings.business_hours)) {
+        StorageService.set("schedules", settings.business_hours);
+      }
+      renderSchedules();
+    }
+
+    function renderSchedules() {
+      const schedules = StorageService.get("schedules", initialMockData.schedules);
+      const container = document.getElementById("schedules-container");
+
+      container.innerHTML = schedules.map((sch, index) => `
+        <div class="card" style="padding: var(--space-4) var(--space-6); background-color: ${sch.active ? 'var(--color-surface)' : '#f8fafc'}; border-color: ${sch.active ? 'var(--color-border)' : '#e2e8f0'};">
+          <div class="flex items-center justify-between flex-wrap gap-4">
+            <div style="min-width: 160px;">
+              <label class="form-checkbox-label">
+                <input type="checkbox" class="sch-active-toggle" data-idx="${index}" ${sch.active ? 'checked' : ''}>
+                <strong style="font-size: var(--font-size-base); color: ${sch.active ? 'var(--color-text)' : 'var(--color-text-muted)'};">${sch.day}</strong>
+              </label>
+            </div>
+
+            <div class="flex items-center gap-3 flex-wrap" style="opacity: ${sch.active ? '1' : '0.4'}; pointer-events: ${sch.active ? 'auto' : 'none'};">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-muted">Expediente:</span>
+                <input type="time" class="form-input sch-start" data-idx="${index}" value="${sch.startTime || '08:00'}" style="width: 110px; padding: 4px 8px;">
+                <span>até</span>
+                <input type="time" class="form-input sch-end" data-idx="${index}" value="${sch.endTime || '18:00'}" style="width: 110px; padding: 4px 8px;">
+              </div>
+
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-muted">Intervalo:</span>
+                <input type="time" class="form-input sch-break-start" data-idx="${index}" value="${sch.breakStart || '12:00'}" style="width: 110px; padding: 4px 8px;">
+                <span>até</span>
+                <input type="time" class="form-input sch-break-end" data-idx="${index}" value="${sch.breakEnd || '13:00'}" style="width: 110px; padding: 4px 8px;">
+              </div>
+            </div>
+
+            <div>
+              <span class="badge ${sch.active ? 'badge-success' : 'badge-neutral'}">
+                ${sch.active ? 'Disponível' : 'Fechado'}
+              </span>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      // Toggle ativo
+      container.querySelectorAll(".sch-active-toggle").forEach(chk => {
+        chk.onchange = () => {
+          const idx = chk.getAttribute("data-idx");
+          schedules[idx].active = chk.checked;
+          StorageService.set("schedules", schedules);
+          renderSchedules();
+        };
+      });
+    }
+
+    document.getElementById("btn-save-all-schedules").onclick = async () => {
+      const btn = document.getElementById("btn-save-all-schedules");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner spinner-sm"></span> Salvando no Supabase...`;
+
+      const schedules = StorageService.get("schedules", initialMockData.schedules);
+      document.querySelectorAll(".sch-active-toggle").forEach(el => {
+        const idx = el.getAttribute("data-idx");
+        schedules[idx].active = el.checked;
+      });
+      document.querySelectorAll(".sch-start").forEach(el => {
+        schedules[el.getAttribute("data-idx")].startTime = el.value;
+      });
+      document.querySelectorAll(".sch-end").forEach(el => {
+        schedules[el.getAttribute("data-idx")].endTime = el.value;
+      });
+      document.querySelectorAll(".sch-break-start").forEach(el => {
+        schedules[el.getAttribute("data-idx")].breakStart = el.value;
+      });
+      document.querySelectorAll(".sch-break-end").forEach(el => {
+        schedules[el.getAttribute("data-idx")].breakEnd = el.value;
+      });
+
+      StorageService.set("schedules", schedules);
+
+      try {
+        await DatabaseService.settings.save({ business_hours: schedules });
+        Toast.success("Horários de atendimento salvos com sucesso no Supabase!");
+      } catch (err) {
+        console.error(err);
+        Toast.error("Erro ao salvar horários no Supabase.");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "Salvar Todos os Horários";
+      }
+
+      renderSchedules();
+    };
+
+    loadSchedules();
+  </script>
+</body>
+</html>

@@ -1,0 +1,838 @@
+# ServiceForge — Sprint 21
+## Reporting & BI Platform (Dashboards, Relatórios, Analytics e Report Builder)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Workflow Engine
+
+• Core Event Bus
+
+Toda geração de documentos analíticos, dashboards e relatórios deverá ocorrer exclusivamente através da Reporting & BI Platform.
+
+Nenhum módulo poderá gerar relatórios diretamente.
+
+Todos deverão consumir esta plataforma.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Criar uma plataforma corporativa de Reporting e Business Intelligence.
+
+Esta plataforma será responsável por:
+
+Dashboards
+
+KPIs
+
+Widgets
+
+Relatórios
+
+Analytics
+
+Exportações
+
+Report Builder
+
+Dashboard Builder
+
+Agendamentos
+
+Indicadores
+
+Documentos parametrizados
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Reporting & BI Platform
+
+Estrutura:
+
+Dashboard Builder
+
+Widget Library
+
+Widget Manager
+
+Report Builder
+
+Template Manager
+
+Dataset Manager
+
+Query Manager
+
+Visualization Engine
+
+Export Engine
+
+Print Engine
+
+Scheduler
+
+Subscriptions
+
+Analytics
+
+KPI Center
+
+Favorites
+
+History
+
+Audit
+
+Configuration
+
+------------------------------------------------------------------
+
+DASHBOARD BUILDER
+
+Criar construtor visual.
+
+Permitir:
+
+Adicionar Widgets
+
+Mover Widgets
+
+Redimensionar
+
+Agrupar
+
+Layouts
+
+Abas
+
+Filtros Globais
+
+Filtros Locais
+
+Favoritos
+
+Duplicar Dashboard
+
+Versionamento
+
+Compartilhamento
+
+------------------------------------------------------------------
+
+WIDGET LIBRARY
+
+Criar biblioteca.
+
+Widgets:
+
+Tabela
+
+Cards
+
+Indicadores
+
+Gráfico Linha
+
+Gráfico Barra
+
+Gráfico Pizza
+
+Área
+
+Rosca
+
+Gauge
+
+Heatmap (estrutura)
+
+Calendário
+
+Timeline
+
+Kanban (visualização)
+
+Mapa (estrutura)
+
+Texto
+
+Imagem
+
+HTML seguro
+
+Iframe (estrutura)
+
+------------------------------------------------------------------
+
+REPORT BUILDER
+
+Criar construtor visual.
+
+Sem programação.
+
+Permitir criar:
+
+Relatórios
+
+Recibos
+
+Ordens de Serviço
+
+Etiquetas
+
+Garantias
+
+Orçamentos
+
+Comprovantes
+
+Listagens
+
+Listas de conferência
+
+Protocolos
+
+Termos
+
+Declarações
+
+Todos utilizando Metadata Platform.
+
+------------------------------------------------------------------
+
+TEMPLATE MANAGER
+
+Criar gerenciamento.
+
+Administrador Global poderá:
+
+Criar templates globais
+
+Versionar
+
+Publicar
+
+Arquivar
+
+Duplicar
+
+Comparar versões
+
+Cada empresa poderá:
+
+Copiar templates globais
+
+Personalizar
+
+Criar templates próprios
+
+Exportar
+
+Importar
+
+------------------------------------------------------------------
+
+EDITOR VISUAL
+
+Editor Drag & Drop.
+
+Componentes:
+
+Texto
+
+Título
+
+Imagem
+
+Logo
+
+Tabela
+
+Campo
+
+Código de barras
+
+QR Code
+
+Linha
+
+Retângulo
+
+Assinatura
+
+Data
+
+Hora
+
+Página
+
+Rodapé
+
+Cabeçalho
+
+Separadores
+
+Campos dinâmicos
+
+Grupos
+
+Repetições
+
+Sub-relatórios (estrutura)
+
+------------------------------------------------------------------
+
+METADADOS
+
+Todos os campos deverão ser carregados automaticamente a partir da Metadata Platform.
+
+Nenhum campo poderá ser hardcoded.
+
+Sempre utilizar:
+
+Entidades
+
+Relacionamentos
+
+Tipos
+
+Validações
+
+Máscaras
+
+Descrições
+
+------------------------------------------------------------------
+
+DATASETS
+
+Criar Dataset Manager.
+
+Permitir:
+
+Selecionar fonte
+
+Selecionar entidades
+
+Criar JOINs
+
+Filtros
+
+Agrupamentos
+
+Ordenação
+
+Campos calculados
+
+Salvar Dataset
+
+Versionar
+
+Compartilhar
+
+Consumir Data Platform.
+
+------------------------------------------------------------------
+
+QUERY MANAGER
+
+Criar gerenciamento.
+
+Permitir:
+
+Consultas visuais
+
+Consultas SQL (somente para Administrador Global)
+
+Versionamento
+
+Permissões
+
+Histórico
+
+Favoritos
+
+------------------------------------------------------------------
+
+VISUALIZATION ENGINE
+
+Criar motor de renderização.
+
+Suportar:
+
+Desktop
+
+Tablet
+
+Mobile
+
+PDF
+
+Impressão
+
+Exportação
+
+Dark Mode
+
+Light Mode
+
+Alta resolução
+
+------------------------------------------------------------------
+
+EXPORT ENGINE
+
+Permitir exportação para:
+
+PDF
+
+Excel
+
+CSV
+
+JSON
+
+XML
+
+HTML
+
+Markdown
+
+Imagem PNG
+
+Imagem SVG
+
+Preparar estrutura para PowerPoint.
+
+------------------------------------------------------------------
+
+PRINT ENGINE
+
+Criar mecanismo de impressão.
+
+Configurar:
+
+A4
+
+A5
+
+Carta
+
+Etiqueta
+
+Bobina térmica
+
+Orientação
+
+Margens
+
+Escala
+
+Cabeçalho
+
+Rodapé
+
+Numeração
+
+Quebra automática
+
+------------------------------------------------------------------
+
+RELATÓRIOS PADRÃO
+
+Criar templates completos.
+
+Exemplos:
+
+Ordem de Serviço
+
+Recibo de Entrada
+
+Recibo de Retirada
+
+Recibo de Pagamento
+
+Garantia
+
+Laudo Técnico
+
+Orçamento
+
+Histórico do Cliente
+
+Histórico do Equipamento
+
+Ordens em Aberto
+
+Ordens por Técnico
+
+Ordens por Empresa
+
+Produtividade
+
+Tempo Médio
+
+Auditoria
+
+Eventos
+
+------------------------------------------------------------------
+
+DASHBOARDS PADRÃO
+
+Criar:
+
+Dashboard Executivo
+
+Dashboard Técnico
+
+Dashboard Financeiro (estrutura)
+
+Dashboard Administrativo
+
+Dashboard Operacional
+
+Dashboard IA
+
+Dashboard Integrações
+
+Dashboard Auditoria
+
+------------------------------------------------------------------
+
+KPI CENTER
+
+Criar gerenciamento.
+
+KPIs:
+
+OS abertas
+
+OS concluídas
+
+Tempo médio
+
+Tempo de aprovação
+
+Retornos
+
+Garantias
+
+Produtividade
+
+Receita (estrutura)
+
+Lucro (estrutura)
+
+Chamados por técnico
+
+Chamados por empresa
+
+Chamados por período
+
+------------------------------------------------------------------
+
+AGENDAMENTOS
+
+Permitir:
+
+Executar relatório manualmente
+
+Diariamente
+
+Semanalmente
+
+Mensalmente
+
+Cron (estrutura)
+
+Enviar automaticamente utilizando Communication Platform.
+
+------------------------------------------------------------------
+
+ASSINATURAS
+
+Permitir assinatura digital em documentos.
+
+Consumir Document Platform.
+
+Nunca implementar assinatura diretamente.
+
+------------------------------------------------------------------
+
+QR CODE
+
+Gerar QR Code.
+
+Código de barras.
+
+Identificadores públicos.
+
+Consumir Document Platform.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Criação
+
+Alteração
+
+Execução
+
+Impressão
+
+Exportação
+
+Compartilhamento
+
+Download
+
+Agendamento
+
+Erro
+
+Tempo
+
+Usuário
+
+Empresa
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+Report.Created
+
+Report.Updated
+
+Report.Executed
+
+Report.Exported
+
+Dashboard.Created
+
+Dashboard.Shared
+
+Widget.Created
+
+Template.Published
+
+Dataset.Executed
+
+KPI.Updated
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+WORKFLOWS
+
+Criar exemplos.
+
+Relatório executado
+
+↓
+
+Atualizar Histórico
+
+↓
+
+Gerar Auditoria
+
+↓
+
+Publicar Evento
+
+↓
+
+Enviar Documento
+
+↓
+
+Registrar Analytics
+
+------------------------------------------------------------------
+
+ADMINISTRAÇÃO
+
+Administrador Global poderá:
+
+Criar templates globais
+
+Publicar widgets
+
+Criar dashboards corporativos
+
+Criar datasets globais
+
+Gerenciar permissões
+
+Visualizar estatísticas
+
+Empresas poderão:
+
+Criar dashboards próprios
+
+Criar relatórios próprios
+
+Criar templates próprios
+
+Compartilhar internamente
+
+------------------------------------------------------------------
+
+SEEDS
+
+Criar:
+
+40 Dashboards
+
+120 Relatórios
+
+60 Datasets
+
+150 Widgets
+
+80 Templates
+
+200 KPIs
+
+500 Execuções
+
+400 Exportações
+
+300 Auditorias
+
+Todos consistentes.
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Dashboard Builder.
+
+Report Builder.
+
+Dataset Explorer.
+
+Widget Library.
+
+Preview em tempo real.
+
+Drag & Drop.
+
+Undo/Redo.
+
+Pesquisa Global.
+
+Favoritos.
+
+Layouts persistentes.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar apenas componentes padrão da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Dashboard Builder
+
+Report Builder
+
+Editor Visual
+
+Widgets
+
+Datasets
+
+Exportações
+
+Impressão
+
+Templates
+
+KPIs
+
+Filtros
+
+Responsividade
+
+Eventos
+
+Auditoria
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao finalizar esta Sprint, o ServiceForge deverá possuir uma plataforma corporativa completa de Reporting & BI, permitindo criar dashboards, indicadores, relatórios analíticos e documentos personalizados totalmente baseados em metadados.
+
+A plataforma deverá permitir que o Administrador Global publique modelos corporativos e que cada empresa personalize seus próprios dashboards e relatórios sem necessidade de desenvolvimento.
+
+IMPORTANTE
+
+NÃO implementar ainda:
+
+• Cubos OLAP
+
+• Data Warehouse
+
+• IA para criação automática de dashboards
+
+• Compartilhamento público de dashboards
+
+• BI em tempo real via streaming
+
+Toda a arquitetura deverá permanecer preparada para essas evoluções futuras sem necessidade de refatoração estrutural.

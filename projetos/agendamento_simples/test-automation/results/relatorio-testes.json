@@ -1,0 +1,218 @@
+{
+  "timestamp": "2026-10-08T02:50:05.348Z",
+  "environment": {
+    "supabaseUrl": "https://owkzswjdeetcbawilrgr.supabase.co",
+    "nodeVersion": "v24.15.0",
+    "platform": "win32"
+  },
+  "summary": {
+    "total": 11,
+    "passed": 11,
+    "failed": 0,
+    "executionTimeMs": 51843
+  },
+  "scenarios": [
+    {
+      "id": 1,
+      "name": "Validação de Conectividade com o Supabase & Auth",
+      "description": "Valida que as credenciais do .env estão ativas e autenticam no Supabase Auth",
+      "status": "PASSED",
+      "durationMs": 308,
+      "details": {
+        "authStatus": 200,
+        "supabaseUrl": "https://owkzswjdeetcbawilrgr.supabase.co",
+        "version": "v2.197.0"
+      }
+    },
+    {
+      "id": 2,
+      "name": "Landing Page & Componentes Dinâmicos (LandingSync)",
+      "description": "Valida que index.html carrega tratamentos, planos e horários com links ativos",
+      "status": "PASSED",
+      "durationMs": 2417,
+      "details": {
+        "heroTitle": "Cuidado, tecnologia e atenção personalizada para o seu sorriso.",
+        "treatmentsCount": 6,
+        "plansCount": 4,
+        "hasHours": true,
+        "screenshot": "01-landing-page.png"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Autenticação de Usuário (Supabase Auth)",
+      "description": "Realiza login com sucesso via Supabase Auth e armazena token de sessão",
+      "status": "PASSED",
+      "durationMs": 2710,
+      "details": {
+        "success": true,
+        "email": "admin@consultorio.com.br",
+        "token": true,
+        "screenshot": "02-login-screen.png"
+      }
+    },
+    {
+      "id": 4,
+      "name": "Dashboard Administrativo",
+      "description": "Acessa o Dashboard, verifica os cards de indicadores e renderização de métricas",
+      "status": "PASSED",
+      "durationMs": 2115,
+      "details": {
+        "pageTitle": "Visão geral",
+        "statsCount": 4,
+        "stats": [
+          "Agendamentos hoje - 8 - Consultas agendadas",
+          "Consultas ativas - 5 - Confirmadas na agenda",
+          "Pacientes cadastrados - 5 - Base de dados Supabase",
+          "Aguardando confirmação - 3 - Status 'Pendente'"
+        ],
+        "screenshot": "03-dashboard.png"
+      }
+    },
+    {
+      "id": 5,
+      "name": "CRUD de Pacientes & Menu Dropdown de Ações",
+      "description": "Cadastra um novo paciente e valida renderização com menu dropdown compacto",
+      "status": "PASSED",
+      "durationMs": 3304,
+      "details": {
+        "createdPatientId": "PAT-006",
+        "patientName": "Teste Automatizado da Silva",
+        "dropdownExists": true,
+        "screenshot": "04-pacientes-crud.png"
+      }
+    },
+    {
+      "id": 6,
+      "name": "Agendamento de Consultas & Ações Dropdown",
+      "description": "Cria um novo agendamento, valida na listagem e verifica dropdown de ações",
+      "status": "PASSED",
+      "durationMs": 3422,
+      "details": {
+        "createdAptId": "APT-009",
+        "service": "Limpeza Dental Preventiva",
+        "screenshot": "05-agendamentos-crud.png"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Agenda Interativa & Exclusão de Consulta no Dia",
+      "description": "Valida o calendário, abre a visão do dia e exclui a consulta criada",
+      "status": "PASSED",
+      "durationMs": 2816,
+      "details": {
+        "calHeader": "Anterior\nHoje\nPróximo\nSetembro de 2026\nMês\nSemana\nDia",
+        "appointmentDeleted": true,
+        "screenshot": "06-agenda-geral.png"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Catálogo de Serviços Odontológicos",
+      "description": "Valida o CRUD de serviços e criação de novo procedimento clínico",
+      "status": "PASSED",
+      "durationMs": 3120,
+      "details": {
+        "serviceId": "SRV-007",
+        "name": "Clareamento Dental Laser",
+        "screenshot": "07-servicos-admin.png"
+      }
+    },
+    {
+      "id": 9,
+      "name": "Planos de Tratamento & Convênios",
+      "description": "Cria plano de acompanhamento com destaque e valida renderização",
+      "status": "PASSED",
+      "durationMs": 3044,
+      "details": {
+        "planId": "PLN-005",
+        "name": "Plano Sorriso Perfeito",
+        "screenshot": "08-planos-admin.png"
+      }
+    },
+    {
+      "id": 10,
+      "name": "Configuração de Horários & Expediente Semanal",
+      "description": "Atualiza horários de expediente e valida persistência de clinic_settings",
+      "status": "PASSED",
+      "durationMs": 3119,
+      "details": {
+        "daysConfigured": true,
+        "screenshot": "09-horarios-admin.png"
+      }
+    },
+    {
+      "id": 11,
+      "name": "Auditoria de Navegação em Todas as Telas",
+      "description": "Percorre todas as telas públicas e administrativas validando ausência de erros",
+      "status": "PASSED",
+      "durationMs": 24302,
+      "details": {
+        "totalAudited": 12,
+        "auditResults": [
+          {
+            "page": "pages/agendar.html",
+            "title": "Agendar Consulta — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/contato.html",
+            "title": "Contato & Localização — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/servicos.html",
+            "title": "Tratamentos Odontológicos — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/clinica-geral.html",
+            "title": "Clínica Geral — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/limpeza.html",
+            "title": "Limpeza Dental — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/aparelho-ortodontico.html",
+            "title": "Aparelhos Ortodônticos — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/implantes.html",
+            "title": "Implantes Dentários — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/mensagens.html",
+            "title": "Central de Mensagens — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/whatsapp.html",
+            "title": "Painel WhatsApp — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/google-calendar.html",
+            "title": "Google Calendar — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/configuracoes.html",
+            "title": "Configurações — Dra. Marta Gelsi Dias",
+            "ok": true
+          },
+          {
+            "page": "pages/perfil.html",
+            "title": "Meu Perfil & Auditoria — Dra. Marta Gelsi Dias",
+            "ok": true
+          }
+        ],
+        "screenshot": "10-agendar-publico.png"
+      }
+    }
+  ]
+}

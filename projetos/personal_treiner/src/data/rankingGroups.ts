@@ -1,0 +1,40 @@
+import { RankingGroup } from '../types';
+
+export const initialRankingGroups: RankingGroup[] = [
+  {
+    id: 'group-1',
+    name: 'Desafio 30 Dias Seca & Consistência',
+    description: 'Competição de frequência e disciplina diária. Ganha pontos quem concluir os treinos prescritos sem falhar!',
+    startDate: '2026-09-01',
+    endDate: '2026-09-30',
+    active: true,
+    studentIds: ['student-1', 'student-3', 'student-6', 'student-16', 'student-5', 'student-8', 'student-13', 'student-20'],
+    reward: '1 Mês de Consultoria Grátis + Kit Biomecânico',
+    metrics: ['scheduled_workouts', 'streak_days', 'completed_exercises'],
+    createdAt: '2026-08-30T10:00:00Z',
+  },
+  {
+    id: 'group-2',
+    name: 'Turma Hipertrofia & Força Máxima',
+    description: 'Foco em progressão de carga e execução biomecânica impecável para atletas e avançados.',
+    startDate: '2026-09-10',
+    endDate: '2026-10-10',
+    active: true,
+    studentIds: ['student-1', 'student-3', 'student-7', 'student-9', 'student-11', 'student-15', 'student-19'],
+    reward: 'Troféu Digital + Avaliação 3D Presencial',
+    metrics: ['weight_progression', 'total_tonnage', 'completed_exercises'],
+    createdAt: '2026-09-08T14:30:00Z',
+  },
+  {
+    id: 'group-3',
+    name: 'Clube de Corrida & Core Saudável',
+    description: 'Grupo focado em estabilidade de quadril, joelho e quilometragem sem dor articular.',
+    startDate: '2026-09-15',
+    endDate: '2026-10-15',
+    active: true,
+    studentIds: ['student-2', 'student-4', 'student-6', 'student-10', 'student-12', 'student-14', 'student-16', 'student-18'],
+    reward: 'Planilha Especial de Periodização de Corrida',
+    metrics: ['scheduled_workouts', 'completed_exercises', 'streak_days'],
+    createdAt: '2026-09-14T09:00:00Z',
+  },
+];

@@ -1,0 +1,1901 @@
+[
+  {
+    "id": "934972d7-a066-4e47-b02d-bae1e1b08c8d",
+    "businessName": "JBL (Produto)",
+    "category": "Eletrônicos",
+    "summary": "Anúncio de venda de uma caixa de som portátil JBL, destacando suas características, acessórios inclusos e preço.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 99959-6899",
+    "whatsappMessage": "Olá! Vi o anúncio da JBL (Produto) na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/6d722a3a-2aa8-4913-8f64-0afe0df93521.jpg",
+    "images": [
+      {
+        "id": "934972d7-a066-4e47-b02d-bae1e1b08c8d",
+        "url": "images/6d722a3a-2aa8-4913-8f64-0afe0df93521.jpg",
+        "caption": "JBL (Produto)"
+      }
+    ],
+    "keywords": [
+      "JBL",
+      "caixa de som",
+      "bluetooth",
+      "eletrônicos",
+      "venda",
+      "áudio"
+    ],
+    "products": [
+      {
+        "name": "Caixa de Som JBL",
+        "price": "1250.00",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "1ea9a30f-d4b4-4199-85c0-46e795629bd4",
+    "businessName": "Márcio Das Máquinas",
+    "category": "Assistência Técnica",
+    "summary": "Anúncio publicitário de serviços de conserto e limpeza de eletrodomésticos, especificamente máquinas de lavar roupa e micro-ondas.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94940-4341",
+    "whatsappMessage": "Olá! Vi o anúncio da Márcio Das Máquinas na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/cc6c7cdb-e4d1-4d7d-8b55-1705312682ae.jpg",
+    "images": [
+      {
+        "id": "1ea9a30f-d4b4-4199-85c0-46e795629bd4",
+        "url": "images/cc6c7cdb-e4d1-4d7d-8b55-1705312682ae.jpg",
+        "caption": "Márcio Das Máquinas"
+      }
+    ],
+    "keywords": [
+      "conserto",
+      "limpeza",
+      "máquina de lavar",
+      "micro-ondas",
+      "assistência técnica",
+      "eletrodomésticos"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "ab3f112a-c45a-404a-8c82-49fb699737ac",
+    "businessName": "Cardápio de Quinta-Feira",
+    "category": "Alimentação",
+    "summary": "Um cardápio digital simples para quinta-feira oferecendo hotdog, caldo verde e cuscuz recheado.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96797-6571",
+    "whatsappMessage": "Olá! Vi o anúncio da Cardápio de Quinta-Feira na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/63e03f22-7ba1-46e4-8a03-cd3311a7e66d.jpg",
+    "images": [
+      {
+        "id": "ab3f112a-c45a-404a-8c82-49fb699737ac",
+        "url": "images/63e03f22-7ba1-46e4-8a03-cd3311a7e66d.jpg",
+        "caption": "Cardápio de Quinta-Feira"
+      },
+      {
+        "id": "67409d36-91fb-409b-b7c0-d52b3ce7e178",
+        "url": "images/9fd3658f-b373-44a9-8873-823531cfcd8c.jpg",
+        "caption": "Cardápio de Quinta-Feira"
+      },
+      {
+        "id": "a8b5e09c-bfad-4358-89d8-7ae6428bb3fc",
+        "url": "images/39c0ba2f-ed65-4faf-a5d2-c19053cb0cae.jpg",
+        "caption": "Cardápio de Quinta-Feira"
+      }
+    ],
+    "keywords": [
+      "cardápio",
+      "quinta-feira",
+      "hotdog",
+      "caldo verde",
+      "cuscuz",
+      "delivery",
+      "comida",
+      "caldos",
+      "caldo de kenga",
+      "caldo de carne",
+      "caldo de feijão",
+      "hot dog",
+      "torresmo",
+      "sopa",
+      "carne de sol",
+      "comida caseira",
+      "encomenda",
+      "friozinho",
+      "Grazy Mello"
+    ],
+    "products": [
+      {
+        "name": "Hotdog",
+        "price": "R$ 15,90",
+        "description": ""
+      },
+      {
+        "name": "Caldo Verde",
+        "price": "R$ 18,90",
+        "description": ""
+      },
+      {
+        "name": "Cuscuz Recheado",
+        "price": "A partir de R$ 16,90",
+        "description": ""
+      },
+      {
+        "name": "Caldo de Kenga",
+        "price": "R$ 19,90",
+        "description": ""
+      },
+      {
+        "name": "Caldo Verde",
+        "price": "R$ 21,90",
+        "description": ""
+      },
+      {
+        "name": "Caldo de Carne",
+        "price": "R$ 18,90",
+        "description": ""
+      },
+      {
+        "name": "Caldo de Feijão",
+        "price": "R$ 15,90",
+        "description": ""
+      },
+      {
+        "name": "Hot Dog",
+        "price": "R$ 16,90",
+        "description": ""
+      },
+      {
+        "name": "Cuscuz",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Torresmo",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Sopa de legumes",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Caldo verde",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Hotdog",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Cuscuz com carne de sol",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "3ff73cd5-056d-4654-88e1-4d0974634bce",
+    "businessName": "Clara Doces e Salgados",
+    "category": "Alimentação",
+    "summary": "Anúncio promocional de pães caseiros, simples e recheados, da marca Clara Doces e Salgados.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 92213-5261",
+    "whatsappMessage": "Olá! Vi o anúncio da Clara Doces e Salgados na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/b2719050-20b1-493d-b781-d83a0c183050.jpg",
+    "images": [
+      {
+        "id": "3ff73cd5-056d-4654-88e1-4d0974634bce",
+        "url": "images/b2719050-20b1-493d-b781-d83a0c183050.jpg",
+        "caption": "Clara Doces e Salgados"
+      }
+    ],
+    "keywords": [
+      "pão caseiro",
+      "doces e salgados",
+      "artesanal",
+      "padaria",
+      "salgateria",
+      "pão recheado"
+    ],
+    "products": [
+      {
+        "name": "Pão caseiro sem recheio",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Pão caseiro com recheio (Presunto e queijo)",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Pão caseiro com recheio (Frango com requeijão e queijo)",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Pão caseiro com recheio (Carne moída com queijo)",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Pão caseiro com recheio (Calabresa com queijo)",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "23aaa559-f0be-4365-8dff-f4ee60f34783",
+    "businessName": "Claudia Bianco",
+    "category": "Saúde e Educação",
+    "summary": "Flyer promocional de serviços de neuropsicopedagogia oferecidos por Claudia Bianco, focados em avaliação e intervenção para crianças, adolescentes e adultos.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 95070-8091",
+    "whatsappMessage": "Olá! Vi o anúncio da Claudia Bianco na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/dcff42cb-5fa6-4c27-b8f1-d4c827e3e55f.jpg",
+    "images": [
+      {
+        "id": "23aaa559-f0be-4365-8dff-f4ee60f34783",
+        "url": "images/dcff42cb-5fa6-4c27-b8f1-d4c827e3e55f.jpg",
+        "caption": "Claudia Bianco"
+      }
+    ],
+    "keywords": [
+      "neuropsicopedagoga",
+      "aprendizagem",
+      "atenção",
+      "memória",
+      "desenvolvimento",
+      "clínica",
+      "avaliação"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "1c2b2bfb-9bb2-4cb3-b0c4-3818f6d0eeea",
+    "businessName": "Studio Beleza Vedrano",
+    "category": "Health & Beauty",
+    "summary": "An advertisement for post-operative care services for abdominoplasty, highlighting the importance of lymphatic drainage and providing contact information.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 98821-0188",
+    "whatsappMessage": "Olá! Vi o anúncio da Studio Beleza Vedrano na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/0e804f7e-2d4e-4936-8147-13fb7efd5f56.jpg",
+    "images": [
+      {
+        "id": "1c2b2bfb-9bb2-4cb3-b0c4-3818f6d0eeea",
+        "url": "images/0e804f7e-2d4e-4936-8147-13fb7efd5f56.jpg",
+        "caption": "Studio Beleza Vedrano"
+      },
+      {
+        "id": "b4ad08d7-4f11-4892-971d-5424b64ce33b",
+        "url": "images/71cef7c8-9e59-4892-9609-9fa0fdead619.jpg",
+        "caption": "Studio Beleza Vedrano"
+      }
+    ],
+    "keywords": [
+      "abdominoplastia",
+      "pós-operatório",
+      "drenagem linfática",
+      "estética",
+      "recuperação",
+      "bem-estar",
+      "massagem",
+      "beleza",
+      "saúde",
+      "autoestima"
+    ],
+    "products": [
+      {
+        "name": "Pode parcelar no cartão",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Pacote com 10 sessões de drenagem linfática",
+        "price": "R$ 1.200,00",
+        "description": ""
+      },
+      {
+        "name": "Pacote com 10 sessões de drenagem linfática por R$ 1.200,00",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "9f21a85b-9b90-4c72-afcc-924d65b4fa27",
+    "businessName": "LUMIN STEC",
+    "category": "Serviços",
+    "summary": "Anúncio publicitário da empresa LUMIN STEC oferecendo serviços de elétrica, iluminação e automação, destacando sinais de alerta para problemas elétricos.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96424-8266",
+    "whatsappMessage": "Olá! Vi o anúncio da LUMIN STEC na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/59cc2b81-4851-48bb-8bdd-19650ddc3ecc.jpg",
+    "images": [
+      {
+        "id": "9f21a85b-9b90-4c72-afcc-924d65b4fa27",
+        "url": "images/59cc2b81-4851-48bb-8bdd-19650ddc3ecc.jpg",
+        "caption": "LUMIN STEC"
+      }
+    ],
+    "keywords": [
+      "eletricista",
+      "elétrica",
+      "manutenção",
+      "instalação",
+      "iluminação",
+      "automação",
+      "LUMIN STEC"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "d047b026-51dd-420f-9bf8-4dee936bfe4e",
+    "businessName": "Giganet",
+    "category": "Telecommunications",
+    "summary": "Promotional flyer for Giganet Internet services in São Paulo, highlighting high-speed fiber plans, included streaming apps, and installation benefits.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 95448-7106",
+    "whatsappMessage": "Olá! Vi o anúncio da Giganet na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/9fb24c6f-43b1-4109-a2b1-1a39444d149f.jpg",
+    "images": [
+      {
+        "id": "d047b026-51dd-420f-9bf8-4dee936bfe4e",
+        "url": "images/9fb24c6f-43b1-4109-a2b1-1a39444d149f.jpg",
+        "caption": "Giganet"
+      },
+      {
+        "id": "4fa9dda9-b9e3-4132-b2fd-f2e7998b459e",
+        "url": "images/89322e7e-7aca-466e-956c-c846bb83c4d0.jpg",
+        "caption": "Giganet"
+      }
+    ],
+    "keywords": [
+      "internet",
+      "fibra óptica",
+      "Giganet",
+      "banda larga",
+      "streaming",
+      "São Paulo",
+      "Internet",
+      "Monumento São Paulo",
+      "Fibra Óptica",
+      "Alta Velocidade",
+      "Planos",
+      "Wi-Fi"
+    ],
+    "products": [
+      {
+        "name": "Plano 200 Megas",
+        "price": "R$ 69,99 (200 Megas)",
+        "description": ""
+      },
+      {
+        "name": "Plano 500 Megas",
+        "price": "R$ 89,99 (500 Megas)",
+        "description": ""
+      },
+      {
+        "name": "Plano 600 Megas",
+        "price": "R$ 99,99 (600 Megas)",
+        "description": ""
+      },
+      {
+        "name": "Plano 800 Megas",
+        "price": "R$ 119,99 (800 Megas)",
+        "description": ""
+      },
+      {
+        "name": "Plano 1GB",
+        "price": "R$ 149,99 (1GB)",
+        "description": ""
+      },
+      {
+        "name": "Instalação 100% gratuita",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Sem taxa de adesão",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Sem carência",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Sem fidelidade",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Você só paga após a instalação",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Plano 500 Megas Standard ou App Advanced",
+        "price": "R$ 89,99",
+        "description": ""
+      },
+      {
+        "name": "Plano 600 Megas Standard ou App Advanced",
+        "price": "R$ 99,99",
+        "description": ""
+      },
+      {
+        "name": "Plano 800 Megas Standard ou App Advanced",
+        "price": "R$ 119,99",
+        "description": ""
+      },
+      {
+        "name": "Plano 1GB App TOP + Advanced ou PREMIUM",
+        "price": "R$ 149,99",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "65f6a96c-f48c-42f5-b229-546035b3e84a",
+    "businessName": "Fernando - Gerente Habitacional",
+    "category": "Serviços Imobiliários",
+    "summary": "Anúncio publicitário de um gerente habitacional chamado Fernando, focado em auxiliar na conquista da casa própria através de programas governamentais como Minha Casa Minha Vida e uso do FGTS.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94817-6588",
+    "whatsappMessage": "Olá! Vi o anúncio da Fernando - Gerente Habitacional na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/ca4ec8e7-c31b-482e-ab87-3cf8aa370aa4.jpg",
+    "images": [
+      {
+        "id": "65f6a96c-f48c-42f5-b229-546035b3e84a",
+        "url": "images/ca4ec8e7-c31b-482e-ab87-3cf8aa370aa4.jpg",
+        "caption": "Fernando - Gerente Habitacional"
+      }
+    ],
+    "keywords": [
+      "casa própria",
+      "Minha Casa Minha Vida",
+      "FGTS",
+      "imóveis",
+      "gerente habitacional",
+      "financiamento"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "5612525e-27d7-420a-b83f-130c41bb9465",
+    "businessName": "Olivelas",
+    "category": "Decoração e Bem-estar",
+    "summary": "Anúncio publicitário de velas aromáticas da marca Olivelas, destacando o aroma 'Morango & Champanhe' e convidando para pedidos via WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96382-0374",
+    "whatsappMessage": "Olá! Vi o anúncio da Olivelas na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "https://iukirkelywzlqkxlcyfk.supabase.co/storage/v1/object/public/images/submissions/cd5c291f-4640-4a5e-b373-ada53b667a40.png",
+    "images": [
+      {
+        "id": "5612525e-27d7-420a-b83f-130c41bb9465",
+        "url": "https://iukirkelywzlqkxlcyfk.supabase.co/storage/v1/object/public/images/submissions/cd5c291f-4640-4a5e-b373-ada53b667a40.png",
+        "caption": "Olivelas"
+      },
+      {
+        "id": "3b33b08b-d1e9-4937-93b6-3051212b2656",
+        "url": "images/54e9f87c-2f97-4f9b-be67-74f8d10284a9.png",
+        "caption": "Olivelas"
+      }
+    ],
+    "keywords": [
+      "vela aromática",
+      "olivelas",
+      "morango e champanhe",
+      "decoração",
+      "bem-estar",
+      "fragrância",
+      "velas aromáticas",
+      "artesanal",
+      "fragrâncias"
+    ],
+    "products": [
+      {
+        "name": "Vela Aromática Morango & Champanhe",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vela Blue Ocean",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vela Morango & Champanhe",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vela Mamãe & Bebê",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vela Laranja & Baunilha",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vela Limão Siciliano",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "b519cf37-e2b0-4505-9f86-c664e64cb5a0",
+    "businessName": "Salgados do Tchuco",
+    "category": "Alimentação",
+    "summary": "Cardápio de salgados artesanais da marca Salgados do Tchuco, apresentando opções para fritar ou fritos, preços detalhados, formas de pagamento, regiões de atendimento e contato via WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 98133-4161",
+    "whatsappMessage": "Olá! Vi o anúncio da Salgados do Tchuco na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/e8266820-4a58-47c3-8444-1cb97754291d.jpg",
+    "images": [
+      {
+        "id": "b519cf37-e2b0-4505-9f86-c664e64cb5a0",
+        "url": "images/e8266820-4a58-47c3-8444-1cb97754291d.jpg",
+        "caption": "Salgados do Tchuco"
+      }
+    ],
+    "keywords": [
+      "salgados",
+      "coxinha",
+      "bolinho de queijo",
+      "bolinho de carne",
+      "risole",
+      "salgateria",
+      "confeitaria",
+      "salgados artesanais",
+      "sabor caseiro"
+    ],
+    "products": [
+      {
+        "name": "Coxinha",
+        "price": "Coxinha (para fritar): R$ 5,00",
+        "description": ""
+      },
+      {
+        "name": "Bolinho de calabresa",
+        "price": "Coxinha (frita): R$ 6,50",
+        "description": ""
+      },
+      {
+        "name": "Risole (presunto e queijo)",
+        "price": "Bolinho de calabresa (para fritar): R$ 5,00",
+        "description": ""
+      },
+      {
+        "name": "Bolinho de queijo",
+        "price": "Bolinho de calabresa (frita): R$ 6,50",
+        "description": ""
+      },
+      {
+        "name": "Bolinho de carne",
+        "price": "Risole presunto e queijo (para fritar): R$ 6,00",
+        "description": ""
+      },
+      {
+        "name": "Coxinha de frango c/ catupiry",
+        "price": "Risole presunto e queijo (frita): R$ 7,50",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "9ae91bbd-c738-44f0-b78c-0902fbf4d64d",
+    "businessName": "Gustavo e Marta Distribuidora",
+    "category": "Distribuição e Comércio",
+    "summary": "Anúncio de venda de caixa de luvas de procedimento Unigloves Clássico Pink por R$ 320,00, oferecido pela distribuidora Gustavo e Marta com contatos via WhatsApp e telefone.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96079-3624",
+    "whatsappMessage": "Olá! Vi o anúncio da Gustavo e Marta Distribuidora na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/4b1a46d6-392e-4efe-8e7e-8ffd5e871ed8.jpg",
+    "images": [
+      {
+        "id": "9ae91bbd-c738-44f0-b78c-0902fbf4d64d",
+        "url": "images/4b1a46d6-392e-4efe-8e7e-8ffd5e871ed8.jpg",
+        "caption": "Gustavo e Marta Distribuidora"
+      }
+    ],
+    "keywords": [
+      "Unigloves",
+      "luvas",
+      "pink",
+      "procedimento",
+      "distribuidora",
+      "Gustavo e Marta"
+    ],
+    "products": [
+      {
+        "name": "Luva de Procedimento Unigloves Clássico Pink",
+        "price": "R$ 320,00",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "d656fc49-cec4-49c0-911d-2110375c5027",
+    "businessName": "Persianas Flexnew",
+    "category": "Decoração e Interiores",
+    "summary": "Anúncio publicitário da empresa Persianas Flexnew, destacando a venda e instalação de persianas, oferecendo sofisticação, privacidade e conforto para ambientes residenciais e comerciais, com contato via WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96053-6556",
+    "whatsappMessage": "Olá! Vi o anúncio da Persianas Flexnew na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/9bf40ae7-4a59-495e-8a5c-5431bc740e83.jpg",
+    "images": [
+      {
+        "id": "d656fc49-cec4-49c0-911d-2110375c5027",
+        "url": "images/9bf40ae7-4a59-495e-8a5c-5431bc740e83.jpg",
+        "caption": "Persianas Flexnew"
+      }
+    ],
+    "keywords": [
+      "persianas",
+      "flexnew",
+      "decoração",
+      "ambiente",
+      "sofisticação",
+      "privacidade",
+      "conforto",
+      "instalação",
+      "orçamento"
+    ],
+    "products": [
+      {
+        "name": "Persianas",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "aac18558-2809-4402-8391-450e537e8b05",
+    "businessName": "Aulas Particulares",
+    "category": "Educação",
+    "summary": "Panfleto publicitário de aulas particulares e reforço escolar com foco em atendimento personalizado, alfabetização, revisões e trabalhos escolares.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 98979-7552",
+    "whatsappMessage": "Olá! Vi o anúncio da Aulas Particulares na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/e89a72d6-430d-4de8-8e01-4247fb503edc.jpg",
+    "images": [
+      {
+        "id": "aac18558-2809-4402-8391-450e537e8b05",
+        "url": "images/e89a72d6-430d-4de8-8e01-4247fb503edc.jpg",
+        "caption": "Aulas Particulares"
+      }
+    ],
+    "keywords": [
+      "aulas particulares",
+      "reforço escolar",
+      "alfabetização",
+      "educação",
+      "estudos",
+      "professora",
+      "atendimento personalizado"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "4cd5f20f-0003-445f-a939-462221b78185",
+    "businessName": "Cuidare",
+    "category": "Saúde e Cuidados",
+    "summary": "Anúncio de serviços de cuidadores de pessoas, abrangendo idosos, crianças, recém-nascidos, puérperas, pós-operatório e acompanhante hospitalar, oferecidos pela empresa Cuidare Moema.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91211-5906",
+    "whatsappMessage": "Olá! Vi o anúncio da Cuidare na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/defc299f-4412-41e5-a306-bf68e95fd6fa.jpg",
+    "images": [
+      {
+        "id": "4cd5f20f-0003-445f-a939-462221b78185",
+        "url": "images/defc299f-4412-41e5-a306-bf68e95fd6fa.jpg",
+        "caption": "Cuidare"
+      }
+    ],
+    "keywords": [
+      "cuidador",
+      "cuidare",
+      "idosos",
+      "crianças",
+      "recém-nascidos",
+      "enfermagem",
+      "saúde",
+      "acompanhante hospitalar",
+      "pós-operatório",
+      "moema"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "4acc4829-af45-45e8-aea7-13a66edd80b8",
+    "businessName": "Vivo",
+    "category": "Telecomunicações",
+    "summary": "Cartão de visita digital de Janilson, consultor de negócios da Vivo, apresentando serviços de conectividade, internet fibra, 5G e planos móveis.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 92585-0856",
+    "whatsappMessage": "Olá! Vi o anúncio da Vivo na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/680fa7e1-6d36-4b9f-8a4d-733babb4c221.jpg",
+    "images": [
+      {
+        "id": "4acc4829-af45-45e8-aea7-13a66edd80b8",
+        "url": "images/680fa7e1-6d36-4b9f-8a4d-733babb4c221.jpg",
+        "caption": "Vivo"
+      }
+    ],
+    "keywords": [
+      "Vivo",
+      "Consultor",
+      "Fibra Ótica",
+      "5G",
+      "Conectividade",
+      "Tecnologia",
+      "Atendimento personalizado"
+    ],
+    "products": [
+      {
+        "name": "Internet Fibra Ótica",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Planos de voz móveis",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Smartphones (aparelhos)",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "21492727-cd64-497f-b6d6-48856fe32c5e",
+    "businessName": "Vlad Souza Massoterapeuta",
+    "category": "Saúde e Bem-estar",
+    "summary": "Flyer promocional para serviços de massoterapia com aromaterapia, oferecendo desconto em sessões de 1 hora.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94214-7615",
+    "whatsappMessage": "Olá! Vi o anúncio da Vlad Souza Massoterapeuta na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/b15267e5-3b8f-4eb4-9591-847caaa8b191.jpg",
+    "images": [
+      {
+        "id": "21492727-cd64-497f-b6d6-48856fe32c5e",
+        "url": "images/b15267e5-3b8f-4eb4-9591-847caaa8b191.jpg",
+        "caption": "Vlad Souza Massoterapeuta"
+      }
+    ],
+    "keywords": [
+      "massagem",
+      "massoterapia",
+      "aromaterapia",
+      "promoção",
+      "bem-estar",
+      "relaxamento"
+    ],
+    "products": [
+      {
+        "name": "Sessão de massagem de 1h",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Promoção de Setembro: Todas as massagens com aromaterapia de R$ 150,00 por R$ 128,00",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "317ac484-b53e-4dd2-9b5e-7b09854447e5",
+    "businessName": "LJ Studio",
+    "category": "Beleza e Estética",
+    "summary": "Anúncio promocional de uma barbearia chamada LJ Studio, destacando a abertura da agenda para agendamentos de serviços de cuidados masculinos.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 95070-1342",
+    "whatsappMessage": "Olá! Vi o anúncio da LJ Studio na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/5c140179-56c5-41ca-b0f9-83e69620085b.jpg",
+    "images": [
+      {
+        "id": "317ac484-b53e-4dd2-9b5e-7b09854447e5",
+        "url": "images/5c140179-56c5-41ca-b0f9-83e69620085b.jpg",
+        "caption": "LJ Studio"
+      }
+    ],
+    "keywords": [
+      "barbearia",
+      "estúdio",
+      "cuidado masculino",
+      "agenda aberta",
+      "barbeiro"
+    ],
+    "products": [
+      {
+        "name": "Agenda aberta",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "a9a7beac-7b08-4a08-a0a8-96ed5ee0b6bc",
+    "businessName": "Dra. Gleise Lopes",
+    "category": "Saúde e Bem-estar",
+    "summary": "Anúncio informativo sobre a importância da massagem terapêutica, promovendo o agendamento de horários com a Dra. Gleise Lopes.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 98124-4787",
+    "whatsappMessage": "Olá! Vi o anúncio da Dra. Gleise Lopes na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/51475a6b-9194-4b9c-b7b5-f404b4f21b4c.jpg",
+    "images": [
+      {
+        "id": "a9a7beac-7b08-4a08-a0a8-96ed5ee0b6bc",
+        "url": "images/51475a6b-9194-4b9c-b7b5-f404b4f21b4c.jpg",
+        "caption": "Dra. Gleise Lopes"
+      }
+    ],
+    "keywords": [
+      "massagem",
+      "bem-estar",
+      "fisioterapia",
+      "dermatofuncional",
+      "saúde",
+      "equilíbrio",
+      "autocuidado"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "04e6fd67-d839-43f4-8f42-89080aa49f9e",
+    "businessName": "Teacher Thiago",
+    "category": "Education",
+    "summary": "An advertisement for private language lessons (English, Spanish, Portuguese) offered by Teacher Thiago, highlighting personalized methods and individual tracking.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 99628-5103",
+    "whatsappMessage": "Olá! Vi o anúncio da Teacher Thiago na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/0806a340-568c-4856-8944-06cb9b4b2a89.jpg",
+    "images": [
+      {
+        "id": "04e6fd67-d839-43f4-8f42-89080aa49f9e",
+        "url": "images/0806a340-568c-4856-8944-06cb9b4b2a89.jpg",
+        "caption": "Teacher Thiago"
+      }
+    ],
+    "keywords": [
+      "Aulas Particulares",
+      "Inglês",
+      "Espanhol",
+      "Português",
+      "Teacher Thiago",
+      "Educação",
+      "Idiomas"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "14db7746-cc71-4aab-88bf-dd17dc6001b4",
+    "businessName": "Kawasaki Ninja 250R 2010",
+    "category": "Automotivo",
+    "summary": "Anúncio de venda de uma motocicleta Kawasaki Ninja 250R ano 2010 na cor vermelha, com 29 mil km rodados, documentos em dia e vários detalhes informados sobre o estado de conservação.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94547-1872",
+    "whatsappMessage": "Olá! Vi o anúncio da Kawasaki Ninja 250R 2010 na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/c9abd643-7641-4272-9ad2-f01a08e7c453.jpg",
+    "images": [
+      {
+        "id": "14db7746-cc71-4aab-88bf-dd17dc6001b4",
+        "url": "images/c9abd643-7641-4272-9ad2-f01a08e7c453.jpg",
+        "caption": "Kawasaki Ninja 250R 2010"
+      }
+    ],
+    "keywords": [
+      "Kawasaki",
+      "Ninja 250R",
+      "moto",
+      "venda",
+      "2010",
+      "veículo"
+    ],
+    "products": [
+      {
+        "name": "Kawasaki Ninja 250R 2010",
+        "price": "R$ 13.253,00 (Tabela)",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "41341cc5-b975-4d4b-878b-fe1f3f529dce",
+    "businessName": "A Engenharia",
+    "category": "Engenharia",
+    "summary": "Anúncio de serviços de engenharia civil, destacando vistorias técnicas, gerenciamento de obra e emissão de ART, com contatos de WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91122-7928",
+    "whatsappMessage": "Olá! Vi o anúncio da A Engenharia na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/06dc8454-b9e6-462a-838b-d73a3c7b089f.jpg",
+    "images": [
+      {
+        "id": "41341cc5-b975-4d4b-878b-fe1f3f529dce",
+        "url": "images/06dc8454-b9e6-462a-838b-d73a3c7b089f.jpg",
+        "caption": "A Engenharia"
+      }
+    ],
+    "keywords": [
+      "engenharia",
+      "vistorias técnicas",
+      "gerenciamento de obra",
+      "emissão de art",
+      "eng. ariele araujo",
+      "eng. marcio manoel"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "1c904f3e-1607-4004-8ed0-fdae268a6d2c",
+    "businessName": "Camila unha",
+    "category": "Beleza e Estética",
+    "summary": "Anúncio promocional de serviços de manicure e pedicure oferecendo um combo por R$ 65,00.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94524-3749",
+    "whatsappMessage": "Olá! Vi o anúncio da Camila unha na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/0a7f8fb4-445c-43b3-886b-9c04e0c9f0f5.jpg",
+    "images": [
+      {
+        "id": "1c904f3e-1607-4004-8ed0-fdae268a6d2c",
+        "url": "images/0a7f8fb4-445c-43b3-886b-9c04e0c9f0f5.jpg",
+        "caption": "Camila unha"
+      }
+    ],
+    "keywords": [
+      "promoção",
+      "pé e mão",
+      "combo",
+      "manicure",
+      "pedicure",
+      "unhas",
+      "camila unha"
+    ],
+    "products": [
+      {
+        "name": "Combo Pé + Mão por R$ 65,00",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Somente essa semana",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "784cd707-04a6-4a0a-9e1a-e7ca3d73950d",
+    "businessName": "Bff Decoração",
+    "category": "Eventos",
+    "summary": "Anúncio de serviços de decoração de festas e eventos com foco em decorações personalizadas e temáticas, com destaque para o tema Patrulha Canina.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 93152-8225",
+    "whatsappMessage": "Olá! Vi o anúncio da Bff Decoração na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/ab675748-b3d7-417e-8151-5017fdd03727.jpg",
+    "images": [
+      {
+        "id": "784cd707-04a6-4a0a-9e1a-e7ca3d73950d",
+        "url": "images/ab675748-b3d7-417e-8151-5017fdd03727.jpg",
+        "caption": "Bff Decoração"
+      }
+    ],
+    "keywords": [
+      "decoração",
+      "festas",
+      "infantil",
+      "aniversário",
+      "patrulha canina",
+      "marcos",
+      "bff decoração",
+      "eventos"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "f7738c3e-e6ee-4444-8288-495671c73e23",
+    "businessName": "Thalita Nunes Psicanalista",
+    "category": "Saúde e Bem-estar",
+    "summary": "Anúncio publicitário de serviços de psicanálise online oferecidos por Thalita Nunes, destacando benefícios como autoconhecimento, superação de bloqueios e terapia online por R$ 79,90.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 99196-2626",
+    "whatsappMessage": "Olá! Vi o anúncio da Thalita Nunes Psicanalista na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/ef1a9f81-d6b3-4144-846e-6106e6039d2c.jpg",
+    "images": [
+      {
+        "id": "f7738c3e-e6ee-4444-8288-495671c73e23",
+        "url": "images/ef1a9f81-d6b3-4144-846e-6106e6039d2c.jpg",
+        "caption": "Thalita Nunes Psicanalista"
+      }
+    ],
+    "keywords": [
+      "psicanálise",
+      "terapia",
+      "saúde mental",
+      "ansiedade",
+      "autoestima",
+      "autoconhecimento",
+      "terapia online",
+      "thalita nunes",
+      "psicanalista"
+    ],
+    "products": [
+      {
+        "name": "Sessão de Terapia On-line de 1 hora",
+        "price": "R$ 79,90",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "f001d40d-c4c9-43b9-b524-0ec8f3958490",
+    "businessName": "Cleide Oliveira",
+    "category": "Serviços Domésticos",
+    "summary": "Anúncio promocional de serviços domésticos autônomos de faxina, arrumação e passadeira prestados por Cleide Oliveira.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96111-7023",
+    "whatsappMessage": "Olá! Vi o anúncio da Cleide Oliveira na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/c385732b-39f6-42d6-9854-5b7685299e6a.jpg",
+    "images": [
+      {
+        "id": "f001d40d-c4c9-43b9-b524-0ec8f3958490",
+        "url": "images/c385732b-39f6-42d6-9854-5b7685299e6a.jpg",
+        "caption": "Cleide Oliveira"
+      }
+    ],
+    "keywords": [
+      "arrumadeira",
+      "passadeira",
+      "faxineira",
+      "limpeza",
+      "organização",
+      "serviços domésticos",
+      "Cleide Oliveira"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "e256619b-bb82-4c77-96a6-7ac08867f0d4",
+    "businessName": "Leila Campos",
+    "category": "Educação / Estética",
+    "summary": "Anúncio de curso presencial de terapia capilar ministrado por Leila Campos, com data, local, conteúdo programático e informações de inscrição.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91608-2626",
+    "whatsappMessage": "Olá! Vi o anúncio da Leila Campos na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/8c12939f-b61e-4724-acce-d5e51c8d75f5.jpg",
+    "images": [
+      {
+        "id": "e256619b-bb82-4c77-96a6-7ac08867f0d4",
+        "url": "images/8c12939f-b61e-4724-acce-d5e51c8d75f5.jpg",
+        "caption": "Leila Campos"
+      }
+    ],
+    "keywords": [
+      "curso presencial",
+      "terapia capilar",
+      "leila campos",
+      "perita tricológica",
+      "dermoterapeuta capilar",
+      "tricoscopia",
+      "saúde do couro cabeludo",
+      "uniart",
+      "são paulo"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "99f10daf-4eac-42ce-a69b-db786258abe0",
+    "businessName": "Andeviva Atelier",
+    "category": "Serviços",
+    "summary": "Anúncio de serviços de costura, ajustes e passadoria com serviço de leva e traz.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94918-5743",
+    "whatsappMessage": "Olá! Vi o anúncio da Andeviva Atelier na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/20b319fe-8f03-4fa4-ab01-d80c4d207c84.jpg",
+    "images": [
+      {
+        "id": "99f10daf-4eac-42ce-a69b-db786258abe0",
+        "url": "images/20b319fe-8f03-4fa4-ab01-d80c4d207c84.jpg",
+        "caption": "Andeviva Atelier"
+      }
+    ],
+    "keywords": [
+      "costura",
+      "ajustes",
+      "atelier",
+      "bainha",
+      "ziper",
+      "passadoria",
+      "roupas"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "7d10cc05-b815-4f0b-a46c-1d7d1e6df1ba",
+    "businessName": "Gato de Botas Sushi e Temakeria",
+    "category": "Alimentação",
+    "summary": "Propaganda de restaurante japonês especializado em sushi, temakeria, yakissoba e hot roll, com serviço de entrega.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 94875-6147",
+    "whatsappMessage": "Olá! Vi o anúncio da Gato de Botas Sushi e Temakeria na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/eb0fbc9e-edaa-4625-ae80-91406c9c4979.jpg",
+    "images": [
+      {
+        "id": "7d10cc05-b815-4f0b-a46c-1d7d1e6df1ba",
+        "url": "images/eb0fbc9e-edaa-4625-ae80-91406c9c4979.jpg",
+        "caption": "Gato de Botas Sushi e Temakeria"
+      }
+    ],
+    "keywords": [
+      "sushi",
+      "temakeria",
+      "gato de botas",
+      "yakissoba",
+      "hot roll",
+      "comida japonesa",
+      "delivery",
+      "culinária japonesa"
+    ],
+    "products": [
+      {
+        "name": "Sushi",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Temaki",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Yakissoba",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Hot Roll",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "f1f9d440-82f9-417d-8082-49a980ef4a86",
+    "businessName": "Analu Gastronomia Artesanal",
+    "category": "Alimentação",
+    "summary": "Cardápio digital de marmitas artesanais e especiais da semana da marca Analu Gastronomia Artesanal, contendo fotos dos pratos, descrições dos acompanhamentos e preços.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 96646-0821",
+    "whatsappMessage": "Olá! Vi o anúncio da Analu Gastronomia Artesanal na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/053dac72-5bed-4605-876b-0dae5d6c3dbb.jpg",
+    "images": [
+      {
+        "id": "f1f9d440-82f9-417d-8082-49a980ef4a86",
+        "url": "images/053dac72-5bed-4605-876b-0dae5d6c3dbb.jpg",
+        "caption": "Analu Gastronomia Artesanal"
+      }
+    ],
+    "keywords": [
+      "marmitas artesanais",
+      "gastronomia artesanal",
+      "refeições balanceadas",
+      "filé de frango",
+      "bife acebolado",
+      "strogonoff",
+      "tilápia",
+      "virado paulista",
+      "rocambole de carne",
+      "frango xadrez",
+      "comida saudável"
+    ],
+    "products": [
+      {
+        "name": "Filé de Frango com arroz, feijão e farofa",
+        "price": "R$ 23,50",
+        "description": ""
+      },
+      {
+        "name": "Bife Acebolado com arroz, feijão e farofa",
+        "price": "R$ 26,80",
+        "description": ""
+      },
+      {
+        "name": "Strogonoff de Frango com arroz e batata palha",
+        "price": "R$ 28,50",
+        "description": ""
+      },
+      {
+        "name": "Tilápia com arroz e mix de legumes",
+        "price": "R$ 29,80",
+        "description": ""
+      },
+      {
+        "name": "Virado Paulista com farofa crocante de banana, linguiça de pernil e couve",
+        "price": "R$ 32,00",
+        "description": ""
+      },
+      {
+        "name": "Rocambole de Carne Moída com creme de espinafre e arroz integral ou branco",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Frango Xadrez com arroz integral ou branco",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Tilápia com Crosta Crocante com arroz e mix de legumes",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "916ad4b1-90e4-4afa-98ad-ded60d99eff6",
+    "businessName": "Samarah Makeup",
+    "category": "Beleza e Estética",
+    "summary": "Anúncio de serviços de maquiagem com pele blindada e penteados por Samarah Makeup, exibindo fotos de clientes e chamada para agendamento via WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 97196-3016",
+    "whatsappMessage": "Olá! Vi o anúncio da Samarah Makeup na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/b7571bcf-cc47-4481-a334-803ff960ec10.jpg",
+    "images": [
+      {
+        "id": "916ad4b1-90e4-4afa-98ad-ded60d99eff6",
+        "url": "images/b7571bcf-cc47-4481-a334-803ff960ec10.jpg",
+        "caption": "Samarah Makeup"
+      }
+    ],
+    "keywords": [
+      "maquiagem",
+      "penteados",
+      "pele blindada",
+      "beleza",
+      "samarah makeup"
+    ],
+    "products": [
+      {
+        "name": "Últimos horários disponíveis",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Vagas LIMITADAS essa semana!",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "7240b757-c4c8-4d39-8396-da834d136c6d",
+    "businessName": "Alan Corretor de Imóveis",
+    "category": "Imobiliária",
+    "summary": "Anúncio de aluguel de apartamento no Condomínio Monumento São Paulo, Vista João Simões, por R$ 4.650,00 o pacote.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 93805-7507",
+    "whatsappMessage": "Olá! Vi o anúncio da Alan Corretor de Imóveis na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/7bda711c-5d62-4caa-8679-0bc1105f76ed.jpg",
+    "images": [
+      {
+        "id": "7240b757-c4c8-4d39-8396-da834d136c6d",
+        "url": "images/7bda711c-5d62-4caa-8679-0bc1105f76ed.jpg",
+        "caption": "Alan Corretor de Imóveis"
+      },
+      {
+        "id": "a486e05c-b628-42f2-925d-39c1ae271676",
+        "url": "images/ca9a88e5-5937-4773-b83e-611093ace0ac.jpg",
+        "caption": "Alan Corretor de Imóveis"
+      }
+    ],
+    "keywords": [
+      "locação",
+      "aluguel",
+      "imóvel",
+      "condomínio",
+      "Monumento São Paulo",
+      "apartamento",
+      "73m²",
+      "lar",
+      "compra",
+      "venda",
+      "corretor",
+      "imobiliária"
+    ],
+    "products": [
+      {
+        "name": "Apartamento 73m²",
+        "price": "R$ 4.650,00",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "2f7a9964-7e9d-4877-95c2-e399051f0269",
+    "businessName": "Babá Disponível",
+    "category": "Serviços Pessoais",
+    "summary": "Anúncio de prestação de serviços de babá com disponibilidade para cuidados infantis na região de Campo Limpo.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 9926-6130",
+    "whatsappMessage": "Olá! Vi o anúncio da Babá Disponível na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/2c83f87b-d1dd-4d24-85f1-842adc9cd1b7.jpg",
+    "images": [
+      {
+        "id": "2f7a9964-7e9d-4877-95c2-e399051f0269",
+        "url": "images/2c83f87b-d1dd-4d24-85f1-842adc9cd1b7.jpg",
+        "caption": "Babá Disponível"
+      }
+    ],
+    "keywords": [
+      "babá",
+      "disponível",
+      "cuidados",
+      "crianças",
+      "infantil",
+      "Campo Limpo"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "5e1fca98-0e87-4325-a6cc-9ff987d108fb",
+    "businessName": "Meire Salgados",
+    "category": "Alimentação",
+    "summary": "Anúncio promocional da empresa Meire Salgados oferecendo um combo de Torta de Frango e Coxinha por R$ 165,00.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91510-7328",
+    "whatsappMessage": "Olá! Vi o anúncio da Meire Salgados na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/6f850618-6905-48d1-95e5-e687bcb510f0.jpg",
+    "images": [
+      {
+        "id": "5e1fca98-0e87-4325-a6cc-9ff987d108fb",
+        "url": "images/6f850618-6905-48d1-95e5-e687bcb510f0.jpg",
+        "caption": "Meire Salgados"
+      }
+    ],
+    "keywords": [
+      "salgados",
+      "torta de frango",
+      "coxinha",
+      "meire salgados",
+      "combo",
+      "comida",
+      "lanche"
+    ],
+    "products": [
+      {
+        "name": "Torta de Frango",
+        "price": "R$ 165,00",
+        "description": ""
+      },
+      {
+        "name": "Coxinha",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Combo Torta de Frango + Coxinha por R$ 165,00",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "6a3706d5-9d70-4c5d-8cb7-77d6ef21bf02",
+    "businessName": "Welington Hair Style",
+    "category": "Salão de Beleza",
+    "summary": "Anúncio publicitário de um salão de beleza oferecendo serviços de corte, escova, tratamentos, progressiva, sobrancelhas e cílios.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91322-9308",
+    "whatsappMessage": "Olá! Vi o anúncio da Welington Hair Style na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/bee6da78-680b-4015-b772-0deae8e980db.jpg",
+    "images": [
+      {
+        "id": "6a3706d5-9d70-4c5d-8cb7-77d6ef21bf02",
+        "url": "images/bee6da78-680b-4015-b772-0deae8e980db.jpg",
+        "caption": "Welington Hair Style"
+      }
+    ],
+    "keywords": [
+      "beleza",
+      "cabelo",
+      "cílios",
+      "corte",
+      "escova",
+      "tratamentos",
+      "progressiva",
+      "sobrancelhas",
+      "salão",
+      "welington hair style"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "33dcbb63-683a-4a9f-827b-3df00fd65ac4",
+    "businessName": "Clínica Paiva's Health",
+    "category": "Saúde e Medicina",
+    "summary": "Anúncio de serviços de atendimento médico especializado em psiquiatria com a Dra. Lygia Paiva, focando em saúde mental, ansiedade, depressão e outros tratamentos.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 91910-7459",
+    "whatsappMessage": "Olá! Vi o anúncio da Clínica Paiva's Health na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/05226d02-ac7e-4eb0-b21c-979ee3d158ce.jpg",
+    "images": [
+      {
+        "id": "33dcbb63-683a-4a9f-827b-3df00fd65ac4",
+        "url": "images/05226d02-ac7e-4eb0-b21c-979ee3d158ce.jpg",
+        "caption": "Clínica Paiva's Health"
+      }
+    ],
+    "keywords": [
+      "saúde mental",
+      "psiquiatria",
+      "ansiedade",
+      "depressão",
+      "insônia",
+      "burnout",
+      "estresse",
+      "médico",
+      "clínica"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "b53cbc32-1ede-4d19-aaf8-fcce5cc4221e",
+    "businessName": "PHM Engenharia",
+    "category": "Engenharia e construção civil",
+    "summary": "Publicidade da PHM Engenharia com fotografia de um imóvel em reforma, lista de serviços e selo de melhor preço. Apresenta Paulo Mancini como contato, telefone, site e QR code, convidando o público a solicitar orçamento pelo WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 98024-3042",
+    "whatsappMessage": "Olá! Vi o anúncio da PHM Engenharia na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/90302f80-8249-4e41-8f02-726b5a9dfcd9.jpg",
+    "images": [
+      {
+        "id": "b53cbc32-1ede-4d19-aaf8-fcce5cc4221e",
+        "url": "images/90302f80-8249-4e41-8f02-726b5a9dfcd9.jpg",
+        "caption": "PHM Engenharia"
+      }
+    ],
+    "keywords": [
+      "PHM Engenharia",
+      "PHM Reformas",
+      "Paulo Mancini",
+      "engenharia",
+      "reformas",
+      "reformas em geral",
+      "construções",
+      "construção civil",
+      "piso",
+      "revestimentos",
+      "pintura",
+      "hidráulica",
+      "elétrica",
+      "drywall",
+      "ar-condicionado",
+      "orçamento",
+      "WhatsApp",
+      "melhor preço",
+      "imóvel em reforma",
+      "escadas",
+      "estrutura de madeira",
+      "QR code"
+    ],
+    "products": [
+      {
+        "name": "MELHOR PREÇO! — alegação publicitária sem valor ou desconto especificado.",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "0d003103-2add-44d9-9d25-bd7fed45dd3b",
+    "businessName": "PMG Alimentos e Bebidas",
+    "category": "Alimentos e bebidas",
+    "summary": "Publicidade da PMG Alimentos e Bebidas direcionada a estabelecimentos de alimentação. Destaca atendimento personalizado, preços competitivos e entrega, com contato por WhatsApp. Apresenta uma mulher e ícones dos segmentos atendidos. Não informa produtos específicos, sabores, quantidades ou valores.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 99199-9996",
+    "whatsappMessage": "Olá! Vi o anúncio da PMG Alimentos e Bebidas na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/21228881-713d-4f74-af6b-f83328a98870.jpg",
+    "images": [
+      {
+        "id": "0d003103-2add-44d9-9d25-bd7fed45dd3b",
+        "url": "images/21228881-713d-4f74-af6b-f83328a98870.jpg",
+        "caption": "PMG Alimentos e Bebidas"
+      }
+    ],
+    "keywords": [
+      "PMG",
+      "PMG Alimentos e Bebidas",
+      "alimentos",
+      "bebidas",
+      "atendimento personalizado",
+      "soluções sob medida",
+      "preços competitivos",
+      "qualidade",
+      "entrega",
+      "delivery",
+      "WhatsApp",
+      "restaurantes",
+      "churrascarias",
+      "lanchonetes",
+      "pizzarias",
+      "hamburguerias",
+      "comida asiática",
+      "pastelarias",
+      "padarias",
+      "docerias",
+      "hambúrguer",
+      "pizza",
+      "espetinho",
+      "pastel",
+      "pão",
+      "cupcake",
+      "doces",
+      "salgados",
+      "economia de tempo"
+    ],
+    "products": [
+      {
+        "name": "Alimentos, sem especificação de itens",
+        "price": "",
+        "description": ""
+      },
+      {
+        "name": "Bebidas, sem especificação de itens",
+        "price": "",
+        "description": ""
+      }
+    ],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "dd5347c1-0338-4ab6-a710-5145d4edf9b0",
+    "businessName": "MobilyCar",
+    "category": "Serviços automotivos",
+    "summary": "Publicidade da MobilyCar direcionada a moradores de condomínios, oferecendo vistorias automotivas, vistoria cautelar e laudo para transferência de veículos. Destaca segurança na compra e venda, atendimento rápido e profissional e equipe especializada. Anuncia 20% de desconto na vistoria cautelar mediante apresentação do anúncio, sujeito a condições. Informa WhatsApp e endereço.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 92502-0462",
+    "whatsappMessage": "Olá! Vi o anúncio da MobilyCar na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/dc781bea-dc2f-476a-a38e-6b463e44984c.jpg",
+    "images": [
+      {
+        "id": "dd5347c1-0338-4ab6-a710-5145d4edf9b0",
+        "url": "images/dc781bea-dc2f-476a-a38e-6b463e44984c.jpg",
+        "caption": "MobilyCar"
+      }
+    ],
+    "keywords": [
+      "MobilyCar",
+      "vistoria automotiva",
+      "vistoria cautelar",
+      "vistorias completas",
+      "laudos confiáveis",
+      "laudo completo e detalhado",
+      "laudo para transferência de veículos",
+      "compra de veículos",
+      "venda de veículos",
+      "transferência de veículos",
+      "segurança",
+      "tranquilidade",
+      "proteção",
+      "confiança",
+      "transparência",
+      "moradores",
+      "condomínio",
+      "atendimento rápido",
+      "atendimento profissional",
+      "equipe especializada",
+      "equipe qualificada",
+      "20% de desconto",
+      "WhatsApp",
+      "automóvel",
+      "SUV",
+      "escudo",
+      "R. Eng. Heitor Antônio Eiras Garcia",
+      "782"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "e3bcf1aa-d8d8-408f-b044-eadc6f2c4155",
+    "businessName": "Lava rápido Bê e Leo",
+    "category": "Serviços automotivos",
+    "summary": "Propaganda do Lava rápido Bê e Leo, com fotografia de um carro esportivo vermelho. Divulga limpeza automotiva, funcionamento das 8h às 18h, sistema leva e traz, endereço na rua João Simões de Souza, nº 343, e telefone para contato.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 97730-8532",
+    "whatsappMessage": "Olá! Vi o anúncio da Lava rápido Bê e Leo na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/52005cbb-1d41-48d6-bf4a-2407cac2ef50.jpg",
+    "images": [
+      {
+        "id": "e3bcf1aa-d8d8-408f-b044-eadc6f2c4155",
+        "url": "images/52005cbb-1d41-48d6-bf4a-2407cac2ef50.jpg",
+        "caption": "Lava rápido Bê e Leo"
+      }
+    ],
+    "keywords": [
+      "Bom dia",
+      "Lava rápido",
+      "Bê e Leo",
+      "Lavagem de carros",
+      "Limpeza automotiva",
+      "Serviços automotivos",
+      "Leva e traz",
+      "Carro esportivo",
+      "Carro vermelho",
+      "Rua João Simões de Souza",
+      "343",
+      "8h às 18h",
+      "Contato",
+      "(11) 97730-8532"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "13c6b8b1-6ee4-4cdc-ae5d-8c4d66767170",
+    "businessName": "Yummy Travel",
+    "category": "Turismo e viagens",
+    "summary": "Anúncio da agência Yummy Travel com divulgação de serviços de turismo e viagens, atendimento personalizado e contato por WhatsApp. A composição apresenta praia ao pôr do sol, mala dourada, chapéu de palha e ícones dos serviços. Não informa preços, descontos, endereço ou horários de funcionamento.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 2979-6321",
+    "whatsappMessage": "Olá! Vi o anúncio da Yummy Travel na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/f3aa9e6a-530b-4811-82fe-4aa777a7654c.jpg",
+    "images": [
+      {
+        "id": "13c6b8b1-6ee4-4cdc-ae5d-8c4d66767170",
+        "url": "images/f3aa9e6a-530b-4811-82fe-4aa777a7654c.jpg",
+        "caption": "Yummy Travel"
+      }
+    ],
+    "keywords": [
+      "Yummy Travel",
+      "agência de viagens",
+      "turismo",
+      "viagens",
+      "passagens aéreas",
+      "voos nacionais",
+      "voos internacionais",
+      "hotéis",
+      "resorts",
+      "cruzeiros",
+      "seguro viagem",
+      "locação de veículos",
+      "passeios",
+      "serviços turísticos",
+      "viagens corporativas",
+      "férias",
+      "lua de mel",
+      "viagens em família",
+      "atendimento personalizado",
+      "segurança",
+      "confiança",
+      "suporte",
+      "planejamento de viagens",
+      "WhatsApp",
+      "praia",
+      "pôr do sol",
+      "mala de viagem",
+      "chapéu de palha",
+      "experiências incríveis",
+      "memórias"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "30d40c07-af87-48dc-a7e8-72f9d270c34b",
+    "businessName": "LÉO V8 Lava Rápido",
+    "category": "Serviços automotivos",
+    "summary": "Propaganda de lava-rápido com promoção de 20% de desconto na lavagem com cera, anunciada como válida somente hoje, sem data especificada. Divulga limpeza completa, proteção e brilho, atendimento rápido, sistema leva e trás até 2 km e preços para motos pequenas e grandes. Apresenta contato por WhatsApp.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 99454-9172",
+    "whatsappMessage": "Olá! Vi o anúncio da LÉO V8 Lava Rápido na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/21997827-238a-42d0-89a0-96ee8b60de62.jpg",
+    "images": [
+      {
+        "id": "30d40c07-af87-48dc-a7e8-72f9d270c34b",
+        "url": "images/21997827-238a-42d0-89a0-96ee8b60de62.jpg",
+        "caption": "LÉO V8 Lava Rápido"
+      }
+    ],
+    "keywords": [
+      "LÉO V8",
+      "lava rápido",
+      "lavagem com cera",
+      "20% de desconto",
+      "promoção imperdível",
+      "só hoje",
+      "limpeza completa",
+      "proteção",
+      "brilho",
+      "atendimento rápido",
+      "leva e trás",
+      "até 2 km",
+      "motos pequenas",
+      "motos grandes",
+      "WhatsApp",
+      "qualidade",
+      "praticidade",
+      "cuidado"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  },
+  {
+    "id": "23409757-980d-49da-ba96-b612fb905272",
+    "businessName": "ARS Contabilidade",
+    "category": "Serviços contábeis",
+    "summary": "Propaganda da ARS Contabilidade que apresenta serviços de contabilidade completa, fiscal e tributário, departamento pessoal e consultoria empresarial. Destaca organização, crescimento empresarial e parceria com o cliente, com chamada para contato pelo WhatsApp 11 95987-7956.",
+    "phone": "",
+    "formattedPhone": "+55 (11) 95987-7956",
+    "whatsappMessage": "Olá! Vi o anúncio da ARS Contabilidade na Vitrine Digital e gostaria de mais informações.",
+    "primaryImage": "images/7b4b6737-52b0-4ab2-b671-42a368cb29d0.jpeg",
+    "images": [
+      {
+        "id": "23409757-980d-49da-ba96-b612fb905272",
+        "url": "images/7b4b6737-52b0-4ab2-b671-42a368cb29d0.jpeg",
+        "caption": "ARS Contabilidade"
+      }
+    ],
+    "keywords": [
+      "ARS Contabilidade",
+      "contabilidade",
+      "contabilidade completa",
+      "gestão contábil",
+      "fiscal",
+      "tributário",
+      "planejamento",
+      "redução de riscos",
+      "otimização de resultados",
+      "departamento pessoal",
+      "gestão de pessoas",
+      "consultoria empresarial",
+      "decisões inteligentes",
+      "estratégias",
+      "crescimento empresarial",
+      "organização",
+      "parceria",
+      "sucesso",
+      "WhatsApp"
+    ],
+    "products": [],
+    "address": "",
+    "instagram": "",
+    "workingHours": ""
+  }
+]

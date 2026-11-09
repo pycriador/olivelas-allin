@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meu Perfil & Auditoria — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Meu Perfil & Auditoria</h1>
+          <p class="text-sm text-muted">Dados da conta administrativa e histórico de atividades do sistema.</p>
+        </div>
+        <div class="flex gap-3">
+          <button type="button" class="btn btn-outline" id="btn-edit-profile-modal">Editar Perfil</button>
+          <button type="button" class="btn btn-outline" id="btn-change-password-modal">Alterar Senha</button>
+          <button type="button" class="btn btn-danger" id="btn-logout-profile">Sair do Sistema</button>
+        </div>
+      </div>
+
+      <!-- Card do Perfil da Dra. Marta -->
+      <div class="card" style="padding: var(--space-8); margin-bottom: var(--space-8);">
+        <div class="flex items-center gap-6 flex-wrap">
+          <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark)); color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: var(--font-size-2xl); font-weight: bold; box-shadow: var(--shadow-md);">
+            MG
+          </div>
+          <div style="flex: 1; min-width: 240px;">
+            <div class="flex items-center gap-3">
+              <h2 style="font-size: var(--font-size-xl);">Dra. Marta Gelsi Dias</h2>
+              <span class="badge badge-success">Administradora</span>
+            </div>
+            <p class="text-secondary" style="margin-top: 2px;">Cirurgiã-Dentista • Responsável Técnica</p>
+            <div class="flex gap-6 flex-wrap" style="margin-top: var(--space-4); font-size: var(--font-size-xs); color: var(--color-text-muted);">
+              <span id="profile-email"><strong>E-mail:</strong> admin@dramartagelsi.com.br</span>
+              <span><strong>WhatsApp:</strong> (11) 99577-0004</span>
+              <span><strong>Último Acesso:</strong> Hoje</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seção de Auditoria Mock -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3 style="font-size: var(--font-size-md);">Registro de Auditoria do Sistema (Audit Logs)</h3>
+            <p class="text-xs text-muted">Histórico das últimas ações executadas no painel e armazenadas no LocalStorage</p>
+          </div>
+          <div class="flex gap-2">
+            <button type="button" class="btn btn-ghost btn-sm" id="btn-refresh-logs">Atualizar</button>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-clear-logs">Limpar Logs</button>
+          </div>
+        </div>
+
+        <div class="table-wrapper" style="border: none; border-radius: 0;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Data & Hora</th>
+                <th>Ação</th>
+                <th>Usuário</th>
+                <th>Descrição do Evento</th>
+                <th>Entidade</th>
+              </tr>
+            </thead>
+            <tbody id="audit-tbody">
+              <!-- Renderizado dinamicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    // Proteger rota com AuthGuard
+    AuthGuard.checkAuth();
+
+    UIComponents.renderAdminSidebar("perfil", "");
+    UIComponents.renderAdminTopbar("Meu Perfil", "Conta");
+
+    // Preencher dados do usuário logado via Supabase
+    async function loadUserProfile() {
+      const user = await AuthService.getUser();
+      if (user && user.email) {
+        const emailSpan = document.getElementById("profile-email");
+        if (emailSpan) emailSpan.innerHTML = `<strong>E-mail:</strong> ${user.email}`;
+      }
+    }
+    loadUserProfile();
+
+    function renderAuditLogs() {
+      const logs = StorageService.get("auditLogs", []);
+      const tbody = document.getElementById("audit-tbody");
+
+      if (logs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted" style="padding: 24px;">Nenhum registro de auditoria encontrado.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => `
+        <tr>
+          <td><code class="text-xs">${l.id}</code></td>
+          <td><span class="text-xs text-muted">${l.timestamp}</span></td>
+          <td><span class="badge badge-info" style="font-size: 0.6875rem;">${l.action}</span></td>
+          <td><strong>${l.user}</strong></td>
+          <td>${l.description}</td>
+          <td><code>${l.entityId || '—'}</code></td>
+        </tr>
+      `).join("");
+    }
+
+    document.getElementById("btn-refresh-logs").onclick = () => {
+      renderAuditLogs();
+      Toast.info("Logs de auditoria atualizados.");
+    };
+
+    document.getElementById("btn-clear-logs").onclick = () => {
+      Modal.confirm({
+        title: "Limpar logs de auditoria?",
+        message: "Esta ação apagará o histórico demonstrativo de atividades do sistema.",
+        confirmText: "Sim, limpar",
+        cancelText: "Cancelar",
+        danger: true,
+        onConfirm: () => {
+          StorageService.set("auditLogs", []);
+          renderAuditLogs();
+          Toast.success("Logs de auditoria limpos com sucesso.");
+        }
+      });
+    };
+
+    document.getElementById("btn-edit-profile-modal").onclick = () => {
+      Modal.confirm({
+        title: "Editar Perfil",
+        message: "Para alterar as informações públicas da clínica e do profissional, utilize a aba 'Dados da Clínica' na tela de Configurações.",
+        confirmText: "Ir para Configurações",
+        cancelText: "Fechar",
+        onConfirm: () => {
+          window.location.href = "configuracoes.html";
+        }
+      });
+    };
+
+    document.getElementById("btn-change-password-modal").onclick = () => {
+      Modal.confirm({
+        title: "Alterar Senha",
+        message: "Sua conta é gerenciada via Supabase Auth com criptografia. Para atualizar sua senha de acesso, você pode redefini-la via e-mail ou pelo console Supabase.",
+        confirmText: "Entendido",
+        cancelText: "Fechar"
+      });
+    };
+
+    document.getElementById("btn-logout-profile").onclick = () => {
+      Modal.confirm({
+        title: "Sair do Sistema",
+        message: "Deseja realmente encerrar a sessão administrativa?",
+        confirmText: "Sim, sair",
+        cancelText: "Cancelar",
+        danger: true,
+        onConfirm: async () => {
+          await AuthService.logout();
+        }
+      });
+    };
+
+    renderAuditLogs();
+  </script>
+</body>
+</html>

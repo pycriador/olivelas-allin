@@ -1,0 +1,441 @@
+{
+  "app": {
+    "name": "ClinicFlow",
+    "tagline": "Gestión inteligente para tu clínica"
+  },
+  "common": {
+    "loading": "Cargando...",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "new": "Nuevo",
+    "search": "Buscar",
+    "back": "Volver",
+    "confirm": "Confirmar",
+    "confirmDelete": "¿Confirmar eliminación?",
+    "actions": "Acciones",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "empty": "Sin registros.",
+    "created": "Registro creado.",
+    "updated": "Registro actualizado.",
+    "deleted": "Registro eliminado.",
+    "comingSoon": "Próximamente",
+    "comingSoonDesc": "Esta sección llegará en la próxima entrega."
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "agenda": "Agenda",
+    "clients": "Clientes",
+    "professionals": "Profesionales",
+    "events": "Eventos",
+    "blocks": "Bloqueos",
+    "appointmentTypes": "Tipos de cita",
+    "schedules": "Horarios",
+    "scheduleGroups": "Grupos de horarios",
+    "users": "Usuarios",
+    "settings": "Configuración",
+    "googleWorkspace": "Google Workspace",
+    "availability": "Disponibilidad"
+  },
+  "clients": {
+    "subtitle": "Gestiona los pacientes de tu clínica",
+    "new": "Nuevo cliente",
+    "edit": "Editar cliente",
+    "dialogDesc": "Registra información del paciente.",
+    "fields": {
+      "fullName": "Nombre completo",
+      "email": "Correo",
+      "phone": "Teléfono",
+      "cpf": "ID fiscal",
+      "birthDate": "Fecha de nacimiento",
+      "guardian": "Responsable",
+      "notes": "Notas"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "archived": "Archivado"
+    }
+  },
+  "professionals": {
+    "subtitle": "Gestiona tu equipo",
+    "new": "Nuevo profesional",
+    "edit": "Editar profesional",
+    "fields": {
+      "fullName": "Nombre completo",
+      "crp": "Registro",
+      "specialty": "Especialidad",
+      "color": "Color de agenda",
+      "session": "Sesión (min)",
+      "interval": "Intervalo (min)",
+      "online": "Atiende en línea",
+      "inPerson": "Atiende presencial",
+      "bio": "Biografía"
+    }
+  },
+  "appointmentTypes": {
+    "subtitle": "Servicios y modalidades",
+    "new": "Nuevo tipo",
+    "edit": "Editar tipo",
+    "fields": {
+      "name": "Nombre",
+      "color": "Color",
+      "duration": "Duración (min)"
+    }
+  },
+  "scheduleGroups": {
+    "subtitle": "Agrupa horarios por turno o guardia",
+    "new": "Nuevo grupo",
+    "edit": "Editar grupo",
+    "fields": {
+      "name": "Nombre",
+      "kind": "Tipo",
+      "color": "Color"
+    },
+    "kinds": {
+      "full": "Completo",
+      "morning": "Mañana",
+      "afternoon": "Tarde",
+      "evening": "Noche",
+      "on_call": "Guardia",
+      "custom": "Personalizado"
+    }
+  },
+  "schedules": {
+    "subtitle": "Define la disponibilidad semanal",
+    "new": "Nuevo horario",
+    "edit": "Editar horario",
+    "allProfessionals": "Todos los profesionales",
+    "fields": {
+      "professional": "Profesional",
+      "weekday": "Día",
+      "start": "Inicio",
+      "end": "Fin",
+      "interval": "Intervalo (min)",
+      "group": "Grupo"
+    },
+    "weekdays": {
+      "0": "Domingo",
+      "1": "Lunes",
+      "2": "Martes",
+      "3": "Miércoles",
+      "4": "Jueves",
+      "5": "Viernes",
+      "6": "Sábado"
+    }
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Crear cuenta",
+    "signOut": "Cerrar sesión",
+    "email": "Correo",
+    "password": "Contraseña",
+    "fullName": "Nombre completo",
+    "clinicName": "Nombre de la clínica",
+    "confirmPassword": "Confirma la contraseña",
+    "forgotPassword": "Olvidé mi contraseña",
+    "resetPassword": "Restablecer contraseña",
+    "newPassword": "Nueva contraseña",
+    "signInTitle": "Bienvenido de vuelta",
+    "signInSubtitle": "Accede a tu clínica",
+    "signUpTitle": "Crea tu cuenta",
+    "signUpSubtitle": "Organiza tu clínica en minutos",
+    "haveAccount": "¿Ya tienes cuenta?",
+    "noAccount": "¿Sin cuenta?",
+    "sendResetLink": "Enviar enlace",
+    "resetSent": "Enlace enviado a tu correo.",
+    "signedIn": "Sesión iniciada.",
+    "signedOut": "Sesión cerrada.",
+    "accountCreated": "Cuenta creada. ¡Bienvenido!",
+    "passwordUpdated": "Contraseña actualizada.",
+    "invalidCredentials": "Correo o contraseña inválidos.",
+    "genericError": "Operación fallida."
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Vista general de tu clínica",
+    "cards": {
+      "clients": "Clientes",
+      "professionals": "Profesionales",
+      "todayAppointments": "Citas hoy",
+      "upcoming": "Próximas",
+      "events": "Eventos",
+      "blocks": "Bloqueos"
+    },
+    "charts": {
+      "weekly": "Citas semanales",
+      "byType": "Distribución por tipo"
+    }
+  },
+  "settings": {
+    "subtitle": "Personaliza tu clínica y preferencias",
+    "tabs": {
+      "clinic": "Clínica",
+      "prefs": "Preferencias"
+    },
+    "clinic": {
+      "title": "Datos de la clínica",
+      "description": "Información mostrada en toda la app",
+      "logoUrl": "URL del logo",
+      "logoHint": "Pega un enlace público de imagen (PNG, JPG o SVG).",
+      "logoPreview": "Vista previa del logo"
+    },
+    "prefs": {
+      "title": "Preferencias regionales",
+      "description": "Zona horaria, idioma y formatos de la agenda",
+      "timezone": "Zona horaria",
+      "dateFormat": "Formato de fecha",
+      "timeFormat": "Formato de hora"
+    }
+  },
+  "theme": {
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Automático"
+  },
+  "language": {
+    "label": "Idioma",
+    "pt-BR": "Português",
+    "en": "English",
+    "es": "Español"
+  },
+  "agenda": {
+    "subtitle": "Visualiza y gestiona la agenda de la clínica",
+    "today": "Hoy",
+    "day": "Día",
+    "week": "Semana",
+    "allProfessionals": "Todos los profesionales"
+  },
+  "events": {
+    "subtitle": "Gestiona todas las citas y eventos",
+    "new": "Nuevo evento",
+    "edit": "Editar evento",
+    "dialogDesc": "Registra una cita o evento.",
+    "fields": {
+      "title": "Título",
+      "startsAt": "Inicio",
+      "endsAt": "Fin",
+      "professional": "Profesional",
+      "client": "Cliente",
+      "appointmentType": "Tipo de cita",
+      "description": "Descripción"
+    },
+    "status": {
+      "scheduled": "Agendado",
+      "confirmed": "Confirmado",
+      "completed": "Realizado",
+      "cancelled": "Cancelado",
+      "no_show": "No asistió"
+    },
+    "filters": {
+      "allStatuses": "Todos los estados"
+    }
+  },
+  "blocks": {
+    "subtitle": "Gestiona bloqueos, vacaciones y feriados",
+    "new": "Nuevo bloqueo",
+    "edit": "Editar bloqueo",
+    "dialogDesc": "Bloquea horarios en la agenda.",
+    "clinicWide": "Toda la clínica",
+    "fields": {
+      "title": "Título",
+      "professional": "Profesional",
+      "reason": "Motivo",
+      "allDay": "Todo el día",
+      "startsAt": "Inicio",
+      "endsAt": "Fin",
+      "description": "Descripción"
+    },
+    "reasons": {
+      "vacation": "Vacaciones",
+      "holiday": "Feriado",
+      "sick_leave": "Baja médica",
+      "day_off": "Día libre",
+      "training": "Formación",
+      "conference": "Congreso",
+      "meeting": "Reunión",
+      "manual": "Manual"
+    }
+  },
+  "google": {
+    "title": "Google Workspace",
+    "description": "Conecta tu cuenta de Google y elige qué calendarios se sincronizan con la agenda.",
+    "connect": "Conectar Google",
+    "disconnect": "Desconectar",
+    "refresh": "Actualizar calendarios",
+    "accountTitle": "Cuenta conectada",
+    "accountDesc": "Cada profesional conecta su propia cuenta de Google.",
+    "accountEmail": "Correo",
+    "lastSync": "Última sincronización",
+    "scopes": "Permisos",
+    "emptyAccount": "Aún no hay cuenta de Google conectada.",
+    "calendarsTitle": "Calendarios",
+    "calendarsDesc": "Elige qué calendarios sincronizar y mostrar en la agenda.",
+    "emptyCalendars": "No hay calendarios disponibles.",
+    "calendarName": "Calendario",
+    "calendarTimezone": "Zona horaria",
+    "calendarAccess": "Acceso",
+    "syncEnabled": "Sincronizar",
+    "showInAgenda": "Mostrar en la agenda",
+    "primary": "Principal",
+    "readOnly": "Solo lectura",
+    "readWrite": "Lectura y escritura",
+    "logsTitle": "Historial de sincronización",
+    "logsDesc": "Últimas ejecuciones.",
+    "emptyLogs": "Sin sincronizaciones registradas.",
+    "logDate": "Fecha",
+    "logType": "Tipo",
+    "logEvents": "Eventos",
+    "logResult": "Resultado",
+    "logOk": "Éxito",
+    "logFail": "Error",
+    "disconnectConfirmTitle": "¿Desconectar cuenta de Google?",
+    "disconnectConfirmDesc": "Los calendarios dejarán de sincronizarse. Puedes reconectar cuando quieras.",
+    "toastConnected": "Cuenta de Google conectada.",
+    "toastDisconnected": "Cuenta de Google desconectada.",
+    "toastRefreshed": "Calendarios actualizados.",
+    "status": {
+      "connected": "Conectado",
+      "disconnected": "Desconectado",
+      "expired": "Expirado",
+      "error": "Error"
+    },
+    "syncNow": "Sincronizar ahora",
+    "syncCalendar": "Sincronizar este calendario",
+    "syncActions": "Acciones",
+    "toastSynced": "Sincronización completada."
+  },
+  "availability": {
+    "title": "Disponibilidad",
+    "subtitle": "Motor de disponibilidad y agendamiento inteligente",
+    "search": "Buscar horarios",
+    "noSlots": "No hay horarios disponibles para estos criterios.",
+    "noSpecialty": "Sin especialidad",
+    "workload": "Carga",
+    "schedule": "Agendar",
+    "overbooking": "Overbooking",
+    "resultsIn": "sugerencias en",
+    "appointments": "citas",
+    "heatmapHint": "Ocupación media de la clínica en los próximos días.",
+    "tabs": {
+      "search": "Sugerencias",
+      "timeline": "Línea de tiempo",
+      "heatmap": "Mapa de ocupación",
+      "rules": "Reglas"
+    },
+    "filters": {
+      "date": "Fecha",
+      "from": "Desde",
+      "to": "Hasta",
+      "duration": "Duración (min)",
+      "professional": "Profesional",
+      "appointmentType": "Tipo de atención",
+      "client": "Cliente",
+      "modality": "Modalidad",
+      "period": "Período preferido",
+      "urgent": "Urgente",
+      "any": "Cualquiera"
+    },
+    "modality": {
+      "online": "En línea",
+      "inPerson": "Presencial"
+    },
+    "period": {
+      "morning": "Mañana",
+      "afternoon": "Tarde",
+      "evening": "Noche"
+    },
+    "states": {
+      "available": "Libre",
+      "partial": "Parcial",
+      "block": "Bloqueo",
+      "lunch": "Almuerzo",
+      "vacation": "Vacaciones",
+      "event": "Atención",
+      "google": "Google",
+      "appointment": "Atención",
+      "off": "Fuera de horario"
+    },
+    "reasons": {
+      "available": "Disponible",
+      "sameProfessional": "Mismo profesional",
+      "lowerWorkload": "Baja carga",
+      "preferredPeriod": "Período preferido",
+      "specialtyMatch": "Especialidad",
+      "almostFull": "Agenda casi llena",
+      "nearLunch": "Cerca del almuerzo",
+      "overbooking": "Overbooking"
+    },
+    "stats": {
+      "freeNow": "Profesionales libres ahora",
+      "averageOccupancy": "Ocupación media",
+      "averageFree": "Tiempo libre medio",
+      "overloaded": "Sobrecargados"
+    },
+    "rules": {
+      "title": "Reglas del motor",
+      "weights": "Pesos del score",
+      "limits": "Límites y granularidad"
+    },
+    "weights": {
+      "weight_available": "Disponible",
+      "weight_same_professional": "Mismo profesional",
+      "weight_lower_workload": "Menor carga",
+      "weight_preferred_period": "Período preferido",
+      "weight_almost_full": "Agenda casi llena",
+      "weight_near_lunch": "Cerca del almuerzo",
+      "weight_overbooking": "Overbooking",
+      "weight_conflict": "Conflicto",
+      "weight_specialty": "Especialidad"
+    },
+    "limits": {
+      "min_minutes_between_appointments": "Intervalo mínimo (min)",
+      "max_daily_minutes": "Máx. minutos/día",
+      "max_weekly_minutes": "Máx. minutos/semana",
+      "max_daily_appointments": "Máx. citas/día",
+      "overbooking_margin_minutes": "Margen de overbooking (min)",
+      "slot_granularity_minutes": "Granularidad (min)"
+    },
+    "wizard": {
+      "title": "Asistente de agendamiento",
+      "step1": "Criterios",
+      "step2": "Horarios",
+      "step3": "Confirmación",
+      "step1Desc": "Define los criterios y deja que el motor sugiera los mejores horarios.",
+      "step2Desc": "Elige una sugerencia para continuar.",
+      "step3Desc": "Revisa conflictos y confirma la cita.",
+      "back": "Volver",
+      "confirm": "Confirmar cita",
+      "validating": "Validando conflictos…",
+      "noConflicts": "No se encontraron conflictos.",
+      "booked": "Cita creada.",
+      "conflictBlocked": "Agendamiento bloqueado por conflictos.",
+      "forceOverbooking": "Forzar overbooking pese a conflictos",
+      "issues": {
+        "invalidRange": "La hora final debe ser posterior a la inicial.",
+        "inPast": "Horario en el pasado.",
+        "professionalMissing": "Profesional no encontrado.",
+        "professionalInactive": "Profesional inactivo.",
+        "modalityUnsupported": "El profesional no atiende en esa modalidad.",
+        "appointmentTypeUnsupported": "El profesional no realiza ese tipo de atención.",
+        "eventConflict": "Conflicto con una cita existente.",
+        "googleConflict": "Conflicto con un evento de Google Calendar.",
+        "blockConflict": "Conflicto con un bloqueo.",
+        "vacationConflict": "Profesional de vacaciones/ausente.",
+        "holidayConflict": "Feriado.",
+        "lunchConflict": "Horario de almuerzo.",
+        "intervalConflict": "Conflicto con intervalo.",
+        "outsideWorkingHours": "Fuera del horario del profesional.",
+        "dailyLimit": "Límite diario alcanzado.",
+        "weeklyLimit": "Límite semanal alcanzado.",
+        "appointmentsLimit": "Máximo de citas del día alcanzado.",
+        "clientBusy": "El cliente ya tiene una cita en ese horario."
+      }
+    },
+    "newBooking": "Nueva cita"
+  }
+}

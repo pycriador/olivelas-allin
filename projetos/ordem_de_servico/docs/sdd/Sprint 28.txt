@@ -1,0 +1,840 @@
+# ServiceForge — Sprint 28
+## Service Order Module — Service Order Management (Abertura da Ordem de Serviço, Workspace, Timeline, Recebimento e Controle Operacional)
+
+Continuar o desenvolvimento do projeto ServiceForge.
+
+Toda arquitetura existente deverá ser preservada.
+
+NÃO remover funcionalidades implementadas.
+
+Toda implementação deverá respeitar integralmente:
+
+• Foundation Platform
+
+• Core Platform
+
+• Metadata Platform
+
+• Master Data Platform
+
+• Data Platform
+
+• Integration Platform
+
+• Administration Platform
+
+• Reporting & BI Platform
+
+• Automation Platform
+
+• Document Platform
+
+• Communication Platform
+
+• AI Platform
+
+• Public Portal
+
+• Workflow Engine
+
+• Core Event Bus
+
+• Customer Management
+
+• Asset Management
+
+Toda Ordem de Serviço deverá consumir exclusivamente os módulos existentes.
+
+Nunca duplicar informações.
+
+Nunca cadastrar Cliente ou Equipamento diretamente na OS.
+
+Sempre utilizar os cadastros existentes.
+
+Todos os formulários deverão utilizar Metadata Platform.
+
+Toda auditoria deverá utilizar Audit Center.
+
+Toda comunicação deverá utilizar Communication Platform.
+
+Toda documentação deverá utilizar Document Platform.
+
+------------------------------------------------------------------
+
+OBJETIVO
+
+Implementar o módulo completo de Ordem de Serviço.
+
+A Ordem de Serviço será o principal Workspace operacional da plataforma.
+
+Toda operação da assistência técnica deverá ocorrer através deste módulo.
+
+------------------------------------------------------------------
+
+ARQUITETURA
+
+Criar módulo:
+
+Service Order Module
+
+↓
+
+Service Order Management
+
+Estrutura:
+
+Dashboard
+
+Ordens de Serviço
+
+Workspace da OS
+
+Timeline
+
+Recebimento
+
+Checklist
+
+Fotos
+
+Diagnóstico Inicial
+
+Prioridades
+
+Status
+
+Movimentações
+
+Histórico
+
+Documentos
+
+Comunicações
+
+Observações
+
+Anexos
+
+Analytics
+
+------------------------------------------------------------------
+
+DASHBOARD
+
+Mostrar:
+
+OS Abertas
+
+OS em Diagnóstico
+
+OS Aguardando Aprovação
+
+OS Aprovadas
+
+OS em Execução
+
+OS Prontas
+
+OS Entregues
+
+OS Canceladas
+
+OS em Garantia
+
+OS com Retorno
+
+Tempo Médio
+
+Quantidade por Técnico
+
+Quantidade por Empresa
+
+------------------------------------------------------------------
+
+ASSISTENTE DE ABERTURA
+
+A criação da Ordem de Serviço deverá ocorrer através de um Wizard.
+
+Etapa 1
+
+Cliente
+
+Pesquisar cliente existente
+
+Cadastrar cliente sem sair da tela
+
+Visualizar equipamentos existentes
+
+------------------------------------------------
+
+Etapa 2
+
+Equipamento
+
+Selecionar equipamento existente
+
+Cadastrar novo equipamento
+
+Visualizar histórico
+
+Garantias
+
+Últimas Ordens
+
+------------------------------------------------
+
+Etapa 3
+
+Recebimento
+
+Checklist
+
+Fotos
+
+Acessórios
+
+Estado físico
+
+Número de Série
+
+Conferência
+
+------------------------------------------------
+
+Etapa 4
+
+Problema Informado
+
+Defeito relatado
+
+Sintomas
+
+Observações
+
+Prioridade
+
+Origem
+
+Canal
+
+------------------------------------------------
+
+Etapa 5
+
+Resumo
+
+Validar informações
+
+Gerar Número da OS
+
+Criar Timeline
+
+Criar Workspace
+
+Publicar Eventos
+
+Registrar Auditoria
+
+------------------------------------------------------------------
+
+NÚMERO DA ORDEM
+
+Gerar automaticamente.
+
+Configuração preparada para:
+
+Sequencial Global
+
+Sequencial por Empresa
+
+Sequencial por Ano
+
+Sequencial Personalizado
+
+Nunca permitir duplicidade.
+
+------------------------------------------------------------------
+
+WORKSPACE DA OS
+
+Após criada, toda Ordem deverá possuir Workspace próprio.
+
+Separar por abas.
+
+Resumo
+
+Timeline
+
+Diagnóstico
+
+Orçamento
+
+Execução
+
+Peças
+
+Garantia
+
+Retornos
+
+Documentos
+
+Comunicações
+
+Histórico
+
+Auditoria
+
+Analytics
+
+Nenhuma informação deverá ficar em telas separadas.
+
+------------------------------------------------------------------
+
+STATUS
+
+Preparar State Machine.
+
+Status padrão:
+
+Em Aberto
+
+Recebida
+
+Em Diagnóstico
+
+Aguardando Aprovação
+
+Aprovada
+
+Rejeitada
+
+Em Execução
+
+Aguardando Peças
+
+Teste
+
+Pronta
+
+Entregue
+
+Cancelada
+
+Garantia
+
+Retorno
+
+Encerrada
+
+Administrador Global poderá alterar o fluxo utilizando Automation Platform.
+
+------------------------------------------------------------------
+
+PRIORIDADE
+
+Baixa
+
+Normal
+
+Alta
+
+Urgente
+
+Emergencial
+
+Configuração preparada para Metadata Platform.
+
+------------------------------------------------------------------
+
+RECEBIMENTO
+
+Registrar:
+
+Data
+
+Hora
+
+Responsável
+
+Fotos
+
+Checklist
+
+Acessórios
+
+Observações
+
+Estado físico
+
+Tudo deverá gerar Timeline automaticamente.
+
+------------------------------------------------------------------
+
+CHECKLIST
+
+Utilizar Metadata Platform.
+
+Itens deverão ser configuráveis.
+
+Permitir:
+
+Booleano
+
+Texto
+
+Seleção
+
+Fotos
+
+Observações
+
+------------------------------------------------------------------
+
+FOTOS
+
+Categorias:
+
+Frente
+
+Traseira
+
+Laterais
+
+Etiqueta
+
+Número de Série
+
+Defeito
+
+Acessórios
+
+Recebimento
+
+Entrega
+
+Consumir Document Platform.
+
+------------------------------------------------------------------
+
+OBSERVAÇÕES
+
+Separar:
+
+Internas
+
+Cliente
+
+Técnicas
+
+Privadas
+
+Todas versionadas.
+
+------------------------------------------------------------------
+
+TIMELINE
+
+Registrar automaticamente:
+
+Criação
+
+Alterações
+
+Mudança de Status
+
+Comunicações
+
+Uploads
+
+Downloads
+
+Aprovações
+
+Documentos
+
+Workflows
+
+Eventos
+
+Integrações
+
+Auditoria
+
+Nunca permitir edição da Timeline.
+
+------------------------------------------------------------------
+
+MOVIMENTAÇÕES
+
+Registrar:
+
+Entrada
+
+Transferência
+
+Mudança de Técnico
+
+Mudança de Empresa
+
+Entrega
+
+Retorno
+
+Cancelamento
+
+------------------------------------------------------------------
+
+PESQUISA
+
+Pesquisar por:
+
+Número da OS
+
+Cliente
+
+Equipamento
+
+Número de Série
+
+Telefone
+
+CPF
+
+Empresa
+
+Técnico
+
+Status
+
+Prioridade
+
+------------------------------------------------------------------
+
+FILTROS
+
+Empresa
+
+Status
+
+Prioridade
+
+Técnico
+
+Cliente
+
+Equipamento
+
+Garantia
+
+Retorno
+
+Período
+
+------------------------------------------------------------------
+
+COMUNICAÇÕES
+
+Exibir histórico.
+
+WhatsApp
+
+Email
+
+SMS (estrutura)
+
+Telegram (estrutura)
+
+Consumindo Communication Platform.
+
+------------------------------------------------------------------
+
+DOCUMENTOS
+
+Exibir:
+
+OS
+
+Recibos
+
+Garantias
+
+Orçamentos
+
+Laudos
+
+Assinaturas
+
+Fotos
+
+Consumindo Document Platform.
+
+------------------------------------------------------------------
+
+AUTOMAÇÕES
+
+Fluxo padrão.
+
+Nova Ordem
+
+↓
+
+Criar Timeline
+
+↓
+
+Registrar Auditoria
+
+↓
+
+Publicar Evento
+
+↓
+
+Atualizar Dashboard
+
+↓
+
+Gerar Documento
+
+↓
+
+Disponibilizar Portal Público
+
+↓
+
+Executar Workflow
+
+------------------------------------------------------------------
+
+EVENTOS
+
+Publicar:
+
+ServiceOrder.Created
+
+ServiceOrder.Updated
+
+ServiceOrder.StatusChanged
+
+ServiceOrder.Assigned
+
+ServiceOrder.Cancelled
+
+ServiceOrder.Delivered
+
+ServiceOrder.Returned
+
+ServiceOrder.Reopened
+
+Todos utilizando Core Event Bus.
+
+------------------------------------------------------------------
+
+AUDITORIA
+
+Registrar:
+
+Criação
+
+Alteração
+
+Visualização
+
+Mudança de Status
+
+Transferência
+
+Downloads
+
+Uploads
+
+Documentos
+
+Comunicações
+
+Sempre registrando:
+
+Usuário
+
+Empresa
+
+Data
+
+Hora
+
+IP
+
+Resultado
+
+------------------------------------------------------------------
+
+PORTAL PÚBLICO
+
+Integrar automaticamente.
+
+Cada Ordem deverá possuir:
+
+Código Público
+
+QR Code
+
+Timeline Pública
+
+Documentos Públicos
+
+Garantia
+
+Aprovação Online
+
+Sem duplicação de dados.
+
+------------------------------------------------------------------
+
+DADOS DE DEMONSTRAÇÃO
+
+Integrar ao Demo Environment Manager.
+
+Gerar automaticamente.
+
+Pequena Assistência
+
+120 OS
+
+Assistência Média
+
+1.500 OS
+
+Grande Rede
+
+50.000 OS
+
+Cada Ordem deverá possuir:
+
+Cliente
+
+Equipamento
+
+Checklist
+
+Fotos simuladas
+
+Timeline
+
+Status
+
+Eventos
+
+Histórico
+
+Documentos
+
+Auditoria
+
+Comunicações
+
+Nunca utilizar Lorem Ipsum.
+
+------------------------------------------------------------------
+
+UX
+
+Criar interface Enterprise.
+
+Workspace moderno.
+
+Abas.
+
+Cards.
+
+Timeline lateral.
+
+Pesquisa instantânea.
+
+Filtros avançados.
+
+Favoritos.
+
+Atalhos.
+
+Colunas configuráveis.
+
+Drag & Drop preparado para futuras evoluções.
+
+Dark Mode.
+
+Responsividade completa.
+
+Nenhum alert().
+
+Nenhum confirm().
+
+Utilizar apenas componentes padrão da plataforma.
+
+------------------------------------------------------------------
+
+TESTES
+
+Executar validação completa.
+
+Testar:
+
+Wizard
+
+Workspace
+
+Timeline
+
+Checklist
+
+Uploads
+
+Pesquisa
+
+Filtros
+
+RBAC
+
+Eventos
+
+Workflow
+
+Portal Público
+
+Auditoria
+
+Responsividade
+
+Acessibilidade
+
+Todos os botões
+
+Todos os CRUDs
+
+Corrigir automaticamente qualquer inconsistência encontrada.
+
+------------------------------------------------------------------
+
+OBJETIVO DA SPRINT
+
+Ao concluir esta Sprint, o ServiceForge deverá possuir um módulo completo de Ordem de Serviço baseado em Workspace, com abertura guiada por Wizard, Timeline imutável, integração total com os módulos da plataforma, documentação, auditoria, automações e Portal Público.
+
+IMPORTANTE
+
+Ainda NÃO implementar:
+
+• Diagnóstico Técnico detalhado
+
+• Orçamento
+
+• Execução Técnica
+
+• Controle de Peças
+
+• Garantias
+
+• Retornos
+
+Esses recursos serão desenvolvidos integralmente na Sprint 29.
+
+Todo o código deverá permanecer modular, desacoplado e preparado para evolução sem necessidade de refatoração estrutural.

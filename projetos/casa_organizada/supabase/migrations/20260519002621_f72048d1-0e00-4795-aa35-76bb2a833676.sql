@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS public.authorized_emails CASCADE;

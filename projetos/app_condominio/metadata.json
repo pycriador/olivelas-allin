@@ -1,0 +1,6 @@
+{
+  "name": "Condominium Platform",
+  "description": "Plataforma SaaS multi-tenant enterprise para gestão de condomínios com experiência mobile-first, calendário interativo, reservas dinâmicas, documentos, busca por IA e governança.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

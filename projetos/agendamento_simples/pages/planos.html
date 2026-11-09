@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Planos & Combos — Dra. Marta Gelsi Dias</title>
+  <link rel="stylesheet" href="../css/variables.css">
+  <link rel="stylesheet" href="../css/reset.css">
+  <link rel="stylesheet" href="../css/global.css">
+  <link rel="stylesheet" href="../css/components.css">
+  <link rel="stylesheet" href="../css/forms.css">
+  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+</head>
+<body class="admin-layout">
+
+  <div id="admin-sidebar-container"></div>
+
+  <div class="admin-main-wrapper">
+    <div id="admin-topbar-container"></div>
+
+    <main class="admin-content">
+      <div class="admin-page-header">
+        <div>
+          <h1 style="font-size: var(--font-size-2xl);">Planos & Combos Odontológicos</h1>
+          <p class="text-sm text-muted">Configuração dos pacotes de acompanhamento exibidos na landing page.</p>
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-new-plan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Novo Plano
+        </button>
+      </div>
+
+      <!-- Grid de Planos -->
+      <div class="stats-grid" id="plans-grid-container" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+        <!-- Renderizado dinamicamente -->
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL: Criar / Editar Plano -->
+  <div class="modal-backdrop" id="plan-modal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="plan-modal-title">Novo Plano</h3>
+        <button type="button" class="btn btn-ghost btn-icon" data-modal-close aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="plan-form">
+        <div class="modal-body">
+          <input type="hidden" id="plan-form-id">
+
+          <div class="form-group">
+            <label class="form-label form-label-required" for="plan-form-name">Nome do Plano</label>
+            <input type="text" id="plan-form-name" class="form-input" required placeholder="Ex: Limpeza Dental Preventiva">
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="plan-form-periodicity">Periodicidade</label>
+              <select id="plan-form-periodicity" class="form-select">
+                <option value="Única">Única</option>
+                <option value="Mensal">Mensal</option>
+                <option value="Semestral">Semestral</option>
+                <option value="Anual">Anual</option>
+                <option value="Por procedimento">Por procedimento</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-form-price">Valor de Referência</label>
+              <input type="text" id="plan-form-price" class="form-input" value="Consultar" placeholder="Consultar">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="plan-form-services">Serviços Inclusos (separados por vírgula)</label>
+            <input type="text" id="plan-form-services" class="form-input" placeholder="Ex: Avaliação, Limpeza, Flúor">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="plan-form-desc">Descrição do Plano</label>
+            <textarea id="plan-form-desc" class="form-textarea" rows="2" placeholder="Benefícios e cuidados inclusos..."></textarea>
+          </div>
+
+          <div class="flex gap-4" style="margin-top: var(--space-4);">
+            <label class="form-checkbox-label">
+              <input type="checkbox" id="plan-form-highlight">
+              <span>Destacar na landing page</span>
+            </label>
+            <label class="form-checkbox-label">
+              <input type="checkbox" id="plan-form-active" checked>
+              <span>Plano ativo</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" data-modal-close>Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar Plano</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Supabase & Scripts -->
+  <script src="../js/supabase-js-v2.js"></script>
+  <script src="../js/mock-data.js"></script>
+  <script src="../js/storage.js"></script>
+  <script src="../js/supabase-client.js"></script>
+  <script src="../js/database.js"></script>
+  <script src="../js/toast.js"></script>
+  <script src="../js/modal.js"></script>
+  <script src="../js/components.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/navigation.js"></script>
+  <script>
+    UIComponents.renderAdminSidebar("planos", "");
+    UIComponents.renderAdminTopbar("Planos", "Comercial");
+
+    async function renderPlans() {
+      const plans = await DatabaseService.plans.getAll();
+      const grid = document.getElementById("plans-grid-container");
+
+      if (plans.length === 0) {
+        grid.innerHTML = `<div style="grid-column: 1 / -1;">${UIComponents.renderEmptyState("Nenhum plano cadastrado", "Crie planos para apresentar aos seus pacientes.")}</div>`;
+        return;
+      }
+
+      grid.innerHTML = plans.map(p => `
+        <div class="card" style="padding: var(--space-6); display: flex; flex-direction: column; position: relative; border-color: ${p.highlight ? 'var(--color-primary)' : 'var(--color-border)'};">
+          ${p.highlight ? '<span class="badge badge-success" style="position: absolute; top: 12px; right: 12px;">Destaque</span>' : ''}
+          
+          <div style="margin-bottom: var(--space-4);">
+            <h3 style="font-size: var(--font-size-md); margin-bottom: 2px;">${p.name}</h3>
+            <span class="badge badge-neutral">${p.periodicity || p.category || 'Mensal'}</span>
+          </div>
+
+          <div style="margin-bottom: var(--space-4);">
+            <span class="text-xs text-muted" style="text-transform: uppercase;">Valor</span>
+            <div style="font-size: var(--font-size-xl); font-weight: bold; color: var(--color-primary-dark);">${p.price || "Consultar"}</div>
+          </div>
+
+          <p class="text-sm text-secondary" style="margin-bottom: var(--space-4); flex: 1;">${p.description || "Sem descrição."}</p>
+
+          <div style="margin-bottom: var(--space-6);">
+            <span class="text-xs text-muted text-bold" style="text-transform: uppercase;">Serviços:</span>
+            <div class="flex flex-wrap gap-1" style="margin-top: 4px;">
+              ${(Array.isArray(p.services) ? p.services : (p.services || "").split(",")).map(s => `
+                <span class="badge badge-info" style="font-size: 0.6875rem;">${s.trim()}</span>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between" style="border-top: 1px solid var(--color-border); padding-top: var(--space-4);">
+            <div>${UIComponents.renderStatusBadge(p.active !== false ? "Ativo" : "Inativo")}</div>
+            <div class="flex gap-1">
+              <button type="button" class="btn btn-ghost btn-sm btn-edit-plan" data-id="${p.id}" title="Editar">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm btn-toggle-plan" data-id="${p.id}" title="Alternar status">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line></svg>
+              </button>
+              <button type="button" class="btn btn-ghost btn-sm btn-delete-plan" data-id="${p.id}" data-name="${p.name}" title="Excluir" style="color: var(--color-danger);">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      // Bind edição
+      grid.querySelectorAll(".btn-edit-plan").forEach(btn => {
+        btn.onclick = () => openEditPlan(btn.getAttribute("data-id"));
+      });
+
+      // Bind toggle status no Supabase
+      grid.querySelectorAll(".btn-toggle-plan").forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute("data-id");
+          const list = await DatabaseService.plans.getAll();
+          const p = list.find(x => x.id === id);
+          if (p) {
+            p.active = !p.active;
+            await DatabaseService.plans.save(p);
+            Toast.info(`Plano ${p.active ? 'ativado' : 'desativado'} no Supabase.`);
+            await renderPlans();
+          }
+        };
+      });
+
+      // Bind exclusão no Supabase
+      grid.querySelectorAll(".btn-delete-plan").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.getAttribute("data-id");
+          const name = btn.getAttribute("data-name");
+          Modal.confirm({
+            title: "Excluir plano?",
+            message: `Deseja remover o plano "${name}" (${id}) do Supabase?`,
+            confirmText: "Sim, excluir",
+            cancelText: "Cancelar",
+            danger: true,
+            onConfirm: async () => {
+              await DatabaseService.plans.delete(id);
+              Toast.success("Plano excluído do Supabase com sucesso.");
+              await renderPlans();
+            }
+          });
+        };
+      });
+    }
+
+    const modalEl = document.getElementById("plan-modal");
+    const formEl = document.getElementById("plan-form");
+
+    document.getElementById("btn-new-plan").onclick = () => {
+      formEl.reset();
+      document.getElementById("plan-form-id").value = "";
+      document.getElementById("plan-modal-title").innerText = "Novo Plano";
+      document.getElementById("plan-form-price").value = "Consultar";
+      document.getElementById("plan-form-active").checked = true;
+      Modal.open(modalEl);
+    };
+
+    async function openEditPlan(id) {
+      const plans = await DatabaseService.plans.getAll();
+      const p = plans.find(x => x.id === id);
+      if (!p) return;
+      document.getElementById("plan-form-id").value = p.id;
+      document.getElementById("plan-modal-title").innerText = `Editar Plano (${p.name})`;
+      document.getElementById("plan-form-name").value = p.name;
+      document.getElementById("plan-form-periodicity").value = p.periodicity || "Mensal";
+      document.getElementById("plan-form-price").value = p.price || "Consultar";
+      document.getElementById("plan-form-services").value = Array.isArray(p.services) ? p.services.join(", ") : p.services;
+      document.getElementById("plan-form-desc").value = p.description || "";
+      document.getElementById("plan-form-highlight").checked = !!p.highlight;
+      document.getElementById("plan-form-active").checked = !!p.active;
+      Modal.open(modalEl);
+    }
+
+    // Salvar plano no Supabase
+    formEl.onsubmit = async (e) => {
+      e.preventDefault();
+      const submitBtn = formEl.querySelector("button[type='submit']");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span class="spinner spinner-sm"></span> Salvando no Supabase...`;
+
+      const id = document.getElementById("plan-form-id").value;
+      const servicesArr = document.getElementById("plan-form-services").value
+        .split(",")
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const planData = {
+        id: id || undefined,
+        name: document.getElementById("plan-form-name").value.trim(),
+        category: document.getElementById("plan-form-periodicity").value,
+        periodicity: document.getElementById("plan-form-periodicity").value,
+        price: document.getElementById("plan-form-price").value.trim() || "Consultar",
+        description: document.getElementById("plan-form-desc").value.trim(),
+        features: servicesArr,
+        services: servicesArr,
+        highlight: document.getElementById("plan-form-highlight").checked,
+        active: document.getElementById("plan-form-active").checked,
+        status: document.getElementById("plan-form-active").checked ? 'active' : 'inactive'
+      };
+
+      try {
+        await DatabaseService.plans.save(planData);
+        Modal.close(modalEl);
+        Toast.success("Plano salvo com sucesso no Supabase!");
+        await renderPlans();
+      } catch (err) {
+        console.error(err);
+        Toast.error("Erro ao salvar plano no Supabase.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Salvar Plano";
+      }
+    };
+
+    renderPlans();
+  </script>
+</body>
+</html>

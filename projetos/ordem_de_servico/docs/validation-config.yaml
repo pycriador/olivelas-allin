@@ -1,0 +1,50 @@
+# Documentation validation configuration
+# Documentation Standard v1.0 — Governance & Automation
+
+standard_version: "1.0"
+
+roots:
+  - docs/pt-BR
+  - docs/en
+
+manifests:
+  - docs/pt-BR/manifest.yaml
+  - docs/en/manifest.yaml
+
+exclude_globs:
+  - "**/generated/**"
+  - "**/node_modules/**"
+  - "**/.git/**"
+
+manifest:
+  require_listed_paths_exist: true
+  warn_unlisted_markdown: false
+  info_unlisted_markdown: false
+
+metadata:
+  validate_when_present: true
+  allowed_statuses:
+    - DRAFT
+    - REVIEW
+    - ACCEPTED
+    - DEPRECATED
+    - ARCHIVED
+  allowed_authority:
+    - Authoritative
+    - Verified
+    - Informational
+    - Reference
+    - Historical
+    - Draft
+    - Unknown
+  require_owner_for_manifest_authoritative: true
+  warn_missing_owner_when_accepted: true
+
+ids:
+  detect_duplicates: true
+  pattern: "^[A-Z][A-Z0-9]*(-[A-Z0-9]+)+$"
+  require_id_for_manifest_entries: true
+
+links:
+  check_internal_markdown: true
+  check_anchors: false
