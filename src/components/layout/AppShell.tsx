@@ -413,7 +413,7 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
       <div className="app-main">
         <AccessDeniedView
           title="Sessão Não Autenticada"
-          reason="Selecione um perfil de demonstração na tela de autenticação para acessar o console administrativo."
+          reason="Autentique-se com seu e-mail e senha corporativos no Supabase para acessar o console administrativo."
           backTo="/login"
         />
       </div>
@@ -1103,9 +1103,9 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
         }
       >
         <p className="text-sm">
-          Esta operação irá redefinir todas as tabelas locais do <strong>IndexedDB</strong> (incluindo os
-          <strong> 16 Módulos Comerciais Olivelas</strong> e os <strong>10 Módulos de Exemplo</strong>) de
-          volta ao estado original, registrando um evento de auditoria de restauração.
+          Esta operação irá restaurar a base operacional dos <strong>16 Módulos Comerciais Olivelas</strong> e
+          dos <strong>10 Módulos de Exemplo</strong> sincronizados com o <strong>Supabase PostgreSQL</strong>,
+          registrando um evento oficial na trilha de auditoria.
         </p>
       </ModalDialog>
 

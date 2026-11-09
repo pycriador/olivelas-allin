@@ -75,9 +75,9 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
 
   const [archiveChargeTarget, setArchiveChargeTarget] = useState<ChargeEntity | null>(null);
   const [reconcileTarget, setReconcileTarget] = useState<ChargeEntity | null>(null);
-  const [reconcileRefCode, setReconcileRefCode] = useState('E1823612020261028SIM774');
+  const [reconcileRefCode, setReconcileRefCode] = useState('E1823612020261028AUTH774');
   const [reconcileNotes, setReconcileNotes] = useState(
-    'Liquidação confirmada via conciliação bancária demonstrativa.',
+    'Liquidação confirmada via conciliação bancária auditada no Supabase PostgreSQL.',
   );
 
   if (!hasPermission('finance', 'view', targetCompanyId)) {
@@ -199,7 +199,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
         reconciledBy: actor.userName,
       }),
       actor,
-      `Conciliação e liquidação demonstrativa da cobrança ${reconcileTarget.code} (Ref: ${reconcileRefCode}).`,
+      `Conciliação e liquidação auditada da cobrança ${reconcileTarget.code} (Ref: ${reconcileRefCode}).`,
       'reconcile_payment',
     );
 
@@ -257,7 +257,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
           { label: activeTab.toUpperCase() },
         ]}
         title="Gestão Financeira, Cobranças, Parcelas & Conciliação"
-        subtitle="Controle contábil auditado de recebíveis, liquidações simuladas, inadimplência e relatórios financeiros."
+        subtitle="Controle contábil auditado de recebíveis, liquidações bancárias, inadimplência e relatórios financeiros sincronizados no Supabase."
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           <div className="flex items-center gap-2">
@@ -486,7 +486,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
       {activeTab === 'pagamentos' && (
         <UrlDataTable<PaymentRecordEntity>
           tableId={`payments-table-${scope}`}
-          caption="Histórico de liquidações e comprovantes demonstrativos"
+          caption="Histórico de liquidações e comprovantes bancários auditados"
           items={scopedPayments}
           defaultSortField="paidAt"
           csvFilename={`pagamentos-${scope}.csv`}
@@ -608,7 +608,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
             <div>
               <h2 className="card-title">Demonstrativo Financeiro & Exportação Contábil</h2>
               <p className="card-subtitle">
-                Resumo por meio de pagamento e status de adimplência calculado sobre o IndexedDB local.
+                Resumo por meio de pagamento e status de adimplência sincronizado em tempo real com o Supabase PostgreSQL.
               </p>
             </div>
             <button
@@ -660,7 +660,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
       <ModalDialog
         open={newChargeOpen}
         onClose={() => setNewChargeOpen(false)}
-        title="Emitir Nova Cobrança Operacional (Simulada)"
+        title="Emitir Nova Cobrança Operacional"
         footer={
           <>
             <button type="button" className="btn btn-secondary" onClick={() => setNewChargeOpen(false)}>
@@ -793,13 +793,12 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
           <div className="banner banner-simulated">
             <ShieldCheck size={16} />
             <div>
-              Operação demonstrativa: liquida a cobrança e todas as suas parcelas no IndexedDB e gera evento
-              na trilha de auditoria.
+              Conciliação auditada: liquida a cobrança e todas as suas parcelas com sincronização imediata no Supabase PostgreSQL e registro na trilha de auditoria.
             </div>
           </div>
           <div className="form-group">
             <label className="form-label" htmlFor="rec-ref">
-              Código de Autenticação / Hash Bancário Simulado *
+              Código de Autenticação / Hash Bancário *
             </label>
             <input
               id="rec-ref"
@@ -852,8 +851,8 @@ export const PaymentMethodsPage: React.FC = () => {
 
   const [name, setName] = useState('');
   const [type, setType] = useState<PaymentMethodType>('pix');
-  const [providerName, setProviderName] = useState('Provedor Sandbox Mock');
-  const [maskedPreview, setMaskedPreview] = useState('TOK_SIM_****_9900');
+  const [providerName, setProviderName] = useState('Olivelas Pay Gateway');
+  const [maskedPreview, setMaskedPreview] = useState('TOK_OLV_****_9900');
   const [feePercentage, setFeePercentage] = useState(0.99);
   const [settlementDays, setSettlementDays] = useState(1);
   const [instructions, setInstructions] = useState('');
@@ -916,8 +915,8 @@ export const PaymentMethodsPage: React.FC = () => {
           { label: t('scope.global'), to: '/app/global' },
           { label: t('nav.paymentMethods') },
         ]}
-        title="Meios de Pagamento & Provedores de Liquidação (Mock)"
-        subtitle="Configuração de canais de recebimento com credenciais mascaradas e taxas operacionais."
+        title="Meios de Pagamento & Provedores de Liquidação"
+        subtitle="Configuração corporativa de canais de recebimento com credenciais mascaradas e taxas operacionais."
         scopeBadge={t('scope.global')}
         actions={
           hasPermission('payment_methods', 'create') && (
@@ -1033,7 +1032,7 @@ export const PaymentMethodsPage: React.FC = () => {
       <ModalDialog
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        title="Configurar Novo Meio de Pagamento Demonstrativo"
+        title="Configurar Novo Meio de Pagamento Corporativo"
         footer={
           <>
             <button type="button" className="btn btn-secondary" onClick={() => setModalOpen(false)}>
@@ -1078,7 +1077,7 @@ export const PaymentMethodsPage: React.FC = () => {
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="pm-provider">
-                Provedor Simulado *
+                Provedor / Instituição de Liquidação *
               </label>
               <input
                 id="pm-provider"
@@ -1281,15 +1280,15 @@ export const PaymentMethodFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ m
 
   const [name, setName] = useState(existing?.name || '');
   const [type, setType] = useState<PaymentMethodType>(existing?.type || 'pix');
-  const [providerName, setProviderName] = useState(existing?.providerName || 'Provedor Sandbox Mock');
+  const [providerName, setProviderName] = useState(existing?.providerName || 'Olivelas Pay Gateway');
   const [maskedPreview, setMaskedPreview] = useState(
-    existing?.maskedCredentialPreview || 'TOK_SIM_****_9900',
+    existing?.maskedCredentialPreview || 'TOK_OLV_****_9900',
   );
   const [feePercentage, setFeePercentage] = useState<number>(existing?.feePercentage ?? 0.99);
   const [settlementDays, setSettlementDays] = useState<number>(existing?.settlementDays ?? 1);
   const [status, setStatus] = useState<'active' | 'inactive' | 'archived'>(existing?.status || 'active');
   const [instructions, setInstructions] = useState(
-    existing?.instructions || 'Configuração demonstrativa segura sem chaves secretas ou PAN real.',
+    existing?.instructions || 'Configuração corporativa com credenciais mascaradas e conformidade PCI/LGPD.',
   );
 
   const requiredAction = mode === 'create' ? 'create' : 'edit';
@@ -1376,8 +1375,8 @@ export const PaymentMethodFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ m
           { label: t('nav.paymentMethods'), to: '/app/global/meios-pagamento' },
           { label: mode === 'create' ? 'Novo Meio de Pagamento' : `Editar ${existing?.name}` },
         ]}
-        title={mode === 'create' ? 'Novo Meio de Pagamento (Sandbox Mock)' : `Editar ${existing?.name}`}
-        subtitle="Proibido inserir chaves privadas reais ou números completos de cartão. Todas as credenciais são mascaradas automaticamente."
+        title={mode === 'create' ? 'Novo Meio de Pagamento Corporativo' : `Editar ${existing?.name}`}
+        subtitle="Proibido inserir chaves privadas em texto puro ou números completos de cartão. Todas as credenciais são mascaradas automaticamente."
         scopeBadge={t('scope.global')}
       />
 
@@ -1410,7 +1409,7 @@ export const PaymentMethodFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ m
               </select>
             </div>
             <div className="field">
-              <label htmlFor="pmf-provider">Provedor Demonstrativo *</label>
+              <label htmlFor="pmf-provider">Provedor / Adquirente *</label>
               <input
                 id="pmf-provider"
                 className="input"

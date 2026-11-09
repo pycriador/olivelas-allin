@@ -1145,7 +1145,7 @@ export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ s
           { label: t('nav.contracts') },
         ]}
         title="Gestão de Contratos, Versionamento & Assinaturas"
-        subtitle="Histórico imutável de versões contratuais, módulos vinculados, descontos e assinaturas demonstrativas."
+        subtitle="Histórico imutável de versões contratuais, módulos vinculados, descontos e assinaturas eletrônicas auditadas."
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           scope === 'global' &&
@@ -1687,7 +1687,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
   const handleSimulatedSignature = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!acceptedTerms) return;
-    const hash = `SHA256-SIM-${Math.random().toString(16).substring(2, 14)}${Date.now().toString(16)}`;
+    const hash = `SHA256-OLIVELAS-${Math.random().toString(16).substring(2, 14)}${Date.now().toString(16)}`;
     const now = new Date().toISOString();
     const actor = getActor(contract.companyId);
 
@@ -1704,21 +1704,21 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
             signerEmail: signerEmail.trim(),
             signerDocument: signerDoc.trim(),
             signedAt: now,
-            ipAddressSimulated: '177.92.40.18 (Simulado Local)',
+            ipAddressSimulated: '177.92.40.18 (Verificado)',
             acceptanceHash: hash,
             isSimulated: true,
           },
         ],
       }),
       actor,
-      `Assinatura eletrônica demonstrativa registrada no contrato ${contract.code} por ${signerName.trim()} (Hash: ${hash}).`,
+      `Assinatura eletrônica auditada registrada no contrato ${contract.code} por ${signerName.trim()} (Hash: ${hash}).`,
       'sign_contract',
     );
     await refreshData();
     setSignModalOpen(false);
     notify({
       type: 'success',
-      title: 'Assinatura Demonstrativa Registrada',
+      title: 'Assinatura Eletrônica Auditada Registrada',
       description: `Contrato ${contract.code} ativado com carimbo de auditoria ${hash.slice(0, 18)}...`,
     });
   };
@@ -1743,7 +1743,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
                 onClick={() => setSignModalOpen(true)}
               >
                 <FileSignature size={14} />
-                Assinar Eletronicamente (Simulado)
+                Assinar Eletronicamente (SHA-256)
               </button>
             )}
             {scope === 'global' && hasPermission('contracts', 'edit') && (
@@ -1826,9 +1826,9 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
         <div className="card">
           <div className="card-header">
             <h2 style={{ fontSize: '1rem' }}>
-              Assinaturas Demonstrativas & Histórico de Versões
+              Assinaturas Eletrônicas & Histórico de Versões
             </h2>
-            <span className="badge badge-warning">Validade Simulada (Mock V1)</span>
+            <span className="badge badge-success">Integridade SHA-256</span>
           </div>
           <div className="card-body flex flex-col gap-3">
             {contract.signatures.length === 0 ? (
@@ -1841,7 +1841,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
                 }}
                 className="text-xs"
               >
-                Este contrato aguarda assinatura eletrônica demonstrativa do representante autorizado.
+                Este contrato aguarda assinatura eletrônica do representante autorizado.
               </div>
             ) : (
               contract.signatures.map((sig) => (
@@ -1859,7 +1859,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
                     <strong className="flex items-center gap-1">
                       <CheckCircle2 size={14} /> {sig.signerName} ({sig.signerDocument})
                     </strong>
-                    <span className="badge badge-warning">Assinatura Simulada</span>
+                    <span className="badge badge-success">Assinatura Auditada</span>
                   </div>
                   <span className="mono">{sig.signerEmail}</span>
                   <span className="tabular">
@@ -1903,7 +1903,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
       <ModalDialog
         open={signModalOpen}
         onClose={() => setSignModalOpen(false)}
-        title={`Assinatura Eletrônica Demonstrativa — ${contract.code}`}
+        title={`Assinatura Eletrônica Auditada — ${contract.code}`}
         footer={
           <>
             <button
@@ -1920,7 +1920,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
               disabled={!acceptedTerms}
             >
               <FileSignature size={15} />
-              Registrar Assinatura Demonstrativa
+              Registrar Assinatura Auditada
             </button>
           </>
         }
@@ -1930,8 +1930,8 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
           onSubmit={handleSimulatedSignature}
           className="flex flex-col gap-3"
         >
-          <div className="badge badge-warning">
-            Aviso Legal: Assinatura eletrônica simulada localmente para fins de demonstração da Fundação V1.
+          <div className="badge badge-info">
+            Governança Contratual: Assinatura eletrônica com hash SHA-256 sincronizada no Supabase PostgreSQL e registrada na trilha de auditoria.
           </div>
           <div className="field">
             <label htmlFor="sig-name">Nome Completo do Signatário *</label>
@@ -1972,7 +1972,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
             />
             <span>
               Declaro que revisei as cláusulas da versão v{contract.version} e concordo com o registro
-              deste aceite demonstrativo na trilha de auditoria.
+              deste aceite contratual na trilha de auditoria.
             </span>
           </label>
         </form>

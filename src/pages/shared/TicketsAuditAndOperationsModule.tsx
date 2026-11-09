@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  Copy,
+  Database,
+  Download,
   Edit3,
   MessageSquare,
   Package,
   Plus,
+  RefreshCw,
   Save,
   Send,
   ShieldCheck,
@@ -23,9 +27,11 @@ import {
 import { generateId, repositories } from '../../repositories/repositories';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
 import { getUserActiveRoles } from '../../services/hbacService';
+import { isSupabaseConfigured, supabase } from '../../lib/supabase/client';
 import {
   AccessDeniedView,
   ArchiveRecordDialog,
+  ModalDialog,
   PageHeader,
   StatusBadge,
   UnsavedChangesBanner,
@@ -693,7 +699,9 @@ export const TicketDetailPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
 
 export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
-  const { auditEvents, companies, session, hasPermission, t } = useApp();
+  const { auditEvents, companies, session, hasPermission, notify, t } = useApp();
+  const [remoteEvents, setRemoteEvents] = useState<AuditEventEntity[]>([]);
+  const [syncingSupabase, setSyncingSupabase] = useState(false);
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
@@ -709,9 +717,79 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
     );
   }
 
+  const handleSyncFromSupabase = async () => {
+    if (!isSupabaseConfigured) return;
+    setSyncingSupabase(true);
+    try {
+      let query = supabase
+        .from('allin_audit_events')
+        .select('*')
+        .order('timestamp', { ascending: false })
+        .limit(150);
+      if (targetCompanyId) {
+        query = query.eq('company_id', targetCompanyId);
+      }
+      const { data, error } = await query;
+      if (!error && Array.isArray(data)) {
+        const mapped: AuditEventEntity[] = data.map((row: Record<string, unknown>) => ({
+          id: String(row.id),
+          timestamp: String(row.timestamp || new Date().toISOString()),
+          actorUserId: String(row.actor_user_id || 'usr-super-admin'),
+          actorName: String(row.actor_name || 'Operador Supabase'),
+          actorRole: String(row.actor_role || 'Super Admin'),
+          companyId: row.company_id ? String(row.company_id) : undefined,
+          companyName: row.company_name ? String(row.company_name) : undefined,
+          module: String(row.module || 'supabase'),
+          entityType: String(row.entity_type || 'record'),
+          entityId: String(row.entity_id || ''),
+          action: (row.action as AuditEventEntity['action']) || 'update',
+          origin: (row.origin as AuditEventEntity['origin']) || 'ui',
+          correlationId: String(row.correlation_id || 'CORR-SUPA'),
+          summary: String(row.summary || 'Evento sincronizado do Supabase'),
+          previousValue: (row.previous_value as Record<string, unknown>) || undefined,
+          newValue: (row.new_value as Record<string, unknown>) || undefined,
+        }));
+        setRemoteEvents(mapped);
+        notify({
+          type: 'success',
+          title: 'Trilha de Auditoria Sincronizada',
+          description: `${mapped.length} evento(s) carregados de public.allin_audit_events no Supabase PostgreSQL.`,
+        });
+      }
+    } finally {
+      setSyncingSupabase(false);
+    }
+  };
+
+  const mergedEvents = React.useMemo(() => {
+    const map = new Map<string, AuditEventEntity>();
+    for (const ev of auditEvents) map.set(ev.id, ev);
+    for (const rev of remoteEvents) {
+      if (!map.has(rev.id)) map.set(rev.id, rev);
+    }
+    return Array.from(map.values()).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+  }, [auditEvents, remoteEvents]);
+
   const scopedEvents = targetCompanyId
-    ? auditEvents.filter((ev) => ev.companyId === targetCompanyId)
-    : auditEvents;
+    ? mergedEvents.filter((ev) => ev.companyId === targetCompanyId)
+    : mergedEvents;
+
+  const handleExportForensicJson = () => {
+    const blob = new Blob([JSON.stringify(scopedEvents, null, 2)], {
+      type: 'application/json;charset=utf-8;',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `auditoria-forense-${scope}-${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    notify({
+      type: 'info',
+      title: 'Exportação JSON Forense Concluída',
+      description: `${scopedEvents.length} registros exportados com estado anterior e posterior.`,
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -724,8 +802,29 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           { label: t('nav.audit') },
         ]}
         title="Trilha de Auditoria Forense & Governança Operacional"
-        subtitle="Registro cronológico imutável de criações, edições, arquivamentos, alterações HBAC e trocas de contexto."
+        subtitle="Registro cronológico imutável sincronizado com public.allin_audit_events no Supabase PostgreSQL."
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleSyncFromSupabase}
+              disabled={syncingSupabase}
+            >
+              <RefreshCw size={14} />
+              {syncingSupabase ? 'Sincronizando...' : 'Sincronizar Supabase (allin_audit_events)'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={handleExportForensicJson}
+            >
+              <Download size={14} />
+              Exportar JSON Forense ({scopedEvents.length})
+            </button>
+          </div>
+        }
       />
 
       <UrlDataTable<AuditEventEntity>
@@ -814,7 +913,7 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
 
 export const AuditEventDetailPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
   const { empresaId, eventoId } = useParams<{ empresaId: string; eventoId: string }>();
-  const { auditEvents, session, hasPermission, t } = useApp();
+  const { auditEvents, session, hasPermission, notify, t } = useApp();
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const baseRoute =
@@ -840,6 +939,28 @@ export const AuditEventDetailPage: React.FC<{ scope: 'global' | 'company' }> = (
         title={`Evento de Auditoria ${event.id}`}
         subtitle={event.summary}
         scopeBadge={event.correlationId}
+        actions={
+          <div className="flex items-center gap-2">
+            <Link to={baseRoute} className="btn btn-secondary btn-sm">
+              Voltar à Trilha
+            </Link>
+            <button
+              type="button"
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                navigator.clipboard?.writeText(JSON.stringify(event, null, 2));
+                notify({
+                  type: 'info',
+                  title: 'Payload Forense Copiado',
+                  description: `O JSON completo do evento ${event.id} foi copiado para a área de transferência.`,
+                });
+              }}
+            >
+              <Copy size={14} />
+              Copiar JSON Forense
+            </button>
+          </div>
+        }
       />
 
       <div className="card">
@@ -922,24 +1043,29 @@ export const CompanyOperationModulePage: React.FC<{
   const [newQty, setNewQty] = useState(10);
   const [newAmount, setNewAmount] = useState(150);
   const [archiveTarget, setArchiveTarget] = useState<OperationalItemEntity | null>(null);
+  const [editingItem, setEditingItem] = useState<OperationalItemEntity | null>(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editCategory, setEditCategory] = useState('');
+  const [editQty, setEditQty] = useState(1);
+  const [editAmount, setEditAmount] = useState(0);
 
   const moduleMeta = {
     inventory: {
       moduleCode: 'allin_estoque',
       title: 'Allin Estoque — Controle de SKUs, Saldos e Depósitos',
-      subtitle: 'Gestão operacional de itens estocados persistida em IndexedDB e isolada no escopo da empresa ativa.',
+      subtitle: 'Gestão operacional de itens estocados sincronizada no Supabase PostgreSQL e isolada no escopo da empresa ativa.',
       icon: <Package size={16} />,
     },
     orders: {
       moduleCode: 'allin_vendas',
       title: 'Allin Vendas — Pedidos Comerciais & Faturamento Operacional',
-      subtitle: 'Registro e acompanhamento de pedidos de clientes com persistência local e trilha de auditoria.',
+      subtitle: 'Registro e acompanhamento de pedidos de clientes com sincronização no Supabase e trilha de auditoria.',
       icon: <ShoppingCart size={16} />,
     },
     crm: {
       moduleCode: 'allin_crm',
       title: 'Allin CRM — Contas, Oportunidades & Relacionamento',
-      subtitle: 'Pipeline comercial e carteira de clientes corporativos da empresa persistidos localmente.',
+      subtitle: 'Pipeline comercial e carteira de clientes corporativos da empresa sincronizados no Supabase.',
       icon: <Users size={16} />,
     },
   }[moduleType];
@@ -1005,7 +1131,35 @@ export const CompanyOperationModulePage: React.FC<{
     await refreshData();
     setNewTitle('');
     setNewCategory('');
-    notify({ type: 'success', title: `Registro ${record.code} persistido no IndexedDB e auditado.` });
+    notify({ type: 'success', title: `Registro ${record.code} sincronizado no Supabase e auditado.` });
+  };
+
+  const handleOpenEdit = (item: OperationalItemEntity) => {
+    setEditingItem(item);
+    setEditTitle(item.title);
+    setEditCategory(item.category);
+    setEditQty(item.quantity);
+    setEditAmount(item.amount);
+  };
+
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingItem || !empresaId) return;
+    await repositories.operationalItems.update(
+      editingItem.id,
+      (curr) => ({
+        ...curr,
+        title: editTitle.trim(),
+        category: editCategory.trim() || 'Geral',
+        quantity: Number(editQty),
+        amount: Number(editAmount),
+      }),
+      getActor(empresaId),
+      `Edição do registro operacional ${editingItem.code}: ${editTitle.trim()}`,
+    );
+    await refreshData();
+    setEditingItem(null);
+    notify({ type: 'success', title: `Registro ${editingItem.code} atualizado com sucesso.` });
   };
 
   const handleToggleStatus = async (item: OperationalItemEntity) => {
@@ -1041,7 +1195,9 @@ export const CompanyOperationModulePage: React.FC<{
       {hasPermission(moduleType, 'create', empresaId) && (
         <form onSubmit={handleAddRecord} className="card">
           <div className="card-header">
-            <h2 className="card-title">Novo Registro Operacional Auditado (Persistência IndexedDB)</h2>
+            <h2 className="card-title flex items-center gap-2">
+              <Database size={15} /> Novo Registro Operacional Auditado (Sincronizado no Supabase)
+            </h2>
             <span className="badge badge-teal">{moduleMeta.moduleCode}</span>
           </div>
           <div className="card-body form-grid">
@@ -1171,17 +1327,90 @@ export const CompanyOperationModulePage: React.FC<{
             header: 'Operação',
             render: (r) =>
               hasPermission(moduleType, 'edit', empresaId) && !r.archiveMetadata.isArchived ? (
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => handleToggleStatus(r)}
-                >
-                  Alternar Status
-                </button>
+                <div className="flex items-center gap-1 flex-wrap">
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => handleOpenEdit(r)}
+                  >
+                    <Edit3 size={13} />
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary btn-sm"
+                    onClick={() => handleToggleStatus(r)}
+                  >
+                    Alternar Status
+                  </button>
+                </div>
               ) : null,
           },
         ]}
       />
+
+      <ModalDialog
+        open={Boolean(editingItem)}
+        onClose={() => setEditingItem(null)}
+        title={`Editar Registro Operacional — ${editingItem?.code || ''}`}
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setEditingItem(null)}>
+              {t('common.cancel')}
+            </button>
+            <button type="submit" form="edit-op-form" className="btn btn-primary">
+              <Save size={14} />
+              Salvar Alterações
+            </button>
+          </>
+        }
+      >
+        <form id="edit-op-form" onSubmit={handleSaveEdit} className="flex flex-col gap-3">
+          <div className="field">
+            <label htmlFor="edit-op-title">Descrição / Item / Cliente *</label>
+            <input
+              id="edit-op-title"
+              className="input"
+              required
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="edit-op-cat">Categoria / Etapa *</label>
+            <input
+              id="edit-op-cat"
+              className="input"
+              required
+              value={editCategory}
+              onChange={(e) => setEditCategory(e.target.value)}
+            />
+          </div>
+          <div className="form-grid">
+            <div className="field">
+              <label htmlFor="edit-op-qty">Quantidade / Volume</label>
+              <input
+                id="edit-op-qty"
+                type="number"
+                className="input"
+                value={editQty}
+                onChange={(e) => setEditQty(Number(e.target.value))}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="edit-op-amt">Valor Financeiro ({company.currency})</label>
+              <input
+                id="edit-op-amt"
+                type="number"
+                step="0.01"
+                className="input"
+                value={editAmount}
+                onChange={(e) => setEditAmount(Number(e.target.value))}
+              />
+            </div>
+          </div>
+        </form>
+      </ModalDialog>
 
       <ArchiveRecordDialog
         open={Boolean(archiveTarget)}

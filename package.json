@@ -1,7 +1,7 @@
 {
   "name": "olivelas-allin",
   "private": true,
-  "version": "0.0.1",
+  "version": "2.0.0",
   "type": "module",
   "scripts": {
     "start": "bash ./start.sh",
@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "node scripts/migrate-supabase.mjs"
+    "db:migrate": "node scripts/migrate-supabase.mjs",
+    "projects:standardize": "node scripts/standardize-projects.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",

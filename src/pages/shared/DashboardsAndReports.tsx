@@ -594,7 +594,7 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
           { label: t('nav.reports') },
         ]}
         title="Allin Analytics — Relatórios e Indicadores Operacionais"
-        subtitle="Indicadores calculados em tempo real sobre os dados persistidos localmente no IndexedDB."
+        subtitle="Indicadores calculados em tempo real sobre os dados sincronizados no Supabase PostgreSQL."
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           <button type="button" className="btn btn-primary btn-sm" onClick={handleExportAnalyticsCsv}>
