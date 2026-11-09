@@ -5,7 +5,6 @@ import {
   BarChart3,
   Boxes,
   Building2,
-  Check,
   CreditCard,
   Database,
   DatabaseBackup,
@@ -21,7 +20,6 @@ import {
   Menu,
   Moon,
   Package,
-  Palette,
   ScrollText,
   Shield,
   ShieldCheck,
@@ -37,7 +35,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { LanguageCode, PermissionResource, ThemeMode } from '../../types/domain';
 import { getUserActiveRoles } from '../../services/hbacService';
-import { DARK_THEMES, findThemePreset, LIGHT_THEMES, ThemePreset } from '../../styles/themes';
+import { DARK_THEMES, findThemePreset, LIGHT_THEMES } from '../../styles/themes';
 import { AccessDeniedView, ModalDialog } from '../shared/SharedComponents';
 
 export const ToastContainer: React.FC = () => {
@@ -67,7 +65,6 @@ export const ToastContainer: React.FC = () => {
 
 export const TopPreferencesControls: React.FC = () => {
   const { session, setLanguage, setTheme, t } = useApp();
-  const [galleryOpen, setGalleryOpen] = useState(false);
 
   const activePreset = findThemePreset(session.theme);
   const isDarkActive =
@@ -81,54 +78,6 @@ export const TopPreferencesControls: React.FC = () => {
       : session.theme === 'dark'
         ? DARK_THEMES[0].id
         : session.theme;
-
-  const renderThemeCard = (preset: ThemePreset) => {
-    const isSelected = normalizedSelectValue === preset.id;
-    return (
-      <button
-        key={preset.id}
-        type="button"
-        onClick={() => setTheme(preset.id)}
-        className={`theme-swatch-card ${isSelected ? 'active' : ''}`}
-        aria-pressed={isSelected}
-      >
-        <div className="theme-swatch-preview">
-          <span
-            className="theme-swatch-chip"
-            style={{ backgroundColor: preset.tokens.bgSidebar }}
-            title="Sidebar"
-          />
-          <span
-            className="theme-swatch-chip"
-            style={{ backgroundColor: preset.tokens.bgCanvas }}
-            title="Canvas"
-          />
-          <span
-            className="theme-swatch-chip"
-            style={{ backgroundColor: preset.tokens.bgSurface }}
-            title="Surface"
-          />
-          <span
-            className="theme-swatch-chip"
-            style={{ backgroundColor: preset.tokens.accentPrimary }}
-            title="Accent Primary"
-          />
-          <span
-            className="theme-swatch-chip"
-            style={{ backgroundColor: preset.tokens.accentText }}
-            title="Accent Focus"
-          />
-        </div>
-        <div className="flex items-center justify-between gap-2 w-full">
-          <strong className="text-xs">{preset.name[session.language]}</strong>
-          {isSelected && <Check size={13} />}
-        </div>
-        <span className="text-xs text-muted" style={{ textAlign: 'left' }}>
-          {preset.description[session.language]}
-        </span>
-      </button>
-    );
-  };
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
@@ -158,17 +107,17 @@ export const TopPreferencesControls: React.FC = () => {
           style={{ width: 'auto', maxWidth: '185px', padding: '0.32rem 0.65rem', fontSize: '0.75rem', borderRadius: '0.65rem' }}
           value={normalizedSelectValue}
           onChange={(e) => setTheme(e.target.value as ThemeMode)}
-          aria-label="Selecionar tema visual (15 claros e 15 escuros)"
+          aria-label="Selecionar tema visual"
         >
           <option value="system">{t('common.theme.system')} (Auto)</option>
-          <optgroup label="15 Temas Claros (Light)">
+          <optgroup label="Temas Claros (Light)">
             {LIGHT_THEMES.map((preset) => (
               <option key={preset.id} value={preset.id}>
                 ☀️ {preset.name[session.language]}
               </option>
             ))}
           </optgroup>
-          <optgroup label="15 Temas Escuros (Dark)">
+          <optgroup label="Temas Escuros (Dark)">
             {DARK_THEMES.map((preset) => (
               <option key={preset.id} value={preset.id}>
                 🌙 {preset.name[session.language]}
@@ -176,64 +125,7 @@ export const TopPreferencesControls: React.FC = () => {
             ))}
           </optgroup>
         </select>
-
-        <button
-          type="button"
-          className="btn btn-secondary btn-sm"
-          onClick={() => setGalleryOpen(true)}
-          title="Abrir Galeria Visual de 30 Temas (15 Claros + 15 Escuros)"
-          aria-label="Galeria de 30 temas"
-        >
-          <Palette size={13} />
-          <span className="hide-on-xs">30 Temas</span>
-        </button>
       </div>
-
-      <ModalDialog
-        open={galleryOpen}
-        onClose={() => setGalleryOpen(false)}
-        title="Seletor Visual de Temas — 15 Temas Claros & 15 Temas Escuros"
-        footer={
-          <>
-            <button
-              type="button"
-              className="btn btn-secondary btn-sm"
-              onClick={() => setTheme('system')}
-            >
-              Usar Tema do Sistema
-            </button>
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={() => setGalleryOpen(false)}
-            >
-              Concluir
-            </button>
-          </>
-        }
-      >
-        <div className="flex flex-col gap-4">
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <strong className="text-sm flex items-center gap-1">
-                <Sun size={15} /> 15 Temas Claros Corporativos
-              </strong>
-              <span className="badge badge-info">15 Light Presets</span>
-            </div>
-            <div className="theme-gallery-grid">{LIGHT_THEMES.map(renderThemeCard)}</div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <strong className="text-sm flex items-center gap-1">
-                <Moon size={15} /> 15 Temas Escuros Corporativos
-              </strong>
-              <span className="badge badge-teal">15 Dark Presets</span>
-            </div>
-            <div className="theme-gallery-grid">{DARK_THEMES.map(renderThemeCard)}</div>
-          </div>
-        </div>
-      </ModalDialog>
     </div>
   );
 };
