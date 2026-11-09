@@ -30,12 +30,17 @@ import {
   LIGHT_THEMES,
 } from '../styles/themes';
 import {
+  askModuleRagCopilot,
   createModuleSchemaRecord,
   findEcosystemModuleBySlug,
+  listModuleRagDocuments,
   listModuleSchemaRecords,
   OLIVELAS_ECOSYSTEM_MODULES,
+  saveModuleRagDocument,
   toggleArchiveModuleSchemaRecord,
+  updateModuleSchemaRecord,
 } from '../services/olivelasEcosystemService';
+import { validatePasswordStrength } from '../services/supabaseAuthService';
 import { getProjectSchemaClient, getUnifiedProfilesTable, isSupabaseConfigured } from '../lib/supabase/client';
 
 const testActor = {
@@ -273,7 +278,7 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
   });
 
   it('6. Internationalization (PT-BR, EN, ES): provides complete translations for all UI keys and locale currency formatting', () => {
-    expect(translations['pt-BR']['app.name']).toBe('Olivelas Allin');
+    expect(translations['pt-BR']['app.name']).toBe('Olivelas All In');
     expect(translations.en['app.name']).toBe('Olivelas Allin');
     expect(translations.es['app.name']).toBe('Olivelas Allin');
 
@@ -516,7 +521,61 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       String(created.record.id),
       true,
       'Arquivamento lógico em teste automatizado',
-      'clara.monteiro@olivelas-allin.demo',
+      'helena.vasconcelos@olivelasallin.com.br',
     );
+
+    // Update record in module schema
+    const updated = await updateModuleSchemaRecord(personalTrainer, String(created.record.id), {
+      full_name: 'Aluno Teste Atualizado Olivelas',
+      monthly_fee: 650,
+    });
+    expect(updated.record.full_name).toBe('Aluno Teste Atualizado Olivelas');
+
+    // RAG Knowledge Base & AI Copilot verification
+    const ragDocs = await listModuleRagDocuments(personalTrainer, 'emp-olivelas-matriz');
+    expect(ragDocs.length).toBeGreaterThanOrEqual(1);
+
+    const savedDoc = await saveModuleRagDocument(
+      personalTrainer,
+      'emp-olivelas-matriz',
+      {
+        title: 'Protocolo de Avaliação Física Olivelas',
+        category: 'manual',
+        content: 'Regras de periodização de treino e bioimpedância mensal.',
+        tags: ['personal_treiner', 'biometria'],
+      },
+      'helena.vasconcelos@olivelasallin.com.br',
+    );
+    expect(savedDoc.document.title).toContain('Protocolo de Avaliação Física');
+
+    const copilotAnswer = await askModuleRagCopilot({
+      moduleSpec: personalTrainer,
+      companyId: 'emp-olivelas-matriz',
+      question: 'Qual o panorama dos alunos ativos e protocolos do módulo?',
+      persona: 'executivo',
+      records: initialList.records,
+      ragDocs: [savedDoc.document, ...ragDocs],
+      actorEmail: 'helena.vasconcelos@olivelasallin.com.br',
+    });
+    expect(copilotAnswer.role).toBe('assistant');
+    expect(copilotAnswer.content).toContain('personal_treiner');
+    expect(copilotAnswer.citations.length).toBeGreaterThanOrEqual(1);
+
+    // Password policy & Granular HBAC evaluation
+    expect(validatePasswordStrength('123').valid).toBe(false);
+    expect(validatePasswordStrength('Olivelas@2026').valid).toBe(true);
+
+    const funcionarioWithGranular = {
+      ...INITIAL_USERS.find((u) => u.id === 'usr-funcionario')!,
+      granularPermissions: ['allin_personal_trainer:create', 'allin_personal_trainer:edit'],
+    };
+    const granularCheck = evaluateEffectivePermission(
+      funcionarioWithGranular,
+      INITIAL_ROLES,
+      'allin_personal_trainer',
+      'create',
+      'emp-olivelas-matriz',
+    );
+    expect(granularCheck.allowed).toBe(true);
   });
 });

@@ -203,9 +203,9 @@ export const ApiHubCatalogPage: React.FC<{ activeTab: ApiHubTab }> = ({ activeTa
           { label: t('nav.apiHub'), to: '/app/global/api-hub/servicos' },
           { label: activeTab.toUpperCase() },
         ]}
-        title="Allin API Hub — Governança de Serviços HTTP, Ambientes & Tokens"
-        subtitle="Console estilo Postman para catalogação de endpoints, interpolação de variáveis, proteção Anti-SSRF e execução simulada."
-        scopeBadge="SANDBOX SEGURO"
+        title="Allin API Hub — Governança de Serviços HTTP, PostgREST Multi-Schema & Tokens HBAC"
+        subtitle="Console para catalogação de endpoints REST, variáveis de ambiente, chaves mascaradas e execução contra os 16 schemas PostgreSQL no Supabase."
+        scopeBadge="SUPABASE POSTGREST"
         actions={
           <div className="flex items-center gap-2">
             {activeTab === 'servicos' && hasPermission('api_hub', 'create') && (
@@ -340,7 +340,7 @@ export const ApiHubCatalogPage: React.FC<{ activeTab: ApiHubTab }> = ({ activeTa
             },
             {
               key: 'timeoutMs',
-              header: 'Respostas Simuladas',
+              header: 'Status HTTP Documentados',
               render: (s) => (
                 <div className="flex gap-1 flex-wrap">
                   {s.expectedResponses.map((r) => (

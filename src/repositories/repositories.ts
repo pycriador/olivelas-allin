@@ -29,6 +29,7 @@ import {
   resetToInitialSeed,
   StoreName,
 } from '../storage/indexedDb';
+import { syncRepositoryEntityToSupabase } from '../services/supabaseAuthService';
 
 export interface MutationActor {
   userId: string;
@@ -74,6 +75,7 @@ export async function recordAuditEvent(params: {
     correlationId: generateId('corr'),
   };
   await putInStore('audit_events', event);
+  void syncRepositoryEntityToSupabase('audit_events', event.id, event as unknown as Record<string, unknown>);
   return event;
 }
 
@@ -180,6 +182,11 @@ class BaseRepository<T extends BaseBusinessEntity> {
       ],
     };
     await putInStore(this.storeName, record);
+    void syncRepositoryEntityToSupabase(
+      this.storeName,
+      record.id,
+      record as unknown as Record<string, unknown>,
+    );
     await recordAuditEvent({
       actor,
       module: this.moduleKey,
@@ -224,6 +231,11 @@ class BaseRepository<T extends BaseBusinessEntity> {
       ],
     };
     await putInStore(this.storeName, updated);
+    void syncRepositoryEntityToSupabase(
+      this.storeName,
+      updated.id,
+      updated as unknown as Record<string, unknown>,
+    );
     await recordAuditEvent({
       actor,
       module: this.moduleKey,

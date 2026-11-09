@@ -36,6 +36,11 @@ import {
 import { translate } from '../i18n/translations';
 import { applyThemePresetToDom } from '../styles/themes';
 import { syncUnifiedUserProfileToSupabase } from '../services/olivelasEcosystemService';
+import {
+  authenticateUserInSupabase,
+  registerAccountInSupabase,
+  RegisterAccountInput,
+} from '../services/supabaseAuthService';
 
 export interface ToastMessage {
   id: string;
@@ -72,6 +77,13 @@ interface AppContextValue {
   setLanguage: (lang: LanguageCode) => void;
   setTheme: (theme: ThemeMode) => void;
   loginAsUser: (userId: string, preferredCompanyId?: string) => Promise<void>;
+  loginWithCredentials: (
+    email: string,
+    password: string,
+  ) => Promise<{ ok: boolean; message?: string; redirectPath?: string }>;
+  registerAccount: (
+    input: RegisterAccountInput,
+  ) => Promise<{ ok: boolean; message?: string; redirectPath?: string }>;
   logout: () => Promise<void>;
   switchCompanyContext: (companyId: string) => Promise<void>;
   startSupportImpersonation: (companyId: string, reason: string) => Promise<void>;
@@ -81,7 +93,7 @@ interface AppContextValue {
   notify: (toast: Omit<ToastMessage, 'id'>) => void;
   dismissToast: (id: string) => void;
   getActor: (overrideCompanyId?: string) => MutationActor;
-  hasPermission: (resource: PermissionResource, action: PermissionAction, companyId?: string) => boolean;
+  hasPermission: (resource: PermissionResource | string, action: PermissionAction, companyId?: string) => boolean;
   canAccessTenant: (companyId: string) => boolean;
   isModuleSubscribed: (companyId: string, moduleCode: string) => boolean;
   isCurrentSuperAdmin: boolean;
@@ -303,11 +315,174 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         action: 'login',
         entityType: 'UserEntity',
         entityId: targetUser.id,
-        summary: `Sessão demonstrativa iniciada por ${targetUser.name} (${targetUser.email}).`,
+        summary: `Sessão autenticada iniciada por ${targetUser.name} (${targetUser.email}).`,
       });
       await refreshData();
     },
     [users, roles, companies, refreshData],
+  );
+
+  const loginWithCredentials = useCallback(
+    async (
+      email: string,
+      password: string,
+    ): Promise<{ ok: boolean; message?: string; redirectPath?: string }> => {
+      const authRes = await authenticateUserInSupabase(email, password);
+      if (!authRes.ok || !authRes.user) {
+        return {
+          ok: false,
+          message: authRes.message || 'Credenciais inválidas no Supabase.',
+        };
+      }
+
+      const dbUser = authRes.user;
+      let existingUser = users.find(
+        (u) => u.id === dbUser.id || u.email.toLowerCase() === dbUser.email.toLowerCase(),
+      );
+
+      if (!existingUser) {
+        const now = new Date().toISOString();
+        const created: UserEntity = {
+          id: dbUser.id,
+          name: dbUser.full_name,
+          email: dbUser.email,
+          phone: dbUser.phone || '+55 11 99999-0000',
+          status: 'active',
+          language: dbUser.language || 'pt-BR',
+          jobTitle: dbUser.job_title,
+          department: dbUser.department,
+          roleIds:
+            Array.isArray(dbUser.role_ids) && dbUser.role_ids.length > 0
+              ? dbUser.role_ids
+              : dbUser.is_global_admin
+                ? ['role-super-admin']
+                : ['role-cliente'],
+          companyIds:
+            Array.isArray(dbUser.company_ids) && dbUser.company_ids.length > 0
+              ? dbUser.company_ids
+              : ['emp-olivelas-matriz'],
+          individualPermissions: dbUser.individual_permissions || [],
+          granularPermissions: dbUser.granular_permissions || [],
+          lastLoginAt: now,
+          createdAt: now,
+          updatedAt: now,
+          archiveMetadata: { isArchived: false },
+          changeHistory: [],
+        };
+        await repositories.users.create(
+          created,
+          { userId: created.id, userName: created.name, userRole: 'Autenticação Supabase' },
+          'Perfil sincronizado de public.profiles no login Supabase',
+        );
+        existingUser = created;
+      }
+
+      const globalStaff = isGlobalStaff(existingUser, roles) || dbUser.is_global_admin;
+      const companyId =
+        existingUser.companyIds[0] || companies[0]?.id || 'emp-olivelas-matriz';
+
+      setSession((prev) => ({
+        ...prev,
+        currentUserId: existingUser!.id,
+        activeScope: globalStaff ? 'global' : 'company',
+        activeCompanyId: companyId,
+        impersonation: null,
+        language: existingUser!.language || prev.language,
+      }));
+
+      await recordAuditEvent({
+        actor: {
+          userId: existingUser.id,
+          userName: existingUser.name,
+          userRole: getUserActiveRoles(existingUser, roles)[0]?.name['pt-BR'] || 'Autenticado',
+          companyId,
+        },
+        module: 'auth',
+        action: 'login',
+        entityType: 'UserEntity',
+        entityId: existingUser.id,
+        summary: `Login autenticado no Supabase (public.profiles) por ${existingUser.name} (${existingUser.email}).`,
+      });
+
+      await refreshData();
+      return {
+        ok: true,
+        redirectPath: globalStaff ? '/app/global' : `/app/empresa/${companyId}`,
+      };
+    },
+    [users, roles, companies, refreshData],
+  );
+
+  const registerAccount = useCallback(
+    async (
+      input: RegisterAccountInput,
+    ): Promise<{ ok: boolean; message?: string; redirectPath?: string }> => {
+      const regRes = await registerAccountInSupabase(input);
+      if (!regRes.ok || !regRes.company || !regRes.user) {
+        return {
+          ok: false,
+          message: regRes.message || 'Erro ao registrar conta e empresa no Supabase.',
+        };
+      }
+
+      const actor = {
+        userId: regRes.user.id,
+        userName: regRes.user.name,
+        userRole: 'Cliente (Administrador da Empresa)',
+        companyId: regRes.company.id,
+        companyName: regRes.company.legalName,
+      };
+
+      await repositories.companies.create(
+        regRes.company,
+        actor,
+        `Nova empresa registrada no Supabase: ${regRes.company.tradeName}`,
+      );
+      await repositories.users.create(
+        regRes.user,
+        actor,
+        `Novo administrador registrado em public.profiles: ${regRes.user.email}`,
+      );
+
+      // Ativa os módulos iniciais para a nova empresa
+      const defaultModCodes = ['allin_core', 'allin_gestao_estoque'];
+      for (const code of defaultModCodes) {
+        const mod = modules.find((m) => m.code === code);
+        if (mod) {
+          await repositories.companyModules.upsert(
+            {
+              id: `sub-${regRes.company.id}-${code}`,
+              companyId: regRes.company.id,
+              moduleId: mod.id,
+              moduleCode: mod.code,
+              status: 'active',
+              activatedAt: new Date().toISOString(),
+              renewalDate: '2027-11-09',
+              billingCycle: 'monthly',
+              agreedPrice: mod.priceMonthly,
+              currency: 'BRL',
+            },
+            actor,
+            `Módulo ${mod.code} ativado no onboarding da empresa`,
+          );
+        }
+      }
+
+      setSession((prev) => ({
+        ...prev,
+        currentUserId: regRes.user!.id,
+        activeScope: 'company',
+        activeCompanyId: regRes.company!.id,
+        impersonation: null,
+      }));
+
+      await refreshData();
+      return {
+        ok: true,
+        redirectPath: `/app/empresa/${regRes.company.id}`,
+      };
+    },
+    [modules, refreshData],
   );
 
   const logout = useCallback(async () => {
@@ -412,7 +587,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [getActor, refreshData, notify, session.language]);
 
   const hasPermission = useCallback(
-    (resource: PermissionResource, action: PermissionAction, companyId?: string): boolean => {
+    (resource: PermissionResource | string, action: PermissionAction, companyId?: string): boolean => {
       const cell = evaluateEffectivePermission(
         currentUser,
         roles,
@@ -479,6 +654,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLanguage,
       setTheme,
       loginAsUser,
+      loginWithCredentials,
+      registerAccount,
       logout,
       switchCompanyContext,
       startSupportImpersonation,
@@ -522,6 +699,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setLanguage,
       setTheme,
       loginAsUser,
+      loginWithCredentials,
+      registerAccount,
       logout,
       switchCompanyContext,
       startSupportImpersonation,

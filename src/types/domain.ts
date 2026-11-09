@@ -154,6 +154,9 @@ export interface CompanyEntity {
     postalCode: string;
     country: string;
   };
+  parentCompanyId?: string;
+  isBranch?: boolean;
+  branchCode?: string;
   createdAt: string;
   updatedAt: string;
   archiveMetadata: ArchiveMetadata;
@@ -169,10 +172,14 @@ export interface UserEntity {
   phone: string;
   status: UserStatus;
   language: LanguageCode;
+  jobTitle?: string;
+  department?: string;
   roleIds: string[];
   companyIds: string[];
   assignedCompanyIds?: string[];
   individualPermissions: IndividualPermissionOverride[];
+  granularPermissions?: string[];
+  requirePasswordReset?: boolean;
   createdAt: string;
   updatedAt: string;
   lastLoginAt: string;

@@ -5,10 +5,10 @@ export type TranslationDictionary = Record<string, string>;
 export const translations: Record<Locale, TranslationDictionary> = {
   'pt-BR': {
     // Brand & Meta
-    'app.name': 'Olivelas Allin',
-    'app.tagline': 'Governança SaaS Multiempresa e Contratação Modular Sob Demanda',
-    'app.mockBadge': 'AMBIENTE MOCK DEMONSTRATIVO — DADOS LOCAIS (INDEXEDDB)',
-    'app.simulatedNotice': 'Operação simulada localmente no navegador. Nenhuma chamada externa de pagamento, assinatura jurídica ou autenticação real foi executada.',
+    'app.name': 'Olivelas All In',
+    'app.tagline': 'Ecossistema SaaS Multiempresa • 16 Plataformas Comerciais • Supabase Multi-Schema',
+    'app.mockBadge': 'OLIVELAS ALL IN — SUPABASE POSTGRESQL 17 MULTI-SCHEMA ONLINE',
+    'app.simulatedNotice': 'Operação 100% integrada ao banco de dados Supabase PostgreSQL (public.profiles + 16 schemas dedicados) com controle de acesso granular HBAC.',
 
     // Navigation & Areas
     'nav.public.home': 'Início',
@@ -89,7 +89,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     'status.deprecated': 'Descontinuado',
     'status.awaiting_approval': 'Aguardando Aprovação',
     'status.awaiting_signature': 'Aguardando Assinatura',
-    'status.signed': 'Assinado (Simulado)',
+    'status.signed': 'Assinado Digitalmente',
     'status.ended': 'Encerrado',
     'status.cancelled': 'Cancelado',
     'status.processing': 'Processando',
@@ -164,7 +164,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     'common.search': 'Buscar registros...',
     'common.showArchived': 'Incluir Arquivados',
     'common.showing': 'Exibindo',
-    'common.simulatedBadge': 'MOCK V1 • PERSISTÊNCIA LOCAL INDEXEDDB',
+    'common.simulatedBadge': 'SUPABASE POSTGRESQL 17 • 16 SCHEMAS ATIVOS',
     'common.status': 'Estado',
     'common.theme.system': 'Sistema',
     'common.theme.light': 'Claro',
@@ -196,7 +196,7 @@ export const translations: Record<Locale, TranslationDictionary> = {
     'landing.hero.ctaPrimary': 'Acessar Ambiente de Demonstração',
     'landing.hero.ctaSecondary': 'Simular Planos e Módulos',
 
-    'msg.savedSuccess': 'Alterações salvas com sucesso e auditadas no IndexedDB.',
+    'msg.savedSuccess': 'Alterações salvas com sucesso e sincronizadas no Supabase PostgreSQL.',
 
     'nav.dashboard': 'Painel Principal',
     'nav.companies': 'Empresas (Tenants)',

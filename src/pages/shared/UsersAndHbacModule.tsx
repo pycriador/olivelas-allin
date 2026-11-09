@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  Database,
   Edit3,
+  KeyRound,
+  Lock,
   Plus,
   Save,
   ShieldCheck,
   Trash2,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import {
+  changeUserPasswordInSupabase,
+  validatePasswordStrength,
+} from '../../services/supabaseAuthService';
+import { OLIVELAS_ECOSYSTEM_MODULES } from '../../services/olivelasEcosystemService';
 import {
   IndividualPermissionOverride,
   LanguageCode,
@@ -191,7 +199,7 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           },
           {
             key: 'lastLoginAt',
-            header: 'Último Acesso (Sim.)',
+            header: 'Último Acesso',
             render: (u) => (
               <span className="text-xs text-muted tabular">
                 {formatDateTime(u.lastLoginAt, session.language)}
@@ -593,6 +601,12 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
   const [ovrReason, setOvrReason] = useState('');
   const [ovrError, setOvrError] = useState('');
 
+  // Redefinição de Senha Real no Supabase (public.profiles + pgcrypto bcrypt)
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+  const [savingPassword, setSavingPassword] = useState(false);
+
   if (!user) {
     return (
       <AccessDeniedView
@@ -692,6 +706,58 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
     notify({ type: 'info', title: 'Exceção individual removida.' });
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+    const check = validatePasswordStrength(newPassword);
+    if (!check.valid) {
+      setPasswordError(check.message || 'Senha inválida.');
+      return;
+    }
+    setSavingPassword(true);
+    const res = await changeUserPasswordInSupabase(user.id, newPassword);
+    setSavingPassword(false);
+    if (!res.ok) {
+      setPasswordError(res.message);
+      return;
+    }
+    setNewPassword('');
+    setPasswordModalOpen(false);
+    notify({
+      type: 'success',
+      title: `Senha de ${user.name} atualizada no Supabase (public.profiles)!`,
+      description: 'Hash bcrypt gravado e tentativas de login zeradas.',
+    });
+  };
+
+  const handleToggleModuleGranularPerm = async (moduleSlug: string, action: PermissionAction) => {
+    if (!hasPermission('roles', 'administer', targetCompanyId) && !hasPermission('users', 'edit', targetCompanyId)) {
+      notify({ type: 'warning', title: 'Permissão administrativa necessária para alterar escopos granulares.' });
+      return;
+    }
+    const permKey = `${moduleSlug}:${action}`;
+    const currentList = user.granularPermissions || [];
+    const exists = currentList.includes(permKey);
+    const nextList = exists ? currentList.filter((k) => k !== permKey) : [...currentList, permKey];
+
+    const actor = getActor(targetCompanyId);
+    await repositories.users.update(
+      user.id,
+      (curr) => ({
+        ...curr,
+        granularPermissions: nextList,
+      }),
+      actor,
+      `${exists ? 'Revogação' : 'Concessão'} granular no módulo (${permKey}) para ${user.name}.`,
+      exists ? 'revoke_permission' : 'grant_permission',
+    );
+    await refreshData();
+    notify({
+      type: 'success',
+      title: `Permissão granular ${permKey} ${exists ? 'removida' : 'concedida'} e sincronizada no Supabase.`,
+    });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -699,11 +765,21 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
           { label: t('nav.users'), to: baseRoute },
           { label: user.name },
         ]}
-        title={`${user.name} — Inspetor de Matriz Efetiva HBAC`}
-        subtitle={`${user.email} • Telefone: ${user.phone} • Criado em: ${formatDateTime(user.createdAt, session.language)}`}
+        title={`${user.name} — Inspetor de Matriz Efetiva HBAC & Segurança Supabase`}
+        subtitle={`${user.email} • Telefone: ${user.phone} • Base Única: public.profiles • Criado em: ${formatDateTime(user.createdAt, session.language)}`}
         scopeBadge={`Papel Principal: ${userRoles[0]?.name[session.language] || 'Sem Papel'}`}
         actions={
           <>
+            {hasPermission('users', 'edit', targetCompanyId) && (
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setPasswordModalOpen(true)}
+              >
+                <KeyRound size={14} />
+                Redefinir Senha (Supabase)
+              </button>
+            )}
             {hasPermission('roles', 'administer', targetCompanyId) && (
               <button
                 type="button"
@@ -886,6 +962,132 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
           </table>
         </div>
       </div>
+
+      {/* Matriz de Permissões Granulares nos 16 Módulos Comerciais Olivelas */}
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h2 style={{ fontSize: '1.05rem' }} className="flex items-center gap-2">
+              <Database size={16} />
+              Permissões Granulares HBAC por Módulo Comercial Olivelas (16 Schemas PostgreSQL)
+            </h2>
+            <p className="text-xs text-muted">
+              Controle granular de ações CRUD, exportação e administração em cada uma das 16 plataformas Olivelas sincronizado em <code>public.profiles.granular_permissions</code>.
+            </p>
+          </div>
+          <span className="badge badge-teal">16 Módulos Integrados</span>
+        </div>
+
+        <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Plataforma Olivelas / Schema SQL</th>
+                {ALL_ACTIONS.map((act) => (
+                  <th key={act}>{ACTION_LABELS[act][session.language]}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {OLIVELAS_ECOSYSTEM_MODULES.map((mod) => {
+                const baseCell = effectiveMatrix.find((c) => c.resource === 'modules');
+                return (
+                  <tr key={mod.id}>
+                    <td>
+                      <strong>{mod.brandName}</strong>
+                      <div className="text-xs text-muted mono">
+                        {mod.dbSchema} • {mod.slug}
+                      </div>
+                    </td>
+                    {ALL_ACTIONS.map((act) => {
+                      const permKey = `${mod.slug}:${act}`;
+                      const hasExplicitGranular = (user.granularPermissions || []).includes(permKey);
+                      const inheritedCell = effectiveMatrix.find(
+                        (c) => c.resource === 'modules' && c.action === act,
+                      );
+                      const effectiveAllowed = hasExplicitGranular || Boolean(inheritedCell?.allowed);
+                      return (
+                        <td key={act}>
+                          <button
+                            type="button"
+                            onClick={() => handleToggleModuleGranularPerm(mod.slug, act)}
+                            className={`btn btn-sm ${
+                              hasExplicitGranular
+                                ? 'btn-primary'
+                                : effectiveAllowed
+                                ? 'btn-secondary'
+                                : 'btn-ghost'
+                            }`}
+                            title={
+                              hasExplicitGranular
+                                ? 'Concessão granular explícita neste módulo (clique para alternar)'
+                                : baseCell?.originLabel || 'Clique para conceder permissão granular neste módulo'
+                            }
+                          >
+                            {hasExplicitGranular
+                              ? 'Granular Ativo'
+                              : effectiveAllowed
+                              ? 'Herdado'
+                              : 'Restrito'}
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Modal de Redefinição de Senha no Supabase (public.profiles) */}
+      <ModalDialog
+        open={passwordModalOpen}
+        onClose={() => setPasswordModalOpen(false)}
+        title={`Redefinir Senha no Supabase — ${user.name}`}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setPasswordModalOpen(false)}
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="submit"
+              form="reset-supabase-pwd-form"
+              disabled={savingPassword}
+              className="btn btn-primary"
+            >
+              <Lock size={14} />
+              {savingPassword ? 'Gravando Hash Bcrypt...' : 'Atualizar Senha em public.profiles'}
+            </button>
+          </>
+        }
+      >
+        <form id="reset-supabase-pwd-form" onSubmit={handleResetPassword} className="flex flex-col gap-3">
+          {passwordError && <p className="error">{passwordError}</p>}
+          <p className="text-xs text-muted">
+            A nova senha será criptografada via <code>pgcrypto</code> (bcrypt) na tabela única{' '}
+            <code>public.profiles</code> e valerá imediatamente para o All In e todos os 16 módulos Olivelas.
+          </p>
+          <div className="field">
+            <label htmlFor="new-supabase-pwd">Nova Senha Corporativa *</label>
+            <input
+              id="new-supabase-pwd"
+              type="password"
+              required
+              minLength={8}
+              className="input"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Mínimo 8 caracteres (Ex.: Olivelas@2026)"
+            />
+          </div>
+        </form>
+      </ModalDialog>
 
       <ModalDialog
         open={overrideModalOpen}

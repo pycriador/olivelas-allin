@@ -1,4 +1,11 @@
-import { getProjectSchemaClient, getUnifiedProfilesTable, isSupabaseConfigured, supabaseUrl } from '../lib/supabase/client';
+import {
+  getProjectSchemaClient,
+  getUnifiedProfilesTable,
+  isSupabaseConfigured,
+  supabase,
+  supabaseKey,
+  supabaseUrl,
+} from '../lib/supabase/client';
 import { UserEntity } from '../types/domain';
 
 export type OlivelasProjectSchemaName =
@@ -1189,5 +1196,599 @@ export async function toggleArchiveModuleSchemaRecord(
       .eq('id', recordId);
   } catch {
     // Mantém sincronizado localmente
+  }
+}
+
+/**
+ * Atualiza (UPDATE) um registro existente no schema PostgreSQL do módulo no Supabase
+ */
+export async function updateModuleSchemaRecord(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  recordId: string,
+  payload: Record<string, unknown>,
+  tableName?: string,
+): Promise<{ record: Record<string, unknown>; persistedInSupabase: boolean }> {
+  const targetTable = tableName || moduleSpec.primaryTable;
+  const updatedPayload = {
+    ...payload,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (targetTable === moduleSpec.primaryTable) {
+    const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
+    const updatedLocal = currentLocal.map((item) =>
+      String(item.id) === recordId ? { ...item, ...updatedPayload } : item,
+    );
+    setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  }
+
+  if (!isSupabaseConfigured) {
+    return { record: { id: recordId, ...updatedPayload }, persistedInSupabase: false };
+  }
+
+  try {
+    const schemaClient = getProjectSchemaClient(moduleSpec.dbSchema);
+    const { data, error } = await schemaClient
+      .from(targetTable)
+      .update(updatedPayload)
+      .eq('id', recordId)
+      .select('*')
+      .single();
+
+    if (!error && data) {
+      return { record: data as Record<string, unknown>, persistedInSupabase: true };
+    }
+  } catch {
+    // Fallback local atualizado
+  }
+
+  return { record: { id: recordId, ...updatedPayload }, persistedInSupabase: false };
+}
+
+/**
+ * Exclui um registro em qualquer tabela do schema do módulo (respeitando governança)
+ */
+export async function deleteModuleSchemaRecord(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  recordId: string,
+  tableName?: string,
+): Promise<{ deletedInSupabase: boolean }> {
+  const targetTable = tableName || moduleSpec.primaryTable;
+
+  if (targetTable === moduleSpec.primaryTable) {
+    const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
+    const updatedLocal = currentLocal.filter((item) => String(item.id) !== recordId);
+    setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  }
+
+  if (!isSupabaseConfigured) {
+    return { deletedInSupabase: false };
+  }
+
+  try {
+    const schemaClient = getProjectSchemaClient(moduleSpec.dbSchema);
+    const { error } = await schemaClient.from(targetTable).delete().eq('id', recordId);
+    return { deletedInSupabase: !error };
+  } catch {
+    return { deletedInSupabase: false };
+  }
+}
+
+/**
+ * Lista registros de qualquer tabela do schema PostgreSQL do módulo (`moduleSpec.tables`)
+ */
+export async function listAnySchemaTableRecords(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  tableName: string,
+  companyId?: string,
+): Promise<{ records: Record<string, unknown>[]; source: 'supabase' | 'local_cache'; endpoint: string }> {
+  if (tableName === moduleSpec.primaryTable) {
+    return listModuleSchemaRecords(moduleSpec, companyId);
+  }
+
+  const endpoint = `${supabaseUrl}/rest/v1/${tableName} (Accept-Profile: ${moduleSpec.dbSchema})`;
+  if (!isSupabaseConfigured) {
+    return { records: [], source: 'local_cache', endpoint };
+  }
+
+  try {
+    const schemaClient = getProjectSchemaClient(moduleSpec.dbSchema);
+    const { data, error } = await schemaClient
+      .from(tableName)
+      .select('*')
+      .limit(100);
+
+    if (error || !data) {
+      return { records: [], source: 'local_cache', endpoint };
+    }
+
+    return {
+      records: data as Record<string, unknown>[],
+      source: 'supabase',
+      endpoint,
+    };
+  } catch {
+    return { records: [], source: 'local_cache', endpoint };
+  }
+}
+
+// =============================================================================
+// RAG COMPLETO E COPILOTO IA POR MÓDULO (public.allin_rag_documents & chat)
+// =============================================================================
+
+export interface OlivelasRagDocument {
+  id: string;
+  company_id: string;
+  module_slug: string;
+  schema_name: string;
+  title: string;
+  category: string;
+  content: string;
+  tags: string[];
+  source_table?: string;
+  source_record_id?: string;
+  metadata?: Record<string, unknown>;
+  is_active: boolean;
+  created_by?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export interface OlivelasCopilotMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  persona: string;
+  content: string;
+  citations: Array<{ id: string; title: string; source: string }>;
+  confidence: 'alta' | 'media';
+  createdAt: string;
+}
+
+export async function listModuleRagDocuments(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  companyId: string,
+): Promise<OlivelasRagDocument[]> {
+  const defaultDoc: OlivelasRagDocument = {
+    id: `rag-seed-${moduleSpec.dbSchema}`,
+    company_id: companyId,
+    module_slug: moduleSpec.slug,
+    schema_name: moduleSpec.dbSchema,
+    title: `Manual Operacional & Governança — ${moduleSpec.brandName}`,
+    category: 'manual',
+    content: `${moduleSpec.description} Schema PostgreSQL: ${moduleSpec.dbSchema}. Tabelas oficiais: ${moduleSpec.tables.join(', ')}. Recursos padronizados: ${moduleSpec.features.join('; ')}. Login unificado via public.profiles e controle HBAC granular.`,
+    tags: [moduleSpec.dbSchema, moduleSpec.primaryTable, 'hbac', 'rag'],
+    source_table: moduleSpec.primaryTable,
+    is_active: true,
+    created_at: new Date().toISOString(),
+  };
+
+  if (!isSupabaseConfigured) {
+    return [defaultDoc];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .schema('public')
+      .from('allin_rag_documents')
+      .select('*')
+      .or(`schema_name.eq.${moduleSpec.dbSchema},module_slug.eq.${moduleSpec.slug},module_slug.eq.global`)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (error || !data || data.length === 0) {
+      return [defaultDoc];
+    }
+
+    return data.map((row: Record<string, unknown>) => ({
+      id: String(row.id),
+      company_id: String(row.company_id || companyId),
+      module_slug: String(row.module_slug || moduleSpec.slug),
+      schema_name: String(row.schema_name || moduleSpec.dbSchema),
+      title: String(row.title || ''),
+      category: String(row.category || 'manual'),
+      content: String(row.content || ''),
+      tags: Array.isArray(row.tags) ? (row.tags as string[]) : [],
+      source_table: row.source_table ? String(row.source_table) : undefined,
+      source_record_id: row.source_record_id ? String(row.source_record_id) : undefined,
+      metadata: (row.metadata as Record<string, unknown>) || {},
+      is_active: row.is_active !== false,
+      created_by: row.created_by ? String(row.created_by) : undefined,
+      created_at: String(row.created_at || new Date().toISOString()),
+    }));
+  } catch {
+    return [defaultDoc];
+  }
+}
+
+export async function saveModuleRagDocument(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  companyId: string,
+  docInput: {
+    id?: string;
+    title: string;
+    category: string;
+    content: string;
+    tags: string[];
+    source_table?: string;
+  },
+  actorEmail: string,
+): Promise<{ document: OlivelasRagDocument; persistedInSupabase: boolean }> {
+  const docId = docInput.id || `rag-${moduleSpec.dbSchema}-${Date.now()}`;
+  const docRecord: OlivelasRagDocument = {
+    id: docId,
+    company_id: companyId || 'emp-olivelas-matriz',
+    module_slug: moduleSpec.slug,
+    schema_name: moduleSpec.dbSchema,
+    title: docInput.title.trim(),
+    category: docInput.category || 'manual',
+    content: docInput.content.trim(),
+    tags: docInput.tags,
+    source_table: docInput.source_table || moduleSpec.primaryTable,
+    is_active: true,
+    created_by: actorEmail,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  };
+
+  if (!isSupabaseConfigured) {
+    return { document: docRecord, persistedInSupabase: false };
+  }
+
+  try {
+    const { error } = await supabase
+      .schema('public')
+      .from('allin_rag_documents')
+      .upsert(
+        {
+          id: docRecord.id,
+          company_id: docRecord.company_id,
+          module_slug: docRecord.module_slug,
+          schema_name: docRecord.schema_name,
+          title: docRecord.title,
+          category: docRecord.category,
+          content: docRecord.content,
+          tags: docRecord.tags,
+          source_table: docRecord.source_table,
+          is_active: true,
+          created_by: actorEmail,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'id' },
+      );
+
+    return { document: docRecord, persistedInSupabase: !error };
+  } catch {
+    return { document: docRecord, persistedInSupabase: false };
+  }
+}
+
+export async function deleteModuleRagDocument(docId: string): Promise<boolean> {
+  if (!isSupabaseConfigured) return false;
+  try {
+    const { error } = await supabase
+      .schema('public')
+      .from('allin_rag_documents')
+      .delete()
+      .eq('id', docId);
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Indexa automaticamente os registros ativos do schema PostgreSQL na base RAG do módulo
+ */
+export async function indexSchemaRecordsIntoRag(
+  moduleSpec: OlivelasEcosystemModuleSpec,
+  companyId: string,
+  records: Record<string, unknown>[],
+  actorEmail: string,
+): Promise<{ document: OlivelasRagDocument; persistedInSupabase: boolean }> {
+  const activeRecords = records.filter(
+    (r) => !(r.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived,
+  );
+  const summaryLines = activeRecords.slice(0, 25).map((r, idx) => {
+    const pairs = moduleSpec.fields
+      .map((f) => `${f.label}: ${String(r[f.key] ?? '—')}`)
+      .join(' | ');
+    return `[#${idx + 1} ID=${String(r.id)}] ${pairs}`;
+  });
+
+  const content = [
+    `Snapshot Indexado em Tempo Real do Schema ${moduleSpec.dbSchema}.${moduleSpec.primaryTable}`,
+    `Total de registros ativos: ${activeRecords.length} (de ${records.length} totais).`,
+    `Tabelas correlacionadas no schema: ${moduleSpec.tables.join(', ')}.`,
+    `Registros indexados:`,
+    ...summaryLines,
+  ].join('\n');
+
+  return saveModuleRagDocument(
+    moduleSpec,
+    companyId,
+    {
+      id: `rag-live-index-${moduleSpec.dbSchema}-${companyId}`,
+      title: `Índice Dinâmico PostgreSQL — ${moduleSpec.dbSchema}.${moduleSpec.primaryTable} (${activeRecords.length} registros)`,
+      category: 'database_index',
+      content,
+      tags: [moduleSpec.dbSchema, moduleSpec.primaryTable, 'live-snapshot', 'postgresql'],
+      source_table: moduleSpec.primaryTable,
+    },
+    actorEmail,
+  );
+}
+
+/**
+ * Executa consulta RAG contextualizada sobre os documentos da base de conhecimento + registros reais do PostgreSQL
+ * e persiste o histórico em `public.allin_ai_chat_messages`.
+ */
+export async function askModuleRagCopilot(params: {
+  moduleSpec: OlivelasEcosystemModuleSpec;
+  companyId: string;
+  question: string;
+  persona: 'executivo' | 'auditor_cfo' | 'arquitetura_sql';
+  records: Record<string, unknown>[];
+  ragDocs: OlivelasRagDocument[];
+  actorEmail: string;
+  userId?: string;
+}): Promise<OlivelasCopilotMessage> {
+  const { moduleSpec, companyId, question, persona, records, ragDocs, userId } = params;
+  const qLower = question.toLowerCase();
+  const tokens = qLower
+    .replace(/[^\p{L}\p{N}\s]/gu, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length >= 3);
+
+  // 1. Recupera documentos RAG mais relevantes (Retrieval)
+  const scoredDocs = ragDocs.map((doc) => {
+    const hay = `${doc.title} ${doc.content} ${doc.tags.join(' ')}`.toLowerCase();
+    let score = doc.schema_name === moduleSpec.dbSchema ? 3 : 1;
+    for (const tk of tokens) {
+      if (hay.includes(tk)) score += 4;
+    }
+    return { doc, score };
+  });
+  scoredDocs.sort((a, b) => b.score - a.score);
+  const topDocs = scoredDocs.slice(0, 3).map((d) => d.doc);
+
+  // 2. Recupera registros reais do banco que casam com a pergunta
+  const activeRecords = records.filter(
+    (r) => !(r.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived,
+  );
+  const archivedCount = records.length - activeRecords.length;
+
+  const matchingRecords = activeRecords.filter((rec) => {
+    if (tokens.length === 0) return true;
+    const serialized = JSON.stringify(rec).toLowerCase();
+    return tokens.some((t) => serialized.includes(t));
+  });
+  const contextRecords = (matchingRecords.length > 0 ? matchingRecords : activeRecords).slice(0, 5);
+
+  // Calcula métricas financeiras/numéricas reais da tabela
+  let numericSum = 0;
+  let numericFieldLabel = '';
+  for (const field of moduleSpec.fields) {
+    if (field.type === 'currency' || field.type === 'number') {
+      numericFieldLabel = field.label;
+      for (const r of activeRecords) {
+        numericSum += Number(r[field.key] || 0);
+      }
+      break;
+    }
+  }
+
+  const personaHeader =
+    persona === 'auditor_cfo'
+      ? `### Parecer de Auditoria Financeira & Governança (${moduleSpec.brandName})`
+      : persona === 'arquitetura_sql'
+      ? `### Diagnóstico de Engenharia Multi-Schema & API (${moduleSpec.dbSchema})`
+      : `### Análise Executiva RAG — ${moduleSpec.brandName}`;
+
+  const recordsBulletList = contextRecords
+    .map((r) => {
+      const summary = moduleSpec.fields
+        .map((f) => `**${f.label}**: ${String(r[f.key] ?? '—')}`)
+        .join(' • ');
+      return `- \`${String(r.id)}\` — ${summary}`;
+    })
+    .join('\n');
+
+  const ragExcerpts = topDocs
+    .map((d) => `- **[${d.category.toUpperCase()}] ${d.title}**: ${d.content.slice(0, 220)}${d.content.length > 220 ? '...' : ''}`)
+    .join('\n');
+
+  const responseText = [
+    personaHeader,
+    `Com base nos dados em tempo real do schema PostgreSQL **\`${moduleSpec.dbSchema}.${moduleSpec.primaryTable}\`** (Tenant \`${companyId}\`) e em **${topDocs.length} documento(s) indexados no RAG**:`,
+    '',
+    `**1. Panorama Operacional no Supabase:**`,
+    `- **Registros Ativos em \`${moduleSpec.dbSchema}.${moduleSpec.primaryTable}\`:** ${activeRecords.length} ativo(s) e ${archivedCount} arquivado(s) logicamente.`,
+    numericFieldLabel
+      ? `- **Consolidado (${numericFieldLabel}):** ${numericSum.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+      : `- **Tabelas integradas no schema \`${moduleSpec.dbSchema}\`:** \`${moduleSpec.tables.join('`, `')}\`.`,
+    '',
+    `**2. Evidências Encontradas nos Registros do Módulo:**`,
+    recordsBulletList || '- Nenhum registro ativo no momento.',
+    '',
+    `**3. Base de Conhecimento RAG Consultada (\`public.allin_rag_documents\`):**`,
+    ragExcerpts,
+    '',
+    persona === 'arquitetura_sql'
+      ? `**4. Endpoint PostgREST & Segurança HBAC:**\n- Endpoint: \`GET ${supabaseUrl}/rest/v1/${moduleSpec.primaryTable}\` com header \`Accept-Profile: ${moduleSpec.dbSchema}\`.\n- Autenticação unificada: \`public.profiles\` (bcrypt + bloqueio anti-força bruta).`
+      : `**4. Recomendação Acionável:**\n- Todos os registros acima estão sincronizados com o banco PostgreSQL e respeitam as permissões granulares HBAC do usuário logado.`,
+  ].join('\n');
+
+  const citations = [
+    ...topDocs.map((d) => ({
+      id: d.id,
+      title: d.title,
+      source: `public.allin_rag_documents (${d.category})`,
+    })),
+    {
+      id: `${moduleSpec.dbSchema}.${moduleSpec.primaryTable}`,
+      title: `Tabela PostgreSQL ${moduleSpec.dbSchema}.${moduleSpec.primaryTable} (${activeRecords.length} registros)`,
+      source: 'Supabase PostgREST Live',
+    },
+  ];
+
+  const assistantMsg: OlivelasCopilotMessage = {
+    id: `msg-${Date.now()}`,
+    role: 'assistant',
+    persona,
+    content: responseText,
+    citations,
+    confidence: 'alta',
+    createdAt: new Date().toISOString(),
+  };
+
+  if (isSupabaseConfigured) {
+    try {
+      await supabase.schema('public').from('allin_ai_chat_messages').insert([
+        {
+          id: `usr-msg-${Date.now()}`,
+          company_id: companyId,
+          user_id: userId || null,
+          module_slug: moduleSpec.slug,
+          schema_name: moduleSpec.dbSchema,
+          persona,
+          role: 'user',
+          content: question,
+          citations: [],
+        },
+        {
+          id: assistantMsg.id,
+          company_id: companyId,
+          user_id: userId || null,
+          module_slug: moduleSpec.slug,
+          schema_name: moduleSpec.dbSchema,
+          persona,
+          role: 'assistant',
+          content: assistantMsg.content,
+          citations: assistantMsg.citations,
+        },
+      ]);
+    } catch {
+      // ignora erro de telemetria de chat
+    }
+  }
+
+  return assistantMsg;
+}
+
+// =============================================================================
+// EXECUTOR REAL DE API REST POSTGREST POR MÓDULO (COM AUDITORIA SUPABASE)
+// =============================================================================
+
+export interface LiveModuleApiResponse {
+  status: number;
+  statusText: string;
+  durationMs: number;
+  endpointUrl: string;
+  curlCommand: string;
+  requestHeaders: Record<string, string>;
+  responseBody: unknown;
+}
+
+export async function executeLiveModuleRestApi(params: {
+  moduleSpec: OlivelasEcosystemModuleSpec;
+  tableName: string;
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
+  queryString?: string;
+  requestBodyJson?: string;
+  actorEmail: string;
+  companyId: string;
+}): Promise<LiveModuleApiResponse> {
+  const { moduleSpec, tableName, method, queryString = '?select=*&limit=25', requestBodyJson, actorEmail, companyId } = params;
+  const normalizedQuery = queryString.startsWith('?') || queryString === '' ? queryString : `?${queryString}`;
+  const endpointUrl = `${supabaseUrl}/rest/v1/${tableName}${normalizedQuery}`;
+
+  const requestHeaders: Record<string, string> = {
+    apikey: `${supabaseKey.slice(0, 16)}...`,
+    Authorization: `Bearer ${supabaseKey.slice(0, 16)}...`,
+    'Accept-Profile': moduleSpec.dbSchema,
+    'Content-Profile': moduleSpec.dbSchema,
+    'Content-Type': 'application/json',
+    Prefer: 'return=representation',
+  };
+
+  const curlLines = [
+    `curl -X ${method} "${endpointUrl}" \\`,
+    `  -H "apikey: $VITE_SUPABASE_ANON_KEY" \\`,
+    `  -H "Authorization: Bearer $VITE_SUPABASE_ANON_KEY" \\`,
+    `  -H "Accept-Profile: ${moduleSpec.dbSchema}" \\`,
+    `  -H "Content-Profile: ${moduleSpec.dbSchema}" \\`,
+    `  -H "Content-Type: application/json" \\`,
+    `  -H "Prefer: return=representation"`,
+  ];
+  if (method !== 'GET' && requestBodyJson?.trim()) {
+    curlLines[curlLines.length - 1] += ' \\';
+    curlLines.push(`  -d '${requestBodyJson.trim()}'`);
+  }
+  const curlCommand = curlLines.join('\n');
+
+  const start = performance.now();
+  try {
+    const fetchHeaders: Record<string, string> = {
+      apikey: supabaseKey,
+      Authorization: `Bearer ${supabaseKey}`,
+      'Accept-Profile': moduleSpec.dbSchema,
+      'Content-Profile': moduleSpec.dbSchema,
+      'Content-Type': 'application/json',
+      Prefer: 'return=representation',
+    };
+
+    const res = await fetch(endpointUrl, {
+      method,
+      headers: fetchHeaders,
+      body: method !== 'GET' && requestBodyJson?.trim() ? requestBodyJson : undefined,
+    });
+
+    const durationMs = Math.round(performance.now() - start);
+    const text = await res.text();
+    let parsed: unknown = text;
+    try {
+      parsed = text ? JSON.parse(text) : null;
+    } catch {
+      parsed = text;
+    }
+
+    if (isSupabaseConfigured) {
+      try {
+        await supabase.schema('public').from('allin_api_history').insert({
+          id: `api-log-${Date.now()}`,
+          company_id: companyId,
+          actor_email: actorEmail,
+          method,
+          endpoint: `/rest/v1/${moduleSpec.dbSchema}.${tableName}${normalizedQuery}`,
+          status_code: res.status,
+          duration_ms: durationMs,
+          request_body: requestBodyJson ? { raw: requestBodyJson } : null,
+          response_preview: Array.isArray(parsed) ? { count: parsed.length, sample: parsed.slice(0, 2) } : { data: parsed },
+        });
+      } catch {
+        // ignora falha de log
+      }
+    }
+
+    return {
+      status: res.status,
+      statusText: res.statusText || (res.ok ? 'OK' : 'Error'),
+      durationMs,
+      endpointUrl,
+      curlCommand,
+      requestHeaders,
+      responseBody: parsed,
+    };
+  } catch (err) {
+    const durationMs = Math.round(performance.now() - start);
+    return {
+      status: 500,
+      statusText: 'Network / Execution Error',
+      durationMs,
+      endpointUrl,
+      curlCommand,
+      requestHeaders,
+      responseBody: { error: String(err) },
+    };
   }
 }

@@ -125,14 +125,18 @@ export function canAccessCompany(
 export function evaluateEffectivePermission(
   user: UserEntity | null,
   allRoles: RoleEntity[],
-  resource: PermissionResource,
+  resource: PermissionResource | string,
   action: PermissionAction,
   targetCompanyId?: string,
   language: LanguageCode = 'pt-BR',
 ): EffectivePermissionCell {
+  const normalizedResource = (ALL_RESOURCES.includes(resource as PermissionResource)
+    ? resource
+    : 'modules') as PermissionResource;
+
   if (!user || user.status !== 'active' || user.archiveMetadata.isArchived) {
     return {
-      resource,
+      resource: normalizedResource,
       action,
       allowed: false,
       scope: 'resource',
@@ -141,17 +145,35 @@ export function evaluateEffectivePermission(
     };
   }
 
+  // 0. Check explicit granular permissions (e.g. "allin_gestao_estoque:create" or "*:administer")
+  const granularList = user.granularPermissions || [];
+  if (
+    granularList.includes(`${resource}:${action}`) ||
+    granularList.includes(`${resource}:administer`) ||
+    granularList.includes(`*:${action}`) ||
+    granularList.includes('*:administer')
+  ) {
+    return {
+      resource: normalizedResource,
+      action,
+      allowed: true,
+      scope: 'company',
+      originType: 'individual_allow',
+      originLabel: `Permissão granular explícita (${resource}:${action})`,
+    };
+  }
+
   // 1. Check explicit individual DENY override first (highest precedence for revocation)
   const individualDeny = (user.individualPermissions || []).find(
     (ovr) =>
       ovr.effect === 'deny' &&
-      ovr.resource === resource &&
+      ovr.resource === normalizedResource &&
       ovr.action === action &&
       (!ovr.companyId || !targetCompanyId || ovr.companyId === targetCompanyId),
   );
   if (individualDeny) {
     return {
-      resource,
+      resource: normalizedResource,
       action,
       allowed: false,
       scope: individualDeny.scope,
@@ -164,13 +186,13 @@ export function evaluateEffectivePermission(
   const individualAllow = (user.individualPermissions || []).find(
     (ovr) =>
       ovr.effect === 'allow' &&
-      ovr.resource === resource &&
+      ovr.resource === normalizedResource &&
       ovr.action === action &&
       (!ovr.companyId || !targetCompanyId || ovr.companyId === targetCompanyId),
   );
   if (individualAllow) {
     return {
-      resource,
+      resource: normalizedResource,
       action,
       allowed: true,
       scope: individualAllow.scope,
@@ -188,7 +210,7 @@ export function evaluateEffectivePermission(
     }
 
     const directGrant = role.permissions.find(
-      (p) => p.resource === resource && (p.action === action || p.action === 'administer'),
+      (p) => p.resource === normalizedResource && (p.action === action || p.action === 'administer'),
     );
     if (directGrant) {
       // If role has company scope and a targetCompanyId is checked, verify user belongs to that company (unless Super Admin)
@@ -202,7 +224,7 @@ export function evaluateEffectivePermission(
       }
 
       return {
-        resource,
+        resource: normalizedResource,
         action,
         allowed: true,
         scope: directGrant.scope,
@@ -224,7 +246,7 @@ export function evaluateEffectivePermission(
     );
     for (const subRole of subordinateRoles) {
       const inheritedGrant = subRole.permissions.find(
-        (p) => p.resource === resource && p.action === action,
+        (p) => p.resource === normalizedResource && p.action === action,
       );
       if (inheritedGrant) {
         if (
@@ -236,7 +258,7 @@ export function evaluateEffectivePermission(
           continue;
         }
         return {
-          resource,
+          resource: normalizedResource,
           action,
           allowed: true,
           scope: inheritedGrant.scope,
@@ -248,7 +270,7 @@ export function evaluateEffectivePermission(
   }
 
   return {
-    resource,
+    resource: normalizedResource,
     action,
     allowed: false,
     scope: 'resource',
