@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
+  Activity,
   Archive,
   ArrowLeft,
   ArrowRight,
@@ -12,16 +13,21 @@ import {
   Database,
   Download,
   Edit3,
+  FolderKanban,
   KeyRound,
+  LayoutDashboard,
   Layers,
   Lock,
   Maximize2,
+  Minimize2,
   Play,
   Plus,
   RefreshCw,
   RotateCcw,
+  Save,
   Search,
   Send,
+  Settings,
   ShieldCheck,
   Sparkles,
   Terminal,
@@ -53,6 +59,13 @@ import {
   toggleArchiveModuleSchemaRecord,
   updateModuleSchemaRecord,
 } from '../../services/olivelasEcosystemService';
+import {
+  getDefaultPlatformSettings,
+  getTableCatalogMetadata,
+  loadModulePlatformSettings,
+  OlivelasPlatformSettings,
+  saveModulePlatformSettings,
+} from '../../services/olivelasPlatformMenusCatalog';
 import { PermissionAction } from '../../types/domain';
 import { OlivelasInteractiveModuleShowcase } from './OlivelasInteractiveModuleShowcase';
 
@@ -88,7 +101,13 @@ export const OlivelasEcosystemHub: React.FC = () => {
   const canAdminister = isDemoRoute || hasPermission(permScope, 'administer') || hasPermission('modules', 'administer');
 
   const [hubTab, setHubTab] = useState<'commercial' | 'examples'>('commercial');
-  const [moduleViewTab, setModuleViewTab] = useState<'interactive' | 'database' | 'rag' | 'api' | 'hbac'>('interactive');
+  const [moduleViewTab, setModuleViewTab] = useState<
+    'dashboard' | 'interactive' | 'workflow' | 'database' | 'rag' | 'api' | 'hbac' | 'settings'
+  >('dashboard');
+  const [isFullscreenPlatform, setIsFullscreenPlatform] = useState<boolean>(false);
+  const [settingsSubTab, setSettingsSubTab] = useState<'general' | 'rules' | 'integrations' | 'backup'>('general');
+  const [platformSettings, setPlatformSettings] = useState<OlivelasPlatformSettings | null>(null);
+  const [savingSettings, setSavingSettings] = useState<boolean>(false);
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [unifiedProfiles, setUnifiedProfiles] = useState<
@@ -184,14 +203,23 @@ export const OlivelasEcosystemHub: React.FC = () => {
     setLoadingRag(false);
   };
 
+  const activeTableMeta = useMemo(() => {
+    if (!selectedModule) return null;
+    return getTableCatalogMetadata(selectedModule, selectedTable || selectedModule.primaryTable);
+  }, [selectedModule, selectedTable]);
+
   useEffect(() => {
     if (selectedModule) {
       setSelectedTable(selectedModule.primaryTable);
       setApiTable(selectedModule.primaryTable);
       setApiResponse(null);
       setCopilotMessages([]);
+      setModuleViewTab('dashboard');
       loadSelectedModuleData(selectedModule, selectedModule.primaryTable);
       loadModuleRagData(selectedModule);
+      loadModulePlatformSettings(selectedModule, resolvedCompanyId).then((cfg) =>
+        setPlatformSettings(cfg),
+      );
 
       const initialForm: Record<string, string> = {};
       for (const field of selectedModule.fields) {
@@ -208,6 +236,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
   const handleSelectSchemaTable = async (tbl: string) => {
     if (!selectedModule) return;
     setSelectedTable(tbl);
+    setApiTable(tbl);
     await loadSelectedModuleData(selectedModule, tbl);
   };
 
@@ -246,20 +275,26 @@ export const OlivelasEcosystemHub: React.FC = () => {
       showToast('Seu perfil HBAC não possui permissão "create" neste módulo.', 'warning');
       return;
     }
-    await createModuleSchemaRecord(selectedModule, resolvedCompanyId, payload);
-    await loadSelectedModuleData(selectedModule);
+    await createModuleSchemaRecord(selectedModule, resolvedCompanyId, payload, selectedModule.primaryTable);
+    await loadSelectedModuleData(selectedModule, selectedTable || selectedModule.primaryTable);
     showToast(message, 'success');
   };
 
-  const openCreateModal = () => {
+  const openCreateModal = (tableOverride?: string) => {
     if (!selectedModule) return;
     if (!canCreate) {
       showToast('Permissão HBAC "create" necessária para criar registros.', 'warning');
       return;
     }
+    const targetTbl = tableOverride || selectedTable || selectedModule.primaryTable;
+    if (tableOverride && tableOverride !== selectedTable) {
+      setSelectedTable(tableOverride);
+      loadSelectedModuleData(selectedModule, tableOverride);
+    }
+    const meta = getTableCatalogMetadata(selectedModule, targetTbl);
     setEditingRecord(null);
     const initialForm: Record<string, string> = {};
-    for (const field of selectedModule.fields) {
+    for (const field of meta.fields) {
       if (field.type === 'select' && field.options?.[0]) {
         initialForm[field.key] = field.options[0].value;
       } else {
@@ -271,14 +306,14 @@ export const OlivelasEcosystemHub: React.FC = () => {
   };
 
   const openEditModal = (rec: Record<string, unknown>) => {
-    if (!selectedModule) return;
+    if (!selectedModule || !activeTableMeta) return;
     if (!canEdit) {
       showToast('Permissão HBAC "edit" necessária para editar registros.', 'warning');
       return;
     }
     setEditingRecord(rec);
     const editForm: Record<string, string> = {};
-    for (const field of selectedModule.fields) {
+    for (const field of activeTableMeta.fields) {
       editForm[field.key] = String(rec[field.key] ?? '');
     }
     setFormValues(editForm);
@@ -287,10 +322,11 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
   const handleSaveRecord = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedModule) return;
+    if (!selectedModule || !activeTableMeta) return;
+    const targetTbl = selectedTable || selectedModule.primaryTable;
 
     const payload: Record<string, unknown> = {};
-    for (const field of selectedModule.fields) {
+    for (const field of activeTableMeta.fields) {
       const raw = formValues[field.key] ?? '';
       if (field.type === 'number' || field.type === 'currency') {
         payload[field.key] = Number(raw || 0);
@@ -301,71 +337,121 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
     if (editingRecord) {
       const recId = String(editingRecord.id || '');
-      const result = await updateModuleSchemaRecord(selectedModule, recId, payload, selectedTable);
-      await loadSelectedModuleData(selectedModule, selectedTable);
+      const result = await updateModuleSchemaRecord(selectedModule, recId, payload, targetTbl);
+      await loadSelectedModuleData(selectedModule, targetTbl);
       setIsCreateOpen(false);
       setEditingRecord(null);
       showToast(
         result.persistedInSupabase
-          ? `Registro ${recId} atualizado no Supabase (${selectedModule.dbSchema}.${selectedTable})!`
-          : `Registro ${recId} atualizado com sucesso!`,
+          ? `Item ${recId} atualizado no Supabase (${selectedModule.dbSchema}.${targetTbl})!`
+          : `Item ${recId} atualizado em ${activeTableMeta.menuLabel}!`,
         'success',
       );
     } else {
-      const result = await createModuleSchemaRecord(selectedModule, resolvedCompanyId, payload);
-      await loadSelectedModuleData(selectedModule, selectedTable);
+      const result = await createModuleSchemaRecord(selectedModule, resolvedCompanyId, payload, targetTbl);
+      await loadSelectedModuleData(selectedModule, targetTbl);
       setIsCreateOpen(false);
       showToast(
         result.persistedInSupabase
-          ? `Registro gravado no Supabase (schema ${selectedModule.dbSchema}.${selectedModule.primaryTable})!`
-          : `Registro salvo no módulo ${selectedModule.brandName}!`,
+          ? `Novo item gravado no Supabase (${selectedModule.dbSchema}.${targetTbl})!`
+          : `Novo item adicionado em ${activeTableMeta.menuLabel}!`,
         'success',
       );
     }
   };
 
+  const handleQuickStatusUpdate = async (rec: Record<string, unknown>, newStatus: string) => {
+    if (!selectedModule || !canEdit) return;
+    const targetTbl = selectedTable || selectedModule.primaryTable;
+    const recId = String(rec.id || '');
+    const statusField =
+      activeTableMeta?.fields.find((f) => f.key === 'status' || f.key === 'kds_status' || f.key === 'risk_level')
+        ?.key || 'status';
+    await updateModuleSchemaRecord(selectedModule, recId, { [statusField]: newStatus }, targetTbl);
+    await loadSelectedModuleData(selectedModule, targetTbl);
+    showToast(`Status do item ${recId} atualizado para "${newStatus}" no Supabase!`, 'success');
+  };
+
+  const handleSavePlatformSettings = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedModule || !platformSettings) return;
+    setSavingSettings(true);
+    const res = await saveModulePlatformSettings(
+      selectedModule,
+      resolvedCompanyId,
+      platformSettings,
+      currentUser?.email || 'helena.vasconcelos@olivelasallin.com.br',
+    );
+    setPlatformSettings(res.settings);
+    setSavingSettings(false);
+    showToast(
+      res.persistedInSupabase
+        ? `Configurações da plataforma ${selectedModule.brandName} salvas no Supabase!`
+        : `Configurações da plataforma ${selectedModule.brandName} salvas com sucesso!`,
+      'success',
+    );
+  };
+
+  const handleResetPlatformSettings = async () => {
+    if (!selectedModule) return;
+    const defaults = getDefaultPlatformSettings(selectedModule);
+    const res = await saveModulePlatformSettings(
+      selectedModule,
+      resolvedCompanyId,
+      defaults,
+      currentUser?.email || 'helena.vasconcelos@olivelasallin.com.br',
+    );
+    setPlatformSettings(res.settings);
+    showToast('Configurações restauradas para o padrão de fábrica da plataforma.', 'info');
+  };
+
   const handleConfirmArchive = async () => {
     if (!selectedModule || !archiveTargetId || !archiveReason.trim()) return;
+    const targetTbl = selectedTable || selectedModule.primaryTable;
     await toggleArchiveModuleSchemaRecord(
       selectedModule,
       archiveTargetId,
       true,
       archiveReason.trim(),
       currentUser?.email || 'admin@olivelas.com.br',
+      targetTbl,
     );
     setArchiveTargetId(null);
     setArchiveReason('');
-    await loadSelectedModuleData(selectedModule, selectedTable);
-    showToast(`Registro arquivado logicamente em ${selectedModule.dbSchema}.${selectedModule.primaryTable}.`, 'info');
+    await loadSelectedModuleData(selectedModule, targetTbl);
+    showToast(`Item arquivado logicamente em ${selectedModule.dbSchema}.${targetTbl}.`, 'info');
   };
 
   const handleRestoreRecord = async (recordId: string) => {
     if (!selectedModule) return;
+    const targetTbl = selectedTable || selectedModule.primaryTable;
     await toggleArchiveModuleSchemaRecord(
       selectedModule,
       recordId,
       false,
       '',
       currentUser?.email || 'admin@olivelas.com.br',
+      targetTbl,
     );
-    await loadSelectedModuleData(selectedModule, selectedTable);
-    showToast(`Registro restaurado em ${selectedModule.dbSchema}.${selectedModule.primaryTable}.`, 'success');
+    await loadSelectedModuleData(selectedModule, targetTbl);
+    showToast(`Item restaurado em ${selectedModule.dbSchema}.${targetTbl}.`, 'success');
   };
 
   const handleDeleteRecord = async (recordId: string) => {
     if (!selectedModule || !canAdminister) return;
-    await deleteModuleSchemaRecord(selectedModule, recordId, selectedTable);
-    await loadSelectedModuleData(selectedModule, selectedTable);
-    showToast(`Registro ${recordId} removido de ${selectedModule.dbSchema}.${selectedTable}.`, 'info');
+    const targetTbl = selectedTable || selectedModule.primaryTable;
+    await deleteModuleSchemaRecord(selectedModule, recordId, targetTbl);
+    await loadSelectedModuleData(selectedModule, targetTbl);
+    showToast(`Item ${recordId} removido de ${selectedModule.dbSchema}.${targetTbl}.`, 'info');
   };
 
   const handleExportCsv = () => {
-    if (!selectedModule || filteredRecords.length === 0) return;
+    if (!selectedModule || !activeTableMeta || filteredRecords.length === 0) return;
     if (!canExport) {
       showToast('Permissão HBAC "export" necessária para exportar relatórios.', 'warning');
       return;
     }
-    const headers = selectedModule.fields.map((f) => f.key);
+    const headers = activeTableMeta.fields.map((f) => f.key);
     const csvLines = [
       ['id', ...headers, 'company_id'].join(','),
       ...filteredRecords.map((r) =>
@@ -506,257 +592,732 @@ export const OlivelasEcosystemHub: React.FC = () => {
   };
 
   // ===========================================================================
-  // VISÃO OPERACIONAL INDIVIDUAL DE UM DOS 16 MÓDULOS COMERCIAIS OLIVELAS
+  // PLATAFORMA COMPLETA DE UM DOS 16 MÓDULOS COMERCIAIS OLIVELAS
+  // (Menus Laterais Completos, Cadastros/Itens de Todas as Tabelas, Workbench,
+  //  Quadro Kanban, Copiloto IA RAG, API Studio, HBAC e Configurações Completas)
   // ===========================================================================
-  if (selectedModule) {
+  if (selectedModule && activeTableMeta) {
     const activeRecordsCount = records.filter(
       (r) => !(r.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived,
     ).length;
 
-    const isPrimaryTableSelected = !selectedTable || selectedTable === selectedModule.primaryTable;
-    const dynamicColumns =
-      !isPrimaryTableSelected && filteredRecords.length > 0
-        ? Object.keys(filteredRecords[0]).filter((k) => k !== 'id' && k !== 'archive_metadata').slice(0, 6)
-        : [];
+    const currentActiveTableCount = activeTableRecords.filter(
+      (r) => !(r.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived,
+    ).length;
+
+    // Cálculo dinâmico de métricas financeiras/numéricas reais da tabela principal
+    let primaryMetricSum = 0;
+    let primaryMetricLabel = 'Volume Operacional';
+    for (const f of selectedModule.fields) {
+      if (f.type === 'currency' || f.type === 'number') {
+        primaryMetricLabel = f.label;
+        for (const r of records) {
+          if (!(r.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived) {
+            primaryMetricSum += Number(r[f.key] || 0);
+          }
+        }
+        break;
+      }
+    }
+
+    const activeRatePercent =
+      records.length > 0 ? Math.round((activeRecordsCount / records.length) * 100) : 100;
 
     return (
       <div
-        className="space-y-5"
-        style={isDemoRoute ? { maxWidth: 1360, margin: '1.5rem auto', padding: '0 1.5rem' } : undefined}
+        className="space-y-4"
+        style={
+          isFullscreenPlatform
+            ? {
+                position: 'fixed',
+                inset: 0,
+                zIndex: 90,
+                background: 'var(--bg-app)',
+                overflowY: 'auto',
+                padding: '1.25rem',
+              }
+            : isDemoRoute
+              ? { maxWidth: 1440, margin: '1rem auto', padding: '0 1.25rem' }
+              : undefined
+        }
       >
-        {/* Barra Superior de Navegação Rápida entre as 16 Plataformas Olivelas */}
-        <div className="card p-3.5 flex items-center gap-2 overflow-x-auto">
-          <button
-            type="button"
-            onClick={() => navigate(buildHubBaseRoute())}
-            className="btn btn-secondary btn-sm shrink-0"
-          >
-            <ArrowLeft size={14} /> Catálogo (16)
-          </button>
-          <div style={{ width: 1, height: 22, background: 'var(--border-subtle)', flexShrink: 0 }} />
-          {OLIVELAS_ECOSYSTEM_MODULES.map((m) => {
-            const isCurrent = m.slug === selectedModule.slug;
-            return (
-              <Link
-                key={m.slug}
-                to={buildModuleRoute(m.slug)}
-                className={`btn btn-sm shrink-0 ${isCurrent ? 'btn-primary' : 'btn-ghost'}`}
-              >
-                {m.brandName.replace('Olivelas - ', '')}
-              </Link>
-            );
-          })}
-        </div>
+        {/* BARRA SUPERIOR DA PLATAFORMA (TOPBAR DEDICADA DO MÓDULO) */}
+        <div className="card p-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() =>
+                navigate(
+                  empresaId
+                    ? `/app/empresa/${resolvedCompanyId}/modulos`
+                    : '/app/global/modulos',
+                )
+              }
+              className="btn btn-secondary btn-sm"
+            >
+              <ArrowLeft size={14} /> Voltar aos Módulos
+            </button>
 
-        {/* Cabeçalho Moderno do Módulo (Padrão Visual gestao_estoque) */}
-        <div className="card p-6">
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="badge badge-teal">Módulo Comercial Oficial</span>
-                <span className="badge badge-info">{selectedModule.category}</span>
-                <span className="badge badge-success flex items-center gap-1 font-mono">
-                  <Database className="w-3.5 h-3.5" />
-                  {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
-                </span>
-                <span className="badge badge-neutral flex items-center gap-1">
-                  <KeyRound className="w-3.5 h-3.5" />
-                  SSO: public.profiles
-                </span>
+            <div className="flex items-center gap-2.5">
+              <div className="stat-icon-box" style={{ width: 38, height: 38 }}>
+                <Layers size={18} />
               </div>
-              <h1 className="text-2xl font-bold">{selectedModule.brandName}</h1>
-              <p className="text-sm text-muted max-w-3xl">{selectedModule.description}</p>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              {!isDemoRoute && (
-                <Link
-                  to={`/demo/${selectedModule.slug}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="btn btn-secondary btn-sm"
-                  title="Abrir esta interface em uma nova guia do navegador"
-                >
-                  <Maximize2 size={14} /> Abrir em Nova Guia
-                </Link>
-              )}
-              <button
-                type="button"
-                onClick={() => loadSelectedModuleData(selectedModule, selectedTable)}
-                className="btn btn-secondary btn-sm"
-              >
-                <RefreshCw className={`w-4 h-4 ${loadingRecords ? 'animate-spin' : ''}`} />
-                Sincronizar
-              </button>
-              {canExport && (
-                <>
-                  <button type="button" onClick={handleExportCsv} className="btn btn-secondary btn-sm">
-                    <Download className="w-4 h-4" />
-                    CSV
-                  </button>
-                  <button type="button" onClick={handleExportJson} className="btn btn-secondary btn-sm">
-                    <Code2 className="w-4 h-4" />
-                    JSON
-                  </button>
-                </>
-              )}
-              {canCreate && (
-                <button type="button" onClick={openCreateModal} className="btn btn-primary btn-sm">
-                  <Plus className="w-4 h-4" />
-                  Novo Registro
-                </button>
-              )}
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <strong className="text-base font-bold">
+                    {platformSettings?.platformDisplayName || selectedModule.brandName}
+                  </strong>
+                  <span className="badge badge-teal">{selectedModule.category}</span>
+                  <span className="badge badge-success font-mono">
+                    <Database size={11} /> {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
+                  </span>
+                </div>
+                <div className="text-xs text-muted">
+                  {selectedModule.tagline} • Tenant: <strong>{currentCompany?.tradeName || resolvedCompanyId}</strong>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* 5 Abas Completas do Módulo: Interface, CRUD Supabase, RAG & Copiloto IA, API REST, Permissões HBAC */}
-          <div className="flex flex-wrap items-center justify-between gap-4 mt-5 pt-4 border-t border-slate-200 dark:border-slate-700">
-            <div className="segmented-tabs">
+          <div className="flex flex-wrap items-center gap-2">
+            {/* Troca rápida entre as 16 Plataformas */}
+            <select
+              aria-label="Alternar plataforma Olivelas"
+              className="select text-xs"
+              style={{ width: 'auto', minWidth: 215 }}
+              value={selectedModule.slug}
+              onChange={(e) => navigate(buildModuleRoute(e.target.value))}
+            >
+              {OLIVELAS_ECOSYSTEM_MODULES.map((m) => (
+                <option key={m.slug} value={m.slug}>
+                  Plataforma: {m.brandName}
+                </option>
+              ))}
+            </select>
+
+            <button
+              type="button"
+              onClick={() => setIsFullscreenPlatform((prev) => !prev)}
+              className="btn btn-secondary btn-sm"
+              title="Alternar Modo Tela Cheia da Plataforma"
+            >
+              {isFullscreenPlatform ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              {isFullscreenPlatform ? 'Sair da Tela Cheia' : 'Modo Tela Cheia'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => loadSelectedModuleData(selectedModule, selectedTable)}
+              className="btn btn-secondary btn-sm"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${loadingRecords ? 'animate-spin' : ''}`} />
+              Sincronizar
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setModuleViewTab('settings')}
+              className={`btn btn-sm ${moduleViewTab === 'settings' ? 'btn-primary' : 'btn-secondary'}`}
+            >
+              <Settings size={14} /> Configurações
+            </button>
+
+            {canCreate && (
+              <button
+                type="button"
+                onClick={() => openCreateModal()}
+                className="btn btn-primary btn-sm"
+              >
+                <Plus size={14} /> Novo {activeTableMeta.singularLabel}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* SHELL PRINCIPAL DA PLATAFORMA: MENU LATERAL COMPLETO + ÁREA DE TRABALHO */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* MENU LATERAL DEDICADO DA PLATAFORMA (TODOS OS MENUS, ITENS E CONFIGURAÇÕES) */}
+          <aside className="lg:col-span-3 card p-4 space-y-5">
+            {/* Seção 1: Painel & Operação */}
+            <div className="space-y-1.5">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted px-2">
+                1. Painel & Operação
+              </div>
+              <button
+                type="button"
+                onClick={() => setModuleViewTab('dashboard')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'dashboard'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <LayoutDashboard size={15} /> Dashboard & Visão Geral
+                </span>
+                <span className="badge badge-neutral text-[10px]">KPIs</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setModuleViewTab('interactive')}
-                className={`segmented-tab ${moduleViewTab === 'interactive' ? 'active' : ''}`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'interactive'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               >
-                <Play size={14} /> Interface Operacional
+                <span className="flex items-center gap-2">
+                  <Play size={15} /> Operação Ao Vivo (Workbench)
+                </span>
+                <span className="badge badge-teal text-[10px]">Live</span>
               </button>
+
               <button
                 type="button"
-                onClick={() => setModuleViewTab('database')}
-                className={`segmented-tab ${moduleViewTab === 'database' ? 'active' : ''}`}
+                onClick={() => setModuleViewTab('workflow')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'workflow'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               >
-                <Database size={14} /> CRUD Multi-Tabela
-                <span className="badge badge-teal">{activeRecordsCount}</span>
+                <span className="flex items-center gap-2">
+                  <FolderKanban size={15} /> Quadro Kanban & Status
+                </span>
+                <span className="badge badge-info text-[10px]">{currentActiveTableCount}</span>
               </button>
+            </div>
+
+            {/* Seção 2: Cadastros & Itens do Sistema (Todas as Tabelas do Schema) */}
+            <div className="space-y-1.5 pt-3 border-t border-slate-200 dark:border-slate-700">
+              <div className="flex items-center justify-between px-2">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-muted">
+                  2. Cadastros & Itens ({selectedModule.tables.length})
+                </span>
+                <span className="font-mono text-[10px] text-teal-600">{selectedModule.dbSchema}</span>
+              </div>
+              {selectedModule.tables.map((tbl) => {
+                const tblMeta = getTableCatalogMetadata(selectedModule, tbl);
+                const isSelectedTbl =
+                  moduleViewTab === 'database' &&
+                  (selectedTable || selectedModule.primaryTable) === tbl;
+                return (
+                  <button
+                    key={tbl}
+                    type="button"
+                    onClick={() => {
+                      handleSelectSchemaTable(tbl);
+                      setModuleViewTab('database');
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all text-left ${
+                      isSelectedTbl
+                        ? 'bg-teal-600 text-white shadow-sm'
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2 truncate">
+                      <Database size={14} className="shrink-0" />
+                      <span className="truncate">{tblMeta.menuLabel}</span>
+                    </span>
+                    <code className="text-[10px] opacity-75 shrink-0">{tbl}</code>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Seção 3: Inteligência Artificial, API & Equipe */}
+            <div className="space-y-1.5 pt-3 border-t border-slate-200 dark:border-slate-700">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted px-2">
+                3. Inteligência, API & Equipe
+              </div>
               <button
                 type="button"
                 onClick={() => setModuleViewTab('rag')}
-                className={`segmented-tab ${moduleViewTab === 'rag' ? 'active' : ''}`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'rag'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               >
-                <Bot size={14} /> RAG & Copiloto IA
-                <span className="badge badge-info">{ragDocs.length}</span>
+                <span className="flex items-center gap-2">
+                  <Bot size={15} /> Copiloto IA & Base RAG
+                </span>
+                <span className="badge badge-info text-[10px]">{ragDocs.length}</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => setModuleViewTab('api')}
-                className={`segmented-tab ${moduleViewTab === 'api' ? 'active' : ''}`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'api'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               >
-                <Terminal size={14} /> API Studio REST
+                <span className="flex items-center gap-2">
+                  <Terminal size={15} /> Integrações & API Studio
+                </span>
+                <span className="badge badge-neutral text-[10px]">REST</span>
               </button>
+
               <button
                 type="button"
                 onClick={() => setModuleViewTab('hbac')}
-                className={`segmented-tab ${moduleViewTab === 'hbac' ? 'active' : ''}`}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'hbac'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
               >
-                <ShieldCheck size={14} /> HBAC & Schema ({selectedModule.tables.length})
+                <span className="flex items-center gap-2">
+                  <ShieldCheck size={15} /> Equipe & Permissões HBAC
+                </span>
+                <span className="badge badge-success text-[10px]">SSO</span>
               </button>
             </div>
 
-            <div className="text-xs text-muted flex items-center gap-3">
-              <span>
-                Schema: <code>{selectedModule.dbSchema}</code>
-              </span>
-              <span>
-                Tenant: <strong>{currentCompany?.tradeName || resolvedCompanyId}</strong>
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ABA 1: INTERFACE OPERACIONAL AO VIVO */}
-        {moduleViewTab === 'interactive' && (
-          <OlivelasInteractiveModuleShowcase
-            module={selectedModule}
-            records={filteredRecords}
-            onQuickPersist={handleQuickPersist}
-            onOpenNewModal={openCreateModal}
-          />
-        )}
-
-        {/* ABA 1 & 2: TABELA DE REGISTROS E CRUD MULTI-TABELA NO SUPABASE */}
-        {(moduleViewTab === 'database' || moduleViewTab === 'interactive') && (
-          <div className="space-y-4">
-            {/* Seletor de Tabelas do Schema PostgreSQL */}
-            <div className="card p-4 flex flex-wrap items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-2">
-                <Database size={16} className="text-teal-600" />
-                <span className="text-xs font-bold uppercase text-muted">Tabelas no Schema:</span>
-                {selectedModule.tables.map((tbl) => {
-                  const isActiveTbl = (selectedTable || selectedModule.primaryTable) === tbl;
-                  return (
-                    <button
-                      key={tbl}
-                      type="button"
-                      onClick={() => handleSelectSchemaTable(tbl)}
-                      className={`btn btn-sm font-mono ${isActiveTbl ? 'btn-primary' : 'btn-secondary'}`}
-                    >
-                      {selectedModule.dbSchema}.{tbl}
-                    </button>
-                  );
-                })}
+            {/* Seção 4: Configurações da Plataforma */}
+            <div className="space-y-1.5 pt-3 border-t border-slate-200 dark:border-slate-700">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted px-2">
+                4. Administração & Ajustes
               </div>
+              <button
+                type="button"
+                onClick={() => setModuleViewTab('settings')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'settings'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <Settings size={15} /> Configurações da Plataforma
+                </span>
+                <span className="badge badge-teal text-[10px]">Setup</span>
+              </button>
+            </div>
+          </aside>
 
-              <div className="flex flex-wrap items-center gap-3 flex-1 justify-end">
-                <div className="relative min-w-[240px]">
-                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
-                  <input
-                    type="text"
-                    value={recordSearch}
-                    onChange={(e) => setRecordSearch(e.target.value)}
-                    placeholder={`Filtrar em ${selectedModule.dbSchema}.${selectedTable || selectedModule.primaryTable}...`}
-                    className="input pl-9 w-full"
-                  />
+          {/* CONTEÚDO PRINCIPAL DO MENU SELECIONADO NA PLATAFORMA */}
+          <main className="lg:col-span-9 space-y-5">
+            {/* =============================================================== */}
+            {/* MENU 1: DASHBOARD EXECUTIVO & VISÃO GERAL DA PLATAFORMA         */}
+            {/* =============================================================== */}
+            {moduleViewTab === 'dashboard' && (
+              <div className="space-y-5">
+                {/* 4 KPIs Executivos em Tempo Real */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                  <div className="card p-4 space-y-1">
+                    <span className="text-xs text-muted">{selectedModule.kpis[0]?.label || 'Itens Ativos'}</span>
+                    <div className="text-2xl font-extrabold">{activeRecordsCount}</div>
+                    <span className="text-xs text-emerald-600 font-semibold">
+                      ✓ Sincronizado em {selectedModule.dbSchema}.{selectedModule.primaryTable}
+                    </span>
+                  </div>
+
+                  <div className="card p-4 space-y-1">
+                    <span className="text-xs text-muted">{primaryMetricLabel}</span>
+                    <div className="text-2xl font-extrabold text-teal-600">
+                      {selectedModule.fields.some((f) => f.type === 'currency')
+                        ? formatCurrency(primaryMetricSum, 'BRL', language)
+                        : primaryMetricSum.toLocaleString('pt-BR')}
+                    </div>
+                    <span className="text-xs text-muted">Consolidado em tempo real</span>
+                  </div>
+
+                  <div className="card p-4 space-y-1">
+                    <span className="text-xs text-muted">Taxa de Disponibilidade / SLA</span>
+                    <div className="text-2xl font-extrabold">{activeRatePercent}%</div>
+                    <span className="text-xs text-emerald-600 font-semibold">
+                      SLA Alvo: {platformSettings?.slaAlertThresholdMinutes || 30} min
+                    </span>
+                  </div>
+
+                  <div className="card p-4 space-y-1">
+                    <span className="text-xs text-muted">Módulos & Tabelas do Schema</span>
+                    <div className="text-2xl font-extrabold">{selectedModule.tables.length} Tabelas</div>
+                    <span className="text-xs text-muted">
+                      {ragDocs.length} doc(s) RAG • SSO Ativo
+                    </span>
+                  </div>
                 </div>
-                <label className="flex items-center gap-2 text-xs cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={showArchived}
-                    onChange={(e) => setShowArchived(e.target.checked)}
-                  />
-                  Exibir arquivados
-                </label>
-              </div>
-            </div>
 
-            <div className="card overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="data-table w-full">
-                  <thead>
-                    <tr>
-                      <th>ID Registro</th>
-                      {isPrimaryTableSelected
-                        ? selectedModule.fields.map((field) => <th key={field.key}>{field.label}</th>)
-                        : dynamicColumns.map((col) => <th key={col}>{col}</th>)}
-                      <th>Governança</th>
-                      <th className="text-right">Ações CRUD (HBAC)</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRecords.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan={(isPrimaryTableSelected ? selectedModule.fields.length : dynamicColumns.length) + 3}
-                          className="text-center py-8 opacity-70"
+                {/* Workbench Operacional Ao Vivo Integrado na Home da Plataforma */}
+                <OlivelasInteractiveModuleShowcase
+                  module={selectedModule}
+                  records={filteredRecords}
+                  onQuickPersist={handleQuickPersist}
+                  onOpenNewModal={() => openCreateModal()}
+                />
+
+                {/* Mapa de Todos os Cadastros / Menus de Itens da Plataforma */}
+                <div className="card p-5 space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-base font-bold flex items-center gap-2">
+                        <Layers size={18} className="text-teal-600" />
+                        Menus de Cadastros & Tabelas de {selectedModule.brandName}
+                      </h3>
+                      <p className="text-xs text-muted">
+                        Acesse qualquer cadastro abaixo para visualizar, criar, editar, filtrar ou exportar itens diretamente no banco PostgreSQL.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setModuleViewTab('settings')}
+                      className="btn btn-secondary btn-sm"
+                    >
+                      <Settings size={14} /> Configurar Parâmetros da Plataforma
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
+                    {selectedModule.tables.map((tbl) => {
+                      const meta = getTableCatalogMetadata(selectedModule, tbl);
+                      return (
+                        <div
+                          key={tbl}
+                          className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between gap-3 bg-slate-50/40 dark:bg-slate-800/30"
                         >
-                          Nenhum registro encontrado em{' '}
-                          <code>
-                            {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
-                          </code>
-                          .
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredRecords.map((rec) => {
-                        const idStr = String(rec.id || '');
-                        const archiveMeta = rec.archive_metadata as
-                          | { isArchived?: boolean; archiveReason?: string }
-                          | undefined;
-                        const isArchived = Boolean(archiveMeta?.isArchived);
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <strong className="text-sm">{meta.menuLabel}</strong>
+                              <span className="badge badge-info font-mono text-[10px]">
+                                {selectedModule.dbSchema}.{tbl}
+                              </span>
+                            </div>
+                            <p className="text-xs text-muted">{meta.description}</p>
+                          </div>
 
-                        return (
-                          <tr key={idStr} className={isArchived ? 'opacity-60' : ''}>
-                            <td className="font-mono text-xs">{idStr}</td>
-                            {isPrimaryTableSelected
-                              ? selectedModule.fields.map((field) => {
+                          <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                handleSelectSchemaTable(tbl);
+                                setModuleViewTab('database');
+                              }}
+                              className="btn btn-primary btn-sm flex-1 justify-center"
+                            >
+                              Abrir {meta.menuLabel}
+                            </button>
+                            {canCreate && (
+                              <button
+                                type="button"
+                                onClick={() => openCreateModal(tbl)}
+                                className="btn btn-secondary btn-sm"
+                                title={`Cadastrar novo ${meta.singularLabel}`}
+                              >
+                                <Plus size={13} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* =============================================================== */}
+            {/* MENU 2: OPERAÇÃO AO VIVO (WORKBENCH PRINCIPAL)                  */}
+            {/* =============================================================== */}
+            {moduleViewTab === 'interactive' && (
+              <OlivelasInteractiveModuleShowcase
+                module={selectedModule}
+                records={filteredRecords}
+                onQuickPersist={handleQuickPersist}
+                onOpenNewModal={() => openCreateModal()}
+              />
+            )}
+
+            {/* =============================================================== */}
+            {/* MENU 3: QUADRO KANBAN & FLUXO DE STATUS DOS ITENS               */}
+            {/* =============================================================== */}
+            {moduleViewTab === 'workflow' && (
+              <div className="card p-5 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <span className="badge badge-teal mb-1">Gestão Visual de Processos</span>
+                    <h3 className="text-base font-bold flex items-center gap-2">
+                      <FolderKanban size={18} className="text-teal-600" />
+                      Quadro Kanban — {activeTableMeta.menuLabel} (<code>{selectedModule.dbSchema}.{selectedTable}</code>)
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <select
+                      className="select text-xs"
+                      value={selectedTable || selectedModule.primaryTable}
+                      onChange={(e) => handleSelectSchemaTable(e.target.value)}
+                    >
+                      {selectedModule.tables.map((t) => (
+                        <option key={t} value={t}>
+                          Tabela: {getTableCatalogMetadata(selectedModule, t).menuLabel} ({t})
+                        </option>
+                      ))}
+                    </select>
+                    {canCreate && (
+                      <button
+                        type="button"
+                        onClick={() => openCreateModal()}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <Plus size={14} /> Novo {activeTableMeta.singularLabel}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {[
+                    {
+                      stageKey: 'pending',
+                      title: '1. Pendente / Em Triagem',
+                      badgeClass: 'badge-warning',
+                      matcher: (st: string) =>
+                        ['pending', 'open', 'waiting', 'draft', 'review', 'waiting_approval', 'curating'].includes(st),
+                    },
+                    {
+                      stageKey: 'in_progress',
+                      title: '2. Em Execução / Operação',
+                      badgeClass: 'badge-info',
+                      matcher: (st: string) =>
+                        ['in_progress', 'preparing', 'in_repair', 'dispatched', 'drawing', 'auditing', 'evaluation', 'in_route'].includes(st),
+                    },
+                    {
+                      stageKey: 'active',
+                      title: '3. Concluído / Ativo / Homologado',
+                      badgeClass: 'badge-success',
+                      matcher: (st: string) =>
+                        ![
+                          'pending',
+                          'open',
+                          'waiting',
+                          'draft',
+                          'review',
+                          'waiting_approval',
+                          'curating',
+                          'in_progress',
+                          'preparing',
+                          'in_repair',
+                          'dispatched',
+                          'drawing',
+                          'auditing',
+                          'evaluation',
+                          'in_route',
+                        ].includes(st),
+                    },
+                  ].map((col) => {
+                    const colItems = filteredRecords.filter((r) => {
+                      const rawStatus = String(
+                        r.status || r.kds_status || r.risk_level || 'active',
+                      ).toLowerCase();
+                      return col.matcher(rawStatus);
+                    });
+
+                    return (
+                      <div
+                        key={col.stageKey}
+                        className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 space-y-3"
+                      >
+                        <div className="flex items-center justify-between">
+                          <strong className="text-xs uppercase tracking-wider">{col.title}</strong>
+                          <span className={`badge ${col.badgeClass}`}>{colItems.length}</span>
+                        </div>
+
+                        <div className="space-y-2.5">
+                          {colItems.length === 0 ? (
+                            <div className="text-xs text-muted py-6 text-center border border-dashed border-slate-300 dark:border-slate-700 rounded-xl">
+                              Nenhum item neste estágio
+                            </div>
+                          ) : (
+                            colItems.map((rec) => {
+                              const recId = String(rec.id || '');
+                              const titleField = activeTableMeta.fields[0];
+                              const subtitleField = activeTableMeta.fields[1];
+                              return (
+                                <div
+                                  key={recId}
+                                  className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm space-y-2"
+                                >
+                                  <div className="flex items-start justify-between gap-2">
+                                    <strong className="text-xs">
+                                      {String(rec[titleField?.key || 'name'] || rec.title || rec.name || recId)}
+                                    </strong>
+                                    <code className="text-[10px] text-muted">{recId}</code>
+                                  </div>
+                                  {subtitleField && (
+                                    <div className="text-xs text-muted">
+                                      {subtitleField.label}:{' '}
+                                      <strong>{String(rec[subtitleField.key] ?? '—')}</strong>
+                                    </div>
+                                  )}
+                                  <div className="flex flex-wrap items-center justify-between gap-1 pt-2 border-t border-slate-100 dark:border-slate-800">
+                                    <div className="flex items-center gap-1">
+                                      {col.stageKey !== 'pending' && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleQuickStatusUpdate(rec, 'pending')}
+                                          className="btn btn-ghost btn-sm text-[10px]"
+                                        >
+                                          ← Triagem
+                                        </button>
+                                      )}
+                                      {col.stageKey !== 'in_progress' && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleQuickStatusUpdate(rec, 'in_progress')}
+                                          className="btn btn-secondary btn-sm text-[10px]"
+                                        >
+                                          Execução
+                                        </button>
+                                      )}
+                                      {col.stageKey !== 'active' && (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleQuickStatusUpdate(rec, 'active')}
+                                          className="btn btn-primary btn-sm text-[10px]"
+                                        >
+                                          ✓ Concluir
+                                        </button>
+                                      )}
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => openEditModal(rec)}
+                                      className="btn btn-ghost btn-sm text-[10px]"
+                                    >
+                                      <Edit3 size={11} />
+                                    </button>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* =============================================================== */}
+            {/* MENU 4: CADASTROS & ITENS (TABELA CRUD COMPLETA POR MENU)       */}
+            {/* =============================================================== */}
+            {(moduleViewTab === 'database' || moduleViewTab === 'interactive' || moduleViewTab === 'dashboard') && (
+              <div className="space-y-4">
+                <div className="card p-4 flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Database size={16} className="text-teal-600" />
+                      <h3 className="text-sm font-bold">
+                        {activeTableMeta.menuLabel} — <code>{selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}</code>
+                      </h3>
+                      <span className="badge badge-teal">{filteredRecords.length} itens</span>
+                    </div>
+                    <p className="text-xs text-muted mt-0.5">{activeTableMeta.description}</p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="relative min-w-[220px]">
+                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
+                      <input
+                        type="text"
+                        value={recordSearch}
+                        onChange={(e) => setRecordSearch(e.target.value)}
+                        placeholder={`Buscar em ${activeTableMeta.menuLabel}...`}
+                        className="input pl-9 w-full text-xs"
+                      />
+                    </div>
+                    <label className="flex items-center gap-1.5 text-xs cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={showArchived}
+                        onChange={(e) => setShowArchived(e.target.checked)}
+                      />
+                      Arquivados
+                    </label>
+                    {canExport && (
+                      <>
+                        <button type="button" onClick={handleExportCsv} className="btn btn-secondary btn-sm">
+                          <Download size={13} /> CSV
+                        </button>
+                        <button type="button" onClick={handleExportJson} className="btn btn-secondary btn-sm">
+                          <Code2 size={13} /> JSON
+                        </button>
+                      </>
+                    )}
+                    {canCreate && (
+                      <button
+                        type="button"
+                        onClick={() => openCreateModal()}
+                        className="btn btn-primary btn-sm"
+                      >
+                        <Plus size={13} /> Cadastrar {activeTableMeta.singularLabel}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Abas Rápidas de Todas as Tabelas do Módulo */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {selectedModule.tables.map((tbl) => {
+                    const meta = getTableCatalogMetadata(selectedModule, tbl);
+                    const isActiveTbl = (selectedTable || selectedModule.primaryTable) === tbl;
+                    return (
+                      <button
+                        key={tbl}
+                        type="button"
+                        onClick={() => handleSelectSchemaTable(tbl)}
+                        className={`btn btn-sm ${isActiveTbl ? 'btn-primary' : 'btn-secondary'}`}
+                      >
+                        {meta.menuLabel}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className="card overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="data-table w-full">
+                      <thead>
+                        <tr>
+                          <th>ID</th>
+                          {activeTableMeta.fields.map((field) => (
+                            <th key={field.key}>{field.label}</th>
+                          ))}
+                          <th>Status / Governança</th>
+                          <th className="text-right">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredRecords.length === 0 ? (
+                          <tr>
+                            <td
+                              colSpan={activeTableMeta.fields.length + 3}
+                              className="text-center py-8 opacity-70"
+                            >
+                              Nenhum item encontrado em{' '}
+                              <code>
+                                {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
+                              </code>
+                              .
+                            </td>
+                          </tr>
+                        ) : (
+                          filteredRecords.map((rec) => {
+                            const idStr = String(rec.id || '');
+                            const archiveMeta = rec.archive_metadata as
+                              | { isArchived?: boolean; archiveReason?: string }
+                              | undefined;
+                            const isArchived = Boolean(archiveMeta?.isArchived);
+
+                            return (
+                              <tr key={idStr} className={isArchived ? 'opacity-60' : ''}>
+                                <td className="font-mono text-xs">{idStr}</td>
+                                {activeTableMeta.fields.map((field) => {
                                   const val = rec[field.key];
                                   if (field.type === 'currency') {
                                     return (
@@ -766,78 +1327,428 @@ export const OlivelasEcosystemHub: React.FC = () => {
                                     );
                                   }
                                   return <td key={field.key}>{String(val ?? '—')}</td>;
-                                })
-                              : dynamicColumns.map((col) => (
-                                  <td key={col} className="text-xs">
-                                    {typeof rec[col] === 'object'
-                                      ? JSON.stringify(rec[col])
-                                      : String(rec[col] ?? '—')}
-                                  </td>
-                                ))}
-                            <td>
-                              {isArchived ? (
-                                <span className="badge badge-warning" title={archiveMeta?.archiveReason}>
-                                  Arquivado Logicamente
-                                </span>
-                              ) : (
-                                <span className="badge badge-success">Ativo no Supabase</span>
-                              )}
-                            </td>
-                            <td className="text-right">
-                              <div className="inline-flex items-center gap-1.5">
-                                {isPrimaryTableSelected && canEdit && (
-                                  <button
-                                    type="button"
-                                    onClick={() => openEditModal(rec)}
-                                    className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                    title="Editar registro no Supabase"
-                                  >
-                                    <Edit3 className="w-3.5 h-3.5" />
-                                    Editar
-                                  </button>
-                                )}
-                                {canArchive &&
-                                  (isArchived ? (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleRestoreRecord(idStr)}
-                                      className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                    >
-                                      <RotateCcw className="w-3.5 h-3.5" />
-                                      Restaurar
-                                    </button>
+                                })}
+                                <td>
+                                  {isArchived ? (
+                                    <span className="badge badge-warning" title={archiveMeta?.archiveReason}>
+                                      Arquivado
+                                    </span>
                                   ) : (
-                                    <button
-                                      type="button"
-                                      onClick={() => setArchiveTargetId(idStr)}
-                                      className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                    >
-                                      <Archive className="w-3.5 h-3.5" />
-                                      Arquivar
-                                    </button>
-                                  ))}
-                                {canAdminister && (
-                                  <button
-                                    type="button"
-                                    onClick={() => handleDeleteRecord(idStr)}
-                                    className="btn btn-ghost btn-sm text-rose-600 inline-flex items-center gap-1"
-                                    title="Excluir registro (Permissão administer)"
-                                  >
-                                    <Trash2 className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                                    <span className="badge badge-success">Ativo no Supabase</span>
+                                  )}
+                                </td>
+                                <td className="text-right">
+                                  <div className="inline-flex items-center gap-1.5">
+                                    {canEdit && (
+                                      <button
+                                        type="button"
+                                        onClick={() => openEditModal(rec)}
+                                        className="btn btn-secondary btn-sm inline-flex items-center gap-1"
+                                      >
+                                        <Edit3 className="w-3.5 h-3.5" /> Editar
+                                      </button>
+                                    )}
+                                    {canArchive &&
+                                      (isArchived ? (
+                                        <button
+                                          type="button"
+                                          onClick={() => handleRestoreRecord(idStr)}
+                                          className="btn btn-secondary btn-sm inline-flex items-center gap-1"
+                                        >
+                                          <RotateCcw className="w-3.5 h-3.5" /> Restaurar
+                                        </button>
+                                      ) : (
+                                        <button
+                                          type="button"
+                                          onClick={() => setArchiveTargetId(idStr)}
+                                          className="btn btn-secondary btn-sm inline-flex items-center gap-1"
+                                        >
+                                          <Archive className="w-3.5 h-3.5" /> Arquivar
+                                        </button>
+                                      ))}
+                                    {canAdminister && (
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDeleteRecord(idStr)}
+                                        className="btn btn-ghost btn-sm text-rose-600 inline-flex items-center gap-1"
+                                        title="Excluir registro"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            )}
+
+            {/* =============================================================== */}
+            {/* MENU 5: CONFIGURAÇÕES COMPLETAS DA PLATAFORMA (SETTINGS)        */}
+            {/* =============================================================== */}
+            {moduleViewTab === 'settings' && platformSettings && (
+              <form onSubmit={handleSavePlatformSettings} className="card p-6 space-y-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-700 pb-4">
+                  <div>
+                    <span className="badge badge-teal mb-1">Centro de Configurações da Plataforma</span>
+                    <h2 className="text-lg font-bold flex items-center gap-2">
+                      <Settings size={18} className="text-teal-600" />
+                      Configurações — {selectedModule.brandName}
+                    </h2>
+                    <p className="text-xs text-muted">
+                      Personalize identidade, regras operacionais, automação WhatsApp, PIX, webhooks e backup do schema <code>{selectedModule.dbSchema}</code>.
+                    </p>
+                  </div>
+
+                  <div className="segmented-tabs">
+                    <button
+                      type="button"
+                      onClick={() => setSettingsSubTab('general')}
+                      className={`segmented-tab ${settingsSubTab === 'general' ? 'active' : ''}`}
+                    >
+                      1. Unidade & Marca
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSettingsSubTab('rules')}
+                      className={`segmented-tab ${settingsSubTab === 'rules' ? 'active' : ''}`}
+                    >
+                      2. Regras & SLA
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSettingsSubTab('integrations')}
+                      className={`segmented-tab ${settingsSubTab === 'integrations' ? 'active' : ''}`}
+                    >
+                      3. PIX, WhatsApp & Webhook
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSettingsSubTab('backup')}
+                      className={`segmented-tab ${settingsSubTab === 'backup' ? 'active' : ''}`}
+                    >
+                      4. Backup & Banco SQL
+                    </button>
+                  </div>
+                </div>
+
+                {settingsSubTab === 'general' && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        Nome de Exibição da Plataforma / Unidade
+                      </label>
+                      <input
+                        type="text"
+                        className="input w-full mt-1"
+                        value={platformSettings.platformDisplayName}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, platformDisplayName: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        CNPJ / Registro Profissional da Unidade
+                      </label>
+                      <input
+                        type="text"
+                        className="input w-full mt-1"
+                        value={platformSettings.unitDocumentCnpj}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, unitDocumentCnpj: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        E-mail Oficial de Operações & Suporte
+                      </label>
+                      <input
+                        type="email"
+                        className="input w-full mt-1"
+                        value={platformSettings.supportEmail}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, supportEmail: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        WhatsApp Business de Atendimento
+                      </label>
+                      <input
+                        type="text"
+                        className="input w-full mt-1"
+                        value={platformSettings.whatsappNumber}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, whatsappNumber: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        Horário de Funcionamento / Turnos
+                      </label>
+                      <input
+                        type="text"
+                        className="input w-full mt-1"
+                        value={platformSettings.operatingHours}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, operatingHours: e.target.value })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        Fuso Horário & Moeda Padrão
+                      </label>
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <input
+                          type="text"
+                          className="input w-full"
+                          value={platformSettings.timezone}
+                          onChange={(e) =>
+                            setPlatformSettings({ ...platformSettings, timezone: e.target.value })
+                          }
+                        />
+                        <select
+                          className="select w-full"
+                          value={platformSettings.currency}
+                          onChange={(e) =>
+                            setPlatformSettings({
+                              ...platformSettings,
+                              currency: e.target.value as 'BRL' | 'USD' | 'EUR',
+                            })
+                          }
+                        >
+                          <option value="BRL">BRL (R$)</option>
+                          <option value="USD">USD ($)</option>
+                          <option value="EUR">EUR (€)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {settingsSubTab === 'rules' && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold uppercase text-muted">
+                          Meta de SLA Operacional (Minutos)
+                        </label>
+                        <input
+                          type="number"
+                          className="input w-full mt-1"
+                          value={platformSettings.slaAlertThresholdMinutes}
+                          onChange={(e) =>
+                            setPlatformSettings({
+                              ...platformSettings,
+                              slaAlertThresholdMinutes: Number(e.target.value),
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold uppercase text-muted">
+                          Taxa de Serviço / Comissão Padrão (%)
+                        </label>
+                        <input
+                          type="number"
+                          className="input w-full mt-1"
+                          value={platformSettings.serviceFeePercent}
+                          onChange={(e) =>
+                            setPlatformSettings({
+                              ...platformSettings,
+                              serviceFeePercent: Number(e.target.value),
+                            })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold uppercase text-muted">
+                          Capacidade / Limite Diário de Operações
+                        </label>
+                        <input
+                          type="number"
+                          className="input w-full mt-1"
+                          value={platformSettings.maxDailyCapacity}
+                          onChange={(e) =>
+                            setPlatformSettings({
+                              ...platformSettings,
+                              maxDailyCapacity: Number(e.target.value),
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {[
+                        {
+                          key: 'enableWhatsappAutomation' as const,
+                          title: 'Automação de Lembretes & Confirmação WhatsApp',
+                          desc: 'Dispara notificações automáticas a cada novo registro ou mudança de status.',
+                        },
+                        {
+                          key: 'enableAiCopilotAutoIndex' as const,
+                          title: 'Indexação Automática no Copiloto RAG',
+                          desc: 'Sincroniza novos itens de todas as tabelas com a base semântica IA.',
+                        },
+                        {
+                          key: 'enableStrictHbacAudit' as const,
+                          title: 'Trilha de Auditoria Estrita HBAC & LGPD',
+                          desc: 'Exige justificativa em arquivamentos e grava log de alterações por usuário.',
+                        },
+                        {
+                          key: 'enablePublicShowcaseLink' as const,
+                          title: 'Habilitar Link Externo de Demonstração (/demo)',
+                          desc: 'Permite abertura em tela cheia para apresentação comercial e clientes.',
+                        },
+                      ].map((sw) => (
+                        <label
+                          key={sw.key}
+                          className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 cursor-pointer"
+                        >
+                          <div>
+                            <div className="text-sm font-bold">{sw.title}</div>
+                            <div className="text-xs text-muted">{sw.desc}</div>
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={platformSettings[sw.key]}
+                            onChange={(e) =>
+                              setPlatformSettings({ ...platformSettings, [sw.key]: e.target.checked })
+                            }
+                          />
+                        </label>
+                      ))}
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        Diretrizes e Políticas Específicas do Módulo
+                      </label>
+                      <textarea
+                        rows={3}
+                        className="input w-full mt-1"
+                        value={platformSettings.customDomainRules}
+                        onChange={(e) =>
+                          setPlatformSettings({ ...platformSettings, customDomainRules: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {settingsSubTab === 'integrations' && (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="text-xs font-semibold uppercase text-muted">
+                          Chave PIX Oficial para Checkout / Liquidação
+                        </label>
+                        <input
+                          type="text"
+                          className="input w-full mt-1 font-mono"
+                          value={platformSettings.pixKey}
+                          onChange={(e) =>
+                            setPlatformSettings({ ...platformSettings, pixKey: e.target.value })
+                          }
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-semibold uppercase text-muted">
+                          Webhook URL para Eventos em Tempo Real
+                        </label>
+                        <input
+                          type="text"
+                          className="input w-full mt-1 font-mono"
+                          value={platformSettings.webhookEndpointUrl}
+                          onChange={(e) =>
+                            setPlatformSettings({ ...platformSettings, webhookEndpointUrl: e.target.value })
+                          }
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-semibold uppercase text-muted">
+                        Template de Mensagem Automática WhatsApp (`{'{{cliente}}'}`, `{'{{id}}'}`)
+                      </label>
+                      <textarea
+                        rows={3}
+                        className="input w-full mt-1"
+                        value={platformSettings.whatsappConfirmationTemplate}
+                        onChange={(e) =>
+                          setPlatformSettings({
+                            ...platformSettings,
+                            whatsappConfirmationTemplate: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {settingsSubTab === 'backup' && (
+                  <div className="space-y-4">
+                    <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/30 space-y-2 text-xs">
+                      <div className="font-bold text-sm">Diagnóstico de Persistência PostgreSQL (Supabase)</div>
+                      <div>
+                        • Schema Dedicado: <code>{selectedModule.dbSchema}</code> ({selectedModule.tables.length} tabelas homologadas)
+                      </div>
+                      <div>
+                        • Tabela de Configurações: <code>public.allin_entity_store</code> (chave:{' '}
+                        <code>platform_settings_{selectedModule.dbSchema}_{resolvedCompanyId}</code>)
+                      </div>
+                      <div>
+                        • Última atualização: <strong>{new Date(platformSettings.updatedAt).toLocaleString('pt-BR')}</strong> por{' '}
+                        <code>{platformSettings.updatedBy}</code>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={handleExportJson}
+                        className="btn btn-secondary"
+                      >
+                        <Download size={15} /> Exportar Snapshot Completo da Plataforma (JSON)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleResetPlatformSettings}
+                        className="btn btn-secondary"
+                      >
+                        <RotateCcw size={15} /> Restaurar Padrões de Fábrica
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <span className="text-xs text-muted">
+                    Todas as alterações entram em vigor imediatamente na plataforma e são salvas no Supabase.
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={savingSettings}
+                    className="btn btn-primary"
+                  >
+                    <Save size={15} />
+                    {savingSettings ? 'Salvando no Supabase...' : 'Salvar Configurações da Plataforma'}
+                  </button>
+                </div>
+              </form>
+            )}
 
         {/* ABA 3: RAG COMPLETO & COPILOTO IA DO MÓDULO */}
         {moduleViewTab === 'rag' && (
@@ -1291,21 +2202,25 @@ export const OlivelasEcosystemHub: React.FC = () => {
             </div>
           </div>
         )}
+          </main>
+        </div>
 
-        {/* Modal de Criação / Edição de Registro no Schema */}
+        {/* Modal de Criação / Edição de Registro em Qualquer Tabela do Schema */}
         {isCreateOpen && (
           <div className="modal-backdrop">
             <div className="modal-content max-w-lg w-full p-6 space-y-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold">
-                  {editingRecord ? `Editar Registro (${String(editingRecord.id)})` : `Novo Registro — ${selectedModule.brandName}`}
+                  {editingRecord
+                    ? `Editar ${activeTableMeta.singularLabel} (${String(editingRecord.id)})`
+                    : `Novo ${activeTableMeta.singularLabel} — ${activeTableMeta.menuLabel}`}
                 </h2>
                 <span className="badge badge-info font-mono">
                   {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
                 </span>
               </div>
               <form onSubmit={handleSaveRecord} className="space-y-4">
-                {selectedModule.fields.map((field) => (
+                {activeTableMeta.fields.map((field) => (
                   <div key={field.key} className="space-y-1">
                     <label className="text-xs font-semibold uppercase opacity-80">{field.label}</label>
                     {field.type === 'select' ? (
@@ -1349,7 +2264,9 @@ export const OlivelasEcosystemHub: React.FC = () => {
                     Cancelar
                   </button>
                   <button type="submit" className="btn btn-primary">
-                    {editingRecord ? 'Salvar Alterações no Supabase' : `Gravar em ${selectedModule.dbSchema}`}
+                    {editingRecord
+                      ? 'Salvar Alterações no Supabase'
+                      : `Gravar em ${selectedModule.dbSchema}.${selectedTable || selectedModule.primaryTable}`}
                   </button>
                 </div>
               </form>

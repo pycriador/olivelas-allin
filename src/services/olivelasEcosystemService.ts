@@ -7,6 +7,11 @@ import {
   supabaseUrl,
 } from '../lib/supabase/client';
 import { UserEntity } from '../types/domain';
+import {
+  getSecondaryTableLocalRecords,
+  getTableCatalogMetadata,
+  setSecondaryTableLocalRecords,
+} from './olivelasPlatformMenusCatalog';
 
 export type OlivelasProjectSchemaName =
   | 'agendamento_simples'
@@ -1103,14 +1108,16 @@ export async function listModuleSchemaRecords(
 }
 
 /**
- * Cria um registro diretamente no schema PostgreSQL exclusivo do módulo no Supabase (`<dbSchema>.<primaryTable>`)
+ * Cria um registro diretamente no schema PostgreSQL exclusivo do módulo no Supabase (`<dbSchema>.<tableName>`)
  */
 export async function createModuleSchemaRecord(
   moduleSpec: OlivelasEcosystemModuleSpec,
   companyId: string,
   payload: Record<string, unknown>,
+  tableName?: string,
 ): Promise<{ record: Record<string, unknown>; persistedInSupabase: boolean }> {
-  const newId = `${moduleSpec.dbSchema.slice(0, 4)}_${Date.now()}`;
+  const targetTable = tableName || moduleSpec.primaryTable;
+  const newId = `${targetTable.slice(0, 4)}_${Date.now()}`;
   const baseRecord: Record<string, unknown> = {
     id: newId,
     company_id: companyId || 'emp-olivelas-matriz',
@@ -1118,26 +1125,32 @@ export async function createModuleSchemaRecord(
     created_at: new Date().toISOString(),
   };
 
-  if (moduleSpec.dbSchema === 'gestao_estoque' && !baseRecord.store_id) {
+  if (moduleSpec.dbSchema === 'gestao_estoque' && targetTable === 'products' && !baseRecord.store_id) {
     baseRecord.store_id = 'store_matriz';
   }
   if (moduleSpec.dbSchema === 'app_condominio' && !baseRecord.condominium_id) {
     baseRecord.condominium_id = 'cond_1';
   }
-  if (moduleSpec.dbSchema === 'agendamentos' && !baseRecord.start_at) {
+  if (moduleSpec.dbSchema === 'agendamentos' && targetTable === 'appointments' && !baseRecord.start_at) {
     baseRecord.start_at = new Date().toISOString();
     baseRecord.end_at = new Date(Date.now() + 45 * 60000).toISOString();
   }
-  if (moduleSpec.dbSchema === 'agendamento_simples' && !baseRecord.scheduled_at) {
+  if (moduleSpec.dbSchema === 'agendamento_simples' && targetTable === 'appointments' && !baseRecord.scheduled_at) {
     baseRecord.scheduled_at = new Date().toISOString();
   }
-  if (moduleSpec.dbSchema === 'rifas' && !baseRecord.slug) {
+  if (moduleSpec.dbSchema === 'rifas' && targetTable === 'campaigns' && !baseRecord.slug) {
     baseRecord.slug = String(baseRecord.title || 'campanha').toLowerCase().replace(/[^a-z0-9]+/g, '-');
     baseRecord.prize_description = baseRecord.prize_description || 'Prêmio Oficial Olivelas';
   }
 
-  const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
-  setLocalSchemaCache(moduleSpec.dbSchema, [baseRecord, ...currentLocal]);
+  if (targetTable === moduleSpec.primaryTable) {
+    const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
+    setLocalSchemaCache(moduleSpec.dbSchema, [baseRecord, ...currentLocal]);
+  } else {
+    const tblMeta = getTableCatalogMetadata(moduleSpec, targetTable);
+    const currentSec = getSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, tblMeta.seedRecords);
+    setSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, [baseRecord, ...currentSec]);
+  }
 
   if (!isSupabaseConfigured) {
     return { record: baseRecord, persistedInSupabase: false };
@@ -1146,7 +1159,7 @@ export async function createModuleSchemaRecord(
   try {
     const schemaClient = getProjectSchemaClient(moduleSpec.dbSchema);
     const { data, error } = await schemaClient
-      .from(moduleSpec.primaryTable)
+      .from(targetTable)
       .insert(baseRecord)
       .select('*')
       .single();
@@ -1170,7 +1183,9 @@ export async function toggleArchiveModuleSchemaRecord(
   archive: boolean,
   reason: string,
   actorEmail: string,
+  tableName?: string,
 ): Promise<void> {
+  const targetTable = tableName || moduleSpec.primaryTable;
   const archiveMetadata = archive
     ? {
         isArchived: true,
@@ -1180,18 +1195,27 @@ export async function toggleArchiveModuleSchemaRecord(
       }
     : { isArchived: false };
 
-  const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
-  const updatedLocal = currentLocal.map((item) =>
-    String(item.id) === recordId ? { ...item, archive_metadata: archiveMetadata } : item,
-  );
-  setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  if (targetTable === moduleSpec.primaryTable) {
+    const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
+    const updatedLocal = currentLocal.map((item) =>
+      String(item.id) === recordId ? { ...item, archive_metadata: archiveMetadata } : item,
+    );
+    setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  } else {
+    const tblMeta = getTableCatalogMetadata(moduleSpec, targetTable);
+    const currentSec = getSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, tblMeta.seedRecords);
+    const updatedSec = currentSec.map((item) =>
+      String(item.id) === recordId ? { ...item, archive_metadata: archiveMetadata } : item,
+    );
+    setSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, updatedSec);
+  }
 
   if (!isSupabaseConfigured) return;
 
   try {
     const schemaClient = getProjectSchemaClient(moduleSpec.dbSchema);
     await schemaClient
-      .from(moduleSpec.primaryTable)
+      .from(targetTable)
       .update({ archive_metadata: archiveMetadata })
       .eq('id', recordId);
   } catch {
@@ -1220,6 +1244,13 @@ export async function updateModuleSchemaRecord(
       String(item.id) === recordId ? { ...item, ...updatedPayload } : item,
     );
     setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  } else {
+    const tblMeta = getTableCatalogMetadata(moduleSpec, targetTable);
+    const currentSec = getSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, tblMeta.seedRecords);
+    const updatedSec = currentSec.map((item) =>
+      String(item.id) === recordId ? { ...item, ...updatedPayload } : item,
+    );
+    setSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, updatedSec);
   }
 
   if (!isSupabaseConfigured) {
@@ -1259,6 +1290,11 @@ export async function deleteModuleSchemaRecord(
     const currentLocal = getLocalSchemaCache(moduleSpec.dbSchema, moduleSpec.seedRecords);
     const updatedLocal = currentLocal.filter((item) => String(item.id) !== recordId);
     setLocalSchemaCache(moduleSpec.dbSchema, updatedLocal);
+  } else {
+    const tblMeta = getTableCatalogMetadata(moduleSpec, targetTable);
+    const currentSec = getSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, tblMeta.seedRecords);
+    const updatedSec = currentSec.filter((item) => String(item.id) !== recordId);
+    setSecondaryTableLocalRecords(moduleSpec.dbSchema, targetTable, updatedSec);
   }
 
   if (!isSupabaseConfigured) {
@@ -1287,8 +1323,11 @@ export async function listAnySchemaTableRecords(
   }
 
   const endpoint = `${supabaseUrl}/rest/v1/${tableName} (Accept-Profile: ${moduleSpec.dbSchema})`;
+  const tblMeta = getTableCatalogMetadata(moduleSpec, tableName);
+  const localFallback = getSecondaryTableLocalRecords(moduleSpec.dbSchema, tableName, tblMeta.seedRecords);
+
   if (!isSupabaseConfigured) {
-    return { records: [], source: 'local_cache', endpoint };
+    return { records: localFallback, source: 'local_cache', endpoint };
   }
 
   try {
@@ -1298,17 +1337,19 @@ export async function listAnySchemaTableRecords(
       .select('*')
       .limit(100);
 
-    if (error || !data) {
-      return { records: [], source: 'local_cache', endpoint };
+    if (error || !data || data.length === 0) {
+      return { records: localFallback, source: 'local_cache', endpoint };
     }
 
+    const rows = data as Record<string, unknown>[];
+    setSecondaryTableLocalRecords(moduleSpec.dbSchema, tableName, rows);
     return {
-      records: data as Record<string, unknown>[],
+      records: rows,
       source: 'supabase',
       endpoint,
     };
   } catch {
-    return { records: [], source: 'local_cache', endpoint };
+    return { records: localFallback, source: 'local_cache', endpoint };
   }
 }
 
