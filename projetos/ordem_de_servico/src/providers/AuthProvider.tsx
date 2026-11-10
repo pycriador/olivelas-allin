@@ -54,12 +54,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+    if (typeof window !== "undefined" && (params?.get("allin_sso") === "1" || !window.localStorage.getItem("sf.demoSession"))) {
+      window.localStorage.setItem("sf.demoSession", "true");
+    }
+    const companyName = params?.get("company_name") || (typeof window !== "undefined" ? window.localStorage.getItem("allin_company_name") : null) || DEMO_COMPANY.name;
+    const userName = params?.get("user_name") || (typeof window !== "undefined" ? window.localStorage.getItem("allin_user_name") : null) || DEMO_USER.name;
+    const userEmail = params?.get("user_email") || (typeof window !== "undefined" ? window.localStorage.getItem("allin_user_email") : null) || DEMO_USER.email;
+    if (typeof window !== "undefined" && params?.get("company_name")) {
+      window.localStorage.setItem("allin_company_name", companyName);
+      window.localStorage.setItem("allin_user_name", userName);
+      window.localStorage.setItem("allin_user_email", userEmail);
+    }
+
     const isDemo = typeof window !== "undefined" && window.localStorage.getItem("sf.demoSession") === "true";
     if (isDemo) {
-      setUser(DEMO_USER);
-      setCompanies([DEMO_COMPANY]);
-      setCurrentCompanyId(DEMO_COMPANY.id);
-      companySelection.set(DEMO_COMPANY.id);
+      const ssoCompany: UserCompany = { ...DEMO_COMPANY, name: companyName };
+      setUser({ ...DEMO_USER, name: userName, email: userEmail });
+      setCompanies([ssoCompany]);
+      setCurrentCompanyId(ssoCompany.id);
+      companySelection.set(ssoCompany.id);
       setLoading(false);
       return;
     }

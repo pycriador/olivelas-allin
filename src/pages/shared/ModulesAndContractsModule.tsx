@@ -25,6 +25,11 @@ import {
 import { generateId, repositories } from '../../repositories/repositories';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
 import {
+  buildModuleInstanceLaunchUrl,
+  getModuleInstanceServerSpec,
+  openModuleInstanceInNewTab,
+} from '../../services/olivelasEcosystemService';
+import {
   AccessDeniedView,
   ArchiveRecordDialog,
   ModalDialog,
@@ -35,11 +40,35 @@ import {
 } from '../../components/shared/SharedComponents';
 
 export const GlobalModulesCatalogPage: React.FC = () => {
-  const { modules, companyModules, session, hasPermission, getActor, refreshData, notify, t } =
-    useApp();
+  const {
+    modules,
+    companyModules,
+    companies,
+    currentUser,
+    session,
+    hasPermission,
+    getActor,
+    refreshData,
+    notify,
+    t,
+  } = useApp();
   const navigate = useNavigate();
   const [archiveTarget, setArchiveTarget] = useState<CatalogModuleEntity | null>(null);
   const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
+  const activeCompany =
+    companies.find((c) => c.id === session.activeCompanyId) || companies[0];
+
+  const handleOpenInstance = (moduleSlug: string, companyId?: string, companyName?: string) => {
+    openModuleInstanceInNewTab({
+      moduleSlug,
+      companyId: companyId || activeCompany?.id || 'emp-olivelas-matriz',
+      companyName: companyName || activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+      userId: currentUser?.id || 'usr-admin-global',
+      userEmail: currentUser?.email || 'willian.o.jesus@gmail.com',
+      userName: currentUser?.name || 'Willian Jesus',
+      userRole: 'GLOBAL_ADMIN',
+    });
+  };
 
   if (!hasPermission('modules', 'view')) {
     return (
@@ -137,19 +166,28 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             .filter((m) => !m.archiveMetadata.isArchived)
             .map((mod) => {
               const demoSlug = mod.ecosystemSlug || mod.code;
+              const srvSpec = getModuleInstanceServerSpec(demoSlug);
+              const launchInfo = buildModuleInstanceLaunchUrl({
+                moduleSlug: demoSlug,
+                companyId: activeCompany?.id || 'emp-olivelas-matriz',
+                companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+                userId: currentUser?.id,
+                userEmail: currentUser?.email,
+                userName: currentUser?.name,
+              });
               const activeCount = companyModules.filter(
                 (cm) => cm.moduleId === mod.id && cm.status === 'active',
               ).length;
               return (
                 <div
                   key={mod.id}
-                  onClick={() => navigate(`/app/global/ecossistema/${demoSlug}`)}
+                  onClick={() => handleOpenInstance(demoSlug)}
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
                       e.preventDefault();
-                      navigate(`/app/global/ecossistema/${demoSlug}`);
+                      handleOpenInstance(demoSlug);
                     }
                   }}
                   className="card card-interactive"
@@ -162,11 +200,16 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                   <div className="card-body flex flex-col gap-2.5">
                     <div className="flex items-center justify-between gap-2 flex-wrap">
                       <span className="badge badge-info">{mod.category}</span>
-                      {mod.dbSchema && (
-                        <span className="badge badge-success mono">
-                          <Database size={11} /> {mod.dbSchema}
+                      <div className="flex items-center gap-1">
+                        <span className="badge badge-teal mono" title="Porta dedicada da instância">
+                          :{srvSpec.port}
                         </span>
-                      )}
+                        {mod.dbSchema && (
+                          <span className="badge badge-success mono">
+                            <Database size={11} /> {mod.dbSchema}
+                          </span>
+                        )}
+                      </div>
                     </div>
 
                     <div>
@@ -181,6 +224,10 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                     <p className="text-xs text-muted leading-relaxed">
                       {mod.description[session.language]}
                     </p>
+
+                    <div className="text-xs mono text-muted" style={{ fontSize: '0.68rem' }}>
+                      Instância Alocada: <strong>{launchInfo.instanceId}</strong>
+                    </div>
 
                     {mod.features && mod.features.length > 0 && (
                       <div className="flex flex-wrap gap-1 pt-1">
@@ -208,13 +255,15 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                       >
                         Ficha
                       </Link>
-                      <Link
-                        to={`/app/global/ecossistema/${demoSlug}`}
+                      <button
+                        type="button"
+                        onClick={() => handleOpenInstance(demoSlug)}
                         className="btn btn-primary btn-sm"
+                        title={`Abrir instância completa em nova aba (${launchInfo.url})`}
                       >
-                        <Play size={12} />
-                        Abrir Interface
-                      </Link>
+                        <ExternalLink size={12} />
+                        Abrir Demo
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -336,13 +385,14 @@ export const GlobalModulesCatalogPage: React.FC = () => {
               return (
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {!m.isExample && (
-                    <Link
-                      to={`/app/global/ecossistema/${demoSlug}`}
+                    <button
+                      type="button"
+                      onClick={() => handleOpenInstance(demoSlug)}
                       className="btn btn-primary btn-sm"
                     >
-                      <Play size={12} />
+                      <ExternalLink size={12} />
                       Abrir Demo
-                    </Link>
+                    </button>
                   )}
                   <Link to={`/app/global/modulos/${m.id}`} className="btn btn-secondary btn-sm">
                     Detalhes
@@ -669,7 +719,7 @@ export const ModuleFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) 
 
 export const ModuleDetailPage: React.FC = () => {
   const { moduloId } = useParams<{ moduloId: string }>();
-  const { modules, companyModules, companies, session, hasPermission, t } = useApp();
+  const { modules, companyModules, companies, currentUser, session, hasPermission, t } = useApp();
 
   const mod = modules.find((m) => m.id === moduloId || m.code === moduloId);
   if (!mod) {
@@ -684,6 +734,20 @@ export const ModuleDetailPage: React.FC = () => {
 
   const subscribedCompanies = companyModules.filter((cm) => cm.moduleId === mod.id);
   const demoSlug = mod.ecosystemSlug || mod.code;
+  const activeCompany =
+    companies.find((c) => c.id === session.activeCompanyId) || companies[0];
+
+  const handleLaunchForCompany = (compId?: string, compName?: string) => {
+    openModuleInstanceInNewTab({
+      moduleSlug: demoSlug,
+      companyId: compId || activeCompany?.id || 'emp-olivelas-matriz',
+      companyName: compName || activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+      userId: currentUser?.id || 'usr-admin-global',
+      userEmail: currentUser?.email || 'willian.o.jesus@gmail.com',
+      userName: currentUser?.name || 'Willian Jesus',
+      userRole: 'GLOBAL_ADMIN',
+    });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -700,20 +764,20 @@ export const ModuleDetailPage: React.FC = () => {
           <div className="flex items-center gap-2 flex-wrap">
             {!mod.isExample && (
               <>
-                <Link
-                  to={`/app/global/ecossistema/${demoSlug}`}
+                <button
+                  type="button"
+                  onClick={() => handleLaunchForCompany()}
                   className="btn btn-primary btn-sm"
                 >
-                  <Play size={14} />
-                  Abrir Demonstração no Console
-                </Link>
+                  <ExternalLink size={14} />
+                  Abrir Instância Completa (Nova Aba com SSO)
+                </button>
                 <Link
-                  to={`/demo/${demoSlug}`}
-                  target="_blank"
+                  to={`/app/global/ecossistema/${demoSlug}`}
                   className="btn btn-secondary btn-sm"
                 >
-                  <ExternalLink size={14} />
-                  Tela Cheia (Nova Guia)
+                  <Play size={14} />
+                  Painel da Instância
                 </Link>
               </>
             )}
@@ -813,15 +877,22 @@ export const ModuleDetailPage: React.FC = () => {
             <thead>
               <tr>
                 <th>Empresa</th>
+                <th>Instância Alocada</th>
                 <th>Ciclo</th>
                 <th>Estado</th>
                 <th>Renovação</th>
                 <th className="num">Valor Acordado</th>
+                <th>Acesso SSO</th>
               </tr>
             </thead>
             <tbody>
               {subscribedCompanies.map((sub) => {
                 const comp = companies.find((c) => c.id === sub.companyId);
+                const instInfo = buildModuleInstanceLaunchUrl({
+                  moduleSlug: demoSlug,
+                  companyId: sub.companyId,
+                  companyName: comp?.tradeName || sub.companyId,
+                });
                 return (
                   <tr key={sub.id}>
                     <td>
@@ -832,6 +903,9 @@ export const ModuleDetailPage: React.FC = () => {
                         {comp?.tradeName || sub.companyId}
                       </Link>
                     </td>
+                    <td>
+                      <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                    </td>
                     <td>{sub.billingCycle}</td>
                     <td>
                       <StatusBadge status={sub.status} />
@@ -839,6 +913,20 @@ export const ModuleDetailPage: React.FC = () => {
                     <td className="tabular">{sub.renewalDate}</td>
                     <td className="num tabular font-semibold">
                       {formatCurrency(sub.agreedPrice, sub.currency, session.language)}
+                    </td>
+                    <td>
+                      {!mod.isExample && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleLaunchForCompany(sub.companyId, comp?.tradeName || sub.companyId)
+                          }
+                          className="btn btn-primary btn-sm"
+                        >
+                          <ExternalLink size={12} />
+                          Abrir Instância
+                        </button>
+                      )}
                     </td>
                   </tr>
                 );
@@ -858,6 +946,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
     companies,
     modules,
     companyModules,
+    currentUser,
     session,
     hasPermission,
     getActor,
@@ -868,6 +957,18 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
 
   const company = companies.find((c) => c.id === empresaId);
   if (!company) return null;
+
+  const handleLaunchCompanyInstance = (moduleSlug: string) => {
+    openModuleInstanceInNewTab({
+      moduleSlug,
+      companyId: company.id,
+      companyName: company.tradeName,
+      userId: currentUser?.id || 'usr-admin-global',
+      userEmail: currentUser?.email || 'willian.o.jesus@gmail.com',
+      userName: currentUser?.name || 'Willian Jesus',
+      userRole: 'COMPANY_ADMIN',
+    });
+  };
 
   const canManage = hasPermission('modules', 'approve', company.id) || hasPermission('modules', 'edit', company.id);
   const mySubs = companyModules.filter((cm) => cm.companyId === company.id);
@@ -990,6 +1091,16 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           const sub = mySubs.find((s) => s.moduleId === mod.id);
           const active = sub?.status === 'active';
           const demoSlug = mod.ecosystemSlug || mod.code;
+          const instInfo = !mod.isExample
+            ? buildModuleInstanceLaunchUrl({
+                moduleSlug: demoSlug,
+                companyId: company.id,
+                companyName: company.tradeName,
+                userId: currentUser?.id,
+                userEmail: currentUser?.email,
+                userName: currentUser?.name,
+              })
+            : null;
           const targetDemoRoute = !mod.isExample
             ? `/app/empresa/${company.id}/ecossistema/${demoSlug}`
             : mod.code === 'allin_estoque'
@@ -1003,13 +1114,23 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           return (
             <div
               key={mod.id}
-              onClick={() => navigate(targetDemoRoute)}
+              onClick={() => {
+                if (!mod.isExample) {
+                  handleLaunchCompanyInstance(demoSlug);
+                } else {
+                  navigate(targetDemoRoute);
+                }
+              }}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  navigate(targetDemoRoute);
+                  if (!mod.isExample) {
+                    handleLaunchCompanyInstance(demoSlug);
+                  } else {
+                    navigate(targetDemoRoute);
+                  }
                 }
               }}
               className="card card-interactive"
@@ -1026,6 +1147,9 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 <div className="flex items-center justify-between gap-2 flex-wrap">
                   <div className="flex items-center gap-1.5">
                     <span className="badge badge-info">{mod.category}</span>
+                    {instInfo && (
+                      <span className="badge badge-teal mono">:{instInfo.port}</span>
+                    )}
                     {mod.dbSchema && (
                       <span className="badge badge-teal mono">
                         <Database size={11} /> {mod.dbSchema}
@@ -1048,6 +1172,12 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 <p className="text-xs text-muted leading-relaxed">
                   {mod.description[session.language]}
                 </p>
+
+                {instInfo && (
+                  <div className="text-xs mono text-muted" style={{ fontSize: '0.68rem' }}>
+                    Instância Alocada ({company.tradeName}): <strong>{instInfo.instanceId}</strong>
+                  </div>
+                )}
 
                 {mod.features && mod.features.length > 0 && (
                   <div className="flex flex-wrap gap-1 pt-1">
@@ -1072,13 +1202,24 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <Link
-                    to={targetDemoRoute}
-                    className="btn btn-primary btn-sm"
-                  >
-                    <Play size={13} />
-                    Abrir Plataforma
-                  </Link>
+                  {!mod.isExample ? (
+                    <button
+                      type="button"
+                      onClick={() => handleLaunchCompanyInstance(demoSlug)}
+                      className="btn btn-primary btn-sm"
+                    >
+                      <ExternalLink size={13} />
+                      Abrir Plataforma (Nova Aba)
+                    </button>
+                  ) : (
+                    <Link
+                      to={targetDemoRoute}
+                      className="btn btn-primary btn-sm"
+                    >
+                      <Play size={13} />
+                      Abrir Plataforma
+                    </Link>
+                  )}
                   {canManage && (
                     <button
                       type="button"

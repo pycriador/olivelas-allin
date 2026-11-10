@@ -439,15 +439,16 @@ export function StoreLandingPage({ rows, onOpenAnalyzer, onOpenIam, onRefreshDat
             : adv.primaryImageUrl
           : "");
 
+      const advAny = adv as unknown as Record<string, unknown>;
       return {
         id: adv.id,
         businessName: adv.businessName,
         category: adv.category || "Comércio Geral",
         summary: adv.summary || "",
-        phone: adv.cleanPhone || "",
+        phone: String(advAny["cleanPhone"] || adv.phone || ""),
         formattedPhone: adv.formattedPhone || "",
         whatsappMessage:
-          adv.whatsappMessage ||
+          String(advAny["whatsappMessage"] || "") ||
           `Olá! Vi o anúncio da ${adv.businessName} na Vitrine Digital e gostaria de mais informações.`,
         primaryImage: primaryImg,
         images: formattedImages,
@@ -455,11 +456,11 @@ export function StoreLandingPage({ rows, onOpenAnalyzer, onOpenIam, onRefreshDat
         products: adv.productsList.map((p) => ({
           name: p.name,
           price: p.price || "",
-          description: p.description || "",
+          description: String((p as unknown as Record<string, unknown>)["description"] || ""),
         })),
-        address: adv.address || "",
-        instagram: adv.instagram || "",
-        workingHours: adv.workingHours || "",
+        address: String(advAny["address"] || ""),
+        instagram: String(advAny["instagram"] || ""),
+        workingHours: String(advAny["workingHours"] || ""),
       };
     });
 

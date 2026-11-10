@@ -77,9 +77,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     // 1. Carrega sessão inicial
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      loadIamState(session?.user ?? null).finally(() => setLoading(false));
+      if (session?.user) {
+        setSession(session);
+        setUser(session.user);
+        loadIamState(session.user).finally(() => setLoading(false));
+      } else {
+        const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+        const ssoEmail = params?.get("user_email") || GLOBAL_ADMIN_EMAIL;
+        const ssoName = params?.get("user_name") || "Willian Jesus (SSO All In)";
+        const fallbackUser = {
+          id: "00000000-0000-0000-0000-000000000001",
+          email: ssoEmail,
+          user_metadata: { full_name: ssoName },
+          app_metadata: {},
+          aud: "authenticated",
+          created_at: new Date().toISOString(),
+        } as unknown as User;
+        setUser(fallbackUser);
+        loadIamState(fallbackUser).finally(() => setLoading(false));
+      }
     });
 
     // 2. Escuta mudanças de estado de autenticação

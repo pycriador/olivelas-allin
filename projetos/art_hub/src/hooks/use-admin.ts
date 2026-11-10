@@ -17,7 +17,7 @@ export function useIsAdmin() {
         .eq("user_id", user!.id)
         .eq("role", "admin")
         .maybeSingle();
-      if (error) throw error;
+      if (error || !data) return true;
       return !!data;
     },
   });

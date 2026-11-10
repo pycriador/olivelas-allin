@@ -16,16 +16,16 @@ export const MODULE_SLUG = 'allin_personal_trainer' as const
 export const MODULE_BRAND_NAME = 'Olivelas - Personal Trainer' as const
 
 export const supabaseUrl =
-  env.VITE_SUPABASE_URL ||
-  env.SUPABASE_URL ||
+  env['VITE_SUPABASE_URL'] ||
+  env['SUPABASE_URL'] ||
   'https://placeholder.supabase.co'
 
 export const supabaseKey =
-  env.VITE_SUPABASE_KEY ||
-  env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-  env.SUPABASE_PUBLISHABLE_KEY ||
-  env.VITE_SUPABASE_ANON_KEY ||
-  env.SUPABASE_ANON_KEY ||
+  env['VITE_SUPABASE_KEY'] ||
+  env['VITE_SUPABASE_PUBLISHABLE_KEY'] ||
+  env['SUPABASE_PUBLISHABLE_KEY'] ||
+  env['VITE_SUPABASE_ANON_KEY'] ||
+  env['SUPABASE_ANON_KEY'] ||
   'placeholder_key'
 
 export const isSupabaseConfigured = Boolean(

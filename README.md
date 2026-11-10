@@ -74,24 +74,29 @@ A tela de login (`/login`), o cadastro de nova empresa (`/cadastro`) e a redefin
 
 Todas as 16 plataformas em `/projetos` fazem parte do catálogo de **Módulos Comerciais Olivelas**, renomeadas sob a identidade oficial **`Olivelas - <Nome da Plataforma>`** e conectadas ao seu respectivo schema no Supabase:
 
-| # | Diretório (`/projetos`) | Nome Oficial da Plataforma | Slug Comercial | Schema PostgreSQL | Tabela Principal | Todas as Tabelas do Schema (CRUD Multi-Tabela) |
+| # | Diretório (`/projetos`) | Nome Oficial da Plataforma | Slug Comercial | Porta / Rota Admin SSO | Schema PostgreSQL | Todas as Tabelas do Schema (CRUD Multi-Tabela) |
 | :-: | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | `agendamento_simples` | **Olivelas - Consultório & Odonto** | `allin_agendamento_simples` | `agendamento_simples` | `appointments` | `clinic_settings`, `plans`, `services`, `patients`, `appointments`, `messages`, `audit_logs` |
-| 2 | `agendamentos` | **Olivelas - Clínicas & Agendamentos** | `allin_agendamentos` | `agendamentos` | `appointments` | `professionals`, `locations`, `appointment_types`, `clients`, `schedules`, `appointments`, `waiting_list` |
-| 3 | `app_condominio` | **Olivelas - Gestão de Condomínios** | `allin_condominio` | `app_condominio` | `occurrences` | `condominiums`, `units`, `resources`, `reservations`, `announcements`, `occurrences`, `bills` |
-| 4 | `art_hub` | **Olivelas - Art Hub & Catálogo IA** | `allin_art_hub` | `art_hub` | `artworks` | `collections`, `artworks`, `ai_prompts`, `ai_queue` |
-| 5 | `casa_organizada` | **Olivelas - Casa Organizada & Rotinas** | `allin_casa_organizada` | `casa_organizada` | `custom_tasks` | `household_profiles`, `global_default_tasks`, `custom_tasks`, `task_completions` |
-| 6 | `contratos` | **Olivelas - Automação de Contratos** | `allin_contratos_automacao` | `contratos` | `generated_documents` | `workspaces`, `projects`, `clauses`, `generated_documents` |
-| 7 | `especificacoes` | **Olivelas - Engenharia de Especificações** | `allin_especificacoes` | `especificacoes` | `specifications` | `workspaces`, `projects`, `sprints`, `specifications`, `snippets` |
-| 8 | `gestao_estoque` | **Olivelas - Gestão de Estoque & PDV** | `allin_gestao_estoque` | `gestao_estoque` | `products` | `stores`, `store_users`, `categories`, `suppliers`, `products`, `stock_batches`, `orders` |
-| 9 | `ordem_de_servico` | **Olivelas - Ordens de Serviço & Assistência** | `allin_ordem_servico` | `ordem_de_servico` | `service_orders` | `customers`, `devices`, `technicians`, `service_orders` |
-| 10 | `personal_treiner` | **Olivelas - Personal Trainer** | `allin_personal_trainer` | `personal_treiner` | `students` | `trainers`, `students`, `exercises`, `workout_plans`, `nutrition_plans` |
-| 11 | `restaurante` | **Olivelas - Gestão de Restaurantes & KDS** | `allin_restaurante` | `restaurante` | `orders` | `restaurants`, `products`, `restaurant_tables`, `orders` |
-| 12 | `rifas` | **Olivelas - Rifas & Sorteios Digitais** | `allin_rifas` | `rifas` | `campaigns` | `campaigns`, `orders` |
-| 13 | `sistema_delivery` | **Olivelas - Central de Delivery** | `allin_delivery` | `sistema_delivery` | `delivery_orders` | `stores`, `couriers`, `delivery_orders` |
-| 14 | `sistema_mercado` | **Olivelas - Supermercado & Cestas** | `allin_mercado` | `sistema_mercado` | `breakfast_baskets` | `products`, `breakfast_baskets`, `catalog_requests` |
-| 15 | `suite_rifa` | **Olivelas - Suíte Multi-Organização de Rifas** | `allin_suite_rifa` | `suite_rifa` | `campaigns` | `organizations`, `campaigns` |
-| 16 | `vitrine_digital` | **Olivelas - Vitrine Digital & Analisador IA** | `allin_vitrine_digital` | `vitrine_digital` | `art_submissions` | `art_submissions`, `image_analysis` |
+| 1 | `agendamento_simples` | **Olivelas - Consultório & Odonto** | `allin_agendamento_simples` | `:4101/pages/dashboard.html` | `agendamento_simples` | `clinic_settings`, `plans`, `services`, `patients`, `appointments`, `messages`, `audit_logs` |
+| 2 | `agendamentos` | **Olivelas - Clínicas & Agendamentos** | `allin_agendamentos` | `:4102/dashboard` | `agendamentos` | `professionals`, `locations`, `appointment_types`, `clients`, `schedules`, `appointments`, `waiting_list` |
+| 3 | `app_condominio` | **Olivelas - Gestão de Condomínios** | `allin_condominio` | `:4103/` | `app_condominio` | `condominiums`, `units`, `resources`, `reservations`, `announcements`, `occurrences`, `bills` |
+| 4 | `art_hub` | **Olivelas - Art Hub & Catálogo IA** | `allin_art_hub` | `:4104/admin` | `art_hub` | `collections`, `artworks`, `ai_prompts`, `ai_queue` |
+| 5 | `casa_organizada` | **Olivelas - Casa Organizada & Rotinas** | `allin_casa_organizada` | `:4105/` | `casa_organizada` | `household_profiles`, `global_default_tasks`, `custom_tasks`, `task_completions` |
+| 6 | `contratos` | **Olivelas - Automação de Contratos** | `allin_contratos_automacao` | `:4106/dashboard` | `contratos` | `workspaces`, `projects`, `clauses`, `generated_documents` |
+| 7 | `especificacoes` | **Olivelas - Engenharia de Especificações** | `allin_especificacoes` | `:4107/projects` | `especificacoes` | `workspaces`, `projects`, `sprints`, `specifications`, `snippets` |
+| 8 | `gestao_estoque` | **Olivelas - Gestão de Estoque & PDV** | `allin_gestao_estoque` | `:4108/dashboard` | `gestao_estoque` | `stores`, `store_users`, `categories`, `suppliers`, `products`, `stock_batches`, `orders` |
+| 9 | `ordem_de_servico` | **Olivelas - Ordens de Serviço & Assistência** | `allin_ordem_servico` | `:4109/dashboard` | `ordem_de_servico` | `customers`, `devices`, `technicians`, `service_orders` |
+| 10 | `personal_treiner` | **Olivelas - Personal Trainer** | `allin_personal_trainer` | `:4110/personal/dashboard` | `personal_treiner` | `trainers`, `students`, `exercises`, `workout_plans`, `nutrition_plans` |
+| 11 | `restaurante` | **Olivelas - Gestão de Restaurantes & KDS** | `allin_restaurante` | `:4111/app` | `restaurante` | `restaurants`, `products`, `restaurant_tables`, `orders` |
+| 12 | `rifas` | **Olivelas - Rifas & Sorteios Digitais** | `allin_rifas` | `:4112/admin/dashboard` | `rifas` | `campaigns`, `orders` |
+| 13 | `sistema_delivery` | **Olivelas - Central de Delivery** | `allin_delivery` | `:4113/app/orders` | `sistema_delivery` | `stores`, `couriers`, `delivery_orders` |
+| 14 | `sistema_mercado` | **Olivelas - Supermercado & Cestas** | `allin_mercado` | `:4114/admin/dashboard` | `sistema_mercado` | `products`, `breakfast_baskets`, `catalog_requests` |
+| 15 | `suite_rifa` | **Olivelas - Suíte Multi-Organização de Rifas** | `allin_suite_rifa` | `:4115/dashboard` | `suite_rifa` | `organizations`, `campaigns` |
+| 16 | `vitrine_digital` | **Olivelas - Vitrine Digital & Analisador IA** | `allin_vitrine_digital` | `:4116/?view=analyzer` | `vitrine_digital` | `art_submissions`, `image_analysis` |
+
+### Instâncias Alocadas por Empresa & Single Sign-On (SSO All In)
+
+- Cada empresa que contrata um módulo recebe uma **instância dedicada e isolada** (`inst_<companyId>_<moduleSlug>`).
+- Ao clicar em qualquer módulo comercial na barra lateral (**Módulos Comerciais**), no catálogo (`/app/global/modulos` ou `/app/empresa/:empresaId/modulos`) ou no botão **"Abrir Demo"** / **"Abrir Plataforma"**, o All In abre **em uma nova aba** a interface real completa daquele projeto na sua porta dedicada (`:4101` a `:4116`), já autenticada via **SSO All In** diretamente na área administrativa/operacional do programa e vinculada à empresa contratante.
 
 ---
 

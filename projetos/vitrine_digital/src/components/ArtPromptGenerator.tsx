@@ -252,7 +252,7 @@ export function ArtPromptGenerator({
       });
 
       if (!res.ok) {
-        throw new Error(res.message || "Falha ao gerar imagem.");
+        throw new Error((res as { message?: string }).message || "Falha ao gerar imagem.");
       }
 
       setGeneratedImageUrl(res.imageUrl);

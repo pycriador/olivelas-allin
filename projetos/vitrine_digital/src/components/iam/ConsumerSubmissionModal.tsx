@@ -80,7 +80,7 @@ export function ConsumerSubmissionModal({
         .from("images")
         .getPublicUrl(storagePath);
 
-      const targetGroupId = iamUser?.group_id || null;
+      const targetGroupId = iamUser?.group_ids?.[0] || null;
 
       await submitArt({
         userId: user.id,

@@ -113,7 +113,30 @@ export function RestaurantProvider({ children }: { children: React.ReactNode }) 
     try {
       const isSuper = isGlobalAdminEmail(user.email) || isDbGlobalAdmin;
       const { data } = await restaurantService.getUserRestaurants(user.id, isSuper);
-      const activeList = data || [];
+      const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+      const ssoCompanyName = params?.get('company_name') || (typeof window !== 'undefined' ? localStorage.getItem('allin_company_name') : null) || 'Olivelas Gastronomia & KDS';
+      const ssoCompanyId = params?.get('company_id') || (typeof window !== 'undefined' ? localStorage.getItem('allin_company_id') : null) || 'rest-allin-default';
+      if (typeof window !== 'undefined' && params?.get('company_name')) {
+        localStorage.setItem('allin_company_name', ssoCompanyName);
+        localStorage.setItem('allin_company_id', ssoCompanyId);
+      }
+
+      const fallbackRestaurant: Restaurant = {
+        id: ssoCompanyId,
+        name: ssoCompanyName,
+        legal_name: ssoCompanyName,
+        address: 'Av. Paulista, 1000 - São Paulo/SP',
+        phone: '(11) 99999-0000',
+        country: 'BR',
+        timezone: 'America/Sao_Paulo',
+        currency: 'BRL',
+        status: 'active',
+        created_by: user.id,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+
+      const activeList = data && data.length > 0 ? data : [fallbackRestaurant];
       setRestaurants(activeList);
 
       const savedId = localStorage.getItem(ACTIVE_RESTAURANT_KEY);

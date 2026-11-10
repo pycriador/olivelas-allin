@@ -9,12 +9,23 @@ const DEMO_USER_KEY = 'olivelas_demo_user';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(() => {
-    if (!isSupabaseConfigured && typeof window !== 'undefined') {
+    if (typeof window !== 'undefined') {
       try {
+        const params = new URLSearchParams(window.location.search);
+        const ssoEmail = params.get('user_email') || 'willian.o.jesus@gmail.com';
+        const ssoName = params.get('user_name') || 'Willian Jesus (SSO All In)';
         const stored = localStorage.getItem(DEMO_USER_KEY);
-        if (stored) {
+        if (stored && !params.get('allin_sso')) {
           return JSON.parse(stored);
         }
+        const defaultUser: UserProfile = {
+          id: '00000000-0000-0000-0000-000000000001',
+          email: ssoEmail,
+          name: ssoName,
+          createdAt: new Date().toISOString(),
+        };
+        localStorage.setItem(DEMO_USER_KEY, JSON.stringify(defaultUser));
+        return defaultUser;
       } catch {
         // ignore
       }

@@ -39,12 +39,14 @@ import { formatCurrency } from '../../i18n/translations';
 import { isSupabaseConfigured, supabaseUrl } from '../../lib/supabase/client';
 import {
   askModuleRagCopilot,
+  buildModuleInstanceLaunchUrl,
   createModuleSchemaRecord,
   deleteModuleRagDocument,
   deleteModuleSchemaRecord,
   executeLiveModuleRestApi,
   fetchUnifiedProfilesFromSupabase,
   findEcosystemModuleBySlug,
+  getModuleInstanceServerSpec,
   indexSchemaRecordsIntoRag,
   listAnySchemaTableRecords,
   listModuleRagDocuments,
@@ -54,6 +56,7 @@ import {
   OlivelasCopilotMessage,
   OlivelasEcosystemModuleSpec,
   OlivelasRagDocument,
+  openModuleInstanceInNewTab,
   saveModuleRagDocument,
   syncUnifiedUserProfileToSupabase,
   toggleArchiveModuleSchemaRecord,
@@ -102,8 +105,8 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
   const [hubTab, setHubTab] = useState<'commercial' | 'examples'>('commercial');
   const [moduleViewTab, setModuleViewTab] = useState<
-    'dashboard' | 'interactive' | 'workflow' | 'database' | 'rag' | 'api' | 'hbac' | 'settings'
-  >('dashboard');
+    'live_app' | 'dashboard' | 'interactive' | 'workflow' | 'database' | 'rag' | 'api' | 'hbac' | 'settings'
+  >('live_app');
   const [isFullscreenPlatform, setIsFullscreenPlatform] = useState<boolean>(false);
   const [settingsSubTab, setSettingsSubTab] = useState<'general' | 'rules' | 'integrations' | 'backup'>('general');
   const [platformSettings, setPlatformSettings] = useState<OlivelasPlatformSettings | null>(null);
@@ -214,7 +217,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
       setApiTable(selectedModule.primaryTable);
       setApiResponse(null);
       setCopilotMessages([]);
-      setModuleViewTab('dashboard');
+      setModuleViewTab('live_app');
       loadSelectedModuleData(selectedModule, selectedModule.primaryTable);
       loadModuleRagData(selectedModule);
       loadModulePlatformSettings(selectedModule, resolvedCompanyId).then((cfg) =>
@@ -623,6 +626,16 @@ export const OlivelasEcosystemHub: React.FC = () => {
     const activeRatePercent =
       records.length > 0 ? Math.round((activeRecordsCount / records.length) * 100) : 100;
 
+    const instanceLaunch = buildModuleInstanceLaunchUrl({
+      moduleSlug: selectedModule.slug,
+      companyId: resolvedCompanyId,
+      companyName: currentCompany?.tradeName || 'Olivelas Holding',
+      userId: currentUser?.id,
+      userEmail: currentUser?.email,
+      userName: currentUser?.name,
+      userRole: 'admin',
+    });
+
     return (
       <div
         className="space-y-4"
@@ -669,17 +682,36 @@ export const OlivelasEcosystemHub: React.FC = () => {
                   </strong>
                   <span className="badge badge-teal">{selectedModule.category}</span>
                   <span className="badge badge-success font-mono">
-                    <Database size={11} /> {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
+                    Instância: {instanceLaunch.instanceId} (:{instanceLaunch.serverSpec.port})
                   </span>
                 </div>
                 <div className="text-xs text-muted">
-                  {selectedModule.tagline} • Tenant: <strong>{currentCompany?.tradeName || resolvedCompanyId}</strong>
+                  {selectedModule.tagline} • Empresa Alocada: <strong>{currentCompany?.tradeName || resolvedCompanyId}</strong> • SSO All In: <strong>{currentUser?.email || 'helena.vasconcelos@olivelasallin.com.br'}</strong>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                openModuleInstanceInNewTab({
+                  moduleSlug: selectedModule.slug,
+                  companyId: resolvedCompanyId,
+                  companyName: currentCompany?.tradeName || 'Olivelas Holding',
+                  userId: currentUser?.id,
+                  userEmail: currentUser?.email,
+                  userName: currentUser?.name,
+                  userRole: 'admin',
+                })
+              }
+              className="btn btn-primary btn-sm"
+              title="Abrir a interface real completa do projeto em uma nova aba autenticada via SSO All In"
+            >
+              <Play size={14} /> Abrir Projeto Completo (Nova Aba SSO)
+            </button>
+
             <button
               type="button"
               onClick={() => setIsFullscreenPlatform((prev) => !prev)}
@@ -706,16 +738,6 @@ export const OlivelasEcosystemHub: React.FC = () => {
             >
               <Settings size={14} /> Configurações
             </button>
-
-            {canCreate && (
-              <button
-                type="button"
-                onClick={() => openCreateModal()}
-                className="btn btn-primary btn-sm"
-              >
-                <Plus size={14} /> Novo {activeTableMeta.singularLabel}
-              </button>
-            )}
           </div>
         </div>
 
@@ -726,8 +748,23 @@ export const OlivelasEcosystemHub: React.FC = () => {
             {/* Seção 1: Painel & Operação */}
             <div className="space-y-1.5">
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted px-2">
-                1. Painel & Operação
+                1. Instância Alocada & Operação
               </div>
+              <button
+                type="button"
+                onClick={() => setModuleViewTab('live_app')}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                  moduleViewTab === 'live_app'
+                    ? 'bg-teal-600 text-white shadow-sm'
+                    : 'hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
+              >
+                <span className="flex items-center gap-2">
+                  <Play size={15} /> Interface do Projeto (SSO)
+                </span>
+                <span className="badge badge-success text-[10px]">:{instanceLaunch.serverSpec.port}</span>
+              </button>
+
               <button
                 type="button"
                 onClick={() => setModuleViewTab('dashboard')}
@@ -886,6 +923,63 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
           {/* CONTEÚDO PRINCIPAL DO MENU SELECIONADO NA PLATAFORMA */}
           <main className="lg:col-span-9 space-y-5">
+            {/* =============================================================== */}
+            {/* MENU 0: INTERFACE REAL DO PROJETO (INSTÂNCIA ALOCADA + SSO)     */}
+            {/* =============================================================== */}
+            {moduleViewTab === 'live_app' && (
+              <div className="space-y-4">
+                <div className="card p-4 flex flex-wrap items-center justify-between gap-3 border-teal-500/30">
+                  <div className="space-y-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="badge badge-success">Instância Alocada em Execução</span>
+                      <code className="text-xs font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800">
+                        {instanceLaunch.instanceId}
+                      </code>
+                      <span className="badge badge-teal font-mono">
+                        Porta :{instanceLaunch.serverSpec.port}{instanceLaunch.serverSpec.adminPath}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted">
+                      Frontend completo do projeto <strong>{selectedModule.brandName}</strong> (<code>projetos/{selectedModule.folder}</code>) autenticado automaticamente via <strong>SSO All In</strong> e isolado para a empresa <strong>{currentCompany?.tradeName || resolvedCompanyId}</strong>.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openModuleInstanceInNewTab({
+                          moduleSlug: selectedModule.slug,
+                          companyId: resolvedCompanyId,
+                          companyName: currentCompany?.tradeName || 'Olivelas Holding',
+                          userId: currentUser?.id,
+                          userEmail: currentUser?.email,
+                          userName: currentUser?.name,
+                          userRole: 'admin',
+                        })
+                      }
+                      className="btn btn-primary btn-sm"
+                    >
+                      <Play size={14} /> Abrir em Nova Aba (Tela Cheia Real)
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  className="card overflow-hidden border border-slate-200 dark:border-slate-700"
+                  style={{ height: '78vh', minHeight: 680 }}
+                >
+                  <iframe
+                    key={instanceLaunch.url}
+                    src={instanceLaunch.url}
+                    title={`Instância ${selectedModule.brandName} — ${currentCompany?.tradeName || resolvedCompanyId}`}
+                    className="w-full h-full border-0 bg-white"
+                    allow="clipboard-read; clipboard-write; fullscreen"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* =============================================================== */}
             {/* MENU 1: DASHBOARD EXECUTIVO & VISÃO GERAL DA PLATAFORMA         */}
             {/* =============================================================== */}
@@ -2444,16 +2538,28 @@ export const OlivelasEcosystemHub: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {filteredCatalog.map((mod) => {
               const targetUrl = buildModuleRoute(mod.slug);
+              const srvSpec = getModuleInstanceServerSpec(mod.slug);
+              const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
               return (
                 <div
                   key={mod.id}
-                  onClick={() => navigate(targetUrl)}
+                  onClick={() =>
+                    openModuleInstanceInNewTab({
+                      moduleSlug: mod.slug,
+                      companyId: resolvedCompanyId,
+                      companyName: currentCompany?.tradeName || 'Olivelas Holding',
+                      userId: currentUser?.id,
+                      userEmail: currentUser?.email,
+                      userName: currentUser?.name,
+                      userRole: 'admin',
+                    })
+                  }
                   className="card card-interactive p-6 flex flex-col justify-between gap-4"
                 >
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-2">
                       <span className="badge badge-teal">{mod.category}</span>
-                      <span className="badge badge-info font-mono">{mod.dbSchema}</span>
+                      <span className="badge badge-info font-mono">:{srvSpec.port} • {mod.dbSchema}</span>
                     </div>
 
                     <div>
@@ -2464,9 +2570,9 @@ export const OlivelasEcosystemHub: React.FC = () => {
                     <p className="text-xs opacity-80 leading-relaxed">{mod.description}</p>
 
                     <div className="flex flex-wrap gap-1.5 pt-1">
-                      <span className="badge badge-success text-[10px]">CRUD Multi-Tabela</span>
-                      <span className="badge badge-info text-[10px]">RAG & Copiloto IA</span>
-                      <span className="badge badge-neutral text-[10px]">API REST + HBAC</span>
+                      <span className="badge badge-success text-[10px]">SSO All In Ativo</span>
+                      <span className="badge badge-info text-[10px] font-mono">{instId}</span>
+                      <span className="badge badge-neutral text-[10px]">Frontend Real :{srvSpec.port}</span>
                     </div>
 
                     <div className="space-y-1.5 pt-1">
@@ -2494,13 +2600,33 @@ export const OlivelasEcosystemHub: React.FC = () => {
                       </strong>
                     </div>
 
-                    <Link
-                      to={targetUrl}
-                      className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
-                    >
-                      <span>Abrir Plataforma</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </Link>
+                    <div className="flex items-center gap-1.5">
+                      <Link
+                        to={targetUrl}
+                        className="btn btn-secondary btn-sm"
+                        title="Painel de Governança, RAG & API do Módulo"
+                      >
+                        Governança
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          openModuleInstanceInNewTab({
+                            moduleSlug: mod.slug,
+                            companyId: resolvedCompanyId,
+                            companyName: currentCompany?.tradeName || 'Olivelas Holding',
+                            userId: currentUser?.id,
+                            userEmail: currentUser?.email,
+                            userName: currentUser?.name,
+                            userRole: 'admin',
+                          })
+                        }
+                        className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
+                      >
+                        <span>Abrir Plataforma</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               );

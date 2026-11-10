@@ -50,7 +50,7 @@ export function initDomainBridge(): void {
         const defaultWarehouse = (await inventoryService.listWarehouses())[0];
 
         for (const part of so.parts) {
-          const product = products.find(p => p.id === part.partId || p.name.toLowerCase() === part.name.toLowerCase());
+          const product = products.find(p => p.id === part.partId || p.name.toLowerCase() === (part.partName || "").toLowerCase());
           if (product && defaultWarehouse) {
             await inventoryService.createMovement({
               productId: product.id,
@@ -59,10 +59,11 @@ export function initDomainBridge(): void {
               warehouseName: defaultWarehouse.name,
               type: "out",
               quantity: part.quantity || 1,
-              unitCost: part.unitPrice || product.costPrice,
-              totalCost: (part.quantity || 1) * (part.unitPrice || product.costPrice),
-              reason: `Utilizado na OS #${so.number}`,
-              document: so.number,
+              unitCost: part.unitValue || product.costPrice,
+              totalCost: (part.quantity || 1) * (part.unitValue || product.costPrice),
+              notes: `Utilizado na OS #${so.number}`,
+              referenceType: "service_order",
+              referenceId: so.id,
             });
 
             // Atualiza saldo do produto
@@ -131,7 +132,7 @@ export function initDomainBridge(): void {
       // Credita comissão do técnico
       if (so.technicianId) {
         const commissionPercentage = 10; // 10% padrão de comissão sobre mão de obra
-        const laborValue = so.services?.reduce((sum, s) => sum + (s.totalPrice || 0), 0) || paymentValue;
+        const laborValue = so.services?.reduce((sum, s) => sum + (s.totalValue || 0), 0) || paymentValue;
         const commissionVal = Math.round(laborValue * (commissionPercentage / 100) * 100) / 100;
 
         if (commissionVal > 0) {
@@ -169,7 +170,7 @@ export function initDomainBridge(): void {
       // Dá entrada nos produtos recebidos
       if (order.items && defaultWarehouse) {
         for (const item of order.items) {
-          const product = products.find(p => p.id === item.productId || p.name.toLowerCase() === item.productName.toLowerCase());
+          const product = products.find(p => p.id === item.productId || p.name.toLowerCase() === (item.productName || "").toLowerCase());
           if (product) {
             await inventoryService.createMovement({
               productId: product.id,
@@ -178,17 +179,18 @@ export function initDomainBridge(): void {
               warehouseName: defaultWarehouse.name,
               type: "in",
               quantity: item.quantity,
-              unitCost: item.unitPrice,
+              unitCost: item.unitCost,
               totalCost: item.total,
-              reason: `Entrada por Pedido de Compra #${order.number}`,
-              document: order.number,
+              notes: `Entrada por Pedido de Compra #${order.number}`,
+              referenceType: "purchase_order",
+              referenceId: order.id,
             });
 
             // Atualiza o estoque e custo médio
             const newStock = product.currentStock + item.quantity;
             await inventoryService.updateProduct(product.id, {
               currentStock: newStock,
-              costPrice: item.unitPrice > 0 ? item.unitPrice : product.costPrice,
+              costPrice: item.unitCost > 0 ? item.unitCost : product.costPrice,
             });
           }
         }

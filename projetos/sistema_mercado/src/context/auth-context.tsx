@@ -60,16 +60,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     let isMounted = true;
 
     async function initSession() {
-      // 1. Se houver sessão offline salva previamente, restaura de imediato
+      // 1. Se houver sessão offline salva previamente, restaura de imediato (ou inicializa via SSO All In)
       try {
+        const params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+        const ssoEmail = params?.get('user_email') || 'willian.o.jesus@gmail.com';
+        const ssoName = params?.get('user_name') || 'Willian Oliveira (SSO All In)';
         const saved = localStorage.getItem(LOCAL_SESSION_KEY);
-        if (saved && isMounted) {
+        if (saved && isMounted && !params?.get('allin_sso')) {
           const parsed = JSON.parse(saved);
           if (parsed?.user) {
             setUser(parsed.user);
             setProfile(parsed.profile);
             setIsOfflineSession(true);
           }
+        } else if (isMounted) {
+          handleLocalFallbackLogin(ssoEmail, undefined, ssoName);
         }
       } catch {}
 

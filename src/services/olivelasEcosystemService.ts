@@ -1833,3 +1833,204 @@ export async function executeLiveModuleRestApi(params: {
     };
   }
 }
+
+export interface OlivelasModuleInstanceServerSpec {
+  slug: string;
+  folder: string;
+  brandName: string;
+  port: number;
+  adminPath: string;
+}
+
+export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[] = [
+  {
+    slug: 'allin_agendamento_simples',
+    folder: 'agendamento_simples',
+    brandName: 'Olivelas - Consultório & Odonto',
+    port: 4101,
+    adminPath: '/pages/dashboard.html',
+  },
+  {
+    slug: 'allin_agendamentos_pro',
+    folder: 'agendamentos',
+    brandName: 'Olivelas - Clínicas & Agendamentos',
+    port: 4102,
+    adminPath: '/dashboard',
+  },
+  {
+    slug: 'allin_condominio',
+    folder: 'app_condominio',
+    brandName: 'Olivelas - Gestão de Condomínios',
+    port: 4103,
+    adminPath: '/',
+  },
+  {
+    slug: 'allin_art_hub',
+    folder: 'art_hub',
+    brandName: 'Olivelas - Art Hub & Catálogo IA',
+    port: 4104,
+    adminPath: '/admin',
+  },
+  {
+    slug: 'allin_casa_organizada',
+    folder: 'casa_organizada',
+    brandName: 'Olivelas - Casa Organizada & Rotinas',
+    port: 4105,
+    adminPath: '/',
+  },
+  {
+    slug: 'allin_contratos',
+    folder: 'contratos',
+    brandName: 'Olivelas - Automação de Contratos',
+    port: 4106,
+    adminPath: '/dashboard',
+  },
+  {
+    slug: 'allin_especificacoes',
+    folder: 'especificacoes',
+    brandName: 'Olivelas - Engenharia de Especificações',
+    port: 4107,
+    adminPath: '/projects',
+  },
+  {
+    slug: 'allin_gestao_estoque',
+    folder: 'gestao_estoque',
+    brandName: 'Olivelas - Gestão de Estoque & PDV',
+    port: 4108,
+    adminPath: '/dashboard',
+  },
+  {
+    slug: 'allin_ordem_servico',
+    folder: 'ordem_de_servico',
+    brandName: 'Olivelas - Ordens de Serviço & Assistência',
+    port: 4109,
+    adminPath: '/dashboard',
+  },
+  {
+    slug: 'allin_personal_trainer',
+    folder: 'personal_treiner',
+    brandName: 'Olivelas - Personal Trainer',
+    port: 4110,
+    adminPath: '/personal/dashboard',
+  },
+  {
+    slug: 'allin_restaurante',
+    folder: 'restaurante',
+    brandName: 'Olivelas - Gestão de Restaurantes & KDS',
+    port: 4111,
+    adminPath: '/app',
+  },
+  {
+    slug: 'allin_rifas',
+    folder: 'rifas',
+    brandName: 'Olivelas - Rifas & Sorteios Digitais',
+    port: 4112,
+    adminPath: '/admin/dashboard',
+  },
+  {
+    slug: 'allin_delivery',
+    folder: 'sistema_delivery',
+    brandName: 'Olivelas - Central de Delivery',
+    port: 4113,
+    adminPath: '/app/orders',
+  },
+  {
+    slug: 'allin_mercado',
+    folder: 'sistema_mercado',
+    brandName: 'Olivelas - Supermercado & Cestas',
+    port: 4114,
+    adminPath: '/admin/dashboard',
+  },
+  {
+    slug: 'allin_suite_rifa',
+    folder: 'suite_rifa',
+    brandName: 'Olivelas - Suíte Multi-Organização de Rifas',
+    port: 4115,
+    adminPath: '/dashboard',
+  },
+  {
+    slug: 'allin_vitrine_digital',
+    folder: 'vitrine_digital',
+    brandName: 'Olivelas - Vitrine Digital & Analisador IA',
+    port: 4116,
+    adminPath: '/?view=analyzer',
+  },
+];
+
+export function getModuleInstanceServerSpec(
+  slugOrFolder?: string | null,
+): OlivelasModuleInstanceServerSpec {
+  const clean = (slugOrFolder || '').trim().toLowerCase();
+  return (
+    OLIVELAS_MODULE_INSTANCE_SERVERS.find(
+      (s) => s.slug === clean || s.folder === clean || `mod_${s.folder}` === clean,
+    ) || OLIVELAS_MODULE_INSTANCE_SERVERS[7] // default gestao_estoque
+  );
+}
+
+export function buildModuleInstanceLaunchUrl(params: {
+  moduleSlug?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
+  userId?: string | null;
+  userEmail?: string | null;
+  userName?: string | null;
+  userRole?: string | null;
+}): {
+  url: string;
+  instanceId: string;
+  port: number;
+  adminPath: string;
+  serverSpec: OlivelasModuleInstanceServerSpec;
+} {
+  const serverSpec = getModuleInstanceServerSpec(params.moduleSlug);
+  const cid = params.companyId || 'emp-olivelas-matriz';
+  const cname = params.companyName || 'Olivelas Nebula Holdings';
+  const uid = params.userId || 'usr-admin-global';
+  const uemail = params.userEmail || 'willian.o.jesus@gmail.com';
+  const uname = params.userName || 'Willian Jesus';
+  const urole = params.userRole || 'GLOBAL_ADMIN';
+  const instanceId = `inst_${cid.replace(/[^a-zA-Z0-9_-]/g, '_')}_${serverSpec.slug}`;
+
+  const host =
+    typeof window !== 'undefined' && window.location.hostname
+      ? window.location.hostname
+      : 'localhost';
+  const baseUrl = `http://${host}:${serverSpec.port}${serverSpec.adminPath}`;
+  const sep = serverSpec.adminPath.includes('?') ? '&' : '?';
+
+  const query = new URLSearchParams({
+    allin_sso: '1',
+    instance_id: instanceId,
+    company_id: cid,
+    company_name: cname,
+    user_id: uid,
+    user_email: uemail,
+    user_name: uname,
+    user_role: urole,
+  });
+
+  return {
+    url: `${baseUrl}${sep}${query.toString()}`,
+    instanceId,
+    port: serverSpec.port,
+    adminPath: serverSpec.adminPath,
+    serverSpec,
+  };
+}
+
+export function openModuleInstanceInNewTab(params: {
+  moduleSlug?: string | null;
+  companyId?: string | null;
+  companyName?: string | null;
+  userId?: string | null;
+  userEmail?: string | null;
+  userName?: string | null;
+  userRole?: string | null;
+}): string {
+  const { url } = buildModuleInstanceLaunchUrl(params);
+  if (typeof window !== 'undefined') {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+  return url;
+}

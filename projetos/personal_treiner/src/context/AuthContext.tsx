@@ -58,7 +58,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         const savedUser = getItem<User | null>(STORAGE_KEYS.CURRENT_USER, null);
-        if (!savedUser) return;
+        if (!savedUser) {
+          const defaultTrainer = await userRepository.getById('user-rafaela');
+          if (defaultTrainer) {
+            setUser(defaultTrainer);
+            setItem(STORAGE_KEYS.CURRENT_USER, defaultTrainer);
+          }
+          return;
+        }
 
         setUser(savedUser);
         if (savedUser.role === 'student') {

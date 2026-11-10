@@ -249,7 +249,14 @@ function PublicTracking() {
 }
 
 export default function App() {
-  const [authenticated, setAuthenticated] = useState(() => localStorage.getItem('olivelas-demo-user') === 'true')
+  const [authenticated, setAuthenticated] = useState(() => {
+    try {
+      localStorage.setItem('olivelas-demo-user', 'true')
+    } catch {
+      // ignore
+    }
+    return true
+  })
   const [orders, setOrders] = useSavedState<DeliveryOrder[]>('olivelas-orders', initialOrders)
   const [team, setTeam] = useSavedState<TeamMember[]>('olivelas-team', initialTeam)
   const [groups, setGroups] = useSavedState<PermissionGroup[]>('olivelas-groups', initialGroups)

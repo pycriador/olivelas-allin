@@ -1010,7 +1010,7 @@ export const deleteAnalysisImage = createServerFn({ method: "POST" })
       .update({
         image_url: updatedImageUrl,
         image_path: updatedImagePath,
-        analysis: updatedAnalysis,
+        analysis: updatedAnalysis as any,
       })
       .eq("id", data.analysisId);
 

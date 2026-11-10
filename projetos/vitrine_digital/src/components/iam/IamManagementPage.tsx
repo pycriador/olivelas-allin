@@ -131,8 +131,8 @@ export function IamManagementPage({
         onNavigateView={handleNav}
         availableGroups={groups}
         pendingSubmissionsCount={pendingSubmissionsCount}
-        onOpenSubmitArt={onOpenSubmitArt}
-        onOpenAuthModal={onOpenAuthModal}
+        onOpenSubmitArt={() => onOpenSubmitArt?.()}
+        onOpenAuthModal={(tab) => onOpenAuthModal?.(tab)}
       />
 
       <div className="relative mx-auto w-full max-w-[1280px] min-w-0 px-3.5 sm:px-8 py-6 sm:py-8">

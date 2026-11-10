@@ -11,6 +11,12 @@ dist-ssr/
 **/dist-ssr/
 build/
 **/build/
+.output/
+**/.output/
+.wrangler/
+**/.wrangler/
+.tanstack/
+**/.tanstack/
 *.local
 **/*.local
 tsconfig.tsbuildinfo

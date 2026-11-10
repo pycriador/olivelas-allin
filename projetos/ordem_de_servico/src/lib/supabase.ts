@@ -75,13 +75,13 @@ const safeStorage: Storage = {
   },
 };
 
-let client: SupabaseClient | null = null;
+let client: SupabaseClient<any, any, any> | null = null;
 
 /**
  * Singleton Supabase client. Reads exclusively from
  * VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.
  */
-export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
+export const supabase: SupabaseClient<any, any, any> = new Proxy({} as SupabaseClient<any, any, any>, {
   get(_target, prop) {
     if (!client) {
       if (!url || !anonKey) {
@@ -109,7 +109,7 @@ export const supabase: SupabaseClient = new Proxy({} as SupabaseClient, {
   },
 });
 
-export function getSupabase(): SupabaseClient {
+export function getSupabase(): SupabaseClient<any, any, any> {
   // Kept for backward compat with older async callers.
   return supabase;
 }

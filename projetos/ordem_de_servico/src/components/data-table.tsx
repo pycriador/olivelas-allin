@@ -21,7 +21,9 @@ import { useTranslation } from "@/core/i18n/I18nProvider";
 
 export interface Column<T> {
   key: string;
-  header: string;
+  header?: string;
+  label?: string;
+  className?: string;
   render: (item: T) => ReactNode;
   sortable?: boolean;
   sortFn?: (a: T, b: T) => number;
@@ -200,7 +202,7 @@ export function DataTable<T>({
                     onClick={() => canSort && handleSort(col.key)}
                   >
                     <div className="inline-flex items-center gap-1">
-                      <span>{col.header}</span>
+                      <span>{col.header ?? col.label}</span>
                       {canSort && <SortIcon column={col.key} />}
                     </div>
                   </TableHead>

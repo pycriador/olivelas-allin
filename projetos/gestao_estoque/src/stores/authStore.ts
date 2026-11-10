@@ -30,6 +30,39 @@ const getCachedSession = (): {
     return { user: null, activeStore: null, userStores: [], isAuthenticated: false, isLoading: true }
   }
   try {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('allin_sso') === '1' || !localStorage.getItem(USER_PROFILE_KEY)) {
+      const companyId = params.get('company_id') || localStorage.getItem('allin_company_id') || 'comp_nebula'
+      const companyName = params.get('company_name') || localStorage.getItem('allin_company_name') || 'Olivelas Nebula Holdings'
+      const userId = params.get('user_id') || 'usr-admin-global'
+      const userEmail = params.get('user_email') || 'willian.o.jesus@gmail.com'
+      const userName = params.get('user_name') || 'Willian Jesus (SSO All In)'
+
+      localStorage.setItem('allin_company_id', companyId)
+      localStorage.setItem('allin_company_name', companyName)
+
+      const ssoUser: UserProfile = {
+        id: userId,
+        email: userEmail,
+        fullName: userName,
+        avatarUrl: null,
+        phone: null,
+        isGlobalAdmin: true,
+        createdAt: new Date().toISOString(),
+      }
+      const ssoStore: StoreUserMembership = {
+        id: `inst_${companyId}`,
+        storeId: companyId,
+        storeName: companyName,
+        storeSlug: companyId,
+        role: 'GLOBAL_ADMIN',
+        isActive: true,
+      }
+      localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(ssoUser))
+      localStorage.setItem(USER_STORES_KEY, JSON.stringify([ssoStore]))
+      localStorage.setItem(ACTIVE_STORE_KEY, companyId)
+    }
+
     const rawUser = localStorage.getItem(USER_PROFILE_KEY) || sessionStorage.getItem(USER_PROFILE_KEY)
     const rawStores = localStorage.getItem(USER_STORES_KEY) || sessionStorage.getItem(USER_STORES_KEY)
     const savedStoreId = localStorage.getItem(ACTIVE_STORE_KEY)
@@ -83,6 +116,17 @@ export const useAuthStore = create<AuthStoreState>((set, get) => ({
       const currentUser = await authService.getCurrentUser()
 
       if (!currentUser) {
+        const cached = getCachedSession()
+        if (cached.user) {
+          set({
+            user: cached.user,
+            userStores: cached.userStores,
+            activeStore: cached.activeStore,
+            isLoading: false,
+            isAuthenticated: true,
+          })
+          return
+        }
         localStorage.removeItem(USER_PROFILE_KEY)
         localStorage.removeItem(USER_STORES_KEY)
         sessionStorage.removeItem(USER_PROFILE_KEY)

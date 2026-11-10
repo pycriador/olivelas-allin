@@ -35,6 +35,10 @@ import {
 import { useApp } from '../../context/AppContext';
 import { LanguageCode, PermissionResource, ThemeMode } from '../../types/domain';
 import { getUserActiveRoles } from '../../services/hbacService';
+import {
+  OLIVELAS_MODULE_INSTANCE_SERVERS,
+  openModuleInstanceInNewTab,
+} from '../../services/olivelasEcosystemService';
 import { DARK_THEMES, findThemePreset, LIGHT_THEMES } from '../../styles/themes';
 import { AccessDeniedView, ModalDialog } from '../shared/SharedComponents';
 
@@ -691,14 +695,14 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
             {topItems.map(renderNavLink)}
           </div>
 
-          {/* Quick Demo Shortcuts for Flagship Olivelas Commercial Modules */}
+          {/* Módulos Comerciais (Instâncias Alocadas com SSO All In em Nova Aba) */}
           <div>
             <div
               className="flex items-center gap-2 px-2 mb-1"
               style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
             >
               <Layers size={12} />
-              <span>Acesso Rápido — Plataformas</span>
+              <span>Módulos Comerciais</span>
             </div>
             <div
               style={{
@@ -710,20 +714,35 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
                 gap: '0.2rem',
               }}
             >
-              {[
-                { slug: 'allin_gestao_estoque', label: 'Gestão de Estoque & PDV' },
-                { slug: 'allin_personal_trainer', label: 'Personal Trainer' },
-                { slug: 'allin_agendamento_simples', label: 'Consultório & Odonto' },
-                { slug: 'allin_restaurante', label: 'Restaurantes & KDS' },
-                { slug: 'allin_delivery', label: 'Central de Delivery' },
-              ].map((quick) => {
-                const target = `${ecosystemBaseRoute}/${quick.slug}`;
-                const active = location.pathname === target;
+              {OLIVELAS_MODULE_INSTANCE_SERVERS.filter((srv) =>
+                mode === 'global' ? true : isModuleSubscribed(cid, srv.slug),
+              ).map((srv) => {
+                const targetPath = `${ecosystemBaseRoute}/${srv.slug}`;
+                const active = location.pathname === targetPath;
+                const activeComp =
+                  mode === 'company'
+                    ? currentCompany
+                    : companies.find((c) => c.id === session.activeCompanyId) || companies[0];
+                const labelClean = srv.brandName.replace(/^Olivelas\s*-\s*/i, '');
                 return (
-                  <Link
-                    key={quick.slug}
-                    to={target}
-                    onClick={() => setSidebarOpen(false)}
+                  <a
+                    key={srv.slug}
+                    href={`http://localhost:${srv.port}${srv.adminPath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSidebarOpen(false);
+                      openModuleInstanceInNewTab({
+                        moduleSlug: srv.slug,
+                        companyId: activeComp?.id || cid,
+                        companyName: activeComp?.tradeName || 'Olivelas Nebula Holdings',
+                        userId: currentUser.id,
+                        userEmail: currentUser.email,
+                        userName: currentUser.name,
+                        userRole: userActiveRoles[0]?.code || 'GLOBAL_ADMIN',
+                      });
+                    }}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -732,14 +751,16 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
                       borderRadius: '0.6rem',
                       fontSize: '0.75rem',
                       fontWeight: active ? 600 : 500,
-                      color: active ? '#ffffff' : '#94a3b8',
+                      color: active ? '#ffffff' : '#cbd5e1',
                       backgroundColor: active ? 'var(--bg-sidebar-active)' : 'transparent',
                       textDecoration: 'none',
+                      cursor: 'pointer',
                     }}
+                    title={`Abrir instância alocada de ${srv.brandName} em nova aba (Porta ${srv.port})`}
                   >
-                    <span className="truncate">{quick.label}</span>
+                    <span className="truncate">{labelClean}</span>
                     <ExternalLink size={11} style={{ opacity: 0.7, flexShrink: 0 }} />
-                  </Link>
+                  </a>
                 );
               })}
             </div>

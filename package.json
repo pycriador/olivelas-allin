@@ -11,7 +11,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "db:migrate": "node scripts/migrate-supabase.mjs",
-    "projects:standardize": "node scripts/standardize-projects.mjs"
+    "projects:standardize": "node scripts/standardize-projects.mjs",
+    "modules:start": "node scripts/start-all-modules.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.95.3",
