@@ -198,17 +198,17 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           },
           {
             key: 'status',
-            header: 'Estado',
+            header: 'Estado & Último Acesso',
             sortable: true,
-            render: (u) => <StatusBadge status={u.status} />,
-          },
-          {
-            key: 'lastLoginAt',
-            header: 'Último Acesso',
             render: (u) => (
-              <span className="text-xs text-muted tabular">
-                {formatDateTime(u.lastLoginAt, session.language)}
-              </span>
+              <div className="flex flex-col gap-1">
+                <div>
+                  <StatusBadge status={u.status} />
+                </div>
+                <span className="text-xs text-muted tabular">
+                  {formatDateTime(u.lastLoginAt, session.language)}
+                </span>
+              </div>
             ),
           },
           {
@@ -1150,7 +1150,7 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
                     if (!cell) return <td key={act}>-</td>;
                     return (
                       <td key={act}>
-                        <div className="flex flex-col gap-1">
+                        <div className="flex flex-col gap-0.5" title={cell.originLabel}>
                           <span
                             className={`badge ${
                               cell.allowed
@@ -1164,7 +1164,10 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
                           >
                             {cell.allowed ? 'Permitido' : 'Bloqueado'}
                           </span>
-                          <span className="text-xs text-muted" style={{ fontSize: '0.68rem' }}>
+                          <span
+                            className="text-xs text-muted truncate"
+                            style={{ fontSize: '0.65rem', maxWidth: '95px' }}
+                          >
                             {cell.originLabel}
                           </span>
                         </div>
@@ -1233,6 +1236,7 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
                                 ? 'btn-secondary'
                                 : 'btn-ghost'
                             }`}
+                            style={{ padding: '0.25rem 0.45rem', fontSize: '0.72rem' }}
                             title={
                               hasExplicitGranular
                                 ? 'Concessão granular explícita neste módulo (clique para alternar)'
@@ -1240,7 +1244,7 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
                             }
                           >
                             {hasExplicitGranular
-                              ? 'Granular Ativo'
+                              ? 'Granular'
                               : effectiveAllowed
                               ? 'Herdado'
                               : 'Restrito'}

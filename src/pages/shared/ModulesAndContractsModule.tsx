@@ -230,8 +230,7 @@ export const ModuleDetailsModal: React.FC<{
               <thead>
                 <tr>
                   <th>Empresa</th>
-                  <th>Instância Alocada</th>
-                  <th>Ciclo</th>
+                  <th>Porta & Ciclo</th>
                   <th>Estado</th>
                   <th className="num">Valor Acordado</th>
                   <th className="num">Acesso SSO</th>
@@ -240,7 +239,7 @@ export const ModuleDetailsModal: React.FC<{
               <tbody>
                 {subscribedCompanies.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center text-muted" style={{ padding: '1.25rem' }}>
+                    <td colSpan={5} className="text-center text-muted" style={{ padding: '1.25rem' }}>
                       Nenhuma empresa vinculada no momento.
                     </td>
                   </tr>
@@ -264,9 +263,14 @@ export const ModuleDetailsModal: React.FC<{
                           </Link>
                         </td>
                         <td>
-                          <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                          <div
+                            className="flex items-center gap-1.5 flex-wrap"
+                            title={instInfo.instanceId}
+                          >
+                            <span className="badge badge-teal mono">:{instInfo.port}</span>
+                            <span className="text-xs text-muted">{sub.billingCycle}</span>
+                          </div>
                         </td>
-                        <td>{sub.billingCycle}</td>
                         <td>
                           <StatusBadge status={sub.status} />
                         </td>
@@ -522,21 +526,26 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           },
           {
             key: 'commercialStatus',
-            header: 'Status',
+            header: 'Status & Empresas',
             sortable: true,
-            render: (m) => <StatusBadge status={m.commercialStatus} />,
-          },
-          {
-            key: 'tenants',
-            header: 'Empresas',
-            isNumeric: true,
-            csvValue: (m) =>
-              companyModules.filter((cm) => cm.moduleId === m.id && cm.status === 'active').length,
+            csvValue: (m) => {
+              const count = companyModules.filter(
+                (cm) => cm.moduleId === m.id && cm.status === 'active',
+              ).length;
+              return `${m.commercialStatus} (${count} empresas)`;
+            },
             render: (m) => {
               const count = companyModules.filter(
                 (cm) => cm.moduleId === m.id && cm.status === 'active',
               ).length;
-              return <span className="badge badge-teal">{count}</span>;
+              return (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <StatusBadge status={m.commercialStatus} />
+                  <span className="badge badge-teal" title="Empresas ativas neste módulo">
+                    {count} emp.
+                  </span>
+                </div>
+              );
             },
           },
           {
@@ -1079,12 +1088,10 @@ export const ModuleDetailPage: React.FC = () => {
             <thead>
               <tr>
                 <th>Empresa</th>
-                <th>Instância Alocada</th>
-                <th>Ciclo</th>
-                <th>Estado</th>
-                <th>Renovação</th>
+                <th>Porta & Ciclo</th>
+                <th>Estado & Renovação</th>
                 <th className="num">Valor Acordado</th>
-                <th>Acesso SSO</th>
+                <th className="num">Acesso SSO</th>
               </tr>
             </thead>
             <tbody>
@@ -1106,17 +1113,24 @@ export const ModuleDetailPage: React.FC = () => {
                       </Link>
                     </td>
                     <td>
-                      <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                      <div
+                        className="flex items-center gap-1.5 flex-wrap"
+                        title={instInfo.instanceId}
+                      >
+                        <span className="badge badge-teal mono">:{instInfo.port}</span>
+                        <span className="text-xs text-muted">{sub.billingCycle}</span>
+                      </div>
                     </td>
-                    <td>{sub.billingCycle}</td>
                     <td>
-                      <StatusBadge status={sub.status} />
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <StatusBadge status={sub.status} />
+                        <span className="text-xs text-muted tabular">Renova: {sub.renewalDate}</span>
+                      </div>
                     </td>
-                    <td className="tabular">{sub.renewalDate}</td>
                     <td className="num tabular font-semibold">
                       {formatCurrency(sub.agreedPrice, sub.currency, session.language)}
                     </td>
-                    <td>
+                    <td className="num">
                       {!mod.isExample && (
                         <button
                           type="button"

@@ -717,7 +717,8 @@
   /* Data Tables elegantes */
   .table-wrapper {
     width: 100%;
-    overflow-x: auto;
+    max-width: 100%;
+    overflow-x: hidden;
     border: 1px solid var(--border-subtle);
     border-radius: var(--radius-md);
     background-color: var(--bg-surface);
@@ -726,18 +727,28 @@
   .data-table,
   .table {
     width: 100%;
+    max-width: 100%;
     border-collapse: collapse;
-    font-size: 0.8125rem;
+    font-size: 0.8rem;
   }
 
   .data-table th,
   .data-table td,
   .table th,
   .table td {
-    padding: 0.65rem 0.75rem;
+    padding: 0.5rem 0.6rem;
     border-block-end: 1px solid var(--border-subtle);
     text-align: start;
     vertical-align: middle;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .data-table td code,
+  .table td code {
+    word-break: break-all;
+    white-space: normal;
   }
 
   .data-table th.num,
@@ -755,11 +766,12 @@
     background-color: color-mix(in srgb, var(--bg-subtle) 75%, var(--bg-surface));
     color: var(--text-secondary);
     font-weight: 700;
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.04em;
+    line-height: 1.25;
     z-index: 1;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .data-table tbody tr,
@@ -845,6 +857,7 @@
     max-height: 90vh;
     width: calc(100% - 1.5rem);
     box-shadow: var(--shadow-lg);
+    overflow-x: hidden;
     overflow-y: auto;
     margin: auto;
   }

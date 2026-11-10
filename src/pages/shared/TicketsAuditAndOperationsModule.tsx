@@ -1301,20 +1301,16 @@ export const CompanyOperationModulePage: React.FC<{
           },
           {
             key: 'quantity',
-            header: 'Qtd / Volume',
-            sortable: true,
-            isNumeric: true,
-            render: (r) => <span className="mono font-semibold">{r.quantity}</span>,
-          },
-          {
-            key: 'amount',
-            header: 'Valor Financeiro',
+            header: 'Qtd & Valor',
             sortable: true,
             isNumeric: true,
             render: (r) => (
-              <span className="font-semibold tabular">
-                {formatCurrency(r.amount, r.currency || company.currency, session.language)}
-              </span>
+              <div className="tabular">
+                <div className="font-semibold">
+                  {formatCurrency(r.amount, r.currency || company.currency, session.language)}
+                </div>
+                <div className="text-xs text-muted mono">Qtd: {r.quantity}</div>
+              </div>
             ),
           },
           {

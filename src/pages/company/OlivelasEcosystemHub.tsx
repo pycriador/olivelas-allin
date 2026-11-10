@@ -1365,9 +1365,11 @@ export const OlivelasEcosystemHub: React.FC = () => {
                       header: 'ID',
                       sortable: true,
                       csvValue: (rec) => String(rec.id || ''),
-                      render: (rec) => <span className="font-mono text-xs">{String(rec.id || '')}</span>,
+                      render: (rec) => (
+                        <span className="font-mono text-xs">{String(rec.id || '')}</span>
+                      ),
                     },
-                    ...activeTableMeta.fields.map((field) => ({
+                    ...activeTableMeta.fields.slice(0, 3).map((field) => ({
                       key: field.key,
                       header: field.label,
                       sortable: true,
@@ -1388,7 +1390,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
                     })),
                     {
                       key: 'gov_status',
-                      header: 'Status / Governança',
+                      header: 'Status',
                       render: (rec) => {
                         const archiveMeta = rec.archive_metadata as
                           | { isArchived?: boolean; archiveReason?: string }
@@ -1399,17 +1401,17 @@ export const OlivelasEcosystemHub: React.FC = () => {
                             Arquivado
                           </span>
                         ) : (
-                          <span className="badge badge-success">Ativo no Supabase</span>
+                          <span className="badge badge-success">Ativo</span>
                         );
                       },
                     },
                     {
                       key: 'row_actions',
-                      header: 'Edição & Exclusão',
+                      header: 'Ações',
                       render: (rec) => {
                         const idStr = String(rec.id || '');
                         return (
-                          <div className="inline-flex items-center gap-1.5">
+                          <div className="inline-flex items-center gap-1 flex-wrap">
                             {canEdit && (
                               <button
                                 type="button"
@@ -2543,7 +2545,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
             },
             {
               key: 'instance',
-              header: 'Instância Alocada & Porta SSO',
+              header: 'Porta & Rota SSO',
               csvValue: (mod) => {
                 const srvSpec = getModuleInstanceServerSpec(mod.slug);
                 const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
@@ -2553,11 +2555,9 @@ export const OlivelasEcosystemHub: React.FC = () => {
                 const srvSpec = getModuleInstanceServerSpec(mod.slug);
                 const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
                 return (
-                  <div className="flex flex-col gap-1">
-                    <span className="badge badge-success font-mono">{instId}</span>
-                    <span className="text-xs text-muted font-mono">
-                      Porta :{srvSpec.port}{srvSpec.adminPath}
-                    </span>
+                  <div className="flex items-center gap-1.5 flex-wrap" title={instId}>
+                    <span className="badge badge-teal font-mono">:{srvSpec.port}</span>
+                    <span className="text-xs text-muted font-mono">{srvSpec.adminPath}</span>
                   </div>
                 );
               },
@@ -2682,7 +2682,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
           </span>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="table-wrapper">
           <table className="data-table w-full text-xs">
             <thead>
               <tr>

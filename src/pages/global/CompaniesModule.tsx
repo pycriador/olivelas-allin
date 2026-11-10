@@ -137,17 +137,17 @@ export const CompaniesListPage: React.FC = () => {
           },
           {
             key: 'operationalStatus',
-            header: 'Estado Operacional',
+            header: 'Estado & Moeda',
             sortable: true,
-            render: (c) => <StatusBadge status={c.operationalStatus} />,
-          },
-          {
-            key: 'currency',
-            header: 'Moeda / Idioma',
             render: (c) => (
-              <span className="text-xs mono">
-                {c.currency} • {c.defaultLanguage}
-              </span>
+              <div className="flex flex-col gap-1">
+                <div>
+                  <StatusBadge status={c.operationalStatus} />
+                </div>
+                <span className="text-xs text-muted mono">
+                  {c.currency} • {c.defaultLanguage}
+                </span>
+              </div>
             ),
           },
           {
@@ -994,7 +994,7 @@ export const CompanyDetailHubPage: React.FC<{
           columns={[
             {
               key: 'code',
-              header: 'Código & Instância',
+              header: 'Código & Porta',
               sortable: true,
               render: (mod) => {
                 const demoSlug = mod.ecosystemSlug || mod.code;
@@ -1009,7 +1009,12 @@ export const CompanyDetailHubPage: React.FC<{
                   <div className="flex flex-col gap-1">
                     <code className="text-xs">{mod.code}</code>
                     {instInfo && (
-                      <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                      <div title={instInfo.instanceId}>
+                        <span className="badge badge-teal mono">
+                          :{instInfo.port}
+                          {instInfo.serverSpec.adminPath}
+                        </span>
+                      </div>
                     )}
                   </div>
                 );
@@ -1109,9 +1114,14 @@ export const CompanyDetailHubPage: React.FC<{
           columns={[
             {
               key: 'code',
-              header: 'Código',
+              header: 'Código & Versão',
               sortable: true,
-              render: (ct) => <span className="mono font-semibold">{ct.code}</span>,
+              render: (ct) => (
+                <div>
+                  <span className="mono font-semibold">{ct.code}</span>
+                  <div className="text-xs text-muted tabular">Versão v{ct.version}</div>
+                </div>
+              ),
             },
             {
               key: 'planName',
@@ -1126,11 +1136,6 @@ export const CompanyDetailHubPage: React.FC<{
                   {ct.startDate} → {ct.endDate}
                 </span>
               ),
-            },
-            {
-              key: 'version',
-              header: 'Versão',
-              render: (ct) => <span className="tabular">v{ct.version}</span>,
             },
             {
               key: 'status',
