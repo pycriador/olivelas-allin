@@ -1,250 +1,236 @@
-# Olivelas All In — Plataforma SaaS Multiempresa, Ecossistema Multi-Schema Supabase, RAG & Governança HBAC (`v2.0.0`)
+# Olivelas All In — Plataforma SaaS Multiempresa, Ecossistema de 37 Plataformas Comerciais, Multi-Schema Supabase, RAG & Governança HBAC (`v2.0.0`)
 
 ![Version](https://img.shields.io/badge/version-2.0.0--production-0f172a?style=flat-square)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?style=flat-square)
 ![React](https://img.shields.io/badge/React-19.0-149eca?style=flat-square)
 ![Vite](https://img.shields.io/badge/Vite-6.x-646cff?style=flat-square)
-![Database](https://img.shields.io/badge/Supabase-PostgreSQL%2017%20(16%20Schemas%20%2B%20public)-10b981?style=flat-square)
-![Auth](https://img.shields.io/badge/Auth-Bcrypt%20pgcrypto%20%2B%20HBAC%20Granular-2563eb?style=flat-square)
-![RAG](https://img.shields.io/badge/RAG%20%26%20IA-Copiloto%20Contextual%2016%20M%C3%B3dulos-0d9488?style=flat-square)
+![Database](https://img.shields.io/badge/Supabase-PostgreSQL%2017%20(27%20Schemas%20%2B%20public)-10b981?style=flat-square)
+![Platforms](https://img.shields.io/badge/Plataformas%20Comerciais-37%20Apps%20(:4101--4137)-f59e0b?style=flat-square)
+![Auth](https://img.shields.io/badge/SSO%20%26%20Auth-Global%20Admin%20Unificado%20%2B%20Bcrypt-2563eb?style=flat-square)
+![RAG](https://img.shields.io/badge/RAG%20%26%20IA-Copiloto%20Contextual%2037%20M%C3%B3dulos-0d9488?style=flat-square)
 ![i18n](https://img.shields.io/badge/i18n-PT--BR%20%7C%20EN%20%7C%20ES-4f46e5?style=flat-square)
 ![Themes](https://img.shields.io/badge/Themes-15%20Light%20%2B%2015%20Dark-d97706?style=flat-square)
 
-**Olivelas All In** é a plataforma corporativa SaaS multiempresa pronta para produção que unifica a governança central (**Autenticação Real no Supabase, Motor HBAC Granular, Gestão de Empresas, Contratos com Assinatura SHA-256, Financeiro, API Hub PostgREST, Chamados e Auditoria Forense**) com as **16 Plataformas Comerciais Olivelas** localizadas em `/projetos`, operando sobre o **PostgreSQL 17 (Supabase)** com **base única de usuários e senhas (`public.profiles`)**, **16 schemas dedicados**, **CRUD Multi-Tabela**, **RAG & Copiloto IA** e **API Studio em tempo real**.
+**Olivelas All In** é a plataforma corporativa SaaS multiempresa pronta para produção que unifica a governança central (**Autenticação Real no Supabase, Motor HBAC Granular, Gestão de Empresas, Catálogo Unificado com Modal e Menu Dropdown, Contratos com Assinatura SHA-256, Financeiro, API Hub PostgREST, Chamados e Auditoria Forense**) com as **37 Plataformas Comerciais Olivelas** localizadas em `/projetos` (servidas nas portas `:4101` a `:4137`), operando sobre o **PostgreSQL 17 (Supabase)** com **Administrador Global único (`willian.o.jesus@gmail.com`)**, **27 schemas dedicados**, **7 aplicações de Página Estática**, **SSO com URL limpa (`/<aplicacao>`)** e **Barra Inferior com Seletor de 3 Camadas (`Landing Page`, `Tela de Login (Visualização)` e `Administração SSO`)**.
 
 ---
 
 ## Sumário
 
-1. [Arquitetura de Produção no Supabase (Login Único + 16 Schemas + RAG + API)](#1-arquitetura-de-produção-no-supabase-login-único--16-schemas--rag--api)
-2. [Autenticação Real no Supabase, Credenciais e Segurança](#2-autenticação-real-no-supabase-credenciais-e-segurança)
-3. [As 16 Plataformas Comerciais do Ecossistema Olivelas](#3-as-16-plataformas-comerciais-do-ecossistema-olivelas)
-4. [As 5 Abas Operacionais de Cada Módulo Olivelas](#4-as-5-abas-operacionais-de-cada-módulo-olivelas)
-5. [Motor HBAC Hierárquico e Permissões Granulares](#5-motor-hbac-hierárquico-e-permissões-granulares)
-6. [Catálogo de Módulos Base (Exemplos de Fundação)](#6-catálogo-de-módulos-base-exemplos-de-fundação)
-7. [Mapa Completo de Rotas e Telas](#7-mapa-completo-de-rotas-e-telas)
-8. [Design System, 30 Temas e Internacionalização (`PT-BR`, `EN`, `ES`)](#8-design-system-30-temas-e-internacionalização-pt-br-en-es)
-9. [Estrutura de Diretórios e Migrations SQL](#9-estrutura-de-diretórios-e-migrations-sql)
-10. [Como Iniciar, Migrar o Banco, Padronizar Projetos, Testar e Compilar](#10-como-iniciar-migrar-o-banco-padronizar-projetos-testar-e-compilar)
+1. [Arquitetura de Produção (Login Único + 27 Schemas Supabase + 37 Plataformas)](#1-arquitetura-de-produção-login-único--27-schemas-supabase--37-plataformas)
+2. [Administrador Global Único (`willian.o.jesus@gmail.com`) & Primeiro Acesso no Supabase](#2-administrador-global-único-willianojeusgmailcom--primeiro-acesso-no-supabase)
+3. [SSO All In, URL Limpa (`/<app>`) e Seletor de 3 Camadas na Barra Inferior](#3-sso-all-in-url-limpa-app-e-seletor-de-3-camadas-na-barra-inferior)
+4. [Catálogo Completo das 37 Plataformas Comerciais (`:4101` a `:4137`)](#4-catálogo-completo-das-37-plataformas-comerciais-4101-a-4137)
+5. [Páginas Estáticas (Frontend Puro) vs Plataformas Multi-Schema](#5-páginas-estáticas-frontend-puro-vs-plataformas-multi-schema)
+6. [As 5 Abas Operacionais de Cada Módulo no Console Principal](#6-as-5-abas-operacionais-de-cada-módulo-no-console-principal)
+7. [Motor HBAC Hierárquico, Tabelas Sem Scroll Horizontal e UI Unificada](#7-motor-hbac-hierárquico-tabelas-sem-scroll-horizontal-e-ui-unificada)
+8. [Mapa Completo de Rotas e Telas](#8-mapa-completo-de-rotas-e-telas)
+9. [Estrutura de Diretórios, Scripts e Migrations SQL](#9-estrutura-de-diretórios-scripts-e-migrations-sql)
+10. [Como Iniciar (`./start`), Parar (`./start stop`), Testar e Compilar](#10-como-iniciar-start-parar-start-stop-testar-e-compilar)
 
 ---
 
-## 1. Arquitetura de Produção no Supabase (Login Único + 16 Schemas + RAG + API)
+## 1. Arquitetura de Produção (Login Único + 27 Schemas Supabase + 37 Plataformas)
 
-Toda a arquitetura visual e de dados foi construída tendo como referência o padrão do módulo **`gestao_estoque`** (`projetos/gestao_estoque`):
-
-- **Base Única de Usuários e Senhas (`public.profiles`):**
-  - Todos os 16 módulos comerciais e o painel central do **Olivelas All In** compartilham a tabela `public.profiles` no schema público (com view espelho `public.allin_users` e vínculo multiempresa `public.company_users`).
-  - Senhas são armazenadas exclusivamente com hash `bcrypt` (`pgcrypto` `crypt(..., gen_salt('bf', 10))`) e validadas diretamente no PostgreSQL via RPCs seguras (`SECURITY DEFINER`).
-- **Isolamento Multi-Schema no PostgreSQL (16 Schemas Dedicados):**
-  - Cada projeto em `/projetos/<modulo>` possui seu próprio schema PostgreSQL isolado no Supabase (`CREATE SCHEMA IF NOT EXISTS <schema>`), exposto no PostgREST para consultas e mutações diretas via `supabase.schema('<schema>').from('<tabela>')`.
-  - Todas as **77 tabelas** de domínio possuem vínculo com `public.allin_companies(id)` (`company_id`) e `public.profiles(id)`, além de suporte a **arquivamento lógico** (`archive_metadata`) e **CRUD completo**.
-- **Persistência Bidirecional & Auditoria Forense (`public.allin_entity_store` & `public.allin_audit_events`):**
-  - Todas as operações de empresas, usuários, papéis HBAC, contratos, faturas, meios de pagamento, chamados e itens operacionais são sincronizadas com o Supabase PostgreSQL e geram registros imutáveis em `public.allin_audit_events` (com exportação CSV e JSON Forense).
-- **RAG Completo & Copiloto IA (`public.allin_rag_documents` & `public.allin_ai_chat_messages`):**
-  - Cada um dos 16 módulos conta com base de conhecimento RAG persistida no Supabase, indexação em 1 clique dos registros reais do schema PostgreSQL e Copiloto IA contextual (modos *Executivo*, *Operacional* e *Técnico/SQL*) com citações verificáveis.
+- **Base Única de Autenticação (`public.profiles` & `auth.users`):**
+  - O Console Principal (`http://localhost:5174`) e todas as **37 plataformas comerciais** (`http://localhost:4101` a `http://localhost:4137`) compartilham a identidade central do **Super Administrador Global**: **`Willian Jesus (willian.o.jesus@gmail.com)`**.
+  - Senhas são armazenadas com hash `bcrypt` (`pgcrypto`) em `public.profiles` e sincronizadas com `auth.users` do Supabase Auth via RPCs `SECURITY DEFINER`.
+- **Isolamento Multi-Schema no PostgreSQL (27 Schemas Dedicados):**
+  - Os projetos com persistência em banco de dados possuem seu próprio schema PostgreSQL isolado no Supabase (`CREATE SCHEMA IF NOT EXISTS <schema>`), exposto no PostgREST para consultas e mutações diretas via `supabase.schema('<schema>').from('<tabela>')`.
+- **Identidade Visual Própria & Favicons SVG Exclusivos (`/favicon.svg`):**
+  - 100% independente de ferramentas ou plugins externos (zero dependências Lovable).
+  - Cada uma das 37 plataformas e o Console Principal possuem seu próprio `/favicon.svg` vetorial exclusivo desenhado sob medida para o seu domínio e título padronizado **`Olivelas - <Nome da Aplicação>`**.
 
 ---
 
-## 2. Autenticação Real no Supabase, Credenciais e Segurança
+## 2. Administrador Global Único (`willian.o.jesus@gmail.com`) & Primeiro Acesso no Supabase
 
-A tela de login (`/login`), o cadastro de nova empresa (`/cadastro`) e a redefinição de senha (`/recuperar-senha` e modal administrativo) operam diretamente sobre as funções PostgreSQL no Supabase:
+Todos os usuários demonstrativos legados foram removidos do banco de dados, dos seeds e das plataformas em `/projetos`, mantendo exclusivamente o **Global Admin oficial**:
 
-- `public.authenticate_olivelas_user(p_email, p_password)` — Valida hash `bcrypt`, registra `last_login_at`, incrementa `login_count` e aplica bloqueio temporário automático (`locked_until`) após 5 tentativas inválidas consecutivas.
-- `public.register_olivelas_account(...)` — Provisiona em transação única uma nova empresa em `public.allin_companies`, o usuário administrador em `public.profiles`, o vínculo em `public.company_users` e os módulos iniciais em `public.allin_company_modules`.
-- `public.change_olivelas_password(p_user_id, p_email, p_new_password, p_actor_email)` — Atualiza o hash `bcrypt` no PostgreSQL, desbloqueia a conta e grava evento na trilha de auditoria.
+| Nome | E-mail Corporativo | Papel HBAC | Nível HBAC | Escopo |
+| :--- | :--- | :--- | :---: | :--- |
+| **Willian Jesus** | `willian.o.jesus@gmail.com` | `GLOBAL_ADMIN` (Super Administrador) | `100` | Console Global + Todas as 4 Empresas + Todas as 37 Plataformas |
 
-### Contas Oficiais Provisionadas no Supabase
-
-> **Senha padrão para todos os perfis oficiais:** `Olivelas@2026`
-
-| Perfil / Papel HBAC | E-mail Corporativo | Escopo | Nível HBAC | Empresa Principal |
-| :--- | :--- | :---: | :---: | :--- |
-| **Super Admin Global** | `helena.vasconcelos@olivelasallin.com.br` | Global | `100` | Todas as Empresas + Console Global |
-| **Administrador Operacional** | `marcos.azevedo@olivelasallin.com.br` | Global | `85` | Console Global + Impersonação Auditada |
-| **Financeiro Global** | `claudia.mendes@olivelasallin.com.br` | Global | `75` | Console Global (Faturamento & Conciliação) |
-| **Suporte / Operador Global** | `rafael.torres@olivelasallin.com.br` | Global | `65` | Console Global (Tickets & Diagnóstico) |
-| **Cliente (Admin da Empresa)** | `beatriz.nogueira@olivelas.com.br` | Empresa | `50` | Olivelas Atelier (`emp-olivelas-matriz`) & Vega Retail |
-| **Gerente da Empresa** | `rodrigo.sampaio@olivelas.com.br` | Empresa | `35` | Olivelas Atelier (`emp-olivelas-matriz`) |
-| **Funcionário / Operador** | `camila.ferreira@olivelas.com.br` | Empresa | `20` | Olivelas Atelier (`emp-olivelas-matriz`) |
+### Fluxo de Configuração de Senha no Primeiro Login
+- Ao informar `willian.o.jesus@gmail.com` em `/login`, caso `must_setup_password = TRUE`, a plataforma exibe automaticamente o modal de **Configuração de Senha no Primeiro Acesso**.
+- A senha definida é gravada diretamente no **Supabase PostgreSQL real** (`public.profiles.password_hash` via `public.setup_initial_olivelas_password`) e espelhada em `auth.users`.
 
 ---
 
-## 3. As 16 Plataformas Comerciais do Ecossistema Olivelas
+## 3. SSO All In, URL Limpa (`/<app>`) e Seletor de 3 Camadas na Barra Inferior
 
-Todas as 16 plataformas em `/projetos` fazem parte do catálogo de **Módulos Comerciais Olivelas**, renomeadas sob a identidade oficial **`Olivelas - <Nome da Plataforma>`** e conectadas ao seu respectivo schema no Supabase:
+Ao abrir qualquer uma das 37 plataformas comerciais (`4101`–`4137`), o servidor de instâncias (`scripts/serve-single-module.mjs`) autentica automaticamente o Super Administrador (`willian.o.jesus@gmail.com`) e mantém uma **sessão SSO ativa persistente** (`localStorage` + cookies HTTP compartilhados `allin_sso_session` e `allin_sso_active=1`).
 
-| # | Diretório (`/projetos`) | Nome Oficial da Plataforma | Slug Comercial | Porta / Rota Admin SSO | Schema PostgreSQL | Todas as Tabelas do Schema (CRUD Multi-Tabela) |
-| :-: | :--- | :--- | :--- | :--- | :--- | :--- |
-| 1 | `agendamento_simples` | **Olivelas - Consultório & Odonto** | `allin_agendamento_simples` | `:4101/pages/dashboard.html` | `agendamento_simples` | `clinic_settings`, `plans`, `services`, `patients`, `appointments`, `messages`, `audit_logs` |
-| 2 | `agendamentos` | **Olivelas - Clínicas & Agendamentos** | `allin_agendamentos` | `:4102/dashboard` | `agendamentos` | `professionals`, `locations`, `appointment_types`, `clients`, `schedules`, `appointments`, `waiting_list` |
-| 3 | `app_condominio` | **Olivelas - Gestão de Condomínios** | `allin_condominio` | `:4103/` | `app_condominio` | `condominiums`, `units`, `resources`, `reservations`, `announcements`, `occurrences`, `bills` |
-| 4 | `art_hub` | **Olivelas - Art Hub & Catálogo IA** | `allin_art_hub` | `:4104/admin` | `art_hub` | `collections`, `artworks`, `ai_prompts`, `ai_queue` |
-| 5 | `casa_organizada` | **Olivelas - Casa Organizada & Rotinas** | `allin_casa_organizada` | `:4105/` | `casa_organizada` | `household_profiles`, `global_default_tasks`, `custom_tasks`, `task_completions` |
-| 6 | `contratos` | **Olivelas - Automação de Contratos** | `allin_contratos_automacao` | `:4106/dashboard` | `contratos` | `workspaces`, `projects`, `clauses`, `generated_documents` |
-| 7 | `especificacoes` | **Olivelas - Engenharia de Especificações** | `allin_especificacoes` | `:4107/projects` | `especificacoes` | `workspaces`, `projects`, `sprints`, `specifications`, `snippets` |
-| 8 | `gestao_estoque` | **Olivelas - Gestão de Estoque & PDV** | `allin_gestao_estoque` | `:4108/dashboard` | `gestao_estoque` | `stores`, `store_users`, `categories`, `suppliers`, `products`, `stock_batches`, `orders` |
-| 9 | `ordem_de_servico` | **Olivelas - Ordens de Serviço & Assistência** | `allin_ordem_servico` | `:4109/dashboard` | `ordem_de_servico` | `customers`, `devices`, `technicians`, `service_orders` |
-| 10 | `personal_treiner` | **Olivelas - Personal Trainer** | `allin_personal_trainer` | `:4110/personal/dashboard` | `personal_treiner` | `trainers`, `students`, `exercises`, `workout_plans`, `nutrition_plans` |
-| 11 | `restaurante` | **Olivelas - Gestão de Restaurantes & KDS** | `allin_restaurante` | `:4111/app` | `restaurante` | `restaurants`, `products`, `restaurant_tables`, `orders` |
-| 12 | `rifas` | **Olivelas - Rifas & Sorteios Digitais** | `allin_rifas` | `:4112/admin/dashboard` | `rifas` | `campaigns`, `orders` |
-| 13 | `sistema_delivery` | **Olivelas - Central de Delivery** | `allin_delivery` | `:4113/app/orders` | `sistema_delivery` | `stores`, `couriers`, `delivery_orders` |
-| 14 | `sistema_mercado` | **Olivelas - Supermercado & Cestas** | `allin_mercado` | `:4114/admin/dashboard` | `sistema_mercado` | `products`, `breakfast_baskets`, `catalog_requests` |
-| 15 | `suite_rifa` | **Olivelas - Suíte Multi-Organização de Rifas** | `allin_suite_rifa` | `:4115/dashboard` | `suite_rifa` | `organizations`, `campaigns` |
-| 16 | `vitrine_digital` | **Olivelas - Vitrine Digital & Analisador IA** | `allin_vitrine_digital` | `:4116/?view=analyzer` | `vitrine_digital` | `art_submissions`, `image_analysis` |
+### URL Limpa com Apenas o Nome da Aplicação
+- Após autenticado, nenhum parâmetro de query string (`?allin_sso=1&instance_id=...&company_id=...`) permanece exposto na barra de endereços.
+- A URL exibida no navegador contém exclusivamente o nome/slug da aplicação logada:
+  - `http://localhost:4129/loja_simples_hortifruti`
+  - `http://localhost:4110/personal_treiner`
+  - `http://localhost:4108/gestao_estoque`
+  - `http://localhost:4101/agendamento_simples`
 
-### Instâncias Alocadas por Empresa & Single Sign-On (SSO All In)
+### Barra Inferior com Seletor das 3 Camadas da Aplicação
+Na barra inferior (`#olivelas-allin-instance-pill`) de todas as 37 aplicações (`4101` a `4137`), o usuário pode alternar em tempo real entre as **3 camadas da aplicação**:
 
-- Cada empresa que contrata um módulo recebe uma **instância dedicada e isolada** (`inst_<companyId>_<moduleSlug>`).
-- Ao clicar em qualquer módulo comercial na barra lateral (**Módulos Comerciais**), no catálogo (`/app/global/modulos` ou `/app/empresa/:empresaId/modulos`) ou no botão **"Abrir Demo"** / **"Abrir Plataforma"**, o All In abre **em uma nova aba** a interface real completa daquele projeto na sua porta dedicada (`:4101` a `:4116`), já autenticada via **SSO All In** diretamente na área administrativa/operacional do programa e vinculada à empresa contratante.
+1. **🌐 `Landing Page`:**
+   - Acessa a vitrine pública ou página institucional da aplicação (ex.: em `:4129` `loja_simples_hortifruti`, exibe o catálogo público completo de frutas, verduras, busca e carrinho WhatsApp em `/index.html`, sem redirecionamento forçado para o admin).
+2. **🔒 `Tela de Login (Visualização)`:**
+   - Exibe a tela de login da aplicação em **modo somente visualização e sem funcionalidade** (todos os campos e botões permanecem desabilitados com `disabled` / `readonly`), preservando a sessão SSO ativa do usuário sem deslogá-lo.
+3. **🛡️ `Administração (SSO)`:**
+   - Acessa o painel administrativo/operacional da aplicação com a sessão SSO ativa de **`Willian Jesus (willian.o.jesus@gmail.com)`** aplicada.
 
 ---
 
-## 4. As 5 Abas Operacionais de Cada Módulo Olivelas
+## 4. Catálogo Completo das 37 Plataformas Comerciais (`:4101` a `:4137`)
 
-Ao abrir qualquer uma das 16 plataformas em `/app/global/ecossistema/:moduleSlug` ou `/app/empresa/:empresaId/ecossistema/:moduleSlug`, o operador dispõe de **5 abas de produção 100% funcionais**:
-
-1. **Interface Operacional (`interactive`):**
-   - Sub-navegação interativa fiel ao domínio do módulo (ex.: *PDV & Frente de Caixa*, *Lotes FEFO*, *Prescrição de Treinos*, *KDS Cozinha*, *Torre de Despacho*, *Construtor de Cláusulas*), KPIs calculados em tempo real e ações rápidas conectadas ao Supabase.
-2. **CRUD Multi-Tabela PostgreSQL (`database`):**
-   - Seletor de todas as tabelas do schema PostgreSQL do módulo (`<schema>.<tabela>`), busca textual, filtro de status, criação, edição em modal, arquivamento lógico, restauração, exclusão física (quando autorizado) e exportação CSV/JSON.
-3. **RAG & Copiloto IA (`rag`):**
-   - Gestão completa da base de conhecimento RAG do módulo (`public.allin_rag_documents`), botão **"Indexar Tabelas do Schema no RAG"** e chat interativo com o **Copiloto IA Olivelas** (`public.allin_ai_chat_messages`) com citações de documentos e registros reais do banco.
-4. **API Studio PostgREST (`api`):**
-   - Executor HTTP em tempo real contra `${VITE_SUPABASE_URL}/rest/v1/<tabela>` com cabeçalhos `Accept-Profile: <schema>` / `Content-Profile: <schema>`, seletor de método (`GET`, `POST`, `PATCH`, `DELETE`), gerador de snippet `cURL`, medição de latência real e gravação automática em `public.allin_api_history`.
-5. **Permissões HBAC do Módulo (`hbac`):**
-   - Inspeção em tempo real das 7 ações granulares (`view`, `create`, `edit`, `archive`, `export`, `approve`, `administer`) do usuário logado naquele módulo específico e matriz dos papéis corporativos.
+| # | Porta & URL Limpa | Diretório (`/projetos`) | Nome Oficial da Aplicação | Tipo / Classificação | Schema PostgreSQL / Armazenamento |
+| :-: | :--- | :--- | :--- | :--- | :--- |
+| 1 | `:4101/agendamento_simples` | `agendamento_simples` | **Olivelas - Consultório & Odonto** | Plataforma Multi-Schema | `agendamento_simples` (`7 tabelas`) |
+| 2 | `:4102/agendamentos` | `agendamentos` | **Olivelas - Clínicas & Agendamentos** | Plataforma Multi-Schema | `agendamentos` (`7 tabelas`) |
+| 3 | `:4103/app_condominio` | `app_condominio` | **Olivelas - Gestão de Condomínios** | Plataforma Multi-Schema | `app_condominio` (`7 tabelas`) |
+| 4 | `:4104/art_hub` | `art_hub` | **Olivelas - Art Hub & Catálogo IA** | Plataforma Multi-Schema | `art_hub` (`4 tabelas`) |
+| 5 | `:4105/casa_organizada` | `casa_organizada` | **Olivelas - Casa Organizada & Rotinas** | Plataforma Multi-Schema | `casa_organizada` (`4 tabelas`) |
+| 6 | `:4106/contratos` | `contratos` | **Olivelas - Automação de Contratos** | Plataforma Multi-Schema | `contratos` (`4 tabelas`) |
+| 7 | `:4107/especificacoes` | `especificacoes` | **Olivelas - Engenharia de Especificações** | Plataforma Multi-Schema | `especificacoes` (`5 tabelas`) |
+| 8 | `:4108/gestao_estoque` | `gestao_estoque` | **Olivelas - Gestão de Estoque & PDV** | Plataforma Multi-Schema | `gestao_estoque` (`7 tabelas`) |
+| 9 | `:4109/ordem_de_servico` | `ordem_de_servico` | **Olivelas - Ordens de Serviço & Assistência** | Plataforma Multi-Schema | `ordem_de_servico` (`4 tabelas`) |
+| 10 | `:4110/personal_treiner` | `personal_treiner` | **Olivelas - Personal Trainer** | Plataforma Multi-Schema | `personal_treiner` (`5 tabelas`) |
+| 11 | `:4111/restaurante` | `restaurante` | **Olivelas - Gestão de Restaurantes & KDS** | Plataforma Multi-Schema | `restaurante` (`4 tabelas`) |
+| 12 | `:4112/rifas` | `rifas` | **Olivelas - Rifas & Sorteios Digitais** | Plataforma Multi-Schema | `rifas` (`2 tabelas`) |
+| 13 | `:4113/sistema_delivery` | `sistema_delivery` | **Olivelas - Central de Delivery** | Plataforma Multi-Schema | `sistema_delivery` (`3 tabelas`) |
+| 14 | `:4114/sistema_mercado` | `sistema_mercado` | **Olivelas - Supermercado & Cestas** | Plataforma Multi-Schema | `sistema_mercado` (`3 tabelas`) |
+| 15 | `:4115/suite_rifa` | `suite_rifa` | **Olivelas - Suíte Multi-Organização de Rifas** | Plataforma Multi-Schema | `suite_rifa` (`2 tabelas`) |
+| 16 | `:4116/vitrine_digital` | `vitrine_digital` | **Olivelas - Vitrine Digital & Analisador IA** | Plataforma Multi-Schema | `vitrine_digital` (`2 tabelas`) |
+| 17 | `:4117/album_figurinhas` | `album_figurinhas` | **Olivelas - Álbum de Figurinhas Digital** | Plataforma Multi-Schema | `album_figurinhas` (`3 tabelas`) |
+| 18 | `:4118/artes_caneca` | `artes_caneca` | **Olivelas - Estúdio de Artes & Canecas** | Plataforma Multi-Schema | `artes_caneca` (`3 tabelas`) |
+| 19 | `:4119/casa_organizada_ai` | `casa_organizada_ai` | **Olivelas - Casa Organizada AI & Automação** | Plataforma Multi-Schema | `casa_organizada_ai` (`3 tabelas`) |
+| 20 | `:4120/cesta_cafe_manha` | `cesta_cafe_manha` | **Olivelas - Cestas de Café & Presentes** | Plataforma Multi-Schema | `cesta_cafe_manha` (`3 tabelas`) |
+| 21 | `:4121/collection_vault` | `collection_vault` | **Olivelas - Collection Vault & Acervos** | Plataforma Multi-Schema | `collection_vault` (`3 tabelas`) |
+| 22 | `:4122/dashboard_bi` | `dashboard_bi` | **Olivelas - Dashboard BI & Analytics** | Plataforma Multi-Schema | `dashboard_bi` (`3 tabelas`) |
+| 23 | `:4123/forms` | `forms` | **Olivelas - IAM Forms & Pesquisas** | Plataforma Multi-Schema | `forms` (`3 tabelas`) |
+| 24 | `:4124/forms_pro` | `forms_pro` | **Olivelas - Forms Pro Enterprise** | Plataforma Multi-Schema | `forms_pro` (`3 tabelas`) |
+| 25 | `:4125/gerenciador_tunnel_apps` | `gerenciador_tunnel_apps` | **Olivelas - Gerenciador de Túneis & Apps** | API Local + SQLite | API Integrada (`/api/apps`, `/api/settings`) |
+| 26 | `:4126/iam_suite` | `iam_suite` | **Olivelas - IAM Suite & Governança** | Plataforma Multi-Schema | `iam_suite` (`3 tabelas`) |
+| 27 | `:4127/inventario_jogos` | `inventario_jogos` | **Olivelas - Inventário de Jogos & Mídias** | Plataforma Multi-Schema | `inventario_jogos` (`3 tabelas`) |
+| 28 | `:4128/link_promo` | `link_promo` | **Olivelas - Link Promo & Afiliados** | Plataforma Multi-Schema | `link_promo` (`3 tabelas`) |
+| 29 | `:4129/loja_simples_hortifruti` | `loja_simples_hortifruti` | **Olivelas - Hortifruti & Feira Fresca** | **Página Estática** | Frontend Estático (`index.html` + `admin/index.html`) |
+| 30 | `:4130/loja_simples_vendas` | `loja_simples_vendas` | **Olivelas - Loja Simples de Vendas** | **Página Estática** | Frontend Estático (`index.html` + JSON/Storage) |
+| 31 | `:4131/qrcode_maker` | `qrcode_maker` | **Olivelas - Estúdio QR Code & PIX** | **Página Estática** | Frontend Estático SPA (Client-Side) |
+| 32 | `:4132/site_simpes_vendas_velas` | `site_simpes_vendas_velas` | **Olivelas - Boutique de Velas Artesanais** | **Página Estática** | Frontend Estático (`index.html`) |
+| 33 | `:4133/site_simples_personal_trainer` | `site_simples_personal_trainer` | **Olivelas - Landing Personal Trainer** | **Página Estática** | Frontend Estático (`index.html`) |
+| 34 | `:4134/site_simples_produtos_naturais` | `site_simples_produtos_naturais` | **Olivelas - Empório Produtos Naturais** | **Página Estática** | Frontend Estático (`index.html`) |
+| 35 | `:4135/site_simples_ti` | `site_simples_ti` | **Olivelas - Consultoria & Soluções de TI** | **Página Estática** | Frontend Estático (`index.html`) |
+| 36 | `:4136/sync_google_drive` | `sync_google_drive` | **Olivelas - Sync Google Drive & Backup** | API Local + SQLite | API Integrada (`/api/auth/status`, `/api/folders`) |
+| 37 | `:4137/visualizador_dashboad_ai` | `visualizador_dashboad_ai` | **Olivelas - Visualizador Dashboard AI** | API Local + SQLite | API Integrada (`/api/auth/me`, `/api/projects`) |
 
 ---
 
-## 5. Motor HBAC Hierárquico e Permissões Granulares
+## 5. Páginas Estáticas (Frontend Puro) vs Plataformas Multi-Schema
 
-O motor HBAC (`src/services/hbacService.ts` e `src/pages/shared/UsersAndHbacModule.tsx`) combina:
-
-- **Herança Hierárquica de Papéis:** Papéis herdam permissões de papéis superiores (`parentRoleId`).
-- **Exceções Individuais (`Permission Overrides`):** Concessões (`allow`) ou revogações (`deny`) auditadas por usuário, recurso, ação e empresa.
-- **Permissões Granulares por Módulo (`granular_permissions` em `public.profiles`):** Matriz interativa de `16 Módulos Comerciais × 7 Ações` configurável diretamente na ficha de cada usuário e sincronizada no Supabase.
-- **Prevenção de Elevação de Privilégios (`validateNoPrivilegeEscalation`):** Impede que operadores concedam papéis ou permissões acima do seu próprio nível hierárquico.
-- **Modo de Suporte Auditado (`Impersonation Context`):** Administradores globais podem ingressar temporariamente no contexto de uma empresa cliente com banner de auditoria visível e rastreabilidade integral.
+As 7 aplicações voltadas para vitrine, catálogo rápido, geração client-side ou landing page comercial sem dependência de backend (`:4129` a `:4135`) possuem a propriedade `isStaticPage: true` e são identificadas em toda a plataforma com o badge **`Página Estática`**:
+- Na listagem unificada de módulos (`/app/global/modulos`), a coluna de arquitetura exibe **`Página Estática (Frontend Puro)`** em vez de schema PostgreSQL.
+- No modal de detalhes da aplicação (`ModuleDetailsModal`), no Hub do Ecossistema (`/app/global/ecossistema`), na tela de detalhes da empresa (`/app/global/empresas/:id`) e na barra inferior de SSO, o selo **`Página Estática`** destaca claramente sua natureza leve e independente de banco de dados.
 
 ---
 
-## 6. Catálogo de Módulos Base (Exemplos de Fundação)
+## 6. As 5 Abas Operacionais de Cada Módulo no Console Principal
 
-Os 10 módulos originais de fundação permanecem disponíveis na aba **"Módulos de Exemplo (10 Base)"** da loja modular:
-`allin_core`, `allin_equipe`, `allin_estoque`, `allin_vendas`, `allin_crm`, `allin_financeiro`, `allin_contratos`, `allin_suporte`, `allin_analytics` e `allin_api_hub`.
+Ao inspecionar qualquer módulo em `/app/global/ecossistema/:moduleSlug` ou `/app/empresa/:empresaId/ecossistema/:moduleSlug`, o operador dispõe de **5 abas de produção**:
+
+1. **Interface Operacional (`interactive`):** KPIs em tempo real, sub-navegação de domínio e atalho direto para abrir a instância dedicada (`/<folder>`).
+2. **CRUD Multi-Tabela PostgreSQL (`database`):** Operação completa sobre todas as tabelas do schema PostgreSQL do módulo (`<schema>.<tabela>`), com criação, edição, arquivamento lógico, restauração e exportação CSV.
+3. **RAG & Copiloto IA (`rag`):** Base de conhecimento RAG (`public.allin_rag_documents`), indexação automática de tabelas e chat contextual (`public.allin_ai_chat_messages`).
+4. **API Studio PostgREST (`api`):** Executor HTTP em tempo real com cabeçalhos `Accept-Profile` / `Content-Profile` e geração de `cURL`.
+5. **Permissões HBAC do Módulo (`hbac`):** Matriz das 7 ações granulares (`view`, `create`, `edit`, `archive`, `export`, `approve`, `administer`) do usuário logado.
 
 ---
 
-## 7. Mapa Completo de Rotas e Telas
+## 7. Motor HBAC Hierárquico, Tabelas Sem Scroll Horizontal e UI Unificada
 
-### 7.1. Área Pública & Autenticação Supabase
-- `/` — Landing Page Executiva atualizada com vitrine das 16 Plataformas Comerciais Olivelas
+- **Listagem Unificada em Tabela Única (`/app/global/modulos` e `/app/global/ecossistema`):**
+  - Todos os módulos são apresentados em uma única lista tabular consolidada (sem cards fragmentados).
+  - **Modal de Detalhes (`ModuleDetailsModal`):** Exibe todas as informações técnicas, KPIs, recursos, arquitetura (`Página Estática` vs `Schema PostgreSQL`) e fecha com botão **X**, tecla `ESC` ou clique fora.
+  - **Menu Dropdown de Ações (`ActionDropdownMenu`):** Agrupa todas as ações de cada linha (*Ver Detalhes*, *Abrir Plataforma SSO*, *CRUD & RAG*, *Editar*, *Ativar/Desativar*) em um único menu suspenso inteligente com posicionamento automático (`fixed`).
+- **Zero Scroll Horizontal em Todas as Tabelas:**
+  - Todas as tabelas e modais utilizam layout fluido (`table-layout: fixed`, `overflow-x: hidden`, quebra inteligente de palavras e ocultação progressiva de colunas secundárias em telas menores), eliminando qualquer barra de rolagem horizontal.
+
+---
+
+## 8. Mapa Completo de Rotas e Telas
+
+### 8.1. Área Pública & Autenticação Supabase (`http://localhost:5174`)
+- `/` — Landing Page Executiva Olivelas All In
 - `/planos` — Planos Comerciais e Simulador Modular
-- `/login` — Autenticação Real no Supabase (`bcrypt` + proteção brute-force + troca rápida de perfil)
+- `/login` — Autenticação Real no Supabase (`willian.o.jesus@gmail.com` + configuração de senha no 1º login)
 - `/cadastro` — Auto-provisionamento de Nova Empresa + Administrador no Supabase
-- `/recuperar-senha` — Redefinição de Senha Corporativa direto no Supabase (`public.change_olivelas_password`)
-- `/termos` e `/privacidade` — Governança Legal, LGPD e Retenção Imutável
+- `/recuperar-senha` — Redefinição de Senha Corporativa direto no Supabase
 
-### 7.2. Console Global da Plataforma (`/app/global`)
+### 8.2. Console Global da Plataforma (`/app/global`)
 - `/app/global` — Dashboard Executivo Global
-- `/app/global/ecossistema` — **Hub das 16 Plataformas Comerciais Olivelas**
-- `/app/global/ecossistema/:moduleSlug` — **Workspace Completo do Módulo (Live UI + CRUD Multi-Tabela + RAG + API + HBAC)**
-- `/app/global/empresas` | `/nova` | `/:empresaId` | `/:empresaId/editar` | `/:empresaId/usuarios` | `/:empresaId/modulos` | `/:empresaId/contratos` | `/:empresaId/financeiro`
-- `/app/global/usuarios` | `/novo` | `/:usuarioId` | `/:usuarioId/editar` (inclui Matriz Granular dos 16 Módulos + Redefinição de Senha Supabase)
-- `/app/global/papeis` — Hierarquia de Papéis HBAC e Simulador de Permissões
-- `/app/global/modulos` | `/novo` | `/:moduloId` | `/:moduloId/editar`
-- `/app/global/contratos` | `/novo` | `/:contratoId` | `/:contratoId/editar` (com Assinatura Eletrônica SHA-256)
-- `/app/global/financeiro` | `/cobrancas` | `/pagamentos` | `/parcelas` | `/conciliacao` | `/relatorios`
-- `/app/global/meios-pagamento` | `/novo` | `/:metodoId` | `/:metodoId/editar`
-- `/app/global/api-hub/servicos` | `/colecoes` | `/ambientes` | `/tokens` | `/historico` | `/servicos/:servicoId/testar` (com proteção Anti-SSRF + chamada Live PostgREST)
-- `/app/global/tickets` | `/auditoria` (com sincronização `public.allin_audit_events` + exportação JSON Forense) | `/relatorios`
-
-### 7.3. Ambiente da Empresa Cliente (`/app/empresa/:empresaId`)
-- `/app/empresa/:empresaId` — Dashboard Executivo da Empresa
-- `/app/empresa/:empresaId/ecossistema` — **Hub das 16 Plataformas Olivelas da Empresa**
-- `/app/empresa/:empresaId/ecossistema/:moduleSlug` — **Operação Completa do Módulo no Escopo do Tenant**
-- `/app/empresa/:empresaId/usuarios` | `/novo` | `/:usuarioId` | `/:usuarioId/editar`
-- `/app/empresa/:empresaId/papeis`, `/modulos`, `/contratos`, `/financeiro`
-- `/app/empresa/:empresaId/operacao/estoque`, `/operacao/vendas`, `/operacao/crm`
-- `/app/empresa/:empresaId/tickets`, `/auditoria`, `/relatorios`
+- `/app/global/ecossistema` — Hub Unificado das 37 Plataformas Comerciais Olivelas
+- `/app/global/ecossistema/:moduleSlug` — Workspace de 5 Abas do Módulo
+- `/app/global/modulos` — Catálogo Unificado (37 Plataformas Comerciais + 10 Módulos Base) com Modal de Detalhes e Menu Dropdown
+- `/app/global/empresas` | `/usuarios` | `/papeis` | `/contratos` | `/financeiro` | `/meios-pagamento` | `/api-hub/servicos` | `/tickets` | `/auditoria` | `/relatorios`
 
 ---
 
-## 8. Design System, 30 Temas e Internacionalização (`PT-BR`, `EN`, `ES`)
-
-- **30 Temas Visuais (`src/styles/themes.ts`):** 15 Temas Claros e 15 Temas Escuros aplicáveis em tempo real.
-- **3 Idiomas Completos (`src/i18n/translations.ts`):** Português (`pt-BR`), Inglês (`en`) e Espanhol (`es`) com formatação nativa de moedas (`BRL`, `USD`, `EUR`) e datas.
-- **Responsividade Integral:** Barra lateral retrátil em dispositivos móveis/tablets, tabelas com rolagem horizontal fluida e modais adaptáveis.
-
----
-
-## 9. Estrutura de Diretórios e Migrations SQL
+## 9. Estrutura de Diretórios, Scripts e Migrations SQL
 
 ```text
 olivelas-allin/
-├── .env.example                # Template seguro de variáveis de ambiente (Supabase & PostgreSQL)
-├── start.sh                    # Script de inicialização rápida do Olivelas All In
-├── package.json                # Scripts de desenvolvimento, build, testes e migrations
+├── .env.example                                     # Template de variáveis de ambiente (Supabase & PostgreSQL)
+├── start                                            # Gerenciador de processos: ./start [start|stop|restart|status]
+├── start.sh                                         # Wrapper compatível que delega para ./start
+├── favicon.svg                                      # Favicon SVG oficial do Console Olivelas All In
+├── README.md                                        # Documentação principal da plataforma
+├── PRODUCT.md                                       # Especificação de produto e governança
+├── DESIGN.md                                        # Especificação do Design System e tabelas responsivas
 ├── supabase/
 │   └── migrations/
-│       ├── 20261109000001_unified_auth_and_allin_core.sql  # Login único (public.profiles) + Core All In
-│       ├── 20261109000002_all_16_project_schemas.sql       # Criação dos 16 schemas dedicados (77 tabelas) + Seed
-│       └── 20261109000003_real_auth_rag_api_hbac.sql       # Auth Bcrypt RPCs + RAG + Copiloto IA + Entity Store
+│       ├── 20261109000001_unified_auth_and_allin_core.sql
+│       ├── 20261109000002_all_16_project_schemas.sql
+│       ├── 20261109000003_real_auth_rag_api_hbac.sql
+│       ├── 20261110000004_single_global_admin_willian.sql
+│       └── 20261110000005_new_21_projects_and_global_admin.sql
 ├── scripts/
-│   ├── migrate-supabase.mjs    # Executor de todas as migrations SQL no Supabase PostgreSQL
-│   └── standardize-projects.mjs # Padronizador arquitetural dos 16 projetos em /projetos
-├── projetos/                   # 16 plataformas Olivelas padronizadas (clientes Supabase + migrations)
-└── src/
-    ├── lib/supabase/client.ts  # Cliente Supabase unificado (multi-schema + public.profiles)
-    ├── services/
-    │   ├── supabaseAuthService.ts      # Autenticação real, cadastro, troca de senha e matriz granular
-    │   ├── olivelasEcosystemService.ts # Catálogo, CRUD multi-tabela, RAG, Copiloto IA e API PostgREST
-    │   ├── hbacService.ts              # Motor HBAC hierárquico e validação anti-escalação
-    │   └── operationalUtils.ts         # Exportação CSV e filtro de segurança Anti-SSRF
-    ├── pages/
-    │   ├── public/PublicPages.tsx                  # Landing page, Login real, Cadastro, Recuperar Senha
-    │   ├── company/OlivelasEcosystemHub.tsx        # Hub e Workspace de 5 abas das 16 Plataformas Olivelas
-    │   ├── global/CompaniesModule.tsx              # Governança multiempresa e contexto de suporte
-    │   ├── global/ApiHubModule.tsx                 # API Hub com executor Anti-SSRF + Live PostgREST
-    │   └── shared/
-    │       ├── UsersAndHbacModule.tsx              # Gestão de usuários, senhas e matriz HBAC de 16 módulos
-    │       ├── ModulesAndContractsModule.tsx       # Loja modular e contratos com assinatura SHA-256
-    │       ├── FinanceModule.tsx                   # Faturamento, parcelas, conciliação e meios de pagamento
-    │       ├── TicketsAuditAndOperationsModule.tsx # Tickets, auditoria forense Supabase e operação base
-    │       └── DashboardsAndReports.tsx            # Dashboards executivos e relatórios analíticos
-    └── test/
-        └── app.test.tsx        # 10 suítes automatizadas de arquitetura, segurança, RAG e HBAC (Vitest)
+│   ├── start-all-modules.mjs                        # Orquestrador das 37 plataformas nas portas 4101–4137
+│   ├── serve-single-module.mjs                      # Servidor SSO com URL limpa (/<app>) e barra de 3 camadas
+│   ├── update-favicons-and-clean-lovable.mjs        # Gerador dos 38 favicons SVG e limpeza de pacotes legados
+│   ├── verify-all-platforms-sso-favicons.mjs        # Verificador automatizado das 37 portas, SSO, camadas e favicons
+│   └── apply-single-admin-willian.mjs               # Provisionamento do Global Admin único no Supabase
+├── projetos/                                        # 37 aplicações comerciais completas e padronizadas
+└── src/                                             # Código-fonte do Console Principal (React 19 + TypeScript)
 ```
 
 ---
 
-## 10. Como Iniciar, Migrar o Banco, Padronizar Projetos, Testar e Compilar
+## 10. Como Iniciar (`./start`), Parar (`./start stop`), Testar e Compilar
 
-### 1. Configurar variáveis de ambiente
-```bash
-cp .env.example .env
-# Preencha o arquivo .env com as credenciais do seu projeto Supabase (nunca versionado no Git)
-```
+### 1. Gerenciar os serviços com o script `./start`
+O script [`./start`](file:///home/willian/Downloads/projetos/olivelas-allin/start) gerencia em background tanto o Console Principal (`:5174`) quanto as 37 plataformas comerciais (`:4101` a `:4137`):
 
-### 2. Executar as migrations no Supabase PostgreSQL
 ```bash
-npm run db:migrate
-```
-
-### 3. Padronizar os 16 projetos em `/projetos` (opcional / já executado)
-```bash
-npm run projects:standardize
-```
-
-### 4. Iniciar o servidor de desenvolvimento
-```bash
-./start.sh
+# Iniciar todos os serviços (sem argumentos ou com 'start')
+./start
 # ou
-npm start
+./start start
+
+# Parar todos os serviços e liberar as portas 5174 e 4101..4137
+./start stop
+
+# Reiniciar todos os serviços
+./start restart
+
+# Verificar o status de todas as portas e processos
+./start status
 ```
 
-### 5. Validar checagem de tipos, suíte de testes e build de produção
+### 2. Verificar automaticamente todas as 37 plataformas, URLs limpas, 3 camadas e SSO
+```bash
+node scripts/verify-all-platforms-sso-favicons.mjs
+```
+
+### 3. Executar checagem de tipos, testes automatizados e build de produção
 ```bash
 npm run typecheck
 npm test

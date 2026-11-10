@@ -1,60 +1,37 @@
-# Product
+# Product — Olivelas All In (`v2.0.0`)
 
-<!-- impeccable:product-schema 1 -->
+<!-- impeccable:product-schema 2 -->
 
 ## Platform
 
-web
+Web (Desktop, Tablet & Mobile Responsive SaaS)
 
 ## Stack
 
-delegated: React 19 + TypeScript (strict) + Vite + React Router 7 + IndexedDB repository architecture
+React 19 + TypeScript 5.7 (strict) + Vite 6 + React Router 7 + Supabase PostgreSQL 17 (`public.profiles` + 27 Domain Schemas) + IndexedDB Local Sync + Multi-Instance SSO Server (`:4101`–`:4137`)
 
 ## Users
 
-- **Pequenas e Médias Empresas (Clientes, Gerentes e Funcionários):** Empresas que desejam contratar exclusivamente os módulos operacionais de que precisam (Core, Estoque, Financeiro, CRM, Vendas, Equipe, API Hub, Contratos, Suporte, Analytics), operando em um ambiente isolado por empresa (`/app/empresa/:empresaId`) com permissões granulares e trilhas de auditoria completas.
-- **Operadores Internos da Plataforma (Super Admin, Admin e Financeiro):** Equipes responsáveis por governança multiempresa, catálogo comercial de módulos, contratos e aditivos, conciliação e cobranças recorrentes, suporte por tickets, gerenciamento de APIs/tokens e auditoria global (`/app/global`).
+- **Super Administrador Global (`Willian Jesus <willian.o.jesus@gmail.com>`):** Conta única de administração global pré-cadastrada em todas as 37 plataformas comerciais e no Console Principal, com configuração de senha no primeiro acesso persistida diretamente no Supabase (`public.profiles` e `auth.users`).
+- **Empresas Contratantes & Operadores (Multiempresa):** Organizações que contratam sob demanda qualquer combinação das **37 Plataformas Comerciais Olivelas** (e dos 10 módulos base), operando em instâncias isoladas com governança HBAC, faturamento unificado e auditoria forense.
 
 ## Product Purpose
 
-Olivelas Allin é uma plataforma SaaS multiempresa modular que permite a pequenas empresas contratar e operar sob demanda apenas os módulos de gestão necessários, com governança empresarial, controle de acesso hierárquico (HBAC), faturamento unificado e auditoria ponta a ponta. Nesta Fundação Mock V1, a aplicação opera 100% localmente no navegador com persistência real em IndexedDB e camada de repositórios desacoplada para futura migração para API real.
+**Olivelas All In** unifica o Console Central de Governança Multiempresa (`:5174`) com um ecossistema real de **37 Plataformas Comerciais** (`:4101` a `:4137`). Cada aplicação comercial conta com Single Sign-On (SSO) automático com sessão ativa persistente, URL limpa contendo apenas o nome da aplicação (`/<nome_da_aplicacao>`), identidade visual e Favicon SVG próprios (`/favicon.svg`), e uma barra inferior interativa que permite alternar entre as 3 camadas da aplicação:
+1. **Landing Page** (Vitrine pública / apresentação comercial)
+2. **Tela de Login (Visualização)** (Modo somente leitura e sem funcionalidade, mantendo a sessão SSO ativa)
+3. **Administração (SSO)** (Painel administrativo autenticado com o Global Admin)
 
 ## Positioning
 
-Diferente de ERPs monolíticos caros ou ferramentas fragmentadas sem governança, o Olivelas Allin combina contratação modular sob demanda (ativação imediata por contrato versionado sem perda de dados históricos na desativação) com controle de acesso hierárquico configurável (HBAC com matriz efetiva e rastreio de origem da permissão), isolamento lógico rigoroso por tenant e console técnico integrado (API Hub estilo Postman e auditoria imutável).
-
-## Operating Context
-
-- Uso diário em navegadores desktop, tablet e mobile, sob iluminação variável de escritório (suporte completo a tema claro e escuro).
-- Operação multilíngue nativa em Português (PT-BR, padrão), Inglês (EN) e Espanhol (ES), com formatação localizada de datas, moedas e números.
-- Listagens administrativas densas baseadas em tabelas com filtros persistidos na URL (`?status=...&search=...&page=...&pageSize=...&sort=...&order=...`), ordenação, paginação real sobre os dados locais e exportação CSV.
-- URLs dedicadas para todas as visualizações de detalhe e páginas de edição completas (sem substituir páginas de edição por modais).
+- **Ecossistema Completo de 37 Plataformas + 10 Módulos Base:** Abrange Saúde/Clínicas, Varejo/PDV/Delivery/Hortifruti, Imóveis/Condomínios, Engenharia/Jurídico/IA, Educação/Fitness, Marketing/Rifas/Afiliados, Infraestrutura/Túneis/Cloud Backup e **7 Páginas Estáticas** (frontend puro sem dependência de backend).
+- **Sessão SSO Ativa & URLs Limpas:** Elimina URLs extensas com parâmetros de query string (`?allin_sso=1&instance_id=...`), mantendo a sessão autenticada via `localStorage` e cookies compartilhados e exibindo apenas `http://localhost:<porta>/<aplicacao>`.
+- **Catálogo Unificado e Zero Scroll Horizontal:** Listagens consolidadas em tabela única sem rolagem horizontal, com detalhes em modal (`ModuleDetailsModal` fechável com `X`, `ESC` ou clique externo) e todas as ações agrupadas em menu dropdown (`ActionDropdownMenu`).
 
 ## Capabilities and Constraints
 
-- **Isolamento Multiempresa:** Nenhuma empresa pode visualizar ou acessar dados de outra empresa mesmo alterando IDs manualmente na URL.
-- **Seis Papéis Iniciais + HBAC Configurável:** Super Admin (com suporte auditado e explícito ao contexto de uma empresa), Admin, Financeiro, Cliente, Gerente e Funcionário.
-- **Zero Exclusão Física:** Registros de negócio nunca são deletados fisicamente pela interface; utilizam arquivamento com motivo, data, responsável e restauração autorizada.
-- **Transparência de Simulação:** Operações demonstrativas (autenticação mock, assinaturas contratuais, cobranças/reembolsos, simulador local de endpoints HTTP no API Hub) são explicitamente identificadas como simuladas. Dados pertencem ao IndexedDB do navegador local e contam com restauração explícita para o estado inicial de fábrica.
-- **Segurança de Dados:** Proibição absoluta de chaves secretas reais, senhas reais ou números completos de cartão/CVV em armazenamento ou logs de auditoria. Tokens exibem seu valor completo apenas no instante da criação demonstrativa.
-
-## Brand Commitments
-
-- Identidade visual discreta, confiável e empresarial: tipografia legível, hierarquia clara, espaçamento consistente, navegação lateral compacta, cabeçalhos com breadcrumbs e design tokens centralizados.
-- Evitar gradientes excessivos, cores neon, sombras exageradas, excesso de bordas arredondadas, animações desnecessárias ou aparência de protótipo genérico.
-
-## Evidence on Hand
-
-- Todos os dados iniciais são sintéticos e demonstrativos (empresas de exemplo isoladas, 6 usuários para cada papel, catálogo de 10 módulos comerciais Allin, contratos versionados, cobranças/pagamentos/parcelas, serviços e coleções no API Hub, tickets de suporte e eventos de auditoria).
-- Preços, planos, assinaturas e transações são rotulados de forma transparente como ilustrativos/simulados.
-
-## Product Principles
-
-1. **Integridade e Rastreabilidade:** Toda mutação relevante gera evento de auditoria com valores anteriores/posteriores, autor e correlação; nenhum dado de negócio sofre exclusão física.
-2. **Isolamento e Menor Privilégio:** O escopo da empresa (`empresaId`) e a matriz efetiva HBAC governam tanto a construção da navegação quanto a proteção direta de cada rota e ação.
-3. **Estado Compartilhável por URL:** Toda listagem reflete busca, filtros, ordenação e paginação em query parameters, preservando o estado ao recarregar ou compartilhar links.
-4. **Arquitetura Pronta para Produção:** Componentes consomem serviços e repositórios tipados em TypeScript estrito sobre IndexedDB, nunca acoplados diretamente ao armazenamento.
-
-## Accessibility & Inclusion
-
-- Navegação por teclado, foco visível, semântica HTML nativa (`<table>`, `<dialog>`, formulários validados com feedback por campo após interação), contraste adequado nos temas claro e escuro, e internacionalização completa em PT-BR, EN e ES.
+- **Administrador Global Único:** `willian.o.jesus@gmail.com` configurado como `GLOBAL_ADMIN` em todas as ferramentas e schemas.
+- **Classificação de Página Estática (`isStaticPage: true`):** As 7 aplicações frontend-only (`:4129` a `:4135`) são identificadas como **Página Estática** em todas as listagens, modais e indicadores de instância.
+- **Zero Dependências Legadas (Lovable Removido):** Todas as 37 aplicações possuem build local autônomo, títulos oficiais `Olivelas - <Aplicação>` e favicons SVG vetoriais exclusivos.
+- **Zero Exclusão Física por Padrão:** Arquivamento lógico auditado com motivo, autor e carimbo de tempo em `public.allin_audit_events`.
+- **Gerenciamento Simplificado via `./start`:** Inicialização (`./start` ou `./start start`), parada (`./start stop`), reinicialização (`./start restart`) e diagnóstico (`./start status`).
