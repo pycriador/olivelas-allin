@@ -79,9 +79,10 @@ async function runVerification() {
     const hasTitle = html.includes(`<title>${mod.expectedBrand}</title>`);
     const hasFaviconLink = html.includes('href="/favicon.svg"');
     const hasWillianSso = html.includes('willian.o.jesus@gmail.com') && html.includes('Willian Jesus');
+    const hasNoMalformedHead = !html.includes('</svg>"') && !/<link[^>]*rel=["']icon["'][^>]*>\s*<path/i.test(html);
     const favOk = favRes.status === 200 && favSvg.includes('<svg');
 
-    if (pageRes.status === 200 && hasTitle && hasFaviconLink && hasWillianSso && favOk) {
+    if (pageRes.status === 200 && hasTitle && hasFaviconLink && hasWillianSso && hasNoMalformedHead && favOk) {
       console.log(`✅ [${mod.port}] ${mod.expectedBrand} | HTTP 200 | Favicon SVG OK | Super Admin: willian.o.jesus@gmail.com`);
     } else {
       console.error(`❌ [${mod.port}] ${mod.expectedBrand} FAILED:`, {
@@ -89,6 +90,7 @@ async function runVerification() {
         hasTitle,
         hasFaviconLink,
         hasWillianSso,
+        hasNoMalformedHead,
         favOk,
       });
       failures++;

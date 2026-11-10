@@ -125,13 +125,13 @@ export const PersonalLayout: React.FC = () => {
     user?.avatarUrl ||
     'https://images.unsplash.com/photo-1594381898411-846e7d193883?w=150&auto=format&fit=crop&q=80';
 
-  // Local persistent state for Formulários sub-menus (open by default)
+  // Local persistent state for Formulários sub-menus
   const [formsSubMenuOpen, setFormsSubMenuOpen] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('rafaela_nav_forms_open');
-      return saved !== null ? saved === 'true' : true;
+      return saved !== null ? saved === 'true' : false;
     } catch {
-      return true;
+      return false;
     }
   });
 
@@ -151,13 +151,13 @@ export const PersonalLayout: React.FC = () => {
     });
   };
 
-  // Local persistent state for Configurações sub-menus (open by default)
+  // Local persistent state for Configurações sub-menus
   const [settingsSubMenuOpen, setSettingsSubMenuOpen] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('rafaela_nav_settings_open');
-      return saved !== null ? saved === 'true' : true;
+      return saved !== null ? saved === 'true' : false;
     } catch {
-      return true;
+      return false;
     }
   });
 
@@ -177,13 +177,13 @@ export const PersonalLayout: React.FC = () => {
     });
   };
 
-  // Local persistent state for Gestão de Planos sub-menus (open by default)
+  // Local persistent state for Gestão de Planos sub-menus
   const [plansSubMenuOpen, setPlansSubMenuOpen] = useState<boolean>(() => {
     try {
       const saved = localStorage.getItem('rafaela_nav_plans_open');
-      return saved !== null ? saved === 'true' : true;
+      return saved !== null ? saved === 'true' : false;
     } catch {
-      return true;
+      return false;
     }
   });
 

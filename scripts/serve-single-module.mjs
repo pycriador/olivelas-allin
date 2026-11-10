@@ -260,7 +260,7 @@ function buildSsoInjectionScript(modInfo) {
 function injectHtml(html, modInfo) {
   const script = buildSsoInjectionScript(modInfo);
   const faviconTag = `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />`;
-  let updated = html;
+  let updated = html.replace(/<link[^>]*rel=["']icon["'][^>]*>\s*(?:<path[\s\S]*?<\/svg>["']?\s*\/?>)?/gi, faviconTag);
   if (/<title>[\s\S]*?<\/title>/i.test(updated)) {
     updated = updated.replace(/<title>[\s\S]*?<\/title>/i, `<title>${modInfo.brandName}</title>`);
   }
