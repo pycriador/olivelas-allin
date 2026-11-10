@@ -146,102 +146,16 @@ export const LoginPage: React.FC = () => {
           </p>
         </div>
 
-        {/* Quick Demo Login Box */}
-        <Card className="p-5 border-slate-200/80 dark:border-white/[0.08] shadow-xs space-y-4">
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            <Sparkles className="w-3.5 h-3.5 text-emerald-500" />
-            Acesso Rápido com 1 Clique
-          </div>
-
-          {/* Section 1: Professores / Personais */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                Personais & Administradores
-              </span>
-              <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">
-                3 Personais Cadastrados
-              </span>
-            </div>
-            <div className="space-y-2">
-              {trainerUsers.map((trainer) => (
-                <button
-                  key={trainer.id}
-                  type="button"
-                  onClick={() => handleQuick(trainer.id, trainer.role)}
-                  disabled={loading}
-                  className={`w-full text-left p-2 rounded-lg border transition-all duration-150 flex items-center justify-between group cursor-pointer ${trainer.color}`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                    <img
-                      src={trainer.avatarUrl}
-                      alt={trainer.name}
-                      className="w-7 h-7 rounded-full object-cover border border-white/20 shrink-0"
-                    />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-xs font-semibold text-slate-900 dark:text-white truncate">
-                          {trainer.name}
-                        </span>
-                        <Badge variant={trainer.badgeVariant} size="sm">
-                          {trainer.tag}
-                        </Badge>
-                      </div>
-                      <p className="text-[11px] text-slate-500 dark:text-dark-muted truncate mt-0.5 font-normal">
-                        {trainer.desc}
-                      </p>
-                    </div>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0 ml-1" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Section 2: Alunos */}
-          <div className="space-y-2 pt-1 border-t border-slate-100 dark:border-white/[0.06]">
-            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block">
-              Entrar como Aluno (Login Único & Funcional)
-            </span>
-            <div className="space-y-1.5">
-              {studentUsers.map((u) => (
-                <button
-                  key={u.id}
-                  type="button"
-                  onClick={() => handleQuick(u.id, u.role)}
-                  disabled={loading}
-                  className={`w-full text-left p-2 rounded-lg border transition-all duration-150 flex items-center justify-between group cursor-pointer ${u.color}`}
-                >
-                  <div className="min-w-0 pr-2">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-semibold text-slate-900 dark:text-white">
-                        {u.name}
-                      </span>
-                      <Badge variant="neutral" size="sm">
-                        {u.tag}
-                      </Badge>
-                    </div>
-                    <p className="text-[11px] text-slate-500 dark:text-dark-muted truncate mt-0.5">
-                      {u.desc}
-                    </p>
-                  </div>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-slate-700 dark:group-hover:text-white group-hover:translate-x-0.5 transition-all shrink-0" />
-                </button>
-              ))}
-            </div>
-          </div>
-        </Card>
-
         {/* Manual Login Form */}
         <Card className="p-5">
           <form onSubmit={handleManualLogin} className="space-y-4">
             <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200">
-              Ou faça login manualmente
+              Acesse sua conta
             </h2>
             <Input
               label="E-mail"
               type="email"
-              placeholder="ex: rafaela@rafaelapersonal.com.br ou mariana.silva@email.com"
+              placeholder="Informe seu e-mail"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               leftIcon={<User className="w-4 h-4" />}
@@ -249,7 +163,7 @@ export const LoginPage: React.FC = () => {
             <Input
               label="Senha"
               type="password"
-              placeholder="123456"
+              placeholder="Informe sua senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               leftIcon={<Lock className="w-4 h-4" />}

@@ -316,6 +316,10 @@ function buildSsoInjectionScript(modInfo) {
     }
 
     function neutralizeNativeLoginIfNeeded() {
+      var hints = document.querySelectorAll('.mock-credential-hint, [data-mock-credentials]');
+      for (var h = 0; h < hints.length; h++) {
+        hints[h].remove();
+      }
       if (currentLayer !== 'login') return;
       var forms = document.querySelectorAll('form');
       for (var i = 0; i < forms.length; i++) {
@@ -329,6 +333,10 @@ function buildSsoInjectionScript(modInfo) {
         var el = inputs[j];
         if (el.closest && el.closest('#olivelas-allin-instance-pill')) continue;
         if (el.closest && el.closest('#olivelas-allin-layer-overlay')) continue;
+        if (el.tagName === 'INPUT' && (el.type === 'email' || el.type === 'password' || el.type === 'text')) {
+          el.value = '';
+          el.setAttribute('value', '');
+        }
         el.setAttribute('disabled', 'disabled');
         el.setAttribute('readonly', 'readonly');
         el.style.pointerEvents = 'none';
@@ -358,7 +366,7 @@ function buildSsoInjectionScript(modInfo) {
           topNotice.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:2147483630;background:linear-gradient(90deg,#1e1b4b,#312e81,#1e1b4b);border-bottom:1px solid rgba(167,139,250,0.45);color:#f8fafc;padding:10px 20px;display:flex;align-items:center;justify-content:center;gap:12px;font-family:system-ui,-apple-system,sans-serif;font-size:12px;box-shadow:0 8px 25px rgba(0,0,0,0.35);';
           topNotice.innerHTML =
             '<span style="padding:3px 8px;border-radius:9999px;background:rgba(245,158,11,0.2);border:1px solid rgba(245,158,11,0.5);color:#fde68a;font-weight:700;font-size:11px;">🔒 SOMENTE VISUALIZAÇÃO (SEM FUNCIONALIDADE)</span>' +
-            '<span>Esta tela de login está em modo de demonstração visual. Sua sessão SSO já está ativa como <strong>' + ctx.userName + ' (' + ctx.userEmail + ')</strong>.</span>';
+            '<span>Esta tela de login está em modo de demonstração visual. Sua sessão SSO já está ativa como <strong>' + ctx.userName + '</strong>.</span>';
           document.body.appendChild(topNotice);
         }
         return;
@@ -390,15 +398,15 @@ function buildSsoInjectionScript(modInfo) {
             '</div>' +
             '<div style="display:flex;flex-direction:column;gap:14px;opacity:0.75;pointer-events:none;user-select:none;">' +
               '<div>' +
-                '<label style="display:block;font-size:12px;font-weight:600;color:#cbd5e1;margin-bottom:6px;">E-mail do Administrador (SSO)</label>' +
-                '<input type="email" disabled readonly value="' + ctx.userEmail + '" style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:10px;background:#090d16;border:1px solid #334155;color:#94a3b8;font-size:13px;cursor:not-allowed;" />' +
+                '<label style="display:block;font-size:12px;font-weight:600;color:#cbd5e1;margin-bottom:6px;">E-mail</label>' +
+                '<input type="email" disabled readonly value="" placeholder="Informe seu e-mail" style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:10px;background:#090d16;border:1px solid #334155;color:#94a3b8;font-size:13px;cursor:not-allowed;" />' +
               '</div>' +
               '<div>' +
                 '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;">' +
-                  '<label style="font-weight:600;color:#cbd5e1;">Senha de Acesso</label>' +
-                  '<span style="color:#64748b;">Gerenciada via All In SSO</span>' +
+                  '<label style="font-weight:600;color:#cbd5e1;">Senha</label>' +
+                  '<span style="color:#64748b;">Autenticação via SSO</span>' +
                 '</div>' +
-                '<input type="password" disabled readonly value="••••••••••••••••" style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:10px;background:#090d16;border:1px solid #334155;color:#94a3b8;font-size:13px;cursor:not-allowed;" />' +
+                '<input type="password" disabled readonly value="" placeholder="Informe sua senha" style="width:100%;box-sizing:border-box;padding:11px 14px;border-radius:10px;background:#090d16;border:1px solid #334155;color:#94a3b8;font-size:13px;cursor:not-allowed;" />' +
               '</div>' +
               '<button type="button" disabled style="margin-top:4px;width:100%;padding:12px;border-radius:10px;background:#1e293b;border:1px solid #475569;color:#94a3b8;font-weight:700;font-size:13px;cursor:not-allowed;">' +
                 'Entrar na Plataforma (Desabilitado — Visualização)' +
@@ -409,7 +417,7 @@ function buildSsoInjectionScript(modInfo) {
                 '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;display:inline-block;"></span>' +
                 'Sessão SSO Já Autenticada e Ativa' +
               '</div>' +
-              '<p style="margin:0;font-size:12px;color:#cbd5e1;line-height:1.5;">Você já está autenticado como <strong>' + ctx.userName + '</strong> (<code>' + ctx.userEmail + '</code>) com perfil <strong>GLOBAL_ADMIN</strong>. Use a barra inferior para alternar para a <strong>Landing Page</strong> ou <strong>Administração (SSO)</strong>.</p>' +
+              '<p style="margin:0;font-size:12px;color:#cbd5e1;line-height:1.5;">Você já está autenticado como <strong>' + ctx.userName + '</strong> com perfil <strong>GLOBAL_ADMIN</strong>. Use a barra inferior para alternar para a <strong>Landing Page</strong> ou <strong>Administração (SSO)</strong>.</p>' +
               '<div style="display:flex;gap:8px;margin-top:4px;">' +
                 '<button type="button" data-switch-layer="landing" style="flex:1;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#f8fafc;font-size:12px;font-weight:600;cursor:pointer;">🌐 Ir para Landing Page</button>' +
                 '<button type="button" data-switch-layer="admin" style="flex:1;padding:8px 10px;border-radius:8px;background:#10b981;border:none;color:#052e16;font-size:12px;font-weight:700;cursor:pointer;">🛡️ Ir para Administração (SSO)</button>' +
@@ -990,12 +998,21 @@ async function startServer() {
         effectiveStaticPathname = '/index.html';
       }
 
-      const candidatePath = path.join(
+      let candidatePath = path.join(
         staticRoot,
         effectiveStaticPathname === '/' ? 'index.html' : effectiveStaticPathname
       );
       if (
-        candidatePath.startsWith(staticRoot) &&
+        effectiveStaticPathname === '/favicon.svg' &&
+        (!fs.existsSync(candidatePath) || !fs.statSync(candidatePath).isFile())
+      ) {
+        const fallbackFavicon = path.join(ROOT_DIR, 'projetos', mod.folder, 'favicon.svg');
+        if (fs.existsSync(fallbackFavicon)) {
+          candidatePath = fallbackFavicon;
+        }
+      }
+      if (
+        (candidatePath.startsWith(staticRoot) || effectiveStaticPathname === '/favicon.svg') &&
         fs.existsSync(candidatePath) &&
         fs.statSync(candidatePath).isFile()
       ) {

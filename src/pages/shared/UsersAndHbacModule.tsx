@@ -1302,7 +1302,7 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
               className="input"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Mínimo 8 caracteres (Ex.: Olivelas@2026)"
+              placeholder="Mínimo 8 caracteres"
             />
           </div>
         </form>

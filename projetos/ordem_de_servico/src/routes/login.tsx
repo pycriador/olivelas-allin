@@ -126,20 +126,6 @@ function LoginPage() {
           <Divider />
 
           <div className="space-y-3">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-primary/40 bg-primary/5 hover:bg-primary/10 text-primary font-medium"
-              onClick={() => {
-                loginAsDemo();
-                toast.success("Acesso em Modo Demonstração & Testes liberado!");
-                navigate({ to: redirect || "/dashboard" });
-              }}
-            >
-              <Sparkles className="mr-2 h-4 w-4" />
-              Acessar Modo Testes & Validação (1-Clique)
-            </Button>
-
             <GoogleLoginButton onClick={onGoogle} loading={googleLoading} variant="Entrar com Google" />
           </div>
 

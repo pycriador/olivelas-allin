@@ -39,11 +39,11 @@ export const LoginPage: React.FC<{
     } catch (err: any) {
       const msg = err?.message || '';
       if (msg.includes('Invalid login credentials')) {
-        setError('E-mail ou senha incorretos. Verifique suas credenciais.');
+        setError('E-mail ou senha incorretos. Verifique seus dados.');
       } else if (msg.includes('Email not confirmed')) {
         setError('Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada.');
       } else if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('fetch') || msg.includes('Failed to load')) {
-        setError('Não foi possível conectar ao Supabase (projeto pausado por inatividade ou domínio indisponível). Utilize as credenciais de teste abaixo para entrar no Modo Local / Contingência.');
+        setError('Não foi possível conectar ao servidor no momento.');
       } else {
         setError(msg || 'Erro ao efetuar login no banco de dados. Tente novamente.');
       }
@@ -90,9 +90,9 @@ export const LoginPage: React.FC<{
     } catch (err: any) {
       const msg = err?.message || '';
       if (msg.includes('User already registered')) {
-        setError('Este e-mail já está cadastrado no sistema. Faça login com suas credenciais.');
+        setError('Este e-mail já está cadastrado no sistema.');
       } else if (msg.includes('rate limit')) {
-        setError('Limite de envio de e-mails do Supabase atingido. Tente novamente em alguns minutos ou use as credenciais de teste.');
+        setError('Limite de envio de e-mails atingido. Tente novamente em alguns minutos.');
       } else {
         setError(msg || 'Erro ao cadastrar novo usuário no banco de dados.');
       }
@@ -107,12 +107,6 @@ export const LoginPage: React.FC<{
     } catch (err: any) {
       setError(err.message || 'Erro ao iniciar autenticação com Google.');
     }
-  };
-
-  const fillDemoCredentials = (targetEmail: string) => {
-    setEmail(targetEmail);
-    setPassword('marketflow2026');
-    setError(null);
   };
 
   return (
@@ -354,30 +348,6 @@ export const LoginPage: React.FC<{
             </svg>
             Entrar com Google
           </Button>
-
-          {/* Dica de Acesso Rápido de Teste */}
-          <div className="rounded-lg bg-muted/60 border p-2.5 text-[11px] text-muted-foreground space-y-1.5">
-            <p className="font-semibold text-foreground">💡 Contas reais cadastradas no Supabase:</p>
-            <div className="flex flex-wrap gap-2">
-              <button
-                type="button"
-                onClick={() => fillDemoCredentials('comerciante@marketflow.com')}
-                className="underline hover:text-primary transition-colors text-left"
-              >
-                • comerciante@marketflow.com
-              </button>
-              <button
-                type="button"
-                onClick={() => fillDemoCredentials('willian.o.jesus@gmail.com')}
-                className="underline hover:text-primary transition-colors text-left"
-              >
-                • willian.o.jesus@gmail.com
-              </button>
-            </div>
-            <p className="text-[10px] text-muted-foreground italic">
-              (Senha padrão dos testes: <code>marketflow2026</code>)
-            </p>
-          </div>
         </CardContent>
 
         <CardFooter className="flex-col space-y-2 justify-center border-t py-3.5">

@@ -678,34 +678,6 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
                     </span>
                   </div>
 
-                  <div className="px-3 py-2">
-                    <p className="text-[10px] font-bold uppercase text-muted-foreground tracking-wider mb-1">
-                      Alternar Conta (Supabase & Demo):
-                    </p>
-                    <div className="space-y-1 max-h-56 overflow-y-auto custom-scrollbar">
-                      {demoUsers.map((du) => (
-                        <button
-                          key={du.email}
-                          onClick={() => {
-                            switchUser(du.email);
-                            setUserDropdownOpen(false);
-                          }}
-                          className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs text-left transition-colors ${
-                            user.email === du.email ? 'bg-primary/10 text-primary font-bold' : 'hover:bg-surface-hover'
-                          }`}
-                        >
-                          <div className="min-w-0 pr-2">
-                            <p className="font-semibold truncate">{du.name}</p>
-                            <p className="text-[10px] text-muted-foreground truncate font-mono">{du.email}</p>
-                          </div>
-                          <span className="text-[9px] uppercase px-1.5 py-0.5 rounded bg-muted shrink-0 font-mono">
-                            {du.role}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
                   <div className="border-t border-border/80 pt-1.5 px-1.5 space-y-0.5">
                     <Link
                       to="/"

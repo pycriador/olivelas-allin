@@ -71,7 +71,7 @@ export const LoginPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@olivelas.com"
+                  placeholder="Informe seu e-mail"
                   className="w-full text-sm pl-10 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
@@ -85,7 +85,7 @@ export const LoginPage: React.FC = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="Informe sua senha"
                   className="w-full text-sm pl-10 pr-3 py-2.5 rounded-xl border border-slate-700 bg-slate-950 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
@@ -100,73 +100,6 @@ export const LoginPage: React.FC = () => {
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
-
-          {/* Quick-switch Profiles */}
-          <div className="pt-4 border-t border-slate-800 space-y-3">
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">
-              Acesso Rápido por Perfil (Supabase & Demo)
-            </p>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('willian.o.jesus@gmail.com', 'Willian Jesus (Admin)')}
-                className="p-2.5 rounded-xl border border-indigo-500/40 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-200 text-xs font-semibold text-left transition-colors flex flex-col col-span-2 sm:col-span-1"
-              >
-                <span className="font-bold flex items-center justify-between">
-                  Willian Jesus <span className="text-[9px] bg-indigo-500 text-white px-1.5 py-0.2 rounded font-mono">SUPABASE</span>
-                </span>
-                <span className="text-[10px] text-slate-400">willian.o.jesus@gmail.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('py.criador@gmail.com', 'Py Criador (Criador)')}
-                className="p-2.5 rounded-xl border border-emerald-500/40 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-200 text-xs font-semibold text-left transition-colors flex flex-col col-span-2 sm:col-span-1"
-              >
-                <span className="font-bold flex items-center justify-between">
-                  Py Criador <span className="text-[9px] bg-emerald-500 text-white px-1.5 py-0.2 rounded font-mono">SUPABASE</span>
-                </span>
-                <span className="text-[10px] text-slate-400">py.criador@gmail.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('admin@olivelas.com', 'Administrador Global')}
-                className="p-2.5 rounded-xl border border-indigo-500/30 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 text-xs font-semibold text-left transition-colors flex flex-col"
-              >
-                <span className="font-bold">Admin Global</span>
-                <span className="text-[10px] text-slate-400">admin@olivelas.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('creator@olivelas.com', 'Criador')}
-                className="p-2.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 text-xs font-semibold text-left transition-colors flex flex-col"
-              >
-                <span className="font-bold">Criador de Forms</span>
-                <span className="text-[10px] text-slate-400">creator@olivelas.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('editor@olivelas.com', 'Editor Convidado')}
-                className="p-2.5 rounded-xl border border-sky-500/30 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300 text-xs font-semibold text-left transition-colors flex flex-col"
-              >
-                <span className="font-bold">Editor Convidado</span>
-                <span className="text-[10px] text-slate-400">editor@olivelas.com</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin('viewer@olivelas.com', 'Visualizador')}
-                className="p-2.5 rounded-xl border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 text-xs font-semibold text-left transition-colors flex flex-col"
-              >
-                <span className="font-bold">Visualizador</span>
-                <span className="text-[10px] text-slate-400">viewer@olivelas.com</span>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>

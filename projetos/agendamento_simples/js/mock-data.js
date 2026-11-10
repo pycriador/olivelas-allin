@@ -390,7 +390,7 @@ const initialMockData = {
     googleCalendar: {
       connected: true,
       calendarId: "primary",
-      accountEmail: "dra.marta.gelsi@demo.com",
+      accountEmail: "Sincronização Institucional",
       lastSyncAt: "Hoje às 08:30",
       syncStatus: "synced",
       eventsCount: 8
@@ -411,7 +411,7 @@ const initialMockData = {
       id: "LOG-002",
       action: "LOGIN",
       description: "Acesso ao painel administrativo",
-      user: "admin@demo.com",
+      user: "Administrador",
       timestamp: "2026-09-21 08:15:22",
       entityId: "AUTH-001"
     },

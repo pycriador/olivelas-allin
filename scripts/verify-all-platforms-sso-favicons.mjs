@@ -150,10 +150,38 @@ async function runVerification() {
     failures++;
   }
 
+  console.log('\n🔍 3. Verificando ausência total de credenciais (mock, demo ou pré-preenchidas) em todas as 37 plataformas...');
+  const FORBIDDEN_CREDENTIAL_PATTERNS = [
+    'Marta@2026Admin',
+    'admin@dramartagelsi.com.br',
+    'dra.marta.gelsi@demo.com',
+    'Preencher dados padrão',
+    'marketflow2026',
+    'comerciante@marketflow.com',
+    'Acesso Rápido para Avaliação',
+    'Acesso Rápido com 1 Clique',
+    'Acesso Rápido por Perfil',
+    'Acessar Modo Testes & Validação',
+    'Olivelas@2026',
+  ];
+
+  for (const mod of MODULES) {
+    const loginHtml = await fetch(`http://localhost:${mod.port}/${mod.folder}?layer=login`).then((r) => r.text());
+    for (const forbidden of FORBIDDEN_CREDENTIAL_PATTERNS) {
+      if (loginHtml.includes(forbidden)) {
+        console.error(`❌ [${mod.port}] /${mod.folder} ainda contém credencial proibida: "${forbidden}"`);
+        failures++;
+      }
+    }
+  }
+  if (failures === 0) {
+    console.log('✅ Zero credenciais mock/demo/pré-preenchidas encontradas em todas as 37 plataformas!');
+  }
+
   if (failures > 0) {
     process.exit(1);
   }
-  console.log('\n🎉 Todas as 37 plataformas passaram 100% nos testes de Nome Oficial, FavIcon SVG, remoção do Lovable e SSO Super Admin (willian.o.jesus@gmail.com)!');
+  console.log('\n🎉 Todas as 37 plataformas passaram 100% nos testes de Nome Oficial, FavIcon SVG, Zero Credenciais Expostas, remoção do Lovable e SSO Super Admin (willian.o.jesus@gmail.com)!');
 }
 
 runVerification();

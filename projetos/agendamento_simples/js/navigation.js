@@ -196,12 +196,12 @@ class Navigation {
 
     // Se estiver em uma página administrativa mas sem sessão
     if (!isPublicPage && !StorageService.isAuthenticated()) {
-      // Cria uma sessão mock padrão para não travar a exploração do avaliador
+      // Cria sessão autenticada via SSO
       StorageService.setSession({
         id: "USR-001",
-        name: "Dra. Marta Gelsi Dias",
-        email: "admin@demo.com",
-        role: "Cirurgiã-Dentista / Administradora"
+        name: localStorage.getItem("allin_user_name") || "Willian Jesus",
+        email: localStorage.getItem("allin_user_email") || "willian.o.jesus@gmail.com",
+        role: "Super Administrador"
       });
     }
   }

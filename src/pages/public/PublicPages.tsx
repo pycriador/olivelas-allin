@@ -485,12 +485,11 @@ export const LoginPage: React.FC = () => {
   );
 
   // Estado do Login Real no Supabase
-  const [email, setEmail] = useState<string>('willian.o.jesus@gmail.com');
+  const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [selectedQuickUserId, setSelectedQuickUserId] = useState<string>('usr-super-admin');
   const [needsFirstLoginPassword, setNeedsFirstLoginPassword] = useState<boolean>(false);
 
   useEffect(() => {
@@ -514,19 +513,10 @@ export const LoginPage: React.FC = () => {
   const [regFullName, setRegFullName] = useState<string>('');
   const [regEmail, setRegEmail] = useState<string>('');
   const [regPassword, setRegPassword] = useState<string>('');
-  const [regPhone, setRegPhone] = useState<string>('+55 11 99999-0000');
+  const [regPhone, setRegPhone] = useState<string>('');
   const [regTradeName, setRegTradeName] = useState<string>('');
   const [regLegalName, setRegLegalName] = useState<string>('');
   const [regCnpj, setRegCnpj] = useState<string>('');
-
-  const handleSelectQuickAccount = (userId: string) => {
-    setSelectedQuickUserId(userId);
-    const u = users.find((item) => item.id === userId);
-    if (u) {
-      setEmail(u.email);
-      setAuthError(null);
-    }
-  };
 
   const handleRealLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -756,81 +746,6 @@ export const LoginPage: React.FC = () => {
                   </button>
                 </div>
               </form>
-
-              {/* Coluna 2: Conta Global Admin no Supabase */}
-              <div className="flex flex-col gap-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold">
-                    2. Global Admin Cadastrado em <code>public.profiles</code> & <code>auth.users</code>
-                  </label>
-                  <span className="badge badge-info">Global Admin Único</span>
-                </div>
-                <p className="text-xs text-muted">
-                  Apenas o Global Admin oficial está registrado no ecossistema e em todas as 16 ferramentas. A senha é configurada no primeiro login e refletida diretamente no Supabase real:
-                </p>
-
-                <div className="flex flex-col gap-2">
-                  {users.map((u) => {
-                    const uRoles = getUserActiveRoles(u, roles);
-                    const active = u.id === selectedQuickUserId && email.toLowerCase() === u.email.toLowerCase();
-                    const linkedCompanies = companies.filter((c) => u.companyIds.includes(c.id));
-                    return (
-                      <div
-                        key={u.id}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleSelectQuickAccount(u.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            handleSelectQuickAccount(u.id);
-                          }
-                        }}
-                        style={{
-                          border: active
-                            ? '2px solid var(--accent-primary)'
-                            : '1px solid var(--border-subtle)',
-                          backgroundColor: active ? 'var(--accent-primary-soft)' : 'var(--bg-surface)',
-                          borderRadius: 'var(--radius-md)',
-                          padding: '0.75rem 1rem',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '0.25rem',
-                        }}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-2">
-                            <strong>{u.name}</strong>
-                            <StatusBadge status={u.status} />
-                          </div>
-                          <span className="badge badge-info">
-                            {uRoles[0]?.name[session.language]} (Nível {uRoles[0]?.hierarchyLevel})
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-xs text-muted mono">
-                          <span>{u.email}</span>
-                          <span>
-                            {needsFirstLoginPassword
-                              ? 'Senha: Definir no 1º Login'
-                              : 'Autenticação Supabase Ativa'}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1 flex-wrap mt-1">
-                          {uRoles.some((r) => r.scope === 'global') && (
-                            <span className="badge">Console Global</span>
-                          )}
-                          {linkedCompanies.map((c) => (
-                            <span key={c.id} className="badge badge-teal">
-                              {c.tradeName}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
             </div>
           ) : (
             /* Formulário de Cadastro Real de Conta & Empresa no Supabase */
@@ -946,7 +861,7 @@ export const LoginPage: React.FC = () => {
 
 export const RecoverPasswordPage: React.FC = () => {
   const { getActor, notify } = useApp();
-  const [email, setEmail] = useState('willian.o.jesus@gmail.com');
+  const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
