@@ -2566,22 +2566,25 @@ export function buildModuleInstanceLaunchUrl(params: {
     typeof window !== 'undefined' && window.location.hostname
       ? window.location.hostname
       : 'localhost';
-  const baseUrl = `http://${host}:${serverSpec.port}${serverSpec.adminPath}`;
-  const sep = serverSpec.adminPath.includes('?') ? '&' : '?';
 
-  const query = new URLSearchParams({
-    allin_sso: '1',
-    instance_id: instanceId,
-    company_id: cid,
-    company_name: cname,
-    user_id: uid,
-    user_email: uemail,
-    user_name: uname,
-    user_role: urole,
-  });
+  if (typeof document !== 'undefined') {
+    const ssoCookiePayload = JSON.stringify({
+      allinSso: '1',
+      instanceId,
+      companyId: cid,
+      companyName: cname,
+      userId: uid,
+      userEmail: uemail,
+      userName: uname,
+      userRole: urole,
+    });
+    document.cookie = `allin_sso_session=${encodeURIComponent(ssoCookiePayload)}; path=/; max-age=2592000; SameSite=Lax`;
+  }
+
+  const cleanUrl = `http://${host}:${serverSpec.port}/${serverSpec.folder}`;
 
   return {
-    url: `${baseUrl}${sep}${query.toString()}`,
+    url: cleanUrl,
     instanceId,
     port: serverSpec.port,
     adminPath: serverSpec.adminPath,

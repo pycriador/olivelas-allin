@@ -87,7 +87,7 @@ class App {
   _configureStore() {
     const loja = this.catalog.getLoja();
 
-    document.title = `${loja.nome} - Catálogo de Hortifruti Fresco`;
+    document.title = 'Olivelas - Hortifruti & Feira Fresca';
 
     const nameEl = $('.header__name');
     if (nameEl) nameEl.textContent = loja.nome;

@@ -66,35 +66,71 @@ async function runVerification() {
     console.log('✅ Zero pacotes Lovable em todos os 37 projetos!');
   }
 
-  console.log('\n🔍 2. Verificando todas as 37 plataformas (4101–4137)...');
+  console.log('\n🔍 2. Verificando todas as 37 plataformas (4101–4137) via URL limpa /<app> e camadas SSO...');
   for (const mod of MODULES) {
-    const sep = mod.adminPath.includes('?') ? '&' : '?';
-    const testUrl = `http://localhost:${mod.port}${mod.adminPath}${sep}allin_sso=1&instance_id=inst_emp-olivelas-matriz_${mod.folder}&company_id=emp-olivelas-matriz&company_name=Olivelas+Atelier+%26+Varejo&user_id=usr-super-admin&user_email=clara.monteiro%40olivelas-allin.demo&user_name=Clara+Monteiro&user_role=GLOBAL_ADMIN`;
+    const cleanUrl = `http://localhost:${mod.port}/${mod.folder}`;
     const favUrl = `http://localhost:${mod.port}/favicon.svg`;
 
-    const [pageRes, favRes] = await Promise.all([fetch(testUrl), fetch(favUrl)]);
+    const [pageRes, favRes] = await Promise.all([fetch(cleanUrl), fetch(favUrl)]);
     const html = await pageRes.text();
     const favSvg = await favRes.text();
 
     const hasTitle = html.includes(`<title>${mod.expectedBrand}</title>`);
     const hasFaviconLink = html.includes('href="/favicon.svg"');
     const hasWillianSso = html.includes('willian.o.jesus@gmail.com') && html.includes('Willian Jesus');
+    const hasThreeLayerButtons =
+      html.includes('data-layer-btn="landing"') &&
+      html.includes('data-layer-btn="login"') &&
+      html.includes('data-layer-btn="admin"');
+    const hasCleanUrlScript = html.includes(`var cleanAppUrl = '/${mod.folder}';`);
     const hasNoMalformedHead = !html.includes('</svg>"') && !/<link[^>]*rel=["']icon["'][^>]*>\s*<path/i.test(html);
     const favOk = favRes.status === 200 && favSvg.includes('<svg');
 
-    if (pageRes.status === 200 && hasTitle && hasFaviconLink && hasWillianSso && hasNoMalformedHead && favOk) {
-      console.log(`✅ [${mod.port}] ${mod.expectedBrand} | HTTP 200 | Favicon SVG OK | Super Admin: willian.o.jesus@gmail.com`);
+    if (
+      pageRes.status === 200 &&
+      hasTitle &&
+      hasFaviconLink &&
+      hasWillianSso &&
+      hasThreeLayerButtons &&
+      hasCleanUrlScript &&
+      hasNoMalformedHead &&
+      favOk
+    ) {
+      console.log(`✅ [${mod.port}] /${mod.folder} -> ${mod.expectedBrand} | 3 Camadas OK | Sessão SSO Ativa`);
     } else {
       console.error(`❌ [${mod.port}] ${mod.expectedBrand} FAILED:`, {
         status: pageRes.status,
         hasTitle,
         hasFaviconLink,
         hasWillianSso,
+        hasThreeLayerButtons,
+        hasCleanUrlScript,
         hasNoMalformedHead,
         favOk,
       });
       failures++;
     }
+  }
+
+  // Verify 4129 (loja_simples_hortifruti) Landing vs Login vs Admin layers explicitly
+  const [hortiLandingHtml, hortiAdminHtml] = await Promise.all([
+    fetch('http://localhost:4129/loja_simples_hortifruti?layer=landing').then((r) => r.text()),
+    fetch('http://localhost:4129/loja_simples_hortifruti?layer=admin').then((r) => r.text()),
+  ]);
+  const hortiLandingOk =
+    hortiLandingHtml.includes('section-products') &&
+    hortiLandingHtml.includes('assets/js/app.js') &&
+    hortiLandingHtml.includes('<base href="/" />');
+  const hortiAdminOk =
+    hortiAdminHtml.includes('Catálogo de Produtos & Estoque') &&
+    hortiAdminHtml.includes('admin.js') &&
+    hortiAdminHtml.includes('<base href="/admin/" />');
+
+  if (hortiLandingOk && hortiAdminOk) {
+    console.log('✅ [4129] loja_simples_hortifruti | Camada Landing Page (Vitrine), Login (Visualização) e Administração (SSO) verificadas!');
+  } else {
+    console.error('❌ [4129] Falha nas camadas de loja_simples_hortifruti:', { hortiLandingOk, hortiAdminOk });
+    failures++;
   }
 
   // Also verify local API endpoints on 4125, 4136, 4137
