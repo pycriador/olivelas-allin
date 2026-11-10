@@ -1,0 +1,159 @@
+#!/usr/bin/env bash
+set -e
+
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$PROJECT_DIR"
+
+PORT="${PORT:-5174}"
+HOST="${HOST:-0.0.0.0}"
+PID_DIR="$PROJECT_DIR/.pids"
+CONSOLE_PID_FILE="$PID_DIR/console.pid"
+MODULES_PID_FILE="$PID_DIR/modules.pid"
+CONSOLE_LOG_FILE="$PID_DIR/console.log"
+MODULES_LOG_FILE="$PID_DIR/modules.log"
+
+# Sem argumentos, executa "start" por padrão
+ACTION="${1:-start}"
+
+stop_services() {
+  local quiet="${1:-false}"
+  if [ "$quiet" != "true" ]; then
+    echo "=================================================================="
+    echo "🛑 Parando Olivelas All In (Console :${PORT} e 37 Módulos :4101..4137)"
+    echo "=================================================================="
+  fi
+
+  # 1. Encerrar pelos arquivos de PID se existirem
+  if [ -f "$CONSOLE_PID_FILE" ]; then
+    local cpid
+    cpid="$(cat "$CONSOLE_PID_FILE" 2>/dev/null || true)"
+    if [ -n "$cpid" ] && kill -0 "$cpid" 2>/dev/null; then
+      kill -TERM "$cpid" 2>/dev/null || true
+    fi
+    rm -f "$CONSOLE_PID_FILE"
+  fi
+
+  if [ -f "$MODULES_PID_FILE" ]; then
+    local mpid
+    mpid="$(cat "$MODULES_PID_FILE" 2>/dev/null || true)"
+    if [ -n "$mpid" ] && kill -0 "$mpid" 2>/dev/null; then
+      kill -TERM "$mpid" 2>/dev/null || true
+    fi
+    rm -f "$MODULES_PID_FILE"
+  fi
+
+  # 2. Garantir encerramento de processos órfãos do projeto
+  pkill -f "node scripts/start-all-modules.mjs" 2>/dev/null || true
+  pkill -f "scripts/serve-single-module.mjs" 2>/dev/null || true
+  pkill -f "vite.*--port ${PORT}" 2>/dev/null || true
+
+  # 3. Liberar portas caso ainda haja algum processo preso
+  if command -v fuser >/dev/null 2>&1; then
+    fuser -k "${PORT}/tcp" >/dev/null 2>&1 || true
+    for p in $(seq 4101 4137); do
+      fuser -k "${p}/tcp" >/dev/null 2>&1 || true
+    done
+  fi
+
+  sleep 1
+
+  if [ "$quiet" != "true" ]; then
+    echo "✅ Todos os serviços do Olivelas All In foram parados com sucesso."
+  fi
+}
+
+start_services() {
+  mkdir -p "$PID_DIR"
+
+  echo "=================================================================="
+  echo "🚀 Iniciando Olivelas All In v2.0 (Produção — Multi-Schema Supabase)"
+  echo "=================================================================="
+  echo "📂 Diretório : $PROJECT_DIR"
+  echo "🌐 Console   : http://localhost:${PORT}"
+  echo "🧩 Instâncias: Portas 4101..4137 (37 Plataformas Comerciais com SSO All In)"
+  echo "🔐 Auth DB   : public.profiles (Super Admin: willian.o.jesus@gmail.com)"
+  echo "🗄️  Schemas   : 27 schemas dedicados no PostgreSQL (Supabase)"
+  echo "=================================================================="
+
+  if [ ! -d "node_modules" ]; then
+    echo "📦 Instalando dependências do projeto..."
+    npm install
+  fi
+
+  # Limpar instâncias anteriores para evitar conflito de portas
+  stop_services "true"
+
+  # 1. Iniciar orquestrador dos 37 módulos (4101..4137)
+  nohup node scripts/start-all-modules.mjs > "$MODULES_LOG_FILE" 2>&1 &
+  MODULES_PID=$!
+  echo "$MODULES_PID" > "$MODULES_PID_FILE"
+
+  # 2. Iniciar console principal Vite (5174)
+  nohup npx vite --host "$HOST" --port "$PORT" > "$CONSOLE_LOG_FILE" 2>&1 &
+  CONSOLE_PID=$!
+  echo "$CONSOLE_PID" > "$CONSOLE_PID_FILE"
+
+  # Aguardar inicialização das portas
+  echo "⏳ Aguardando inicialização do Console (:${PORT}) e dos 37 módulos (:4101..4137)..."
+  for _ in $(seq 1 15); do
+    if curl -s -o /dev/null "http://localhost:${PORT}" && curl -s -o /dev/null "http://localhost:4101/favicon.svg"; then
+      break
+    fi
+    sleep 0.5
+  done
+
+  echo "✅ Olivelas All In iniciado com sucesso!"
+  echo "   • Console Principal (PID $CONSOLE_PID): http://localhost:${PORT}"
+  echo "   • 37 Módulos SSO    (PID $MODULES_PID): Portas 4101 a 4137"
+  echo "   • Logs              : $CONSOLE_LOG_FILE | $MODULES_LOG_FILE"
+  echo "   • Para parar        : ./start stop"
+  echo "=================================================================="
+}
+
+status_services() {
+  echo "=================================================================="
+  echo "📊 Status dos Serviços — Olivelas All In"
+  echo "=================================================================="
+  if curl -s -o /dev/null "http://localhost:${PORT}"; then
+    echo "✅ Console Principal (:${PORT}) : ATIVO -> http://localhost:${PORT}"
+  else
+    echo "🔴 Console Principal (:${PORT}) : PARADO"
+  fi
+
+  local active_modules=0
+  for p in $(seq 4101 4137); do
+    if curl -s -o /dev/null "http://localhost:${p}/favicon.svg"; then
+      active_modules=$((active_modules + 1))
+    fi
+  done
+
+  if [ "$active_modules" -eq 37 ]; then
+    echo "✅ Módulos do Ecossistema       : 37/37 ATIVOS (Portas 4101..4137)"
+  elif [ "$active_modules" -gt 0 ]; then
+    echo "🟡 Módulos do Ecossistema       : ${active_modules}/37 ATIVOS"
+  else
+    echo "🔴 Módulos do Ecossistema       : 0/37 ATIVOS (PARADOS)"
+  fi
+  echo "=================================================================="
+}
+
+case "$ACTION" in
+  start)
+    start_services
+    ;;
+  stop)
+    stop_services "false"
+    ;;
+  restart)
+    stop_services "false"
+    start_services
+    ;;
+  status)
+    status_services
+    ;;
+  *)
+    echo "Uso: ./start [start|stop|restart|status]"
+    echo "  Sem argumentos: inicia todos os serviços (equivalente a ./start start)"
+    exit 1
+    ;;
+esac

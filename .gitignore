@@ -49,6 +49,7 @@ tsconfig.tsbuildinfo
 *.sw?
 
 # Logs & Test coverage
+.pids/
 logs
 *.log
 **/*.log
