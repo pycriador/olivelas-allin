@@ -849,6 +849,64 @@
     margin: auto;
   }
 
+  dialog.app-dialog.app-dialog-lg {
+    max-width: 900px;
+  }
+
+  /* Dropdown Menu de Ações */
+  .action-dropdown-menu {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+    padding: 0.35rem;
+    min-width: 220px;
+    z-index: 95;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .action-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: transparent;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-align: left;
+    text-decoration: none;
+    font-family: inherit;
+    transition: background-color 0.12s ease, color 0.12s ease;
+  }
+
+  .action-dropdown-item:hover {
+    background-color: var(--bg-subtle);
+    color: var(--accent-primary);
+    text-decoration: none;
+  }
+
+  .action-dropdown-item.danger {
+    color: var(--status-danger);
+  }
+
+  .action-dropdown-item.danger:hover {
+    background-color: var(--status-danger-bg);
+    color: var(--status-danger);
+  }
+
+  .action-dropdown-divider {
+    height: 1px;
+    background-color: var(--border-subtle);
+    margin: 0.25rem 0;
+  }
+
   dialog.app-dialog::backdrop {
     background-color: rgba(9, 13, 22, 0.6);
     backdrop-filter: blur(4px);

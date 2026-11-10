@@ -5,9 +5,11 @@ import {
   Archive,
   ArrowDown,
   ArrowUp,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Download,
+  MoreHorizontal,
   RotateCcw,
   Search,
   ShieldAlert,
@@ -97,9 +99,11 @@ export const ModalDialog: React.FC<{
   open: boolean;
   onClose: () => void;
   title: string;
+  subtitle?: string;
+  size?: 'md' | 'lg';
   children: React.ReactNode;
   footer?: React.ReactNode;
-}> = ({ open, onClose, title, children, footer }) => {
+}> = ({ open, onClose, title, subtitle, size = 'md', children, footer }) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const titleId = useId();
 
@@ -160,19 +164,164 @@ export const ModalDialog: React.FC<{
       ref={dialogRef}
       closedby="any"
       aria-labelledby={titleId}
-      className="app-dialog"
+      className={`app-dialog ${size === 'lg' ? 'app-dialog-lg' : ''}`}
     >
-      <div className="card-header">
-        <h2 id={titleId} style={{ fontSize: '1rem' }}>
-          {title}
-        </h2>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose} aria-label="Fechar">
+      <div className="card-header" style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'var(--bg-surface)' }}>
+        <div className="flex flex-col gap-0.5">
+          <h2 id={titleId} style={{ fontSize: '1.05rem' }}>
+            {title}
+          </h2>
+          {subtitle && <span className="text-xs text-muted">{subtitle}</span>}
+        </div>
+        <button
+          type="button"
+          className="btn btn-secondary btn-sm"
+          onClick={onClose}
+          aria-label="Fechar modal"
+          title="Fechar (Esc)"
+        >
           <X size={16} />
         </button>
       </div>
       <div className="card-body">{children}</div>
       {footer && <div className="card-footer">{footer}</div>}
     </dialog>
+  );
+};
+
+export interface ActionDropdownItem {
+  key: string;
+  label: string;
+  icon?: React.ReactNode;
+  onClick?: () => void;
+  to?: string;
+  variant?: 'default' | 'danger';
+  dividerBefore?: boolean;
+}
+
+export const ActionDropdownMenu: React.FC<{
+  label?: string;
+  items: ActionDropdownItem[];
+}> = ({ label = 'Ações', items }) => {
+  const [open, setOpen] = useState(false);
+  const [coords, setCoords] = useState<{ top: number; left: number; openUpward: boolean }>({
+    top: 0,
+    left: 0,
+    openUpward: false,
+  });
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
+
+  const toggleMenu = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const menuWidth = 235;
+      const estimatedHeight = items.length * 38 + 20;
+      const openUpward = window.innerHeight - rect.bottom < estimatedHeight && rect.top > estimatedHeight;
+      const left = Math.max(12, Math.min(rect.right - menuWidth, window.innerWidth - menuWidth - 12));
+      const top = openUpward ? rect.top - 6 : rect.bottom + 6;
+      setCoords({ top, left, openUpward });
+    }
+    setOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(target) &&
+        btnRef.current &&
+        !btnRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+      }
+    };
+
+    const handleScrollOrResize = () => {
+      setOpen(false);
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('scroll', handleScrollOrResize, true);
+    window.addEventListener('resize', handleScrollOrResize);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('scroll', handleScrollOrResize, true);
+      window.removeEventListener('resize', handleScrollOrResize);
+    };
+  }, [open]);
+
+  return (
+    <div style={{ display: 'inline-block', position: 'relative' }}>
+      <button
+        ref={btnRef}
+        type="button"
+        className="btn btn-secondary btn-sm"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={toggleMenu}
+      >
+        <MoreHorizontal size={14} />
+        <span>{label}</span>
+        <ChevronDown size={13} />
+      </button>
+
+      {open && (
+        <div
+          ref={menuRef}
+          role="menu"
+          className="action-dropdown-menu"
+          style={{
+            position: 'fixed',
+            top: coords.openUpward ? undefined : coords.top,
+            bottom: coords.openUpward ? window.innerHeight - coords.top : undefined,
+            left: coords.left,
+          }}
+        >
+          {items.map((item) => (
+            <React.Fragment key={item.key}>
+              {item.dividerBefore && <div className="action-dropdown-divider" role="separator" />}
+              {item.to ? (
+                <Link
+                  to={item.to}
+                  role="menuitem"
+                  className={`action-dropdown-item ${item.variant === 'danger' ? 'danger' : ''}`}
+                  onClick={() => setOpen(false)}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={`action-dropdown-item ${item.variant === 'danger' ? 'danger' : ''}`}
+                  onClick={() => {
+                    setOpen(false);
+                    item.onClick?.();
+                  }}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </button>
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+    </div>
   );
 };
 

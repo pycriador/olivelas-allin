@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
+  Archive,
   CheckCircle2,
   Database,
   Edit3,
   ExternalLink,
+  Eye,
   FileSignature,
   Layers,
   Package,
   Play,
   Plus,
+  RotateCcw,
   Save,
   Sparkles,
+  X,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -31,6 +35,8 @@ import {
 } from '../../services/olivelasEcosystemService';
 import {
   AccessDeniedView,
+  ActionDropdownItem,
+  ActionDropdownMenu,
   ArchiveRecordDialog,
   ModalDialog,
   PageHeader,
@@ -38,6 +44,264 @@ import {
   UnsavedChangesBanner,
   UrlDataTable,
 } from '../../components/shared/SharedComponents';
+
+export const ModuleDetailsModal: React.FC<{
+  module: CatalogModuleEntity | null;
+  onClose: () => void;
+}> = ({ module: mod, onClose }) => {
+  const { companyModules, companies, currentUser, session, hasPermission } = useApp();
+
+  if (!mod) return null;
+
+  const subscribedCompanies = companyModules.filter((cm) => cm.moduleId === mod.id);
+  const demoSlug = mod.ecosystemSlug || mod.code;
+  const activeCompany =
+    companies.find((c) => c.id === session.activeCompanyId) || companies[0];
+  const launchInfo = !mod.isExample
+    ? buildModuleInstanceLaunchUrl({
+        moduleSlug: demoSlug,
+        companyId: activeCompany?.id || 'emp-olivelas-matriz',
+        companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+      })
+    : null;
+
+  const handleLaunchForCompany = (compId?: string, compName?: string) => {
+    openModuleInstanceInNewTab({
+      moduleSlug: demoSlug,
+      companyId: compId || activeCompany?.id || 'emp-olivelas-matriz',
+      companyName: compName || activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+      userId: currentUser?.id || 'usr-admin-global',
+      userEmail: currentUser?.email || 'willian.o.jesus@gmail.com',
+      userName: currentUser?.name || 'Willian Jesus',
+      userRole: 'GLOBAL_ADMIN',
+    });
+  };
+
+  return (
+    <ModalDialog
+      open={Boolean(mod)}
+      onClose={onClose}
+      size="lg"
+      title={`${mod.name[session.language]} (${mod.code})`}
+      subtitle={`Versão v${mod.version} • Categoria: ${mod.category}${mod.dbSchema ? ` • Schema Supabase: ${mod.dbSchema}` : ''}`}
+      footer={
+        <div className="flex items-center justify-between w-full gap-2 flex-wrap">
+          <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
+            <X size={14} />
+            Fechar
+          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            {hasPermission('modules', 'edit') && (
+              <Link
+                to={`/app/global/modulos/${mod.id}/editar`}
+                className="btn btn-secondary btn-sm"
+                onClick={onClose}
+              >
+                <Edit3 size={14} />
+                Editar Módulo
+              </Link>
+            )}
+            {!mod.isExample && (
+              <>
+                <Link
+                  to={`/app/global/ecossistema/${demoSlug}`}
+                  className="btn btn-secondary btn-sm"
+                  onClick={onClose}
+                >
+                  <Play size={14} />
+                  Painel da Instância
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleLaunchForCompany()}
+                  className="btn btn-primary btn-sm"
+                >
+                  <ExternalLink size={14} />
+                  Abrir Aplicação (Nova Aba SSO)
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      }
+    >
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <p className="text-sm text-muted" style={{ flex: 1 }}>
+            {mod.description[session.language]}
+          </p>
+          <div className="flex items-center gap-1.5">
+            <StatusBadge status={mod.commercialStatus} />
+            {mod.isExample ? (
+              <span className="badge badge-warning">Módulo de Exemplo / Fundação</span>
+            ) : (
+              <span className="badge badge-success">Plataforma Comercial Oficial</span>
+            )}
+          </div>
+        </div>
+
+        <div className="kpi-grid">
+          <div className="kpi-card">
+            <span className="kpi-label">Preço Mensal</span>
+            <span className="kpi-value" style={{ fontSize: '1.35rem' }}>
+              {formatCurrency(mod.priceMonthly, mod.currency, session.language)}
+            </span>
+            <span className="kpi-meta">Vigência: {mod.effectiveDate}</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Preço Anual</span>
+            <span className="kpi-value" style={{ fontSize: '1.35rem' }}>
+              {formatCurrency(mod.priceYearly, mod.currency, session.language)}
+            </span>
+            <span className="kpi-meta">Limites: {mod.usageLimits}</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Empresas Assinantes</span>
+            <span className="kpi-value" style={{ fontSize: '1.35rem' }}>
+              {subscribedCompanies.filter((s) => s.status === 'active').length}
+            </span>
+            <span className="kpi-meta">
+              {launchInfo
+                ? `Porta :${launchInfo.port}${launchInfo.serverSpec.adminPath}`
+                : 'Módulo de Fundação'}
+            </span>
+          </div>
+          {mod.dbSchema && (
+            <div className="kpi-card">
+              <span className="kpi-label">Schema PostgreSQL</span>
+              <span className="kpi-value mono" style={{ fontSize: '1.05rem' }}>
+                {mod.dbSchema}
+              </span>
+              <span className="kpi-meta">
+                {mod.tables?.length || 1} tabela(s) • public.profiles SSO
+              </span>
+            </div>
+          )}
+        </div>
+
+        {mod.features && mod.features.length > 0 && (
+          <div className="card" style={{ boxShadow: 'none' }}>
+            <div className="card-header" style={{ padding: '0.75rem 1rem' }}>
+              <strong className="text-xs uppercase">Recursos & Arquitetura da Aplicação</strong>
+              {mod.projectFolder && (
+                <span className="badge badge-info mono">/projetos/{mod.projectFolder}</span>
+              )}
+            </div>
+            <div className="card-body grid-2" style={{ padding: '1rem' }}>
+              <div>
+                <strong className="text-xs uppercase text-muted block mb-2">
+                  Funcionalidades Disponíveis
+                </strong>
+                <div className="flex flex-col gap-1.5">
+                  {mod.features.map((feat) => (
+                    <div key={feat} className="flex items-center gap-2 text-sm">
+                      <CheckCircle2 size={14} style={{ color: 'var(--status-success)' }} />
+                      <span>{feat}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {mod.tables && (
+                <div>
+                  <strong className="text-xs uppercase text-muted block mb-2">
+                    Tabelas no Schema ({mod.dbSchema})
+                  </strong>
+                  <div className="flex flex-wrap gap-1.5">
+                    {mod.tables.map((tbl) => (
+                      <span key={tbl} className="badge badge-teal mono">
+                        {mod.dbSchema}.{tbl}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="card" style={{ boxShadow: 'none' }}>
+          <div className="card-header" style={{ padding: '0.75rem 1rem' }}>
+            <strong className="text-xs uppercase">
+              Empresas com Vínculo neste Módulo ({subscribedCompanies.length})
+            </strong>
+          </div>
+          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Empresa</th>
+                  <th>Instância Alocada</th>
+                  <th>Ciclo</th>
+                  <th>Estado</th>
+                  <th className="num">Valor Acordado</th>
+                  <th className="num">Acesso SSO</th>
+                </tr>
+              </thead>
+              <tbody>
+                {subscribedCompanies.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center text-muted" style={{ padding: '1.25rem' }}>
+                      Nenhuma empresa vinculada no momento.
+                    </td>
+                  </tr>
+                ) : (
+                  subscribedCompanies.map((sub) => {
+                    const comp = companies.find((c) => c.id === sub.companyId);
+                    const instInfo = buildModuleInstanceLaunchUrl({
+                      moduleSlug: demoSlug,
+                      companyId: sub.companyId,
+                      companyName: comp?.tradeName || sub.companyId,
+                    });
+                    return (
+                      <tr key={sub.id}>
+                        <td>
+                          <Link
+                            to={`/app/global/empresas/${sub.companyId}`}
+                            className="font-semibold"
+                            onClick={onClose}
+                          >
+                            {comp?.tradeName || sub.companyId}
+                          </Link>
+                        </td>
+                        <td>
+                          <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                        </td>
+                        <td>{sub.billingCycle}</td>
+                        <td>
+                          <StatusBadge status={sub.status} />
+                        </td>
+                        <td className="num tabular font-semibold">
+                          {formatCurrency(sub.agreedPrice, sub.currency, session.language)}
+                        </td>
+                        <td className="num">
+                          {!mod.isExample && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleLaunchForCompany(
+                                  sub.companyId,
+                                  comp?.tradeName || sub.companyId,
+                                )
+                              }
+                              className="btn btn-primary btn-sm"
+                            >
+                              <ExternalLink size={12} />
+                              Abrir Instância
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ModalDialog>
+  );
+};
 
 export const GlobalModulesCatalogPage: React.FC = () => {
   const {
@@ -52,8 +316,10 @@ export const GlobalModulesCatalogPage: React.FC = () => {
     notify,
     t,
   } = useApp();
+  const [searchParams] = useSearchParams();
   const [archiveTarget, setArchiveTarget] = useState<CatalogModuleEntity | null>(null);
-  const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
+  const [detailModalModule, setDetailModalModule] = useState<CatalogModuleEntity | null>(null);
+
   const activeCompany =
     companies.find((c) => c.id === session.activeCompanyId) || companies[0];
 
@@ -78,9 +344,14 @@ export const GlobalModulesCatalogPage: React.FC = () => {
     );
   }
 
-  const commercialModules = modules.filter((m) => !m.isExample);
-  const exampleModules = modules.filter((m) => Boolean(m.isExample));
-  const activeTabItems = catalogTab === 'commercial' ? commercialModules : exampleModules;
+  const commercialCount = modules.filter((m) => !m.isExample).length;
+  const exampleCount = modules.filter((m) => Boolean(m.isExample)).length;
+  const typeFilter = searchParams.get('type') || 'all';
+  const unifiedItems = modules.filter((m) => {
+    if (typeFilter === 'commercial') return !m.isExample;
+    if (typeFilter === 'examples') return Boolean(m.isExample);
+    return true;
+  });
 
   const handleRestore = async (mod: CatalogModuleEntity) => {
     await repositories.modules.restore(mod.id, getActor());
@@ -96,13 +367,13 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           { label: t('nav.modules') },
         ]}
         title="Catálogo Comercial de Módulos Olivelas All In"
-        subtitle="Todas as 16 plataformas Olivelas integram o catálogo comercial oficial com schemas PostgreSQL dedicados no Supabase. Clique em qualquer módulo para abrir a interface de demonstração no navegador."
+        subtitle={`Lista unificada com todos os ${modules.length} módulos (${commercialCount} plataformas comerciais Olivelas com schemas PostgreSQL dedicados e ${exampleCount} módulos base). Clique em um módulo para abrir seus detalhes em modal ou use o menu de ações.`}
         scopeBadge={t('scope.global')}
         actions={
           <div className="flex items-center gap-2 flex-wrap">
             <Link to="/app/global/ecossistema" className="btn btn-secondary btn-sm">
               <Sparkles size={14} />
-              Hub de Demonstração (16 Schemas)
+              Hub de Demonstração ({commercialCount} Plataformas)
             </Link>
             {hasPermission('modules', 'create') && (
               <Link to="/app/global/modulos/novo" className="btn btn-primary btn-sm">
@@ -114,59 +385,13 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         }
       />
 
-      {/* Segmented Tabs: 16 Módulos Comerciais Olivelas vs 10 Módulos de Exemplo */}
-      <div className="card p-4 flex items-center justify-between gap-4 flex-wrap">
-        <div className="segmented-tabs" role="tablist" aria-label="Estrutura do Catálogo de Módulos">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={catalogTab === 'commercial'}
-            className={`segmented-tab ${catalogTab === 'commercial' ? 'active' : ''}`}
-            onClick={() => setCatalogTab('commercial')}
-          >
-            <Sparkles size={14} />
-            <span>Módulos Comerciais Olivelas ({commercialModules.length} Plataformas)</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={catalogTab === 'examples'}
-            className={`segmented-tab ${catalogTab === 'examples' ? 'active' : ''}`}
-            onClick={() => setCatalogTab('examples')}
-          >
-            <Layers size={14} />
-            <span>Módulos de Exemplo / Fundação ({exampleModules.length} Exemplos)</span>
-          </button>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          {catalogTab === 'commercial' ? (
-            <span className="badge badge-success">
-              <Database size={12} /> 16 Schemas PostgreSQL Ativos no Supabase
-            </span>
-          ) : (
-            <span className="badge badge-warning">
-              Estrutura de Exemplos (Módulos Base Migrados)
-            </span>
-          )}
-        </div>
-      </div>
-
       <UrlDataTable<CatalogModuleEntity>
         tableId="global-modules-table"
-        caption="Catálogo comercial de módulos da plataforma Olivelas Allin"
-        items={activeTabItems}
+        caption="Catálogo unificado de módulos da plataforma Olivelas All In"
+        items={unifiedItems}
         defaultSortField="code"
-        csvFilename={
-          catalogTab === 'commercial'
-            ? 'catalogo-modulos-comerciais-olivelas.csv'
-            : 'catalogo-modulos-exemplos-allin.csv'
-        }
-        searchPlaceholder={
-          catalogTab === 'commercial'
-            ? 'Buscar plataforma Olivelas, schema PostgreSQL, instância ou categoria...'
-            : 'Buscar módulo de exemplo por código ou nome...'
-        }
+        csvFilename="catalogo-modulos-olivelas-allin.csv"
+        searchPlaceholder="Buscar aplicação Olivelas, código, schema PostgreSQL, porta (:4101–:4137) ou categoria..."
         statusExtractor={(m) => m.commercialStatus}
         searchExtractor={(m) => {
           const demoSlug = m.ecosystemSlug || m.code;
@@ -180,21 +405,44 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           { value: 'archived', label: t('status.archived') },
         ]}
         isArchivedExtractor={(m) => m.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission('modules', 'archive') ? (item) => setArchiveTarget(item) : undefined
-        }
-        onRestoreClick={hasPermission('modules', 'archive') ? handleRestore : undefined}
+        extraFiltersRender={(params, updateParam) => (
+          <select
+            className="select"
+            style={{ width: 'auto', minWidth: '215px' }}
+            value={params.get('type') || 'all'}
+            onChange={(e) => updateParam('type', e.target.value)}
+            aria-label="Filtrar tipo de módulo"
+          >
+            <option value="all">Todos os Módulos ({modules.length})</option>
+            <option value="commercial">Plataformas Comerciais ({commercialCount})</option>
+            <option value="examples">Módulos Base / Exemplos ({exampleCount})</option>
+          </select>
+        )}
         columns={[
           {
             key: 'code',
-            header: catalogTab === 'commercial' ? 'Plataforma Comercial Olivelas' : 'Módulo de Exemplo',
+            header: 'Aplicação / Módulo',
             sortable: true,
             csvValue: (m) => `${m.name[session.language]} (${m.code})`,
             render: (m) => (
               <div>
-                <Link to={`/app/global/modulos/${m.id}`} className="font-semibold">
+                <button
+                  type="button"
+                  onClick={() => setDetailModalModule(m)}
+                  className="font-semibold"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: 'var(--accent-primary)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    font: 'inherit',
+                    fontWeight: 600,
+                  }}
+                >
                   {m.name[session.language]}
-                </Link>
+                </button>
                 <div className="text-xs text-muted mono">
                   {m.code} • v{m.version}
                   {m.dbSchema ? ` • schema: ${m.dbSchema}` : ' • estrutura: exemplo'}
@@ -217,7 +465,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 </div>
                 <span className="text-xs text-muted">
                   {m.dbSchema
-                    ? `PostgreSQL: ${m.dbSchema} (${m.tables?.length || 4} tabelas)`
+                    ? `PostgreSQL: ${m.dbSchema} (${m.tables?.length || 1} tabelas)`
                     : `Dep.: ${m.dependencies.length > 0 ? m.dependencies.join(', ') : 'Nenhuma'}`}
                 </span>
               </div>
@@ -294,37 +542,77 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           },
           {
             key: 'actions',
-            header: 'Demonstração & Ficha',
+            header: 'Ações',
+            isNumeric: true,
             render: (m) => {
               const demoSlug = m.ecosystemSlug || m.code;
-              return (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {!m.isExample && (
-                    <button
-                      type="button"
-                      onClick={() => handleOpenInstance(demoSlug)}
-                      className="btn btn-primary btn-sm"
-                    >
-                      <ExternalLink size={12} />
-                      Abrir Demo
-                    </button>
-                  )}
-                  <Link to={`/app/global/modulos/${m.id}`} className="btn btn-secondary btn-sm">
-                    Detalhes
-                  </Link>
-                  {hasPermission('modules', 'edit') && (
-                    <Link
-                      to={`/app/global/modulos/${m.id}/editar`}
-                      className="btn btn-ghost btn-sm"
-                    >
-                      <Edit3 size={13} />
-                    </Link>
-                  )}
-                </div>
-              );
+              const isArchived = m.archiveMetadata.isArchived;
+              const menuItems: ActionDropdownItem[] = [
+                {
+                  key: 'details',
+                  label: 'Detalhes da Aplicação',
+                  icon: <Eye size={14} />,
+                  onClick: () => setDetailModalModule(m),
+                },
+              ];
+
+              if (!m.isExample) {
+                menuItems.push(
+                  {
+                    key: 'open-sso',
+                    label: 'Abrir Aplicação (Nova Aba SSO)',
+                    icon: <ExternalLink size={14} />,
+                    onClick: () => handleOpenInstance(demoSlug),
+                  },
+                  {
+                    key: 'hub',
+                    label: 'Painel da Instância / Hub',
+                    icon: <Play size={14} />,
+                    to: `/app/global/ecossistema/${demoSlug}`,
+                  },
+                );
+              }
+
+              if (hasPermission('modules', 'edit')) {
+                menuItems.push({
+                  key: 'edit',
+                  label: 'Editar Módulo',
+                  icon: <Edit3 size={14} />,
+                  to: `/app/global/modulos/${m.id}/editar`,
+                  dividerBefore: true,
+                });
+              }
+
+              if (hasPermission('modules', 'archive')) {
+                if (isArchived) {
+                  menuItems.push({
+                    key: 'restore',
+                    label: t('common.restore'),
+                    icon: <RotateCcw size={14} />,
+                    onClick: () => handleRestore(m),
+                    dividerBefore: !hasPermission('modules', 'edit'),
+                  });
+                } else {
+                  menuItems.push({
+                    key: 'archive',
+                    label: t('common.archive'),
+                    icon: <Archive size={14} />,
+                    variant: 'danger',
+                    onClick: () => setArchiveTarget(m),
+                    dividerBefore: !hasPermission('modules', 'edit'),
+                  });
+                }
+              }
+
+              return <ActionDropdownMenu label="Ações" items={menuItems} />;
             },
           },
         ]}
+      />
+
+      <ModuleDetailsModal
+        module={detailModalModule}
+        onClose={() => setDetailModalModule(null)}
       />
 
       <ArchiveRecordDialog
@@ -856,6 +1144,7 @@ export const ModuleDetailPage: React.FC = () => {
 
 export const CompanyModulesSubscriptionPage: React.FC = () => {
   const { empresaId } = useParams<{ empresaId: string }>();
+  const [searchParams] = useSearchParams();
   const {
     companies,
     modules,
@@ -867,7 +1156,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
     refreshData,
     notify,
   } = useApp();
-  const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
+  const [detailModalModule, setDetailModalModule] = useState<CatalogModuleEntity | null>(null);
 
   const company = companies.find((c) => c.id === empresaId);
   if (!company) return null;
@@ -887,9 +1176,15 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
   const canManage = hasPermission('modules', 'approve', company.id) || hasPermission('modules', 'edit', company.id);
   const mySubs = companyModules.filter((cm) => cm.companyId === company.id);
 
-  const commercialModules = modules.filter((m) => !m.archiveMetadata.isArchived && !m.isExample);
-  const exampleModules = modules.filter((m) => !m.archiveMetadata.isArchived && Boolean(m.isExample));
-  const visibleModules = catalogTab === 'commercial' ? commercialModules : exampleModules;
+  const nonArchivedModules = modules.filter((m) => !m.archiveMetadata.isArchived);
+  const commercialCount = nonArchivedModules.filter((m) => !m.isExample).length;
+  const exampleCount = nonArchivedModules.filter((m) => Boolean(m.isExample)).length;
+  const typeFilter = searchParams.get('type') || 'all';
+  const visibleModules = nonArchivedModules.filter((m) => {
+    if (typeFilter === 'commercial') return !m.isExample;
+    if (typeFilter === 'examples') return Boolean(m.isExample);
+    return true;
+  });
 
   const handleToggleSubscription = async (mod: CatalogModuleEntity) => {
     if (!canManage) return;
@@ -952,47 +1247,15 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           { label: 'Módulos Comerciais Olivelas & Loja Modular' },
         ]}
         title={`Módulos Comerciais Olivelas — ${company.tradeName}`}
-        subtitle="Clique em qualquer plataforma Olivelas para abrir sua interface funcional de demonstração no navegador ou gerencie suas assinaturas."
+        subtitle={`Lista unificada com ${nonArchivedModules.length} aplicações (${commercialCount} plataformas comerciais Olivelas e ${exampleCount} módulos base). Clique no módulo para ver os detalhes em modal ou use o menu de ações.`}
         scopeBadge={company.tradeName}
         actions={
           <Link to={`/app/empresa/${company.id}/ecossistema`} className="btn btn-primary btn-sm">
             <Sparkles size={14} />
-            Ver Hub Completo (16 Plataformas)
+            Ver Hub Completo ({commercialCount} Plataformas)
           </Link>
         }
       />
-
-      {/* Segmented Tabs: 16 Módulos Comerciais Olivelas vs 10 Módulos de Exemplo */}
-      <div className="card p-4 flex items-center justify-between gap-4 flex-wrap">
-        <div className="segmented-tabs" role="tablist">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={catalogTab === 'commercial'}
-            className={`segmented-tab ${catalogTab === 'commercial' ? 'active' : ''}`}
-            onClick={() => setCatalogTab('commercial')}
-          >
-            <Sparkles size={14} />
-            <span>Módulos Comerciais Olivelas ({commercialModules.length} Plataformas)</span>
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={catalogTab === 'examples'}
-            className={`segmented-tab ${catalogTab === 'examples' ? 'active' : ''}`}
-            onClick={() => setCatalogTab('examples')}
-          >
-            <Layers size={14} />
-            <span>Módulos de Exemplo ({exampleModules.length} Base)</span>
-          </button>
-        </div>
-
-        <span className="text-xs text-muted">
-          {catalogTab === 'commercial'
-            ? 'Clique no card ou em "Abrir Plataforma" para testar a interface do módulo no navegador.'
-            : 'Módulos originais de fundação migrados para a estrutura de exemplos.'}
-        </span>
-      </div>
 
       <UrlDataTable<CatalogModuleEntity>
         tableId={`company-modules-table-${company.id}`}
@@ -1000,7 +1263,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         items={visibleModules}
         defaultSortField="code"
         csvFilename={`modulos-${company.id}.csv`}
-        searchPlaceholder="Buscar plataforma Olivelas, schema PostgreSQL, instância ou categoria..."
+        searchPlaceholder="Buscar aplicação Olivelas, schema PostgreSQL, instância ou categoria..."
         statusExtractor={(mod) => {
           const sub = mySubs.find((s) => s.moduleId === mod.id);
           return sub?.status === 'active' ? 'active' : 'pending';
@@ -1014,15 +1277,44 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           { value: 'active', label: 'Contratado / Ativo' },
           { value: 'pending', label: 'Disponível para Contratação' },
         ]}
+        extraFiltersRender={(params, updateParam) => (
+          <select
+            className="select"
+            style={{ width: 'auto', minWidth: '215px' }}
+            value={params.get('type') || 'all'}
+            onChange={(e) => updateParam('type', e.target.value)}
+            aria-label="Filtrar tipo de módulo"
+          >
+            <option value="all">Todos os Módulos ({nonArchivedModules.length})</option>
+            <option value="commercial">Plataformas Comerciais ({commercialCount})</option>
+            <option value="examples">Módulos Base / Exemplos ({exampleCount})</option>
+          </select>
+        )}
         columns={[
           {
             key: 'code',
-            header: catalogTab === 'commercial' ? 'Plataforma Comercial Olivelas' : 'Módulo Base',
+            header: 'Aplicação / Módulo',
             sortable: true,
             csvValue: (mod) => `${mod.name[session.language]} (${mod.code})`,
             render: (mod) => (
               <div>
-                <div className="font-semibold">{mod.name[session.language]}</div>
+                <button
+                  type="button"
+                  onClick={() => setDetailModalModule(mod)}
+                  className="font-semibold"
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    padding: 0,
+                    color: 'var(--accent-primary)',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    font: 'inherit',
+                    fontWeight: 600,
+                  }}
+                >
+                  {mod.name[session.language]}
+                </button>
                 <div className="text-xs text-muted mono">
                   {mod.code} • v{mod.version}
                   {mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}
@@ -1037,6 +1329,11 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-1 flex-wrap">
                   <span className="badge badge-info">{mod.category}</span>
+                  {mod.isExample ? (
+                    <span className="badge badge-warning">Exemplo</span>
+                  ) : (
+                    <span className="badge badge-success">Comercial Oficial</span>
+                  )}
                   {mod.dbSchema && (
                     <span className="badge badge-teal mono">
                       <Database size={11} /> {mod.dbSchema}
@@ -1103,7 +1400,8 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           },
           {
             key: 'actions',
-            header: 'Acesso SSO & Contratação',
+            header: 'Ações',
+            isNumeric: true,
             render: (mod) => {
               const sub = mySubs.find((s) => s.moduleId === mod.id);
               const active = sub?.status === 'active';
@@ -1118,43 +1416,59 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                       ? `/app/empresa/${company.id}/operacao/crm`
                       : `/app/empresa/${company.id}`;
 
-              return (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  {!mod.isExample ? (
-                    <button
-                      type="button"
-                      onClick={() => handleLaunchCompanyInstance(demoSlug)}
-                      className="btn btn-primary btn-sm"
-                    >
-                      <ExternalLink size={13} />
-                      Abrir Plataforma (Nova Aba)
-                    </button>
-                  ) : (
-                    <Link to={targetDemoRoute} className="btn btn-primary btn-sm">
-                      <Play size={13} />
-                      Abrir Plataforma
-                    </Link>
-                  )}
-                  {canManage && (
-                    <button
-                      type="button"
-                      disabled={mod.isCore && active}
-                      onClick={() => handleToggleSubscription(mod)}
-                      className="btn btn-secondary btn-sm"
-                    >
-                      <Package size={13} />
-                      {mod.isCore && active
-                        ? 'Base Ativa'
-                        : active
-                          ? 'Desativar'
-                          : 'Contratar'}
-                    </button>
-                  )}
-                </div>
-              );
+              const menuItems: ActionDropdownItem[] = [
+                {
+                  key: 'details',
+                  label: 'Detalhes da Aplicação',
+                  icon: <Eye size={14} />,
+                  onClick: () => setDetailModalModule(mod),
+                },
+              ];
+
+              if (!mod.isExample) {
+                menuItems.push(
+                  {
+                    key: 'open-sso',
+                    label: 'Abrir Plataforma (Nova Aba SSO)',
+                    icon: <ExternalLink size={14} />,
+                    onClick: () => handleLaunchCompanyInstance(demoSlug),
+                  },
+                  {
+                    key: 'hub',
+                    label: 'Painel da Instância / Hub',
+                    icon: <Play size={14} />,
+                    to: targetDemoRoute,
+                  },
+                );
+              } else {
+                menuItems.push({
+                  key: 'open-base',
+                  label: 'Abrir Módulo Base',
+                  icon: <Play size={14} />,
+                  to: targetDemoRoute,
+                });
+              }
+
+              if (canManage && !(mod.isCore && active)) {
+                menuItems.push({
+                  key: 'toggle-sub',
+                  label: active ? 'Desativar Assinatura' : 'Contratar Módulo',
+                  icon: <Package size={14} />,
+                  variant: active ? 'danger' : 'default',
+                  dividerBefore: true,
+                  onClick: () => handleToggleSubscription(mod),
+                });
+              }
+
+              return <ActionDropdownMenu label="Ações" items={menuItems} />;
             },
           },
         ]}
+      />
+
+      <ModuleDetailsModal
+        module={detailModalModule}
+        onClose={() => setDetailModalModule(null)}
       />
     </div>
   );
