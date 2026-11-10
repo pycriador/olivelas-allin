@@ -83,7 +83,7 @@ export const ModuleDetailsModal: React.FC<{
       onClose={onClose}
       size="lg"
       title={`${mod.name[session.language]} (${mod.code})`}
-      subtitle={`Versão v${mod.version} • Categoria: ${mod.category}${mod.dbSchema ? ` • Schema Supabase: ${mod.dbSchema}` : ''}`}
+      subtitle={`Versão v${mod.version} • Categoria: ${mod.category}${mod.isStaticPage ? ' • Arquitetura: Página Estática (Front-end)' : mod.dbSchema ? ` • Schema Supabase: ${mod.dbSchema}` : ''}`}
       footer={
         <div className="flex items-center justify-between w-full gap-2 flex-wrap">
           <button type="button" className="btn btn-secondary btn-sm" onClick={onClose}>
@@ -130,10 +130,12 @@ export const ModuleDetailsModal: React.FC<{
           <p className="text-sm text-muted" style={{ flex: 1 }}>
             {mod.description[session.language]}
           </p>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <StatusBadge status={mod.commercialStatus} />
             {mod.isExample ? (
               <span className="badge badge-warning">Módulo de Exemplo / Fundação</span>
+            ) : mod.isStaticPage ? (
+              <span className="badge badge-neutral">Página Estática</span>
             ) : (
               <span className="badge badge-success">Plataforma Comercial Oficial</span>
             )}
@@ -166,16 +168,26 @@ export const ModuleDetailsModal: React.FC<{
                 : 'Módulo de Fundação'}
             </span>
           </div>
-          {mod.dbSchema && (
+          {mod.isStaticPage ? (
             <div className="kpi-card">
-              <span className="kpi-label">Schema PostgreSQL</span>
-              <span className="kpi-value mono" style={{ fontSize: '1.05rem' }}>
-                {mod.dbSchema}
+              <span className="kpi-label">Arquitetura</span>
+              <span className="kpi-value" style={{ fontSize: '1.05rem' }}>
+                Página Estática
               </span>
-              <span className="kpi-meta">
-                {mod.tables?.length || 1} tabela(s) • public.profiles SSO
-              </span>
+              <span className="kpi-meta">Front-end puro • Sem backend • SSO All In</span>
             </div>
+          ) : (
+            mod.dbSchema && (
+              <div className="kpi-card">
+                <span className="kpi-label">Schema PostgreSQL</span>
+                <span className="kpi-value mono" style={{ fontSize: '1.05rem' }}>
+                  {mod.dbSchema}
+                </span>
+                <span className="kpi-meta">
+                  {mod.tables?.length || 1} tabela(s) • public.profiles SSO
+                </span>
+              </div>
+            )
           )}
         </div>
 
@@ -349,10 +361,12 @@ export const GlobalModulesCatalogPage: React.FC = () => {
   }
 
   const commercialCount = modules.filter((m) => !m.isExample).length;
+  const staticCount = modules.filter((m) => Boolean(m.isStaticPage)).length;
   const exampleCount = modules.filter((m) => Boolean(m.isExample)).length;
   const typeFilter = searchParams.get('type') || 'all';
   const unifiedItems = modules.filter((m) => {
     if (typeFilter === 'commercial') return !m.isExample;
+    if (typeFilter === 'static') return Boolean(m.isStaticPage);
     if (typeFilter === 'examples') return Boolean(m.isExample);
     return true;
   });
@@ -400,7 +414,8 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         searchExtractor={(m) => {
           const demoSlug = m.ecosystemSlug || m.code;
           const srvSpec = getModuleInstanceServerSpec(demoSlug);
-          return `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits} ${m.dbSchema || ''} :${srvSpec.port}`;
+          const staticTag = m.isStaticPage ? 'página estática pagina estatica front-end sem backend' : '';
+          return `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits} ${m.dbSchema || ''} :${srvSpec.port} ${staticTag}`;
         }}
         statusOptions={[
           { value: 'active', label: t('status.active') },
@@ -419,6 +434,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           >
             <option value="all">Todos os Módulos ({modules.length})</option>
             <option value="commercial">Plataformas Comerciais ({commercialCount})</option>
+            <option value="static">Páginas Estáticas ({staticCount})</option>
             <option value="examples">Módulos Base / Exemplos ({exampleCount})</option>
           </select>
         )}
@@ -427,7 +443,8 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             key: 'code',
             header: 'Aplicação',
             sortable: true,
-            csvValue: (m) => `${m.name[session.language]} (${m.code})`,
+            csvValue: (m) =>
+              `${m.name[session.language]} (${m.code})${m.isStaticPage ? ' [Página Estática]' : ''}`,
             render: (m) => (
               <div style={{ maxWidth: '280px' }}>
                 <button
@@ -450,9 +467,13 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 </button>
                 <div
                   className="text-xs text-muted mono truncate"
-                  title={`${m.code} • v${m.version}${m.dbSchema ? ` • schema: ${m.dbSchema}` : ''}`}
+                  title={
+                    m.isStaticPage
+                      ? `${m.code} • v${m.version} • Página Estática (Front-end sem backend)`
+                      : `${m.code} • v${m.version}${m.dbSchema ? ` • schema: ${m.dbSchema}` : ''}`
+                  }
                 >
-                  v{m.version} • {m.dbSchema || m.code}
+                  v{m.version} • {m.isStaticPage ? 'Página Estática' : m.dbSchema || m.code}
                 </div>
               </div>
             ),
@@ -465,6 +486,10 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 <span className="badge badge-info">{m.category}</span>
                 {m.isExample ? (
                   <span className="badge badge-warning">Base</span>
+                ) : m.isStaticPage ? (
+                  <span className="badge badge-neutral" title="Aplicação Front-end pura (sem backend)">
+                    Página Estática
+                  </span>
                 ) : (
                   <span className="badge badge-success">Comercial</span>
                 )}
@@ -1024,16 +1049,26 @@ export const ModuleDetailPage: React.FC = () => {
           </span>
           <span className="kpi-meta">Limites: {mod.usageLimits}</span>
         </div>
-        {mod.dbSchema && (
+        {mod.isStaticPage ? (
           <div className="kpi-card">
-            <span className="kpi-label">Schema PostgreSQL (Supabase)</span>
-            <span className="kpi-value mono" style={{ fontSize: '1.2rem' }}>
-              {mod.dbSchema}
+            <span className="kpi-label">Arquitetura</span>
+            <span className="kpi-value" style={{ fontSize: '1.2rem' }}>
+              Página Estática
             </span>
-            <span className="kpi-meta">
-              {mod.tables?.length || 4} tabelas dedicadas • Login único public.profiles
-            </span>
+            <span className="kpi-meta">Front-end puro • Sem backend • SSO All In</span>
           </div>
+        ) : (
+          mod.dbSchema && (
+            <div className="kpi-card">
+              <span className="kpi-label">Schema PostgreSQL (Supabase)</span>
+              <span className="kpi-value mono" style={{ fontSize: '1.2rem' }}>
+                {mod.dbSchema}
+              </span>
+              <span className="kpi-meta">
+                {mod.tables?.length || 4} tabelas dedicadas • Login único public.profiles
+              </span>
+            </div>
+          )
         )}
       </div>
 
@@ -1191,10 +1226,12 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
 
   const nonArchivedModules = modules.filter((m) => !m.archiveMetadata.isArchived);
   const commercialCount = nonArchivedModules.filter((m) => !m.isExample).length;
+  const staticCount = nonArchivedModules.filter((m) => Boolean(m.isStaticPage)).length;
   const exampleCount = nonArchivedModules.filter((m) => Boolean(m.isExample)).length;
   const typeFilter = searchParams.get('type') || 'all';
   const visibleModules = nonArchivedModules.filter((m) => {
     if (typeFilter === 'commercial') return !m.isExample;
+    if (typeFilter === 'static') return Boolean(m.isStaticPage);
     if (typeFilter === 'examples') return Boolean(m.isExample);
     return true;
   });
@@ -1284,7 +1321,8 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         searchExtractor={(mod) => {
           const demoSlug = mod.ecosystemSlug || mod.code;
           const srvSpec = getModuleInstanceServerSpec(demoSlug);
-          return `${mod.code} ${mod.name['pt-BR']} ${mod.category} ${mod.dbSchema || ''} :${srvSpec.port} ${mod.usageLimits}`;
+          const staticTag = mod.isStaticPage ? 'página estática pagina estatica front-end sem backend' : '';
+          return `${mod.code} ${mod.name['pt-BR']} ${mod.category} ${mod.dbSchema || ''} :${srvSpec.port} ${mod.usageLimits} ${staticTag}`;
         }}
         statusOptions={[
           { value: 'active', label: 'Contratado / Ativo' },
@@ -1300,6 +1338,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           >
             <option value="all">Todos os Módulos ({nonArchivedModules.length})</option>
             <option value="commercial">Plataformas Comerciais ({commercialCount})</option>
+            <option value="static">Páginas Estáticas ({staticCount})</option>
             <option value="examples">Módulos Base / Exemplos ({exampleCount})</option>
           </select>
         )}
@@ -1308,7 +1347,8 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
             key: 'code',
             header: 'Aplicação',
             sortable: true,
-            csvValue: (mod) => `${mod.name[session.language]} (${mod.code})`,
+            csvValue: (mod) =>
+              `${mod.name[session.language]} (${mod.code})${mod.isStaticPage ? ' [Página Estática]' : ''}`,
             render: (mod) => (
               <div style={{ maxWidth: '280px' }}>
                 <button
@@ -1331,9 +1371,13 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 </button>
                 <div
                   className="text-xs text-muted mono truncate"
-                  title={`${mod.code} • v${mod.version}${mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}`}
+                  title={
+                    mod.isStaticPage
+                      ? `${mod.code} • v${mod.version} • Página Estática (Front-end sem backend)`
+                      : `${mod.code} • v${mod.version}${mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}`
+                  }
                 >
-                  v{mod.version} • {mod.dbSchema || mod.code}
+                  v{mod.version} • {mod.isStaticPage ? 'Página Estática' : mod.dbSchema || mod.code}
                 </div>
               </div>
             ),
@@ -1346,6 +1390,10 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 <span className="badge badge-info">{mod.category}</span>
                 {mod.isExample ? (
                   <span className="badge badge-warning">Base</span>
+                ) : mod.isStaticPage ? (
+                  <span className="badge badge-neutral" title="Aplicação Front-end pura (sem backend)">
+                    Página Estática
+                  </span>
                 ) : (
                   <span className="badge badge-success">Comercial</span>
                 )}

@@ -232,6 +232,7 @@ function buildSsoInjectionScript(modInfo) {
       bar.innerHTML =
         '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;display:inline-block;flex-shrink:0;"></span>' +
         '<span style="font-weight:700;color:#fde68a;">' + ctx.brandName + '</span>' +
+        (${modInfo.isStaticPage ? 'true' : 'false'} ? '<span style="padding:2px 6px;border-radius:9999px;background:rgba(148,163,184,0.2);color:#e2e8f0;font-size:10px;font-weight:600;">Página Estática</span>' : '') +
         '<span style="opacity:0.4;">|</span>' +
         '<span style="font-weight:600;color:#6ee7b7;">' + ctx.companyName + '</span>' +
         '<span style="opacity:0.4;">|</span>' +

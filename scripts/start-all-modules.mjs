@@ -241,6 +241,7 @@ export const MODULE_SERVERS = [
     port: 4129,
     adminPath: '/admin/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'loja_simples_vendas',
@@ -249,6 +250,7 @@ export const MODULE_SERVERS = [
     port: 4130,
     adminPath: '/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'qrcode_maker',
@@ -257,6 +259,7 @@ export const MODULE_SERVERS = [
     port: 4131,
     adminPath: '/',
     type: 'spa',
+    isStaticPage: true,
   },
   {
     folder: 'site_simpes_vendas_velas',
@@ -265,6 +268,7 @@ export const MODULE_SERVERS = [
     port: 4132,
     adminPath: '/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'site_simples_personal_trainer',
@@ -273,6 +277,7 @@ export const MODULE_SERVERS = [
     port: 4133,
     adminPath: '/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'site_simples_produtos_naturais',
@@ -281,6 +286,7 @@ export const MODULE_SERVERS = [
     port: 4134,
     adminPath: '/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'site_simples_ti',
@@ -289,6 +295,7 @@ export const MODULE_SERVERS = [
     port: 4135,
     adminPath: '/index.html',
     type: 'vanilla',
+    isStaticPage: true,
   },
   {
     folder: 'sync_google_drive',

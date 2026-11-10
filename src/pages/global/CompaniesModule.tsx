@@ -1025,7 +1025,12 @@ export const CompanyDetailHubPage: React.FC<{
               header: 'Módulo Comercial',
               render: (mod) => (
                 <div>
-                  <strong>{mod.name[session.language]}</strong>
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <strong>{mod.name[session.language]}</strong>
+                    {mod.isStaticPage && (
+                      <span className="badge badge-neutral">Página Estática</span>
+                    )}
+                  </div>
                   <div className="text-xs text-muted">{mod.description[session.language]}</div>
                 </div>
               ),

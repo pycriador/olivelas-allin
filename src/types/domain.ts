@@ -216,6 +216,7 @@ export interface CatalogModuleEntity {
   effectiveDate: string;
   isCore?: boolean;
   isExample?: boolean;
+  isStaticPage?: boolean;
   dbSchema?: string;
   projectFolder?: string;
   ecosystemSlug?: string;

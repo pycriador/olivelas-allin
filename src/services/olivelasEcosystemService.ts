@@ -71,6 +71,7 @@ export interface OlivelasEcosystemModuleSpec {
   description: string;
   category: 'Saúde & Bem-Estar' | 'Varejo & Gastronomia' | 'Operações & Imóveis' | 'Engenharia, Jurídico & IA' | 'Sorteios & Campanhas';
   priceMonthly: number;
+  isStaticPage?: boolean;
   primaryTable: string;
   tables: string[];
   features: string[];
@@ -1218,6 +1219,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Catálogo interativo e painel administrativo completo para hortifrutis, feiras e empórios naturais com pedidos diretos no WhatsApp.',
     category: 'Varejo & Gastronomia',
     priceMonthly: 199,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Painel Administrativo de Produtos e Estoque', 'Múltiplas Unidades (Kg, Bandeja, Maço)', 'Carrinho com Pedido Direto no WhatsApp', 'Exportação e Backup de Catálogo JSON'],
@@ -1236,6 +1238,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Vitrine comercial responsiva para distribuidoras, panificadoras e comércio em geral com tabela de preços dinâmica e pedido via WhatsApp.',
     category: 'Varejo & Gastronomia',
     priceMonthly: 189,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Catálogo B2B/B2C de Alta Conversão', 'Busca por Código, Nome ou Categoria', 'Lista de Favoritos & Carrinho Persistente', 'Fechamento de Pedido via WhatsApp'],
@@ -1254,6 +1257,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Estúdio profissional para criação de QR Codes artísticos e corporativos com 54 presets visuais, encurtadores integrados e exportação SVG/PNG.',
     category: 'Sorteios & Campanhas',
     priceMonthly: 179,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['54+ Presets de Estilo e Cores', '11 Encurtadores de URL Integrados', 'Logos Oficiais & Customização SVG/PNG', 'Geração de Comandos cURL e Python'],
@@ -1272,6 +1276,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Vitrine oficial da boutique Olivelas para comercialização de velas aromáticas artesanais, home sprays, difusores e lembrancinhas personalizadas.',
     category: 'Varejo & Gastronomia',
     priceMonthly: 240,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Coleção Autoral de Velas & Difusores', 'Notas Olfativas e Curadoria Sensorial', 'Sacola de Compras & Favoritos', 'Atendimento Concierge via WhatsApp'],
@@ -1290,6 +1295,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Landing page especializada para consultoria fitness e personal trainers com apresentação de metodologia, pacotes de aulas, FAQ e agendamento.',
     category: 'Saúde & Bem-Estar',
     priceMonthly: 169,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Apresentação de Planos e Combos', 'Integração Direta com App de Treinos', 'Agendamento de Avaliação via WhatsApp', 'Seção de Resultados e FAQ Interativo'],
@@ -1308,6 +1314,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Portal comercial para lojas de produtos naturais e suplementação com catálogo por categoria, mapa interativo de unidades e pedidos WhatsApp.',
     category: 'Saúde & Bem-Estar',
     priceMonthly: 189,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Catálogo de Grãos, Ervas e Suplementos', 'Mapa Interativo de Lojas (Leaflet)', 'Depoimentos e Benefícios Nutricionais', 'Canal Rápido de Pedidos WhatsApp'],
@@ -1326,6 +1333,7 @@ export const OLIVELAS_ECOSYSTEM_MODULES: OlivelasEcosystemModuleSpec[] = [
     description: 'Plataforma comercial para empresas de TI, MSP e segurança eletrônica com planos de suporte corporativo, outsourcing de hardware e chamados.',
     category: 'Engenharia, Jurídico & IA',
     priceMonthly: 210,
+    isStaticPage: true,
     primaryTable: 'profiles',
     tables: ['profiles', 'user_roles'],
     features: ['Planos de Suporte Mensal B2B', 'Catálogo de Locação de Equipamentos', 'Soluções de Redes, CFTV e Telefonia IP', 'Abertura Rápida de Chamados'],
@@ -2240,6 +2248,7 @@ export interface OlivelasModuleInstanceServerSpec {
   brandName: string;
   port: number;
   adminPath: string;
+  isStaticPage?: boolean;
 }
 
 export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[] = [
@@ -2445,6 +2454,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Hortifruti & Feira Fresca',
     port: 4129,
     adminPath: '/admin/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_loja_simples_vendas',
@@ -2452,6 +2462,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Loja Simples de Vendas',
     port: 4130,
     adminPath: '/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_qrcode_maker',
@@ -2459,6 +2470,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Estúdio QR Code & PIX',
     port: 4131,
     adminPath: '/',
+    isStaticPage: true,
   },
   {
     slug: 'allin_site_simpes_vendas_velas',
@@ -2466,6 +2478,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Boutique de Velas Artesanais',
     port: 4132,
     adminPath: '/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_site_simples_personal_trainer',
@@ -2473,6 +2486,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Landing Personal Trainer',
     port: 4133,
     adminPath: '/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_site_simples_produtos_naturais',
@@ -2480,6 +2494,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Empório Produtos Naturais',
     port: 4134,
     adminPath: '/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_site_simples_ti',
@@ -2487,6 +2502,7 @@ export const OLIVELAS_MODULE_INSTANCE_SERVERS: OlivelasModuleInstanceServerSpec[
     brandName: 'Olivelas - Consultoria & Soluções de TI',
     port: 4135,
     adminPath: '/index.html',
+    isStaticPage: true,
   },
   {
     slug: 'allin_sync_google_drive',

@@ -682,6 +682,9 @@ export const OlivelasEcosystemHub: React.FC = () => {
                     {platformSettings?.platformDisplayName || selectedModule.brandName}
                   </strong>
                   <span className="badge badge-teal">{selectedModule.category}</span>
+                  {selectedModule.isStaticPage && (
+                    <span className="badge badge-neutral">Página Estática</span>
+                  )}
                   <span className="badge badge-success font-mono">
                     Instância: {instanceLaunch.instanceId} (:{instanceLaunch.serverSpec.port})
                   </span>
@@ -2527,18 +2530,29 @@ export const OlivelasEcosystemHub: React.FC = () => {
             },
             {
               key: 'category',
-              header: 'Categoria & Schema PostgreSQL',
+              header: 'Categoria & Arquitetura',
               sortable: true,
-              csvValue: (mod) => `${mod.category} (${mod.dbSchema})`,
+              csvValue: (mod) =>
+                `${mod.category} (${mod.isStaticPage ? 'Página Estática' : mod.dbSchema})`,
               render: (mod) => (
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="badge badge-teal">{mod.category}</span>
-                    <span className="badge badge-info font-mono">{mod.dbSchema}</span>
+                    {mod.isStaticPage ? (
+                      <span className="badge badge-neutral">Página Estática</span>
+                    ) : (
+                      <span className="badge badge-info font-mono">{mod.dbSchema}</span>
+                    )}
                   </div>
                   <div className="text-xs text-muted">
-                    {mod.tables.length} tabelas: <code>{mod.tables.slice(0, 4).join(', ')}</code>
-                    {mod.tables.length > 4 ? ` +${mod.tables.length - 4}` : ''}
+                    {mod.isStaticPage ? (
+                      <span>Front-end puro • Sem backend</span>
+                    ) : (
+                      <>
+                        {mod.tables.length} tabelas: <code>{mod.tables.slice(0, 4).join(', ')}</code>
+                        {mod.tables.length > 4 ? ` +${mod.tables.length - 4}` : ''}
+                      </>
+                    )}
                   </div>
                 </div>
               ),
