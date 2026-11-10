@@ -727,14 +727,14 @@
   .table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.84rem;
+    font-size: 0.8125rem;
   }
 
   .data-table th,
   .data-table td,
   .table th,
   .table td {
-    padding: 0.8rem 1rem;
+    padding: 0.65rem 0.75rem;
     border-block-end: 1px solid var(--border-subtle);
     text-align: start;
     vertical-align: middle;

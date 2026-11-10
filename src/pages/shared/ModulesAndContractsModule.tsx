@@ -421,15 +421,16 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         columns={[
           {
             key: 'code',
-            header: 'Aplicação / Módulo',
+            header: 'Aplicação',
             sortable: true,
             csvValue: (m) => `${m.name[session.language]} (${m.code})`,
             render: (m) => (
-              <div>
+              <div style={{ maxWidth: '280px' }}>
                 <button
                   type="button"
                   onClick={() => setDetailModalModule(m)}
-                  className="font-semibold"
+                  className="font-semibold truncate block w-full"
+                  title={`${m.name[session.language]} — Clique para ver detalhes`}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -443,37 +444,32 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 >
                   {m.name[session.language]}
                 </button>
-                <div className="text-xs text-muted mono">
-                  {m.code} • v{m.version}
-                  {m.dbSchema ? ` • schema: ${m.dbSchema}` : ' • estrutura: exemplo'}
+                <div
+                  className="text-xs text-muted mono truncate"
+                  title={`${m.code} • v${m.version}${m.dbSchema ? ` • schema: ${m.dbSchema}` : ''}`}
+                >
+                  v{m.version} • {m.dbSchema || m.code}
                 </div>
               </div>
             ),
           },
           {
             key: 'category',
-            header: 'Categoria & Arquitetura',
+            header: 'Categoria',
             render: (m) => (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1 flex-wrap">
-                  <span className="badge badge-info">{m.category}</span>
-                  {m.isExample ? (
-                    <span className="badge badge-warning">Exemplo</span>
-                  ) : (
-                    <span className="badge badge-success">Comercial Oficial</span>
-                  )}
-                </div>
-                <span className="text-xs text-muted">
-                  {m.dbSchema
-                    ? `PostgreSQL: ${m.dbSchema} (${m.tables?.length || 1} tabelas)`
-                    : `Dep.: ${m.dependencies.length > 0 ? m.dependencies.join(', ') : 'Nenhuma'}`}
-                </span>
+              <div className="flex items-center gap-1 flex-wrap">
+                <span className="badge badge-info">{m.category}</span>
+                {m.isExample ? (
+                  <span className="badge badge-warning">Base</span>
+                ) : (
+                  <span className="badge badge-success">Comercial</span>
+                )}
               </div>
             ),
           },
           {
             key: 'instance',
-            header: 'Instância Alocada & Porta SSO',
+            header: 'Porta & Rota SSO',
             csvValue: (m) => {
               if (m.isExample) return 'Módulo Base';
               const demoSlug = m.ecosystemSlug || m.code;
@@ -482,11 +478,11 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 companyId: activeCompany?.id || 'emp-olivelas-matriz',
                 companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
               });
-              return `${launchInfo.instanceId} (:${launchInfo.port})`;
+              return `:${launchInfo.port}${launchInfo.serverSpec.adminPath}`;
             },
             render: (m) => {
               if (m.isExample) {
-                return <span className="text-xs text-muted">Fundação / Exemplo</span>;
+                return <span className="text-xs text-muted">Fundação</span>;
               }
               const demoSlug = m.ecosystemSlug || m.code;
               const launchInfo = buildModuleInstanceLaunchUrl({
@@ -495,10 +491,13 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
               });
               return (
-                <div className="flex flex-col gap-1">
-                  <span className="badge badge-teal mono">{launchInfo.instanceId}</span>
-                  <span className="text-xs text-muted mono">
-                    Porta :{launchInfo.port}{launchInfo.serverSpec.adminPath}
+                <div className="flex items-center gap-1.5 flex-wrap" title={launchInfo.instanceId}>
+                  <span className="badge badge-teal mono">:{launchInfo.port}</span>
+                  <span
+                    className="text-xs text-muted mono truncate"
+                    style={{ maxWidth: '130px' }}
+                  >
+                    {launchInfo.serverSpec.adminPath}
                   </span>
                 </div>
               );
@@ -506,7 +505,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           },
           {
             key: 'priceMonthly',
-            header: 'Preço Mensal / Anual',
+            header: 'Mensalidade',
             sortable: true,
             isNumeric: true,
             csvValue: (m) => m.priceMonthly,
@@ -523,13 +522,13 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           },
           {
             key: 'commercialStatus',
-            header: 'Estado Comercial',
+            header: 'Status',
             sortable: true,
             render: (m) => <StatusBadge status={m.commercialStatus} />,
           },
           {
             key: 'tenants',
-            header: 'Empresas Ativas',
+            header: 'Empresas',
             isNumeric: true,
             csvValue: (m) =>
               companyModules.filter((cm) => cm.moduleId === m.id && cm.status === 'active').length,
@@ -537,7 +536,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
               const count = companyModules.filter(
                 (cm) => cm.moduleId === m.id && cm.status === 'active',
               ).length;
-              return <span className="badge badge-teal">{count} empresa(s)</span>;
+              return <span className="badge badge-teal">{count}</span>;
             },
           },
           {
@@ -1293,15 +1292,16 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         columns={[
           {
             key: 'code',
-            header: 'Aplicação / Módulo',
+            header: 'Aplicação',
             sortable: true,
             csvValue: (mod) => `${mod.name[session.language]} (${mod.code})`,
             render: (mod) => (
-              <div>
+              <div style={{ maxWidth: '280px' }}>
                 <button
                   type="button"
                   onClick={() => setDetailModalModule(mod)}
-                  className="font-semibold"
+                  className="font-semibold truncate block w-full"
+                  title={`${mod.name[session.language]} — Clique para ver detalhes`}
                   style={{
                     background: 'none',
                     border: 'none',
@@ -1315,38 +1315,32 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 >
                   {mod.name[session.language]}
                 </button>
-                <div className="text-xs text-muted mono">
-                  {mod.code} • v{mod.version}
-                  {mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}
+                <div
+                  className="text-xs text-muted mono truncate"
+                  title={`${mod.code} • v${mod.version}${mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}`}
+                >
+                  v{mod.version} • {mod.dbSchema || mod.code}
                 </div>
               </div>
             ),
           },
           {
             key: 'category',
-            header: 'Categoria & Escopo',
+            header: 'Categoria',
             render: (mod) => (
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-1 flex-wrap">
-                  <span className="badge badge-info">{mod.category}</span>
-                  {mod.isExample ? (
-                    <span className="badge badge-warning">Exemplo</span>
-                  ) : (
-                    <span className="badge badge-success">Comercial Oficial</span>
-                  )}
-                  {mod.dbSchema && (
-                    <span className="badge badge-teal mono">
-                      <Database size={11} /> {mod.dbSchema}
-                    </span>
-                  )}
-                </div>
-                <span className="text-xs text-muted">{mod.usageLimits}</span>
+              <div className="flex items-center gap-1 flex-wrap">
+                <span className="badge badge-info">{mod.category}</span>
+                {mod.isExample ? (
+                  <span className="badge badge-warning">Base</span>
+                ) : (
+                  <span className="badge badge-success">Comercial</span>
+                )}
               </div>
             ),
           },
           {
             key: 'instance',
-            header: 'Instância Alocada & Porta SSO',
+            header: 'Porta & Rota SSO',
             csvValue: (mod) => {
               if (mod.isExample) return 'Módulo Base';
               const demoSlug = mod.ecosystemSlug || mod.code;
@@ -1355,11 +1349,11 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 companyId: company.id,
                 companyName: company.tradeName,
               });
-              return `${instInfo.instanceId} (:${instInfo.port})`;
+              return `:${instInfo.port}${instInfo.serverSpec.adminPath}`;
             },
             render: (mod) => {
               if (mod.isExample) {
-                return <span className="text-xs text-muted">Módulo de Exemplo</span>;
+                return <span className="text-xs text-muted">Fundação</span>;
               }
               const demoSlug = mod.ecosystemSlug || mod.code;
               const instInfo = buildModuleInstanceLaunchUrl({
@@ -1368,10 +1362,13 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                 companyName: company.tradeName,
               });
               return (
-                <div className="flex flex-col gap-1">
-                  <span className="badge badge-teal mono">{instInfo.instanceId}</span>
-                  <span className="text-xs text-muted mono">
-                    Porta :{instInfo.port}{instInfo.serverSpec.adminPath}
+                <div className="flex items-center gap-1.5 flex-wrap" title={instInfo.instanceId}>
+                  <span className="badge badge-teal mono">:{instInfo.port}</span>
+                  <span
+                    className="text-xs text-muted mono truncate"
+                    style={{ maxWidth: '130px' }}
+                  >
+                    {instInfo.serverSpec.adminPath}
                   </span>
                 </div>
               );
@@ -1379,7 +1376,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           },
           {
             key: 'priceMonthly',
-            header: 'Valor Mensal',
+            header: 'Mensalidade',
             sortable: true,
             isNumeric: true,
             csvValue: (mod) => mod.priceMonthly,
