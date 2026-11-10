@@ -83,7 +83,15 @@ export const App: React.FC = () => {
         <ToastProvider>
           <AuthProvider>
             <TrainerFilterProvider>
-              <BrowserRouter basename={import.meta.env.BASE_URL}>
+              <BrowserRouter
+                basename={
+                  !import.meta.env.BASE_URL ||
+                  import.meta.env.BASE_URL === './' ||
+                  import.meta.env.BASE_URL === '/./'
+                    ? '/'
+                    : import.meta.env.BASE_URL
+                }
+              >
                 <Routes>
 
                 {/* Public Routes */}

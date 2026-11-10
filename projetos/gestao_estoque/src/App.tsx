@@ -27,7 +27,15 @@ export function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter basename={import.meta.env.BASE_URL}>
+      <BrowserRouter
+        basename={
+          !import.meta.env.BASE_URL ||
+          import.meta.env.BASE_URL === './' ||
+          import.meta.env.BASE_URL === '/./'
+            ? '/'
+            : import.meta.env.BASE_URL
+        }
+      >
         <AppRoutes />
         <Toaster position="top-right" richColors />
       </BrowserRouter>
