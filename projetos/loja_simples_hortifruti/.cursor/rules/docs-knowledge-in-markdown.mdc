@@ -1,0 +1,46 @@
+---
+description: New documentation knowledge must land in repo Markdown the same session — never chat-only or rule-only; Confluence is optional
+alwaysApply: true
+---
+
+# Knowledge → Markdown (mandatory)
+
+Any **new durable fact** about this framework or an as-is pack (policy, structure, ownership, ops path, contract, lesson learned) must be written to a **`.md` file in the repo** in the **same session** it was discovered — before closing the task.
+
+Chat replies and Cursor rules are **not** durable documentation.
+
+## Where to write
+
+| Knowledge type | Prefer |
+| --- | --- |
+| Standard methodology | Existing file under `docs/en/` (mirror `docs/pt-BR/` when bilingual) |
+| As-is Loft pack | `docs/en/loft-infra/`, `docs/en/aiops-apps/` (+ pt-BR) |
+| Templates / examples | `docs/en/templates/`, `examples/` |
+| Framework adoption / index | Root `README.md` / `README.pt-BR.md`, `docs/en/README.md` |
+| Deferred work | Register as [documentation debt](docs/en/documentation-debt.md) (owner, priority, status) |
+
+**Confluence:** GitHub/local Markdown is the source of truth. Publish with `docs-sync/` only when needed (optional). Dual-surface link rules: [docs/en/publishing-surfaces.md](docs/en/publishing-surfaces.md). Never treat the Confluence UI as the only place of record.
+
+## `.md` vs `.mdc` vs skill
+
+| Artifact | Purpose |
+| --- | --- |
+| **`.md`** | Durable knowledge for humans and agents |
+| **`.mdc`** | Short agent guardrails — not a runbook substitute |
+| **Skill** | Workflow for syncing docs after changes |
+
+If a fact landed in a rule during a session, **mirror it into the appropriate `.md`** and keep the rule as a pointer.
+
+## Checklist (before closing)
+
+- [ ] New fact is in a `.md` file, not only in chat
+- [ ] Existing canonical doc preferred over a new file
+- [ ] Bilingual update when this repo requires EN + pt-BR
+- [ ] Clear language (`docs-clear-language.mdc`)
+- [ ] Debt registered if docs intentionally lag
+
+## Anti-patterns
+
+- Closing a session with discoveries only in the chat transcript
+- Duplicating long runbooks inside `.mdc` files
+- Editing Confluence without updating the repo Markdown source

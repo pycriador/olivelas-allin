@@ -1,0 +1,30 @@
+---
+description: Required quality checks before finishing a task in this documentation repository. Run make docs-validate and fix reported errors.
+alwaysApply: true
+---
+
+# Quality checks — aiops-documentation
+
+Before declaring any task done, run from the repository root and fix every ERROR reported.
+
+## Commands
+
+```bash
+make docs-validate
+```
+
+Optional when you changed many links: `make docs-check-links`.
+
+## Exit criteria
+
+| Tool | Criterion |
+| --- | --- |
+| `make docs-validate` (`scripts/docs_lint.py validate`) | No ERROR on governed docs |
+| Bilingual trees | Same semantic change in `docs/en/` and `docs/pt-BR/` when both exist |
+
+## Common fixes
+
+- Broken relative Markdown links → correct the path or add the missing file
+- Manifest path missing → add the file or remove the stale manifest entry
+- Status token not in `DRAFT` / `REVIEW` / `ACCEPTED` / `DEPRECATED` / `ARCHIVED` → use a allowed token
+- Unilateral `ACCEPTED` on a new methodology page → leave `DRAFT` or `REVIEW` for human review

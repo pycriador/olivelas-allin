@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <script>
+    // GitHub Pages SPA router fallback: converte caminho 404 em rota de hash
+    (function() {
+      var pathname = window.location.pathname;
+      var repo = '/olivelas-qrcode';
+      var route = pathname.startsWith(repo) ? pathname.slice(repo.length) : pathname;
+      if (route.startsWith('/')) route = route.slice(1);
+      
+      var target = (pathname.startsWith(repo) ? repo : '') + '/#/' + route + window.location.search + window.location.hash;
+      window.location.replace(target);
+    })();
+  </script>
+  <title>Olivelas QR Code Studio</title>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "Hortifruti Natural - Catálogo de Produtos",
+  "short_name": "Hortifruti Natural",
+  "description": "Catálogo de produtos e tabela de preços Hortifruti Natural.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#ffffff",
+  "theme_color": "#e94560",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "assets/images/logo192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/images/logo512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

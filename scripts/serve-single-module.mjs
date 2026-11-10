@@ -182,6 +182,7 @@ function buildSsoInjectionScript(modInfo) {
     localStorage.setItem('olivelas_personal_current_user_v5', JSON.stringify(personalAdminUser));
     localStorage.setItem('olivelas_personal_users_v5', JSON.stringify([personalAdminUser]));
     localStorage.setItem('rafaela_app_users_v3', JSON.stringify([personalAdminUser]));
+    localStorage.setItem('ai_survey_auth_token', 'sso-global-admin-willian');
 
     try {
       var routineRaw = localStorage.getItem('rotina-inteligente-state');
@@ -332,6 +333,229 @@ async function startServer() {
         res.writeHead(302, { Location: target });
         res.end();
         return;
+      }
+
+      // Built-in API handlers for local backend SPA projects (gerenciador_tunnel_apps, sync_google_drive, visualizador_dashboad_ai)
+      if (pathname.startsWith('/api/')) {
+        const sendJson = (status, data) => {
+          res.writeHead(status, {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Cache-Control': 'no-cache',
+          });
+          res.end(JSON.stringify(data));
+        };
+
+        if (pathname === '/api/events') {
+          res.writeHead(200, {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+          });
+          res.write('event: connected\ndata: {"status":"ok"}\n\n');
+          return;
+        }
+
+        if (pathname === '/api/health') {
+          sendJson(200, { status: 'ok', port: mod.port, admin: 'willian.o.jesus@gmail.com', time: new Date().toISOString() });
+          return;
+        }
+
+        if (mod.folder === 'gerenciador_tunnel_apps') {
+          if (pathname === '/api/settings/status') {
+            sendJson(200, {
+              defaultProvider: 'cloudflared',
+              lanIp: '192.168.1.100',
+              adminEmail: 'willian.o.jesus@gmail.com',
+              adminName: 'Willian Jesus',
+              providers: {
+                cloudflared: { installed: true, version: '2026.11.0', hasToken: true, protocol: 'http2' },
+                ngrok: { installed: true, version: '3.18.0', hasAuthtoken: true, domain: '' },
+                localtunnel: { installed: true, version: '2.0.2' },
+                localhost_run: { installed: true, version: 'SSH Native' },
+              },
+            });
+            return;
+          }
+          if (pathname === '/api/apps') {
+            sendJson(200, [
+              {
+                id: 1,
+                name: 'Olivelas All In Console (Port 5174)',
+                local_port: 5174,
+                execution_mode: 'app_and_tunnel',
+                tunnel_provider: 'cloudflared',
+                public_url: 'https://allin.olivelas.com.br',
+                is_running: 1,
+                app_status: 'running',
+                tunnel_status: 'online',
+                last_status: 'online',
+                auto_restart: 1,
+                created_at: new Date().toISOString(),
+              },
+              {
+                id: 2,
+                name: 'Olivelas - Gestão de Estoque & PDV (Port 4108)',
+                local_port: 4108,
+                execution_mode: 'app_and_tunnel',
+                tunnel_provider: 'cloudflared',
+                public_url: 'https://estoque.olivelas.com.br',
+                is_running: 1,
+                app_status: 'running',
+                tunnel_status: 'online',
+                last_status: 'online',
+                auto_restart: 1,
+                created_at: new Date().toISOString(),
+              },
+            ]);
+            return;
+          }
+          if (pathname === '/api/notifications') {
+            sendJson(200, { notifications: [], unreadCount: 0 });
+            return;
+          }
+          if (pathname === '/api/history') {
+            sendJson(200, { items: [], pagination: { page: 1, limit: 25, total: 0, totalPages: 1 } });
+            return;
+          }
+          if (pathname === '/api/system/active-ports') {
+            sendJson(200, {
+              ports: [
+                { port: 5174, pid: process.pid, processName: 'node (Olivelas All In)', address: '0.0.0.0:5174' },
+                { port: 4108, pid: process.pid, processName: 'node (Gestão de Estoque)', address: '0.0.0.0:4108' },
+              ],
+            });
+            return;
+          }
+          sendJson(200, { success: true });
+          return;
+        }
+
+        if (mod.folder === 'sync_google_drive') {
+          if (pathname === '/api/auth/status') {
+            sendJson(200, {
+              authenticated: true,
+              method: 'oauth2',
+              user: {
+                email: 'willian.o.jesus@gmail.com',
+                displayName: 'Willian Jesus (Global Admin)',
+              },
+              storageQuota: {
+                limit: String(100 * 1024 * 1024 * 1024),
+                usage: String(18 * 1024 * 1024 * 1024),
+              },
+            });
+            return;
+          }
+          if (pathname === '/api/folders') {
+            sendJson(200, [
+              {
+                id: 1,
+                name: 'Backups Ecossistema Olivelas All In',
+                local_path: '/home/willian/Downloads/projetos/olivelas-allin',
+                remote_folder_id: 'gdrive-olivelas-root',
+                remote_folder_name: 'Olivelas Cloud Backups',
+                sync_direction: 'upload',
+                schedule_cron: '0 */6 * * *',
+                is_active: 1,
+                is_syncing: 0,
+                watch_enabled: 1,
+                watch_delay_seconds: 10,
+                last_sync_at: new Date().toISOString(),
+                last_sync_status: 'success',
+                last_sync_message: 'Sincronizado por Willian Jesus (willian.o.jesus@gmail.com)',
+                files_synced_count: 37,
+                total_bytes_synced: 15482880,
+              },
+            ]);
+            return;
+          }
+          if (pathname === '/api/notifications') {
+            sendJson(200, { notifications: [], unreadCount: 0 });
+            return;
+          }
+          if (pathname === '/api/history') {
+            sendJson(200, { items: [], pagination: { page: 1, limit: 30, total: 0, totalPages: 1 } });
+            return;
+          }
+          sendJson(200, { success: true });
+          return;
+        }
+
+        if (mod.folder === 'visualizador_dashboad_ai') {
+          const adminUser = {
+            id: '00000000-0000-0000-0000-000000000001',
+            email: 'willian.o.jesus@gmail.com',
+            name: 'Willian Jesus',
+            role: 'GLOBAL_ADMIN',
+            createdAt: '2026-01-01T00:00:00.000Z',
+          };
+          if (pathname === '/api/auth/me' || pathname === '/api/auth/login' || pathname === '/api/auth/register') {
+            sendJson(200, {
+              user: adminUser,
+              token: 'sso-global-admin-willian',
+              googleConfigured: true,
+              googleClientEmail: 'willian.o.jesus@gmail.com',
+            });
+            return;
+          }
+          if (pathname === '/api/auth/credentials') {
+            sendJson(200, {
+              hasServiceAccount: true,
+              clientEmail: 'willian.o.jesus@gmail.com',
+              projectId: 'olivelas-allin',
+              hasGoogleApiKey: true,
+              hasGeminiApiKey: true,
+            });
+            return;
+          }
+          if (pathname === '/api/projects') {
+            sendJson(200, {
+              projects: [
+                {
+                  id: 'proj-olivelas-nps-2026',
+                  name: 'Pesquisa Executiva de Satisfação Olivelas 2026',
+                  description: 'Análise consolidada de NPS e percepção de marca Olivelas',
+                  questionCount: 4,
+                  respondentCount: 3,
+                  updatedAt: new Date().toISOString(),
+                },
+              ],
+            });
+            return;
+          }
+          if (pathname === '/api/public/default-survey' || pathname.startsWith('/api/projects/')) {
+            const sampleSurvey = {
+              id: 'survey-olivelas-nps-2026',
+              title: 'Pesquisa Executiva de Satisfação & NPS — Ecossistema Olivelas',
+              description: 'Avaliação contínua de satisfação dos clientes e parceiros Olivelas (Global Admin: Willian Jesus).',
+              source: 'google_forms',
+              createdAt: new Date().toISOString(),
+              questions: [
+                { id: 'q1', text: 'Qual seu nível de satisfação geral com a plataforma Olivelas?', type: 'scale', required: true },
+                { id: 'q2', text: 'Qual módulo você mais utiliza na sua operação?', type: 'single_choice', required: true },
+              ],
+              mappings: [
+                { questionId: 'q1', columnHeader: 'Qual seu nível de satisfação geral com a plataforma Olivelas?', chartType: 'bar', category: 'Satisfação & NPS', ignore: false },
+                { questionId: 'q2', columnHeader: 'Qual módulo você mais utiliza na sua operação?', chartType: 'pie', category: 'Uso de Módulos', ignore: false },
+              ],
+              responses: [
+                { id: 'r1', submittedAt: new Date().toISOString(), answers: { q1: '10 - Excelente', q2: 'Olivelas - Gestão de Estoque & PDV' } },
+                { id: 'r2', submittedAt: new Date().toISOString(), answers: { q1: '10 - Excelente', q2: 'Olivelas - Dashboard BI & Analytics' } },
+                { id: 'r3', submittedAt: new Date().toISOString(), answers: { q1: '9 - Muito Bom', q2: 'Olivelas - IAM Suite & Governança' } },
+              ],
+            };
+            sendJson(200, {
+              survey: sampleSurvey,
+              project: { id: 'proj-olivelas-nps-2026', name: sampleSurvey.title, survey: sampleSurvey },
+              isReadOnly: false,
+              isDefaultPublic: false,
+              sourceName: 'Olivelas Analytics Cloud',
+            });
+            return;
+          }
+          sendJson(200, { success: true });
+          return;
+        }
       }
 
       // Check static file first

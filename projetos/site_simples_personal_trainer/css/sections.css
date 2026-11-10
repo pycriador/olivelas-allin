@@ -1,0 +1,1006 @@
+/**
+ * SITE PERSONAL RAFAELA — Estilos Específicos das Seções
+ */
+
+/* ==========================================================================
+   1. HEADER & NAVEGAÇÃO
+   ========================================================================== */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  z-index: var(--z-sticky);
+  background-color: rgba(250, 249, 246, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(226, 222, 215, 0.5);
+  transition: background-color var(--transition-base), box-shadow var(--transition-base), height var(--transition-base);
+}
+
+.site-header.header--scrolled {
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 4px 20px rgba(13, 61, 52, 0.08);
+  height: 72px;
+}
+
+.header-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.site-logo {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.site-logo__name {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-extrabold);
+  letter-spacing: 0.14em;
+  color: var(--color-primary);
+  line-height: 1.1;
+}
+
+.site-logo__sub {
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: 0.22em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.nav-list {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.nav-link {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-muted);
+  transition: color var(--transition-fast);
+  padding: var(--space-2) 0;
+  position: relative;
+}
+
+.nav-link:hover {
+  color: var(--color-primary);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--color-accent);
+  transition: width var(--transition-fast);
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+.menu-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+}
+
+.menu-toggle__icon {
+  width: 26px;
+  height: 26px;
+}
+
+.nav-overlay {
+  display: none;
+}
+
+/* ==========================================================================
+   2. HERO SECTION
+   ========================================================================== */
+.hero-section {
+  padding-top: calc(var(--header-height) + var(--space-12));
+  padding-bottom: var(--space-20);
+  background: linear-gradient(180deg, #f7f5ef 0%, var(--color-background) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.12em;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+  text-transform: uppercase;
+}
+
+.hero-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-text);
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: var(--space-5);
+}
+
+.hero-title-highlight {
+  color: var(--color-primary);
+}
+
+.hero-text {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+  max-width: 540px;
+}
+
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-10);
+}
+
+.hero-features-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--color-border);
+  width: 100%;
+}
+
+.hero-feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.hero-feature-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.hero-media {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-elevated);
+  border: 4px solid #ffffff;
+  background-color: var(--color-primary);
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+
+.hero-float-badge {
+  position: absolute;
+  bottom: var(--space-6);
+  left: -20px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3) var(--space-5);
+  box-shadow: var(--shadow-hover);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  z-index: 2;
+}
+
+.hero-float-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-float-text strong {
+  display: block;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+.hero-float-text span {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+/* ==========================================================================
+   3. DIFERENCIAIS
+   ========================================================================== */
+.differentials-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+}
+
+.differential-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.differential-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.differential-icon-box {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-primary-subtle);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-4);
+}
+
+.differential-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.differential-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.differential-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   4. SOBRE A RAFAELA
+   ========================================================================== */
+.about-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.about-image-wrapper {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-elevated);
+  border: 4px solid #ffffff;
+}
+
+.about-image {
+  width: 100%;
+  aspect-ratio: 4/5;
+  object-fit: cover;
+}
+
+.about-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.about-quote {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  margin-bottom: var(--space-6);
+  position: relative;
+  padding-left: var(--space-6);
+  border-left: 3px solid var(--color-accent);
+}
+
+.about-text {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  line-height: 1.7;
+  margin-bottom: var(--space-8);
+}
+
+.about-credentials-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.credential-card {
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.credential-label {
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.05em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.credential-value {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   5. SERVIÇOS
+   ========================================================================== */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.service-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.service-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--color-primary-light);
+}
+
+.service-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background-color: var(--color-primary-dark);
+}
+
+.service-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.service-card:hover .service-img {
+  transform: scale(1.06);
+}
+
+.service-icon-floating {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+}
+
+.service-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.service-body {
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.service-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.service-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-6);
+  flex-grow: 1;
+}
+
+.service-btn {
+  width: 100%;
+  margin-top: auto;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-color: var(--color-border);
+  gap: var(--space-2);
+}
+
+.service-btn .btn-icon {
+  color: var(--color-whatsapp);
+  width: 1rem;
+  height: 1rem;
+  transition: color var(--transition-fast);
+}
+
+.service-btn:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.service-btn:hover .btn-icon {
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   6. COMBOS DE TREINAMENTO
+   ========================================================================== */
+.combos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+/* ==========================================================================
+   7. PLANOS MENSAIS
+   ========================================================================== */
+.monthly-plans-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-8);
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.monthly-plan-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-10);
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.monthly-plan-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.monthly-plan-card--highlight {
+  border: 2px solid var(--color-primary);
+}
+
+/* ==========================================================================
+   8. DIFERENÇA ENTRE COMBO E PLANO MENSAL
+   ========================================================================== */
+.difference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.difference-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.difference-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.difference-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   9. APLICATIVO EXCLUSIVO
+   ========================================================================== */
+.app-section {
+  background: linear-gradient(135deg, #07241e 0%, #0d3d34 100%);
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.app-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-12);
+  align-items: center;
+}
+
+.app-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.app-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-extrabold);
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+}
+
+.app-text {
+  font-size: var(--font-size-md);
+  color: var(--color-text-inverse-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+}
+
+.app-features-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+  width: 100%;
+}
+
+.app-feature-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--font-size-sm);
+  color: #f8faf9;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.app-feature-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   10. PROGRAMAS ESPECIAIS
+   ========================================================================== */
+.programs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.program-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+.program-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.program-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+  background-color: var(--color-primary-dark);
+}
+
+.program-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.program-card:hover .program-img {
+  transform: scale(1.06);
+}
+
+.program-body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.program-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.program-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   11. ALIMENTAÇÃO SAUDÁVEL
+   ========================================================================== */
+.nutrition-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-4);
+}
+
+.nutrition-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nutrition-icon {
+  width: 32px;
+  height: 32px;
+  color: var(--color-primary);
+  margin-bottom: var(--space-2);
+}
+
+.nutrition-title {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+/* ==========================================================================
+   12. COMO FUNCIONA (TIMELINE)
+   ========================================================================== */
+.timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-6);
+  position: relative;
+}
+
+.timeline-step {
+  position: relative;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+}
+
+.timeline-number {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--color-accent);
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-2);
+}
+
+.timeline-title {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  margin-bottom: var(--space-2);
+}
+
+.timeline-desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   13. DEPOIMENTOS
+   ========================================================================== */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.testimonial-card {
+  background-color: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.testimonial-quote {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: var(--space-6);
+}
+
+.testimonial-author {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--color-border-subtle);
+  padding-top: var(--space-4);
+}
+
+.testimonial-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+}
+
+.testimonial-role {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+}
+
+/* ==========================================================================
+   14. CTA FINAL
+   ========================================================================== */
+.final-cta-section {
+  background: linear-gradient(135deg, #07241e 0%, #10453a 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: var(--space-20) 0;
+}
+
+.final-cta-content {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.final-cta-title {
+  font-size: var(--font-size-4xl);
+  font-weight: var(--font-weight-extrabold);
+  color: #ffffff;
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+}
+
+.final-cta-text {
+  font-size: var(--font-size-md);
+  color: var(--color-text-inverse-muted);
+  line-height: 1.6;
+  margin-bottom: var(--space-8);
+}
+
+.final-cta-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
+   15. ESTRUTURA PARA FORMULÁRIO FUTURO
+   ========================================================================== */
+.future-contact-section {
+  border-top: 1px solid var(--color-border-subtle);
+  padding: var(--space-12) 0;
+  background-color: var(--color-surface);
+}
+
+.future-form-wrapper {
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: var(--color-surface-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+}
+
+.future-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+.future-form-full {
+  grid-column: span 2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-label {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background-color: #ffffff;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-subtle);
+  outline: none;
+}
+
+/* ==========================================================================
+   16. FOOTER
+   ========================================================================== */
+.site-footer {
+  background-color: #061915;
+  color: #a4b8b3;
+  padding-top: var(--space-16);
+  padding-bottom: var(--space-10);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: var(--font-size-sm);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: var(--space-10);
+  margin-bottom: var(--space-12);
+}
+
+.footer-brand .site-logo__name {
+  color: #ffffff;
+}
+
+.footer-brand-desc {
+  margin-top: var(--space-4);
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+.footer-heading {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-bold);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: var(--space-4);
+}
+
+.footer-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer-nav-link {
+  color: #a4b8b3;
+  transition: color var(--transition-fast);
+}
+
+.footer-nav-link:hover {
+  color: #ffffff;
+}
+
+.footer-disclaimer-bar {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-6);
+  font-size: var(--font-size-xs);
+  color: #7b948e;
+  line-height: 1.6;
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: var(--space-6);
+  font-size: var(--font-size-xs);
+}

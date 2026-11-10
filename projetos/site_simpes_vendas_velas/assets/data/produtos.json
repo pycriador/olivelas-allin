@@ -1,0 +1,818 @@
+{
+  "meta": {
+    "nome": "OLIVELAS",
+    "subtitulo": "VELA AROMÁTICA",
+    "slogan": "Aromas que transformam ambientes em memórias",
+    "manifesto": "A Olivelas transforma ambientes em momentos especiais através de aromas que acolhem e inspiram.",
+    "descricao": "Velas artesanais de cera vegetal, pavio de algodão e fragrâncias de alta fixação. Curadoria exclusiva para transformar a atmosfera do seu lar.",
+    "whatsapp": "5511963820374",
+    "email": "contato@olivelas.com.br",
+    "endereco": "São Paulo, SP",
+    "horario": "Seg a Sáb · 9h às 18h",
+    "site": "https://olivelas.com.br",
+    "instagram": "https://instagram.com/olivelas",
+    "moeda": "BRL",
+    "locale": "pt-BR",
+    "vigencia": "2026-12-31",
+    "corPrimaria": "#1B1B1B",
+    "corSecundaria": "#B79C6B",
+    "corFundo": "#F7F4EF",
+    "corApoio": "#D8CCBC",
+    "fonteTitulo": "Playfair Display",
+    "fonteTexto": "Montserrat"
+  },
+  "hero": {
+    "titulo": "OLIVELAS",
+    "subtitulo": "Velas artesanais com cera vegetal e aromas que transformam ambientes em memórias. Conheça nossa coleção e faça seu pedido direto pelo WhatsApp.",
+    "cta": "Explorar Coleção",
+    "imagem": "assets/images/og-cover.webp"
+  },
+  "heroConfig": {
+    "chamadaPrincipal": "Aromas que transformam ambientes em memórias",
+    "descricao": "Feitas à mão, em pequenos lotes, em São Paulo. Fragrâncias autorais — cada uma com a sua cor e o seu símbolo exclusivo.",
+    "botaoColecao": "Ver a coleção",
+    "botaoPedido": "Fazer um pedido",
+    "prelaunch": "Cera 100% vegetal · Pavio de algodão · Queima limpa e duradoura"
+  },
+  "colecaoConfig": {
+    "eyebrow": "A coleção",
+    "titulo": "Nossos aromas, seus rituais",
+    "subtitulo": "Cada fragrância vem em dois tamanhos: Mini de 30 g, para experimentar, e Padrão de 130 g, em copo de vidro.",
+    "notaCatalogo": "Todas as velas acompanham instruções de primeiro uso para máxima durabilidade e difusão.",
+    "fineprint": "Preços válidos para pedidos combinados diretamente com o ateliê",
+    "colecoesDisponiveis": [
+      {
+        "id": "todos",
+        "nome": "Todos os produtos",
+        "filtro": "todos"
+      },
+      {
+        "id": "velas",
+        "nome": "Velas Aromáticas",
+        "filtro": "velas"
+      },
+      {
+        "id": "kits",
+        "nome": "Kits",
+        "filtro": "kits"
+      },
+      {
+        "id": "aromatizadores",
+        "nome": "Aromatizadores",
+        "filtro": "aromatizadores"
+      },
+      {
+        "id": "acessorios",
+        "nome": "Acessórios",
+        "filtro": "acessorios"
+      }
+    ],
+    "velasAtivas": [
+      "OV01",
+      "OV02",
+      "OV03",
+      "OV04",
+      "OV05",
+      "OV06",
+      "OV07",
+      "OV08",
+      "OV09"
+    ]
+  },
+  "complementosConfig": {
+    "eyebrow": "Para completar o ambiente",
+    "titulo": "Linhas complementares",
+    "subtitulo": "Aromatizadores, sachês e acessórios para o cuidado das suas velas."
+  },
+  "atelie": {
+    "eyebrow": "O ateliê",
+    "titulo": "Feita à mão, em pequenos lotes",
+    "descricao": "A Olivelas nasce em São Paulo, com produção artesanal cuidadosa. Cada vela é derramada à mão, em pequenos lotes, com cera 100% vegetal, pavio de algodão puro e essências de alta performance que preenchem o ambiente com sutileza e requinte.",
+    "especificacoes": "130 g · copo de vidro · cera vegetal · pavio de algodão",
+    "tagline": "A Olivelas transforma ambientes em momentos especiais através de aromas que acolhem e inspiram.",
+    "imagensAleatorias": [
+      "assets/images/products/verbena.webp",
+      "assets/images/products/blue-ocean.webp",
+      "assets/images/products/morango-champanhe.webp",
+      "assets/images/products/mistica.webp",
+      "assets/images/products/orquidea-negra.webp",
+      "assets/images/products/mamae-bebe.webp",
+      "assets/images/products/cravo-canela.webp",
+      "assets/images/products/alfazema.webp",
+      "assets/images/products/lavanda.webp"
+    ]
+  },
+  "comoPedir": {
+    "eyebrow": "Como pedir",
+    "titulo": "Pedidos direto com o ateliê",
+    "subtitulo": "Monte seu pedido pelo catálogo ou fale diretamente conosco pelo WhatsApp e Instagram — inclusive para lembrancinhas e eventos especiais.",
+    "linhas": [
+      {
+        "titulo": "Velas da coleção",
+        "descricao": "Nossos aromas autorais em versões Mini (30 g) ou Padrão (130 g em copo de vidro)."
+      },
+      {
+        "titulo": "Lembrancinhas de eventos",
+        "descricao": "Batizados, casamentos, maternidade e eventos corporativos com rótulos personalizados sob encomenda."
+      },
+      {
+        "titulo": "Kits e presentes",
+        "descricao": "Combinações de velas, difusores e acessórios com embalagem estruturada para presentear."
+      }
+    ],
+    "botaoWhatsApp": "Falar no WhatsApp",
+    "botaoInstagram": "Instagram @rosa_olivelas",
+    "fineprint": "WhatsApp (11) 96382-0374 · Atendimento de Seg a Sáb das 9h às 18h"
+  },
+  "pilares": [
+    {
+      "icone": "feather",
+      "titulo": "Design Minimalista",
+      "descricao": "Sofisticação em cada detalhe para harmonizar com seu ambiente."
+    },
+    {
+      "icone": "palette",
+      "titulo": "Coleção Organizada",
+      "descricao": "Cores e códigos exclusivos para cada fragrância."
+    },
+    {
+      "icone": "sparkle",
+      "titulo": "Aromas que Marcam",
+      "descricao": "Fragrâncias marcantes que acolhem, inspiram e transformam o espaço."
+    },
+    {
+      "icone": "shield",
+      "titulo": "Qualidade Premium",
+      "descricao": "Matérias-primas selecionadas (cera vegetal e pavio de algodão) para entregar o melhor em cada vela."
+    }
+  ],
+  "homeFeatured": [
+    {
+      "id": "novidades",
+      "tag": "novidades",
+      "eyebrow": "Chegaram para ficar",
+      "titulo": "Novidades da casa"
+    },
+    {
+      "id": "mais-vendidos",
+      "tag": "mais-vendidos",
+      "eyebrow": "Escolhidos por vocês",
+      "titulo": "Os mais queridos"
+    },
+    {
+      "id": "rituais",
+      "tag": "rituais",
+      "eyebrow": "Para completar o ambiente",
+      "titulo": "Pequenos rituais"
+    }
+  ],
+  "categorias": [
+    {
+      "id": "velas-aromaticas",
+      "nome": "Velas Aromáticas",
+      "descricao": "Velas artesanais de cera vegetal e fragrâncias exclusivas.",
+      "produtos": [
+        {
+          "id": "OV01",
+          "nome": "Verbena",
+          "slug": "verbena",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Frutal Verde",
+          "corExclusiva": "#8EA487",
+          "icone": "leaf",
+          "badge": "Mais vendido",
+          "descricao": "Notas frescas e verdes que remetem a jardins ensolarados, com equilíbrio perfeito entre cítricos suaves e folhas frescas de verbena.",
+          "imagem": "assets/images/products/verbena.webp",
+          "imagemThumb": "assets/images/products/verbena-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/verbena-mini.webp",
+              "imagemThumb": "assets/images/products/verbena-mini-thumb.webp",
+              "imagemFull": "assets/images/products/verbena-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/verbena.webp",
+              "imagemThumb": "assets/images/products/verbena-thumb.webp",
+              "imagemFull": "assets/images/products/verbena-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/verbena-full.webp"
+        },
+        {
+          "id": "OV02",
+          "nome": "Blue Ocean",
+          "slug": "blue-ocean",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Floral Frutal",
+          "corExclusiva": "#6E8797",
+          "icone": "wave",
+          "badge": "",
+          "descricao": "Frescor aquático revigorante que evoca brisa marinha e amplitude. Florais delicados sobre um fundo leve, limpo e sofisticado.",
+          "imagem": "assets/images/products/blue-ocean.webp",
+          "imagemThumb": "assets/images/products/blue-ocean-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/blue-ocean-mini.webp",
+              "imagemThumb": "assets/images/products/blue-ocean-mini-thumb.webp",
+              "imagemFull": "assets/images/products/blue-ocean-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/blue-ocean.webp",
+              "imagemThumb": "assets/images/products/blue-ocean-thumb.webp",
+              "imagemFull": "assets/images/products/blue-ocean-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/blue-ocean-full.webp"
+        },
+        {
+          "id": "OV03",
+          "nome": "Morango & Champanhe",
+          "slug": "morango-champanhe",
+          "tags": [
+            "novidades"
+          ],
+          "familiaOlfativa": "Frutal Gourmand",
+          "corExclusiva": "#C49A90",
+          "icone": "sparkle",
+          "badge": "Novo",
+          "descricao": "Fragrância adocicada e efervescente que celebra momentos leves. Notas de morango silvestre com toque requintado de champanhe.",
+          "imagem": "assets/images/products/morango-champanhe.webp",
+          "imagemThumb": "assets/images/products/morango-champanhe-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/morango-champanhe-mini.webp",
+              "imagemThumb": "assets/images/products/morango-champanhe-mini-thumb.webp",
+              "imagemFull": "assets/images/products/morango-champanhe-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/morango-champanhe.webp",
+              "imagemThumb": "assets/images/products/morango-champanhe-thumb.webp",
+              "imagemFull": "assets/images/products/morango-champanhe-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/morango-champanhe-full.webp"
+        },
+        {
+          "id": "OV04",
+          "nome": "Mística",
+          "slug": "mistica",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Oriental Ambarada",
+          "corExclusiva": "#525C67",
+          "icone": "star",
+          "badge": "Assinatura",
+          "descricao": "Atmosfera envolvente, profunda e misteriosa. Acordes orientais ambarados que convidam à introspecção e ao relaxamento.",
+          "imagem": "assets/images/products/mistica.webp",
+          "imagemThumb": "assets/images/products/mistica-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/mistica-mini.webp",
+              "imagemThumb": "assets/images/products/mistica-mini-thumb.webp",
+              "imagemFull": "assets/images/products/mistica-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/mistica.webp",
+              "imagemThumb": "assets/images/products/mistica-thumb.webp",
+              "imagemFull": "assets/images/products/mistica-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/mistica-full.webp"
+        },
+        {
+          "id": "OV05",
+          "nome": "Lavanda",
+          "slug": "lavanda",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Herbal Floral",
+          "corExclusiva": "#8A7F9D",
+          "icone": "lavender",
+          "badge": "Mais vendido",
+          "descricao": "Clássico atemporal de relaxamento e serenidade. Lavanda pura que acalma os sentidos e prepara o ambiente para o descanso.",
+          "imagem": "assets/images/products/lavanda.webp",
+          "imagemThumb": "assets/images/products/lavanda-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/lavanda-mini.webp",
+              "imagemThumb": "assets/images/products/lavanda-mini-thumb.webp",
+              "imagemFull": "assets/images/products/lavanda-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/lavanda.webp",
+              "imagemThumb": "assets/images/products/lavanda-thumb.webp",
+              "imagemFull": "assets/images/products/lavanda-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/lavanda-full.webp"
+        },
+        {
+          "id": "OV06",
+          "nome": "Orquídea Negra",
+          "slug": "orquidea-negra",
+          "tags": [
+            "novidades"
+          ],
+          "familiaOlfativa": "Floral Oriental",
+          "corExclusiva": "#5B3645",
+          "icone": "flower",
+          "badge": "Assinatura",
+          "descricao": "Sofisticação sensual e floral intensa. Uma presença marcante e elegante que transforma qualquer espaço em refúgio nobre.",
+          "imagem": "assets/images/products/orquidea-negra.webp",
+          "imagemThumb": "assets/images/products/orquidea-negra-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/orquidea-negra-mini.webp",
+              "imagemThumb": "assets/images/products/orquidea-negra-mini-thumb.webp",
+              "imagemFull": "assets/images/products/orquidea-negra-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/orquidea-negra.webp",
+              "imagemThumb": "assets/images/products/orquidea-negra-thumb.webp",
+              "imagemFull": "assets/images/products/orquidea-negra-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/orquidea-negra-full.webp"
+        },
+        {
+          "id": "OV07",
+          "nome": "Mamãe & Bebê",
+          "slug": "mamae-bebe",
+          "tags": [
+            "novidades"
+          ],
+          "familiaOlfativa": "Floral Conforto",
+          "corExclusiva": "#BFC2BC",
+          "icone": "heart",
+          "badge": "Acolhedor",
+          "descricao": "Delicadeza pura, aconchego e memória afetiva. Notas suaves e confortáveis que abraçam o ambiente como um carinho maternal.",
+          "imagem": "assets/images/products/mamae-bebe.webp",
+          "imagemThumb": "assets/images/products/mamae-bebe-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/mamae-bebe-mini.webp",
+              "imagemThumb": "assets/images/products/mamae-bebe-mini-thumb.webp",
+              "imagemFull": "assets/images/products/mamae-bebe-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/mamae-bebe.webp",
+              "imagemThumb": "assets/images/products/mamae-bebe-thumb.webp",
+              "imagemFull": "assets/images/products/mamae-bebe-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/mamae-bebe-full.webp"
+        },
+        {
+          "id": "OV08",
+          "nome": "Cravo & Canela",
+          "slug": "cravo-canela",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Especiarias Quentes",
+          "corExclusiva": "#A96F4E",
+          "icone": "spice",
+          "badge": "",
+          "descricao": "Calor acolhedor e energia aromática. Especiarias nobres que aquecem encontros e criam uma sensação imediata de lar.",
+          "imagem": "assets/images/products/cravo-canela.webp",
+          "imagemThumb": "assets/images/products/cravo-canela-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/cravo-canela-mini.webp",
+              "imagemThumb": "assets/images/products/cravo-canela-mini-thumb.webp",
+              "imagemFull": "assets/images/products/cravo-canela-mini-full.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/cravo-canela.webp",
+              "imagemThumb": "assets/images/products/cravo-canela-thumb.webp",
+              "imagemFull": "assets/images/products/cravo-canela-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/cravo-canela-full.webp"
+        },
+        {
+          "id": "OV09",
+          "nome": "Alfazema",
+          "slug": "alfazema",
+          "tags": [
+            "mais-vendidos"
+          ],
+          "familiaOlfativa": "Herbal Fresco",
+          "corExclusiva": "#8FA2A6",
+          "icone": "lavender",
+          "badge": "Frescor",
+          "descricao": "Frescor herbal límpido e purificante. Notas botânicas de alfazema que renovam as energias e trazem equilíbrio ao ambiente.",
+          "imagem": "assets/images/products/alfazema.webp",
+          "imagemThumb": "assets/images/products/alfazema-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Mini",
+              "recipiente": "Potinho de vidro",
+              "peso": "30 g",
+              "quantidade": 1,
+              "preco": 12.9,
+              "queima": "20 h",
+              "medidas": "5 × 5 × 4 cm",
+              "imagem": "assets/images/products/alfazema-mini.webp",
+              "imagemThumb": "assets/images/products/alfazema-mini-thumb.webp"
+            },
+            {
+              "tipo": "Padrão",
+              "recipiente": "Copo de vidro",
+              "peso": "130 g",
+              "quantidade": 1,
+              "preco": 69.9,
+              "queima": "50 h",
+              "medidas": "8 × 8 × 9 cm",
+              "imagem": "assets/images/products/alfazema.webp",
+              "imagemThumb": "assets/images/products/alfazema-thumb.webp",
+              "imagemFull": "assets/images/products/alfazema-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/alfazema-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "kits",
+      "nome": "Kits",
+      "descricao": "Conjuntos especiais e lotes de mini velas para presentear e celebrar.",
+      "produtos": [
+        {
+          "id": "KIT01",
+          "nome": "Kit 3 Mini Velas",
+          "slug": "kit-3-mini-velas",
+          "tags": [
+            "mais-vendidos",
+            "novidades"
+          ],
+          "familiaOlfativa": "Seleção Especial · 3x 30 g",
+          "corExclusiva": "#B79C6B",
+          "icone": "sparkle",
+          "badge": "Destaque",
+          "descricao": "Trio exclusivo com 3 mini velas artesanais de 30 g em potinho de vidro com aromas à sua escolha.",
+          "imagem": "assets/images/products/lavanda-mini.webp",
+          "imagemThumb": "assets/images/products/lavanda-mini-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Kit",
+              "recipiente": "3x Potinho de vidro",
+              "peso": "3x 30 g",
+              "quantidade": 3,
+              "preco": 119.9,
+              "queima": "60 h total",
+              "medidas": "5 × 5 × 4 cm cada",
+              "imagem": "assets/images/products/lavanda-mini.webp",
+              "imagemThumb": "assets/images/products/lavanda-mini-thumb.webp",
+              "imagemFull": "assets/images/products/lavanda-mini-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/lavanda-mini-full.webp"
+        },
+        {
+          "id": "KIT02",
+          "nome": "Kit 10 Mini Velas",
+          "slug": "kit-10-mini-velas",
+          "tags": [
+            "novidades"
+          ],
+          "familiaOlfativa": "Lembrancinhas & Presentes · 10x 30 g",
+          "corExclusiva": "#8EA487",
+          "icone": "leaf",
+          "badge": "Mais vendido",
+          "descricao": "Conjunto com 10 mini velas artesanais de 30 g. Ideal para lembrancinhas de batizados, maternidade ou presentes.",
+          "imagem": "assets/images/products/verbena-mini.webp",
+          "imagemThumb": "assets/images/products/verbena-mini-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Kit",
+              "recipiente": "10x Potinho de vidro",
+              "peso": "10x 30 g",
+              "quantidade": 10,
+              "preco": 379.9,
+              "queima": "200 h total",
+              "medidas": "5 × 5 × 4 cm cada",
+              "imagem": "assets/images/products/verbena-mini.webp",
+              "imagemThumb": "assets/images/products/verbena-mini-thumb.webp",
+              "imagemFull": "assets/images/products/verbena-mini-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/verbena-mini-full.webp"
+        },
+        {
+          "id": "KIT03",
+          "nome": "Kit 50 Mini Velas",
+          "slug": "kit-50-mini-velas",
+          "tags": [
+            "novidades"
+          ],
+          "familiaOlfativa": "Eventos & Casamentos · 50x 30 g",
+          "corExclusiva": "#6E8797",
+          "icone": "wave",
+          "badge": "Eventos",
+          "descricao": "Lote de 50 mini velas artesanais de 30 g para casamentos, festas e celebrações corporativas com rótulo personalizado.",
+          "imagem": "assets/images/products/morango-champanhe-mini.webp",
+          "imagemThumb": "assets/images/products/morango-champanhe-mini-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Kit",
+              "recipiente": "50x Potinho de vidro",
+              "peso": "50x 30 g",
+              "quantidade": 50,
+              "preco": 1690.0,
+              "queima": "1000 h total",
+              "medidas": "5 × 5 × 4 cm cada",
+              "imagem": "assets/images/products/morango-champanhe-mini.webp",
+              "imagemThumb": "assets/images/products/morango-champanhe-mini-thumb.webp",
+              "imagemFull": "assets/images/products/morango-champanhe-mini-full.webp"
+            }
+          ],
+          "imagemFull": "assets/images/products/morango-champanhe-mini-full.webp"
+        }
+      ]
+    },
+    {
+      "id": "aromatizadores",
+      "nome": "Aromatizadores",
+      "descricao": "Difusores de varetas e sachês aromáticos para manter seus ambientes perfumados continuamente.",
+      "produtos": [
+        {
+          "id": "ARO1",
+          "nome": "Difusor de Varetas — Alfazema",
+          "slug": "difusor-alfazema",
+          "tags": [
+            "rituais"
+          ],
+          "familiaOlfativa": "Herbal Fresco · 100 ml",
+          "corExclusiva": "#8FA2A6",
+          "icone": "lavender",
+          "badge": "Em breve",
+          "emBreve": true,
+          "descricao": "Frasco de vidro âmbar com 100 ml de fragrância e varetas de bambu. Perfuma ambientes de até 20 m² por até 60 dias.",
+          "imagem": "assets/images/products/difusor-alfazema.webp",
+          "imagemThumb": "assets/images/products/difusor-alfazema-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Único",
+              "recipiente": "Frasco de vidro âmbar 100 ml",
+              "peso": "100 ml",
+              "quantidade": 1,
+              "preco": 89.9,
+              "queima": "60 dias",
+              "medidas": "6 × 6 × 18 cm",
+              "imagem": "assets/images/products/difusor-alfazema.webp",
+              "imagemThumb": "assets/images/products/difusor-alfazema-thumb.webp"
+            }
+          ]
+        },
+        {
+          "id": "ARO2",
+          "nome": "Difusor de Varetas — Lavanda",
+          "slug": "difusor-lavanda",
+          "tags": [
+            "rituais"
+          ],
+          "familiaOlfativa": "Herbal Floral · 100 ml",
+          "corExclusiva": "#8A7F9D",
+          "icone": "lavender",
+          "badge": "Em breve",
+          "emBreve": true,
+          "descricao": "Lavanda francesa em versão difusor contínuo. Perfuma delicadamente o espaço por até 60 dias.",
+          "imagem": "assets/images/products/difusor-lavanda.webp",
+          "imagemThumb": "assets/images/products/difusor-lavanda-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Único",
+              "recipiente": "Frasco de vidro âmbar 100 ml",
+              "peso": "100 ml",
+              "quantidade": 1,
+              "preco": 89.9,
+              "queima": "60 dias",
+              "medidas": "6 × 6 × 18 cm",
+              "imagem": "assets/images/products/difusor-lavanda.webp",
+              "imagemThumb": "assets/images/products/difusor-lavanda-thumb.webp"
+            }
+          ]
+        },
+        {
+          "id": "ARO3",
+          "nome": "Sachê Aromático Para Gavetas",
+          "slug": "sache-guarda-roupa",
+          "tags": [
+            "rituais"
+          ],
+          "familiaOlfativa": "Floral Amadeirado",
+          "corExclusiva": "#BFC2BC",
+          "icone": "leaf",
+          "badge": "Em breve",
+          "emBreve": true,
+          "descricao": "Sachê em tecido de algodão com esferas perfumadas. Ideal para gavetas, closets e malas. Duração de até 90 dias.",
+          "imagem": "assets/images/products/sache-guarda-roupa.webp",
+          "imagemThumb": "assets/images/products/sache-guarda-roupa-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Dupla",
+              "recipiente": "Envelope de algodão",
+              "peso": "30 g cada",
+              "quantidade": 2,
+              "preco": 24.9,
+              "queima": "90 dias",
+              "medidas": "10 × 14 cm",
+              "imagem": "assets/images/products/sache-guarda-roupa.webp",
+              "imagemThumb": "assets/images/products/sache-guarda-roupa-thumb.webp"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "acessorios",
+      "nome": "Acessórios",
+      "descricao": "Itens exclusivos que complementam a experiência e o ritual de acender suas velas.",
+      "produtos": [
+        {
+          "id": "ACC2",
+          "nome": "Cortador de Pavio Dourado",
+          "slug": "cortador-pavio",
+          "tags": [
+            "rituais"
+          ],
+          "familiaOlfativa": "Cuidados da Vela",
+          "corExclusiva": "#B79C6B",
+          "icone": "sparkle",
+          "badge": "Em breve",
+          "emBreve": true,
+          "descricao": "Em aço inoxidável dourado fosco com coletor. Mantém a chama no tamanho ideal e previne fumaça escura.",
+          "imagem": "assets/images/products/cortador-pavio.webp",
+          "imagemThumb": "assets/images/products/cortador-pavio-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Único",
+              "recipiente": "Aço inoxidável fosco",
+              "peso": "60 g",
+              "quantidade": 1,
+              "preco": 16.9,
+              "queima": "—",
+              "medidas": "18 cm",
+              "imagem": "assets/images/products/cortador-pavio.webp",
+              "imagemThumb": "assets/images/products/cortador-pavio-thumb.webp"
+            }
+          ]
+        },
+        {
+          "id": "ACC1",
+          "nome": "Fósforos Longos Decorativos",
+          "slug": "kit-fosforos",
+          "tags": [
+            "rituais"
+          ],
+          "familiaOlfativa": "Ritual & Decoração",
+          "corExclusiva": "#A96F4E",
+          "icone": "spice",
+          "badge": "Em breve",
+          "emBreve": true,
+          "descricao": "Fósforos em madeira reflorestada de haste longa em garrafa decorativa de vidro com riscador integrado.",
+          "imagem": "assets/images/products/kit-fosforos.webp",
+          "imagemThumb": "assets/images/products/kit-fosforos-thumb.webp",
+          "tamanhos": [
+            {
+              "tipo": "Único",
+              "recipiente": "Frasco decorativo",
+              "peso": "45 g",
+              "quantidade": 1,
+              "preco": 18.9,
+              "queima": "60 palitos",
+              "medidas": "7 × 4 × 12 cm",
+              "imagem": "assets/images/products/kit-fosforos.webp",
+              "imagemThumb": "assets/images/products/kit-fosforos-thumb.webp"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "midiaConfig": {
+    "usarImagemFullNoModal": true,
+    "modoExibicaoModal": "cover",
+    "modoExibicaoCards": "cover",
+    "proporcaoCards": "1/1"
+  }
+}

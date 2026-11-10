@@ -1,0 +1,129 @@
+version: '1.0'
+root: .
+documents:
+  - id: DOC-ROOT-README
+    title: "Documentation Overview"
+    type: Overview
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: README.md
+  - id: DOC-AI-CTX
+    title: "AI Context & Assistant Guide"
+    type: Guide
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: ai-context.md
+  - id: DOC-ARCH-OVR
+    title: "System Architecture Overview"
+    type: Architecture
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: architecture/architecture-overview.md
+  - id: DOC-ARCH-COMP
+    title: "Component Architecture & Modules"
+    type: Architecture
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: architecture/component-architecture.md
+  - id: DOC-ARCH-STATE
+    title: "Client-Side Reactive State Management"
+    type: Architecture
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: architecture/state-management.md
+  - id: DOC-ARCH-PWA
+    title: "PWA & Offline Strategy"
+    type: Architecture
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: architecture/pwa-offline-strategy.md
+  - id: DOC-APP-CATALOG
+    title: "Storefront & Dynamic Catalog"
+    type: Application
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: application/storefront-catalog.md
+  - id: DOC-APP-ADMIN
+    title: "Admin Management Panel"
+    type: Application
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: application/admin-panel.md
+  - id: DOC-APP-CART
+    title: "Cart & WhatsApp Order Checkout"
+    type: Application
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: application/cart-and-checkout.md
+  - id: DOC-APP-MODALS
+    title: "Product Modals & Deep Linking"
+    type: Application
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: application/product-modals.md
+  - id: DOC-CTR-SCHEMA
+    title: "Product Catalog Data Schema (produtos.json)"
+    type: Contract
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: contracts/produtos-json-schema.md
+  - id: DOC-CTR-STORAGE
+    title: "LocalStorage Keys & Persistence Contract"
+    type: Contract
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: contracts/localstorage-schema.md
+  - id: DOC-CTR-WPP
+    title: "WhatsApp Order Payload Contract"
+    type: Contract
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: contracts/whatsapp-message-contract.md
+  - id: DOC-OPS-DEV
+    title: "Local Development & Tooling"
+    type: Operations
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: operations/local-development.md
+  - id: DOC-OPS-DEPLOY
+    title: "Static Hosting & Deployment Guide"
+    type: Operations
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: operations/deployment.md
+  - id: DOC-OPS-MAINT
+    title: "Catalog Maintenance, Backup & Restore"
+    type: Operations
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: operations/catalog-maintenance.md
+  - id: DOC-SEC-MODEL
+    title: "Client-Side Security Model"
+    type: Security
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: security/client-security-model.md
+  - id: DOC-SEC-PRIVACY
+    title: "Privacy & Data Handling"
+    type: Security
+    status: ACCEPTED
+    owner: hortifruti-dev
+    authority: Authoritative
+    path: security/privacy-and-data-handling.md

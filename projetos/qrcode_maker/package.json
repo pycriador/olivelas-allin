@@ -1,0 +1,31 @@
+{
+  "name": "olivelas-qrcode",
+  "version": "2.0.0",
+  "description": "Plataforma profissional de geração de QR Code em TypeScript com 54+ estilos e 10+ encurtadores de URL.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pycriador/olivelas-qrcode.git"
+  },
+  "keywords": [
+    "qrcode",
+    "typescript",
+    "url-shortener",
+    "vite",
+    "github-pages"
+  ],
+  "author": "Willian Jesus",
+  "license": "MIT",
+  "dependencies": {
+    "qr-code-styling": "^1.9.2"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5"
+  }
+}

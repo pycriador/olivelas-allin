@@ -1,0 +1,38 @@
+---
+description: Pointer map — which Documentation Standard docs to read first by topic (knowledge lives in Markdown, not in this rule)
+alwaysApply: false
+---
+
+# Area map (pointers only)
+
+Canonical knowledge is in **`.md` files**. Use this table to open the right entry points. Keep this file short — update the linked docs, not this rule.
+
+| Topic | Read first |
+| --- | --- |
+| Framework entry / index | `README.md`, `README.pt-BR.md`, `docs/en/README.md`, `docs/pt-BR/README.md` |
+| Language / bilingual policy | `docs/en/language.md` |
+| Style / writing | `docs/en/style-guide.md`, `docs/en/standards.md` |
+| Lifecycle / status | `docs/en/lifecycle.md`, `docs/en/change-policy.md` |
+| AI agent doc rules | `docs/en/ai-change-rules.md`, `docs/en/ai-documentation-workflow.md`, `docs/en/ai-context.md` |
+| Agent entry files (AGENTS.md / CLAUDE.md) | `docs/en/ai-agent-entry.md`, `AGENTS.md`, `CLAUDE.md` |
+| Architecture methodology | `docs/en/architecture-model.md` |
+| Contracts methodology | `docs/en/contract-model.md` |
+| Operations / reliability | `docs/en/operations-model.md` |
+| Security methodology | `docs/en/security-model.md` |
+| Governance / validation | `docs/en/governance.md`, `docs/en/automation-commands.md`, `Makefile` `docs-validate` |
+| Documentation debt | `docs/en/documentation-debt.md` |
+| Changelog | `docs/en/changelog-policy.md` |
+| As-is: Loft infra publish path | `docs/en/loft-infra/README.md` (start: `publish-guide.md`, `examples/`) |
+| As-is: Loft Datadog observability | `docs/en/loft-observability/README.md` |
+| As-is: AIOps apps | `docs/en/aiops-apps/README.md` |
+| Templates | `docs/en/templates/` |
+| Examples | `examples/README.md` |
+| Optional Confluence publish | `docs-sync/README.md`, `docs/en/publishing-surfaces.md` |
+| Cursor / Claude skills | `.cursor/skills/document-after-change/SKILL.md`, `.cursor/skills/grill-me/SKILL.md`, `.claude/skills/` |
+| Adopter agent starter | `examples/adopter-agent-starter/` |
+
+pt-BR mirrors live under `docs/pt-BR/` with the same relative paths.
+
+## Related rules
+
+- `docs-first.mdc`, `docs-knowledge-in-markdown.mdc`, `docs-clear-language.mdc`, `docs-reuse-patterns.mdc`, `docs-quality-checks.mdc`

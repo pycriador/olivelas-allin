@@ -1,0 +1,5 @@
+# Robots.txt — Rafaela Personal Trainer
+User-agent: *
+Allow: /
+
+Sitemap: https://rafaelapersonal.com.br/sitemap.xml

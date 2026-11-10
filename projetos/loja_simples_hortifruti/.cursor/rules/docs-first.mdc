@@ -1,0 +1,32 @@
+---
+description: Documentation-first — read canonical docs before reinventing; evidence wins; update Markdown in the same session
+alwaysApply: true
+---
+
+# Documentation-first protocol
+
+This repository is a **documentation framework**. Re-deriving what is already written wastes time and drifts the standard.
+
+## Workflow (this order)
+
+1. **Read first** — open the canonical doc for the topic (see `docs-area-map.mdc` and root README index). Cite the section that grounds the answer.
+2. **Reason from the doc** — plan edits or answers from documented behavior and policies.
+3. **Evidence over stale text** — if code, configs, or live checks contradict a doc, **evidence wins**. Flag the divergence and update the Markdown.
+4. **Investigate only the gap** — dig into files/tools only for what docs do not cover or to validate suspicious passages.
+5. **Update in the same session** — new facts, decisions, or corrections go into the appropriate `.md` now (rule `docs-knowledge-in-markdown.mdc`). Use the skill `.cursor/skills/document-after-change` for change impact, changelog, and optional Confluence.
+6. **No home for the topic?** — extend an existing template/category or create a doc under `docs/` / `examples/`, then link it from the nearest README/index. Do not leave knowledge only in chat or `.mdc` rules.
+
+## Agent constraints
+
+Follow [docs/en/ai-change-rules.md](docs/en/ai-change-rules.md): do not invent components/SLOs/owners; do not set `ACCEPTED` unilaterally; keep bilingual trees in sync when this repo requires EN + pt-BR.
+
+## Anti-patterns
+
+- Answering from memory when a canonical policy already exists
+- Shipping a technical change without updating docs that became false ([change-policy.md](docs/en/change-policy.md))
+- Creating parallel "AI summary" pages instead of editing the canonical doc
+
+## Related
+
+- [change-policy.md](docs/en/change-policy.md), [source-of-truth.md](docs/en/source-of-truth.md)
+- [ai-documentation-workflow.md](docs/en/ai-documentation-workflow.md)

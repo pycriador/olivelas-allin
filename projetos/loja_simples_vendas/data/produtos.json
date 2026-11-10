@@ -1,0 +1,602 @@
+{
+  "loja": {
+    "nome": "PB&Cia - Pão de Batata & Cia",
+    "vigenciaTabela": "31/10/2026",
+    "whatsapp": "5511994206655",
+    "moeda": "BRL"
+  },
+  "categorias": [
+    {
+      "categoria": "Pão de Batata",
+      "slug": "pao-de-batata",
+      "produtos": [
+        {
+          "codigo": "00006",
+          "nome": "Pão de Batata Sem Recheio",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 33.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00085",
+          "nome": "Pão de Batata 4 Queijos",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "130 g",
+          "precoPacote": 50.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00037",
+          "nome": "Pão de Batata Calabresa",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "130 g",
+          "precoPacote": 50.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00039",
+          "nome": "Pão de Batata Frango c/ Requeijão",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "130 g",
+          "precoPacote": 50.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00008",
+          "nome": "Pão de Batata Requeijão",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "130 g",
+          "precoPacote": 50.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00002",
+          "nome": "Pão de Batata Misto",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 53.5,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Salgados Lanche",
+      "slug": "salgados-lanche",
+      "produtos": [
+        {
+          "codigo": "00082",
+          "nome": "Pão Tipo Bauru Presunto c/ Queijo e Tomate",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "130 g",
+          "precoPacote": 53.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00081",
+          "nome": "Pão Tipo Doguinho",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "140 g",
+          "precoPacote": 53.5,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Croissant",
+      "slug": "croissant",
+      "produtos": [
+        {
+          "codigo": "00097",
+          "nome": "Pão Tipo Croissant 4 Queijos",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00027",
+          "nome": "Pão Tipo Croissant Frango c/ Requeijão",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00026",
+          "nome": "Pão Tipo Croissant Misto",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Pizza Folhada",
+      "slug": "pizza-folhada",
+      "produtos": [
+        {
+          "codigo": "00092",
+          "nome": "Pão Folhado 4 Queijos (Pizza Folhada)",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00090",
+          "nome": "Pão Folhado Calabresa c/ Requeijão (Pizza Folhada)",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00091",
+          "nome": "Pão Folhado Frango c/ Requeijão (Pizza Folhada)",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Salgados Fritos",
+      "slug": "salgados-fritos",
+      "produtos": [
+        {
+          "codigo": "00030",
+          "nome": "Bolinho Frito Carne",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 49,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00041",
+          "nome": "Bolinho Frito Queijo",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 49,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00048",
+          "nome": "Coxinha Frita Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 49,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00028",
+          "nome": "Coxinha Frita Frango c/ Requeijão",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 49,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00159",
+          "nome": "Coxinha Crispy de Frango c/ Requeijão",
+          "unidadesPorPacote": 15,
+          "pesoUnitario": "120 g",
+          "precoPacote": 81,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00427",
+          "nome": "Coxinha Premium de Frango c/ Requeijão",
+          "unidadesPorPacote": 12,
+          "pesoUnitario": "150 g",
+          "precoPacote": 72.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00437",
+          "nome": "Coxinha Premium de Frango",
+          "unidadesPorPacote": 12,
+          "pesoUnitario": "150 g",
+          "precoPacote": 72.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00425",
+          "nome": "Coxinha Camarão",
+          "unidadesPorPacote": 15,
+          "pesoUnitario": "115 g",
+          "precoPacote": 96,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00299",
+          "nome": "Kibe com Requeijão Frito",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 51,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00057",
+          "nome": "Kibe Frito Carne",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 51,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Salgados para Assar",
+      "slug": "salgados-para-assar",
+      "produtos": [
+        {
+          "codigo": "00054",
+          "nome": "Empada Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "95 g",
+          "precoPacote": 51,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00055",
+          "nome": "Empada Palmito",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "95 g",
+          "precoPacote": 51,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00052",
+          "nome": "Esfiha Carne",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 52.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00053",
+          "nome": "Esfiha Frango c/ Requeijão",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 52.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00153",
+          "nome": "Esfiha Queijo",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 52.5,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Linha Mini Salgados e Pães",
+      "slug": "linha-mini-salgados-e-paes",
+      "produtos": [
+        {
+          "codigo": "00129",
+          "nome": "Bolinha Mini Frita Queijo",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "20 g",
+          "precoPacote": 63,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00120",
+          "nome": "Coxinha Mini Frita Frango c/ Requeijão",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "20 g",
+          "precoPacote": 63,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00124",
+          "nome": "Kibe Mini Frito Carne",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "20 g",
+          "precoPacote": 63,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00009",
+          "nome": "Pão de Batata Requeijão Mini",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "30 g",
+          "precoPacote": 72,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00167",
+          "nome": "Coxinha Box Frango c/ Requeijão",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "50 g",
+          "precoPacote": 55,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00171",
+          "nome": "Coxinha Box Queijo c/ Cebolinha",
+          "unidadesPorPacote": 25,
+          "pesoUnitario": "50 g",
+          "precoPacote": 55,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Empanada",
+      "slug": "empanada",
+      "produtos": [
+        {
+          "codigo": "00065",
+          "nome": "Empanada Carne",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 72,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00066",
+          "nome": "Empanada Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 72,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Tortas e Quiches",
+      "slug": "tortas-e-quiches",
+      "produtos": [
+        {
+          "codigo": "00375",
+          "nome": "Tortinha de Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "160 g",
+          "precoPacote": 69.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00376",
+          "nome": "Tortinha de Palmito",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "160 g",
+          "precoPacote": 69.5,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00307",
+          "nome": "Quiche de Alho Poró com Creme de Ricota",
+          "unidadesPorPacote": 6,
+          "pesoUnitario": "130 g",
+          "precoPacote": 55,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00308",
+          "nome": "Quiche de Espinafre com Creme de Ricota",
+          "unidadesPorPacote": 6,
+          "pesoUnitario": "130 g",
+          "precoPacote": 55,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00309",
+          "nome": "Quiche de Queijo",
+          "unidadesPorPacote": 6,
+          "pesoUnitario": "130 g",
+          "precoPacote": 55,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Torta Grande",
+      "slug": "torta-grande",
+      "produtos": [
+        {
+          "codigo": "00374",
+          "nome": "Torta de Palmito",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "1 un.",
+          "precoPacote": 85.43,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00377",
+          "nome": "Torta de Frango com Requeijão",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "1 un.",
+          "precoPacote": 85.43,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Quadrado Folhado",
+      "slug": "quadrado-folhado",
+      "produtos": [
+        {
+          "codigo": "00353",
+          "nome": "Folhado Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00349",
+          "nome": "Folhado Presunto com Queijo",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00355",
+          "nome": "Folhado Quatro Queijos",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "100 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Pão de Queijo",
+      "slug": "pao-de-queijo",
+      "produtos": [
+        {
+          "codigo": "00393",
+          "nome": "Pão de Queijo Tradicional (2kg / 15g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (15 g/un.)",
+          "precoPacote": 64,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00395",
+          "nome": "Pão de Queijo Tradicional (2kg / 90g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (90 g/un.)",
+          "precoPacote": 66,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00391",
+          "nome": "Pão de Queijo Tradicional (2kg / 75g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (75 g/un.)",
+          "precoPacote": 65,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00401",
+          "nome": "Pão de Queijo Gourmet (2kg / 15g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (15 g/un.)",
+          "precoPacote": 75,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00402",
+          "nome": "Pão de Queijo Gourmet (2kg / 75g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (75 g/un.)",
+          "precoPacote": 76,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00385",
+          "nome": "Pão de Queijo Recheado com Requeijão (2kg / 30g un.)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg (30 g/un.)",
+          "precoPacote": 67,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Linha Integral",
+      "slug": "linha-integral",
+      "produtos": [
+        {
+          "codigo": "00182",
+          "nome": "Esfiha Integral Queijo",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "110 g",
+          "precoPacote": 58,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Broa",
+      "slug": "broa",
+      "produtos": [
+        {
+          "codigo": "00046",
+          "nome": "Mini Broa (2kg)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "2 kg",
+          "precoPacote": 66,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Pastéis de Forno",
+      "slug": "pasteis-de-forno",
+      "produtos": [
+        {
+          "codigo": "00760",
+          "nome": "Pastel de Forno Frango",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "121 g",
+          "precoPacote": 50,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00765",
+          "nome": "Pastel de Forno Queijo Cremoso",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "121 g",
+          "precoPacote": 50,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00762",
+          "nome": "Pastel de Forno Carne",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "121 g",
+          "precoPacote": 50,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00768",
+          "nome": "Pastel de Forno Palmito",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "121 g",
+          "precoPacote": 50,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    },
+    {
+      "categoria": "Doce",
+      "slug": "doce",
+      "produtos": [
+        {
+          "codigo": "00697",
+          "nome": "Quindim - Caixa c/ 6 Bandejas",
+          "unidadesPorPacote": 6,
+          "pesoUnitario": "0,0375 g",
+          "precoPacote": 38,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00686",
+          "nome": "Mini Churros Doce de Leite (1,5kg)",
+          "unidadesPorPacote": 1,
+          "pesoUnitario": "1,5 kg",
+          "precoPacote": 66,
+          "imagem": "assets/images/logo.png"
+        },
+        {
+          "codigo": "00023",
+          "nome": "Croissant com Recheio de Chocolate",
+          "unidadesPorPacote": 10,
+          "pesoUnitario": "120 g",
+          "precoPacote": 62,
+          "imagem": "assets/images/logo.png"
+        }
+      ]
+    }
+  ]
+}

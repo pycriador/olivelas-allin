@@ -1,0 +1,279 @@
+{
+  "app": {
+    "name": "Nexus Data",
+    "tagline": "Plataforma corporativa de datos y analítica"
+  },
+  "auth": {
+    "welcome": "Bienvenido de nuevo",
+    "createAccount": "Crea tu cuenta",
+    "login": "Ingresar",
+    "signup": "Registrarse",
+    "email": "Correo",
+    "password": "Contraseña",
+    "fullName": "Nombre completo",
+    "forgotPassword": "Olvidé mi contraseña",
+    "noAccount": "¿Sin cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "signUpHere": "Regístrate",
+    "signInHere": "Ingresa",
+    "orContinueWith": "o continúa con",
+    "comingSoon": "Próximamente",
+    "resetPassword": "Restablecer contraseña",
+    "sendResetLink": "Enviar enlace",
+    "newPassword": "Nueva contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "updatePassword": "Actualizar contraseña",
+    "backToLogin": "Volver al login",
+    "logout": "Salir",
+    "pitchTitle": "Unifica datos, reportes y decisiones",
+    "pitchDesc": "Una plataforma moderna para administrar bases de datos, construir reportes y explorar dashboards corporativos.",
+    "benefits": {
+      "one": "Gobernanza y seguridad multi-tenant",
+      "two": "Constructor visual de reportes y dashboards",
+      "three": "Analítica en tiempo real con IA"
+    }
+  },
+  "nav": {
+    "home": "Inicio",
+    "reports": "Reportes",
+    "dashboards": "Dashboards",
+    "analytics": "Analítica",
+    "favorites": "Favoritos",
+    "admin": "Administración",
+    "profile": "Perfil",
+    "settings": "Configuración",
+    "help": "Ayuda",
+    "workspace": "Workspace",
+    "personal": "Personal",
+    "data": "Datos",
+    "dataSources": "Data Sources",
+    "dataCatalog": "Data Catalog",
+    "explorer": "Explorador",
+    "schemas": "Schemas",
+    "views": "Views",
+    "metadata": "Metadata"
+  },
+  "home": {
+    "greeting": "Hola, {{name}}",
+    "subtitle": "Aquí un resumen de tu organización hoy.",
+    "kpis": {
+      "employees": "Empleados",
+      "reports": "Reportes",
+      "dashboards": "Dashboards",
+      "revenue": "Ingresos (mes)"
+    },
+    "sections": {
+      "recentReports": "Reportes recientes",
+      "favorites": "Favoritos",
+      "dashboards": "Dashboards",
+      "activities": "Actividad reciente"
+    },
+    "empty": "Nada aún"
+  },
+  "common": {
+    "search": "Buscar...",
+    "loading": "Cargando",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "openMenu": "Abrir menú",
+    "commandPalette": "Paleta de comandos"
+  },
+  "settings": {
+    "title": "Configuración",
+    "subtitle": "Administra las preferencias de tu cuenta y organización",
+    "tabs": {
+      "general": "General",
+      "theme": "Tema",
+      "language": "Idioma",
+      "notifications": "Notificaciones",
+      "ai": "IA",
+      "integrations": "Integraciones",
+      "security": "Seguridad"
+    },
+    "placeholder": "Este módulo estará disponible pronto."
+  },
+  "pages": {
+    "reports": {
+      "title": "Reportes",
+      "subtitle": "Explora reportes corporativos preconfigurados"
+    },
+    "dashboards": {
+      "title": "Dashboards",
+      "subtitle": "Paneles ejecutivos y operativos"
+    },
+    "analytics": {
+      "title": "Analítica",
+      "subtitle": "Métricas avanzadas de tu negocio"
+    },
+    "favorites": {
+      "title": "Favoritos",
+      "subtitle": "Tus reportes y dashboards favoritos"
+    },
+    "admin": {
+      "title": "Administración",
+      "subtitle": "Usuarios, roles y permisos"
+    },
+    "profile": {
+      "title": "Perfil",
+      "subtitle": "Tu información personal"
+    },
+    "help": {
+      "title": "Ayuda",
+      "subtitle": "Centro de ayuda y recursos"
+    }
+  },
+  "errors": {
+    "signInFailed": "Error al ingresar. Verifica tus credenciales.",
+    "signUpFailed": "Error al registrarse. Intenta con otro correo.",
+    "invalidEmail": "Correo inválido",
+    "passwordShort": "La contraseña debe tener al menos 8 caracteres",
+    "nameRequired": "El nombre es obligatorio",
+    "resetSent": "Si el correo existe, enviaremos instrucciones.",
+    "passwordUpdated": "Contraseña actualizada.",
+    "required": "Campo obligatorio"
+  },
+  "ds": {
+    "catalogOnly": "solo catálogo",
+    "searchSources": "Buscar por nombre, host o tipo…",
+    "searchCatalog": "Buscar tablas, vistas y columnas…",
+    "typeToSearch": "Escribe al menos 2 caracteres para buscar columnas",
+    "noResults": "Sin resultados",
+    "noObjects": "Sin objetos catalogados",
+    "notSynced": "Fuente aún no sincronizada",
+    "selectObject": "Selecciona un objeto en el árbol",
+    "noDefinition": "Definición no disponible",
+    "none": "Sin registros",
+    "rows": "filas",
+    "page": {
+      "sources": {
+        "title": "Data Sources",
+        "subtitle": "Gestiona conexiones, credenciales, health check y sincronización de metadatos."
+      },
+      "catalog": {
+        "title": "Data Catalog",
+        "subtitle": "Catálogo corporativo de datos con nombres amigables, descripciones y etiquetas."
+      },
+      "explorer": {
+        "title": "Database Explorer",
+        "subtitle": "Navega por base, esquema, tabla, columnas, índices y restricciones."
+      },
+      "schemas": {
+        "title": "Schemas",
+        "subtitle": "Todos los esquemas descubiertos en las fuentes conectadas."
+      },
+      "views": {
+        "title": "Views",
+        "subtitle": "Vistas y vistas materializadas catalogadas, con definición SQL."
+      },
+      "metadata": {
+        "title": "Metadata",
+        "subtitle": "Cobertura de documentación e historial de sincronizaciones."
+      }
+    },
+    "action": {
+      "new": "Nueva conexión",
+      "test": "Probar",
+      "sync": "Sincronizar",
+      "seedDemo": "Fuente demo",
+      "clearSearch": "Limpiar búsqueda"
+    },
+    "form": {
+      "newTitle": "Nueva fuente de datos",
+      "editTitle": "Editar fuente de datos"
+    },
+    "field": {
+      "name": "Nombre",
+      "type": "Tipo",
+      "description": "Descripción",
+      "environment": "Entorno",
+      "host": "Host",
+      "httpHost": "Endpoint HTTP",
+      "libsqlUrl": "URL libSQL",
+      "port": "Puerto",
+      "database": "Base de datos",
+      "schema": "Esquema predeterminado",
+      "username": "Usuario",
+      "password": "Contraseña",
+      "passwordKeep": "Déjalo vacío para mantener la actual",
+      "ssl": "SSL/TLS",
+      "active": "Activa",
+      "friendlyName": "Nombre amigable",
+      "dataType": "Tipo de dato",
+      "nullable": "Nulo",
+      "keys": "Claves"
+    },
+    "env": {
+      "production": "Producción",
+      "staging": "Staging",
+      "development": "Desarrollo"
+    },
+    "health": {
+      "unknown": "Desconocido",
+      "online": "En línea",
+      "offline": "Sin conexión",
+      "unstable": "Inestable",
+      "timeout": "Timeout",
+      "invalid_credentials": "Credenciales inválidas"
+    },
+    "stat": {
+      "schemas": "Schemas",
+      "tables": "Tablas",
+      "views": "Views",
+      "columns": "Columnas"
+    },
+    "tab": {
+      "objects": "Objetos",
+      "columns": "Columnas",
+      "indexes": "Índices",
+      "constraints": "Restricciones",
+      "definition": "Definición"
+    },
+    "objectType": {
+      "table": "Tabla",
+      "view": "View",
+      "materialized_view": "Vista materializada",
+      "function": "Función",
+      "procedure": "Procedimiento"
+    },
+    "syncStatus": {
+      "running": "En ejecución",
+      "success": "Éxito",
+      "failed": "Falló"
+    },
+    "empty": {
+      "title": "Sin fuentes de datos",
+      "description": "Crea una conexión o usa la fuente demo de la plataforma."
+    },
+    "catalogEmpty": {
+      "title": "Catálogo vacío",
+      "description": "Sincroniza una fuente para descubrir esquemas y tablas."
+    },
+    "toast": {
+      "saved": "Cambios guardados",
+      "deleted": "Fuente eliminada",
+      "synced": "Sincronizado: {{tables}} tablas y {{views}} vistas"
+    },
+    "meta": {
+      "named": "Objetos con nombre amigable",
+      "described": "Objetos descritos",
+      "tagged": "Objetos con etiquetas",
+      "columnsDescribed": "Columnas descritas",
+      "undocumented": "Objetos sin documentación",
+      "missingName": "sin nombre amigable",
+      "missingDescription": "sin descripción",
+      "recentSyncs": "Sincronizaciones recientes"
+    },
+    "hint": {
+      "postgresql": "Conexión TCP directa. Indica host, puerto, base y credenciales.",
+      "mysql": "Conexión mediante endpoint HTTP serverless (PlanetScale o gateway mysql-http compatible).",
+      "mariadb": "Conexión mediante endpoint HTTP serverless (PlanetScale o gateway mysql-http compatible).",
+      "sqlite": "SQLite remoto vía libSQL/Turso. Usa la URL de la base y el token como contraseña.",
+      "planned": "Este motor puede catalogarse, pero aún no tiene driver de conexión activo."
+    }
+  }
+}

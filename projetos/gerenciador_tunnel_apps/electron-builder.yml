@@ -1,0 +1,65 @@
+appId: com.olivelas.localtunnel
+productName: Olivelas Local Tunnel
+copyright: Copyright © 2026 Olivelas
+
+afterPack: scripts/after-pack.cjs
+afterAllArtifactBuild: scripts/after-all-artifact-build.cjs
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**/*
+  - dist-server/**/*
+  - build/icons/**/*
+  - package.json
+
+asarUnpack:
+  - "**/*.node"
+  - "**/node_modules/better-sqlite3/**"
+  - "dist-server/electron/preload.cjs"
+
+linux:
+  icon: build/icons/icon.png
+  category: Development
+  synopsis: Gerenciador de Aplicações Locais e Túneis Públicos (Cloudflared / Ngrok)
+  executableArgs:
+    - "--no-sandbox"
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+
+win:
+  icon: build/icons/icon.png
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Olivelas Local Tunnel
+
+mac:
+  icon: build/icons/icon.png
+  category: public.app-category.developer-tools
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64

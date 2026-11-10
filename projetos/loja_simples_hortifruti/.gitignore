@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.py[cod]
+.Python
+.DS_Store
+docs-sync/.venv/
+docs-sync/docs-sync.yaml
+docs-sync/docs-sync.local.yaml
+docs-sync/.docs-sync-state*.json
+*.egg-info/
+.pytest_cache/
+.ruff_cache/

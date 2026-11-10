@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="600" height="400">
+  <defs>
+    <linearGradient id="t1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e332a"/>
+      <stop offset="100%" stop-color="#164d3f"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" rx="16" fill="url(#t1)"/>
+  <circle cx="300" cy="170" r="60" fill="none" stroke="#c99846" stroke-width="2" stroke-dasharray="4 4"/>
+  <!-- Dumbbell icon outline -->
+  <path d="M260 170 h80 M265 150 v40 M255 155 v30 M335 150 v40 M345 155 v30" stroke="#f8faf9" stroke-width="4" stroke-linecap="round"/>
+  <rect x="80" y="270" width="440" height="80" rx="12" fill="#ffffff" fill-opacity="0.08" stroke="#c99846" stroke-width="1"/>
+  <text x="300" y="305" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" font-weight="700" fill="#ffffff">ACOMPANHAMENTO PERSONALIZADO</text>
+  <text x="300" y="330" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#a4b8b3">Substituir por /assets/images/training-01.jpg</text>
+</svg>

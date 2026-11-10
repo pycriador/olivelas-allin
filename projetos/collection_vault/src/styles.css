@@ -1,0 +1,177 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Retro Arcade Design System */
+@theme inline {
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+  --radius-xl: 8px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-neon-pink: var(--neon-pink);
+  --color-neon-cyan: var(--neon-cyan);
+  --color-neon-yellow: var(--neon-yellow);
+  --color-neon-green: var(--neon-green);
+  --color-neon-purple: var(--neon-purple);
+  --color-chart-1: var(--neon-pink);
+  --color-chart-2: var(--neon-cyan);
+  --color-chart-3: var(--neon-yellow);
+  --color-chart-4: var(--neon-green);
+  --color-chart-5: var(--neon-purple);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-display: "Press Start 2P", system-ui, sans-serif;
+  --font-mono: "VT323", "Courier New", monospace;
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+}
+
+:root {
+  --radius: 4px;
+  /* Deep arcade dark — default theme */
+  --background: oklch(0.16 0.04 280);
+  --foreground: oklch(0.96 0.02 80);
+  --card: oklch(0.21 0.05 280);
+  --card-foreground: oklch(0.96 0.02 80);
+  --popover: oklch(0.21 0.05 280);
+  --popover-foreground: oklch(0.96 0.02 80);
+  --primary: oklch(0.72 0.28 340); /* neon pink */
+  --primary-foreground: oklch(0.12 0.03 280);
+  --secondary: oklch(0.28 0.06 280);
+  --secondary-foreground: oklch(0.96 0.02 80);
+  --muted: oklch(0.24 0.04 280);
+  --muted-foreground: oklch(0.72 0.04 280);
+  --accent: oklch(0.78 0.20 200); /* neon cyan */
+  --accent-foreground: oklch(0.12 0.03 280);
+  --destructive: oklch(0.65 0.27 25);
+  --destructive-foreground: oklch(0.98 0 0);
+  --border: oklch(0.32 0.06 280);
+  --input: oklch(0.24 0.05 280);
+  --ring: oklch(0.72 0.28 340);
+
+  --neon-pink: oklch(0.72 0.28 340);
+  --neon-cyan: oklch(0.82 0.18 200);
+  --neon-yellow: oklch(0.92 0.20 100);
+  --neon-green: oklch(0.85 0.24 145);
+  --neon-purple: oklch(0.62 0.26 300);
+
+  --gradient-arcade: linear-gradient(135deg, var(--neon-pink), var(--neon-purple) 50%, var(--neon-cyan));
+  --gradient-screen: radial-gradient(ellipse at top, oklch(0.22 0.08 280), oklch(0.12 0.04 280));
+  --shadow-neon-pink: 0 0 20px oklch(0.72 0.28 340 / 0.6), 0 0 40px oklch(0.72 0.28 340 / 0.3);
+  --shadow-neon-cyan: 0 0 20px oklch(0.82 0.18 200 / 0.6), 0 0 40px oklch(0.82 0.18 200 / 0.3);
+  --shadow-pixel: 4px 4px 0 oklch(0.12 0.04 280);
+
+  --sidebar: oklch(0.13 0.04 280);
+  --sidebar-foreground: oklch(0.92 0.02 80);
+  --sidebar-primary: oklch(0.72 0.28 340);
+  --sidebar-primary-foreground: oklch(0.12 0.03 280);
+  --sidebar-accent: oklch(0.22 0.05 280);
+  --sidebar-accent-foreground: oklch(0.96 0.02 80);
+  --sidebar-border: oklch(0.28 0.06 280);
+  --sidebar-ring: oklch(0.72 0.28 340);
+}
+
+.light {
+  --background: oklch(0.97 0.01 280);
+  --foreground: oklch(0.18 0.04 280);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.18 0.04 280);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.18 0.04 280);
+  --primary: oklch(0.55 0.25 340);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.92 0.02 280);
+  --secondary-foreground: oklch(0.18 0.04 280);
+  --muted: oklch(0.92 0.02 280);
+  --muted-foreground: oklch(0.45 0.04 280);
+  --accent: oklch(0.55 0.18 200);
+  --accent-foreground: oklch(1 0 0);
+  --border: oklch(0.86 0.02 280);
+  --input: oklch(0.94 0.02 280);
+  --ring: oklch(0.55 0.25 340);
+  --sidebar: oklch(0.95 0.02 280);
+  --sidebar-foreground: oklch(0.18 0.04 280);
+  --sidebar-border: oklch(0.86 0.02 280);
+}
+
+@layer base {
+  * { border-color: var(--color-border); }
+  body {
+    background: var(--gradient-screen);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+  }
+  h1, h2, h3, h4, .font-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+
+  /* CRT scanlines overlay */
+  .crt-scanlines {
+    position: relative;
+  }
+  .crt-scanlines::after {
+    content: "";
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 2px,
+      oklch(0 0 0 / 0.15) 2px,
+      oklch(0 0 0 / 0.15) 3px
+    );
+    mix-blend-mode: multiply;
+  }
+
+  .pixel-border {
+    box-shadow:
+      inset 0 0 0 2px var(--background),
+      inset 0 0 0 4px var(--primary),
+      var(--shadow-pixel);
+  }
+
+  .neon-text-pink { color: var(--neon-pink); text-shadow: 0 0 8px var(--neon-pink), 0 0 20px oklch(0.72 0.28 340 / 0.6); }
+  .neon-text-cyan { color: var(--neon-cyan); text-shadow: 0 0 8px var(--neon-cyan), 0 0 20px oklch(0.82 0.18 200 / 0.6); }
+  .neon-text-yellow { color: var(--neon-yellow); text-shadow: 0 0 8px var(--neon-yellow), 0 0 20px oklch(0.92 0.20 100 / 0.5); }
+
+  .arcade-grid {
+    background-image:
+      linear-gradient(oklch(0.72 0.28 340 / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(0.82 0.18 200 / 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
+  }
+}
+
+@keyframes blink-caret { 50% { opacity: 0; } }
+.blink { animation: blink-caret 1s steps(2) infinite; }
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px oklch(0.72 0.28 340 / 0.5); }
+  50% { box-shadow: 0 0 40px oklch(0.72 0.28 340 / 0.9); }
+}
+.glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }

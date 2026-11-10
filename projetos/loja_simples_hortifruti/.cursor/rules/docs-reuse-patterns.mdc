@@ -1,0 +1,43 @@
+---
+description: Prefer existing Documentation Standard templates, categories, and examples — extend before inventing new structure
+alwaysApply: true
+---
+
+# Extend before invent
+
+Applies to new or changed documentation under this framework.
+
+**Mantra:** simple, consistent, reusable. Do not invent a parallel structure when the standard already has a home.
+
+## Default workflow
+
+1. **Find the sibling** — search `docs/en/templates/`, category hubs, and `examples/` for the same grain (overview, contract, runbook, ADR, security asset, etc.).
+2. **Cite the reference** — name the template or example path in the reply/PR.
+3. **Extend or mirror** — copy the section layout and metadata conventions; adapt content only.
+4. **New structure only when no sibling exists** — justify in chat and document why in the nearest README the same session.
+
+| Need | Start here |
+| --- | --- |
+| Project / system overview | `docs/en/templates/project-overview.md` |
+| Architecture | [architecture-model.md](docs/en/architecture-model.md) + architecture templates |
+| Contracts | [contract-model.md](docs/en/contract-model.md) + `docs/en/templates/contract.md` |
+| Operations | [operations-model.md](docs/en/operations-model.md) + ops templates |
+| Security | [security-model.md](docs/en/security-model.md) + security templates |
+| AI-ready context | [ai-context.md](docs/en/ai-context.md), [ai-ready-model.md](docs/en/ai-ready-model.md) |
+| Agent entry files | [ai-agent-entry.md](docs/en/ai-agent-entry.md), `examples/adopter-agent-starter/` |
+| Adoption path | [adoption-path.md](docs/en/adoption-path.md), `examples/adoption-scaffold/` |
+
+## Complexity gate
+
+If the proposed doc layout is **more complex** than the sibling (new category, custom taxonomy, extra metadata schemes): tell the user **before writing** — what, why no simpler path, and how it maps to existing hubs.
+
+## Anti-patterns
+
+- New top-level doc trees that bypass `docs/en/` / `docs/pt-BR/`
+- One-off heading schemes that break progressive disclosure
+- Copying an unrelated domain's structure because names look similar
+
+## Related
+
+- [standards.md](docs/en/standards.md), [document-types.md](docs/en/document-types.md)
+- Skill: `.cursor/skills/document-after-change`

@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olivelas - Landing Personal Trainer</title>
+  <meta name="description" content="Treinamento personalizado com Rafaela Personal Trainer. Aulas individuais, combos semanais, planos mensais e acompanhamento personalizado para seus objetivos.">
+  <meta name="keywords" content="personal trainer, treino personalizado, saúde, emagrecimento, condicionamento, hipertrofia, Rafaela personal">
+  <meta name="author" content="Rafaela Personal Trainer">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://rafaelapersonal.com.br/">
+
+  <!-- Open Graph / Redes Sociais -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rafaelapersonal.com.br/">
+  <meta property="og:title" content="Rafaela Personal Trainer | Treinamento Personalizado">
+  <meta property="og:description" content="Treino individualizado, acompanhamento próximo e planos adaptados ao seu momento de vida. Conheça as modalidades.">
+  <meta property="og:image" content="https://rafaelapersonal.com.br/assets/images/rafaela-hero.jpg">
+
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Rafaela Personal Trainer | Treinamento Personalizado">
+  <meta name="twitter:description" content="Treinamento individualizado e acompanhamento próximo com Rafaela Personal Trainer.">
+  <meta name="twitter:image" content="https://rafaelapersonal.com.br/assets/images/rafaela-hero.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Fontes do Google: Plus Jakarta Sans com Preconnect para Alta Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&display=swap" rel="stylesheet">
+
+  <!-- CSS Modular -->
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <!-- Scripts com Defer para Performance Sem Bloqueio de Renderização -->
+  <script src="js/config.js" defer></script>
+  <script src="js/whatsapp.js" defer></script>
+  <script src="js/navigation.js" defer></script>
+  <script src="js/faq.js" defer></script>
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+
+  <!-- ======================================================================
+       1. HEADER & NAVEGAÇÃO FIXA
+       ====================================================================== -->
+  <header class="site-header" role="banner">
+    <div class="container header-container">
+      <a href="#inicio" class="site-logo" aria-label="Rafaela Personal Trainer - Voltar ao início">
+        <span class="site-logo__name">RAFAELA</span>
+        <span class="site-logo__sub">PERSONAL TRAINER</span>
+      </a>
+
+      <!-- Menu Principal (Desktop e Drawer Mobile) -->
+      <nav class="nav-menu" id="primary-navigation" aria-label="Navegação principal">
+        <ul class="nav-list">
+          <li><a href="#inicio" class="nav-link">Início</a></li>
+          <li><a href="#sobre" class="nav-link">Sobre</a></li>
+          <li><a href="#servicos" class="nav-link">Serviços</a></li>
+          <li><a href="#combos" class="nav-link">Combos</a></li>
+          <li><a href="#planos" class="nav-link">Planos</a></li>
+          <li><a href="#aplicativo" class="nav-link">Aplicativo</a></li>
+          <li><a href="#programas" class="nav-link">Programas</a></li>
+          <li><a href="#faq" class="nav-link">FAQ</a></li>
+          <li><a href="#contato" class="nav-link">Contato</a></li>
+        </ul>
+
+        <button type="button" class="btn btn--sm btn--primary nav-action-btn" data-whatsapp-msg="assessment">
+          Agendar avaliação
+        </button>
+      </nav>
+
+      <!-- Botão Hambúrguer Mobile -->
+      <button type="button" class="menu-toggle" aria-controls="primary-navigation" aria-expanded="false" aria-label="Abrir menu de navegação">
+        <svg class="menu-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Overlay para fechar gaveta no mobile -->
+  <div class="nav-overlay" aria-hidden="true"></div>
+
+  <main id="conteudo-principal">
+
+    <!-- ======================================================================
+         2. HERO SECTION
+         ====================================================================== -->
+    <section id="inicio" class="hero-section" aria-labelledby="hero-heading">
+      <div class="container">
+        <div class="hero-grid">
+          
+          <!-- Conteúdo da Esquerda -->
+          <div class="hero-content reveal-on-scroll">
+            <span class="hero-badge">PERSONAL TRAINER</span>
+            
+            <h1 id="hero-heading" class="hero-title">
+              Treino personalizado para uma vida mais <span class="hero-title-highlight">forte, saudável</span> e equilibrada.
+            </h1>
+            
+            <p class="hero-text">
+              Treinamento individual, acompanhamento próximo e estratégias adaptadas aos seus objetivos, rotina e momento de vida.
+            </p>
+
+            <div class="hero-ctas">
+              <a href="#planos" class="btn btn--primary btn--lg">Conhecer os planos</a>
+              <button type="button" class="btn btn--whatsapp btn--lg" data-whatsapp-msg="hero">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar com a Rafaela
+              </button>
+            </div>
+
+            <!-- Badges Visuais Informativos -->
+            <div class="hero-features-strip">
+              <span class="hero-feature-pill">
+                <span class="hero-feature-dot"></span> Atendimento personalizado
+              </span>
+              <span class="hero-feature-pill">
+                <span class="hero-feature-dot"></span> Treinos adaptados
+              </span>
+              <span class="hero-feature-pill">
+                <span class="hero-feature-dot"></span> Acompanhamento individual
+              </span>
+            </div>
+          </div>
+
+          <!-- Mídia da Direita (Placeholder Elegante / Foto) -->
+          <div class="hero-media reveal-on-scroll">
+            <div class="hero-image-wrapper">
+              <picture>
+                <source srcset="assets/images/rafaela-hero.jpg" type="image/jpeg">
+                <img 
+                  src="assets/images/rafaela-hero.jpg" 
+                  alt="Rafaela Personal Trainer — Treino personalizado para uma vida mais forte e saudável" 
+                  class="hero-image"
+                  width="600" 
+                  height="750" 
+                  loading="eager" 
+                  decoding="async"
+                >
+              </picture>
+            </div>
+
+            <div class="hero-float-badge">
+              <div class="hero-float-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <div class="hero-float-text">
+                <strong>Metodologia Individual</strong>
+                <span>Foco na sua vida real</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         3. DIFERENCIAIS
+         ====================================================================== -->
+    <section class="section section--alt" aria-labelledby="diferenciais-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Diferenciais</span>
+          <h2 id="diferenciais-heading" class="section-title">Por que treinar com acompanhamento exclusivo?</h2>
+          <p class="section-subtitle">Pilares essenciais que transformam o exercício em um hábito consistente e seguro.</p>
+        </header>
+
+        <div class="differentials-grid">
+          <!-- Card 1 -->
+          <article class="differential-card reveal-on-scroll">
+            <div class="differential-icon-box">
+              <svg class="differential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
+              </svg>
+            </div>
+            <h3 class="differential-title">Treino Personalizado</h3>
+            <p class="differential-desc">Cada treino é adaptado aos objetivos, nível e rotina do aluno.</p>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="differential-card reveal-on-scroll">
+            <div class="differential-icon-box">
+              <svg class="differential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+              </svg>
+            </div>
+            <h3 class="differential-title">Acompanhamento Próximo</h3>
+            <p class="differential-desc">Mais acompanhamento e orientação durante toda a sua evolução.</p>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="differential-card reveal-on-scroll">
+            <div class="differential-icon-box">
+              <svg class="differential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <h3 class="differential-title">Estratégia Individual</h3>
+            <p class="differential-desc">O planejamento considera o momento e as necessidades de cada pessoa.</p>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="differential-card reveal-on-scroll">
+            <div class="differential-icon-box">
+              <svg class="differential-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+                <line x1="12" y1="18" x2="12.01" y2="18"></line>
+              </svg>
+            </div>
+            <h3 class="differential-title">Tecnologia</h3>
+            <p class="differential-desc">Planos mensais contam com acesso ao aplicativo exclusivo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         4. SOBRE RAFAELA
+         ====================================================================== -->
+    <section id="sobre" class="section" aria-labelledby="sobre-heading">
+      <div class="container">
+        <div class="about-grid">
+          
+          <!-- Imagem Sobre -->
+          <div class="about-image-wrapper reveal-on-scroll">
+            <picture>
+              <source srcset="assets/images/rafaela-about.jpg" type="image/jpeg">
+              <img 
+                src="assets/images/rafaela-about.jpg" 
+                alt="Foto institucional de Rafaela — Personal Trainer em atendimento e orientação" 
+                class="about-image"
+                width="600" 
+                height="750" 
+                loading="lazy" 
+                decoding="async"
+              >
+            </picture>
+          </div>
+
+          <!-- Texto Institucional e Placeholders -->
+          <div class="about-content reveal-on-scroll">
+            <span class="section-tag">Sobre Rafaela</span>
+            
+            <h2 id="sobre-heading" class="about-quote">
+              "Mais do que treinar. É construir uma rotina que você consegue manter."
+            </h2>
+            
+            <p class="about-text">
+              Sou Rafaela, Personal Trainer, e acredito que o treinamento precisa fazer sentido para a vida real. Meu trabalho combina acompanhamento próximo, planejamento e exercícios adaptados para diferentes objetivos e momentos.
+            </p>
+
+            <!-- Placeholders Editáveis Organizadamente Identificados -->
+            <div class="about-credentials-grid">
+              <div class="credential-card">
+                <span class="credential-label">Formação</span>
+                <span class="credential-value">[FORMAÇÃO]</span>
+              </div>
+              <div class="credential-card">
+                <span class="credential-label">Certificações</span>
+                <span class="credential-value">[CERTIFICAÇÕES]</span>
+              </div>
+              <div class="credential-card">
+                <span class="credential-label">Especializações</span>
+                <span class="credential-value">[ESPECIALIZAÇÕES]</span>
+              </div>
+              <div class="credential-card">
+                <span class="credential-label">Experiência</span>
+                <span class="credential-value">[ANOS DE EXPERIÊNCIA]</span>
+              </div>
+            </div>
+
+            <div>
+              <button type="button" class="btn btn--primary" data-whatsapp-msg="default">
+                Conversar com a Rafaela
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         5. SERVIÇOS
+         ====================================================================== -->
+    <section id="servicos" class="section section--alt" aria-labelledby="servicos-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Serviços</span>
+          <h2 id="servicos-heading" class="section-title">Modalidades e Atendimento</h2>
+          <p class="section-subtitle">Estratégias estruturadas para atender desde o início de uma vida ativa até metas avançadas de rendimento físico.</p>
+        </header>
+
+        <div class="services-grid">
+          
+          <!-- 1. Personal Trainer -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-personal.jpg" alt="Personal Trainer acompanhando e orientando aluna durante exercício com halter" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 18h12M6 6h12M9 12h6M4 6v12M20 6v12"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Personal Trainer</h3>
+              <p class="service-desc">Treinamento individual com acompanhamento personalizado.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="servicePersonal">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Personal
+              </button>
+            </div>
+          </article>
+
+          <!-- 2. Emagrecimento -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-emagrecimento.jpg" alt="Treinamento focado em emagrecimento e composição corporal" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Emagrecimento</h3>
+              <p class="service-desc">Estratégias de treinamento voltadas para pessoas que buscam melhorar composição corporal e condicionamento.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceEmagrecimento">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Emagrecimento
+              </button>
+            </div>
+          </article>
+
+          <!-- 3. Hipertrofia -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-hipertrofia.jpg" alt="Treino estruturado para hipertrofia e ganho de massa" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 9h12M6 15h12M3 12h18"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Hipertrofia</h3>
+              <p class="service-desc">Treinos estruturados de acordo com objetivos individuais.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceHipertrofia">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Hipertrofia
+              </button>
+            </div>
+          </article>
+
+          <!-- 4. Condicionamento -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-condicionamento.jpg" alt="Condicionamento físico e resistência com acompanhamento" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Condicionamento</h3>
+              <p class="service-desc">Treinamentos para melhorar resistência, força, mobilidade e capacidade física.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceCondicionamento">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Condicionamento
+              </button>
+            </div>
+          </article>
+
+          <!-- 5. Gestantes -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-gestantes.jpg" alt="Mulher grávida fazendo exercícios de fortalecimento com halteres na academia" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"></path>
+                  <path d="M12 7v5l3 3"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Gestantes</h3>
+              <p class="service-desc">Exercícios adaptados para gestantes, respeitando orientação e liberação profissional adequada.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceGestantes">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Gestantes
+              </button>
+            </div>
+          </article>
+
+          <!-- 6. Melhor Idade -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-melhor-idade.jpg" alt="Mulher idosa ativa treinando com halteres em estúdio fitness" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <path d="M8 12h8"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Melhor Idade</h3>
+              <p class="service-desc">Treinamento adaptado para pessoas da terceira idade, com foco em mobilidade, força, equilíbrio e autonomia.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceMelhorIdade">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Melhor Idade
+              </button>
+            </div>
+          </article>
+
+          <!-- 7. Treinamento Funcional -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-funcional.jpg" alt="Exercícios de treinamento funcional e mobilidade" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Treinamento Funcional</h3>
+              <p class="service-desc">Exercícios que trabalham diferentes capacidades físicas e movimentos do cotidiano.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceFuncional">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Funcional
+              </button>
+            </div>
+          </article>
+
+          <!-- 8. Treino Online -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-online.jpg" alt="Consultoria e treino online ao vivo" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Treino Online</h3>
+              <p class="service-desc">Possibilidade de acompanhamento remoto conforme disponibilidade da profissional.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceTreinoOnline">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Treino Online
+              </button>
+            </div>
+          </article>
+
+          <!-- 9. Alimentação Saudável -->
+          <article class="service-card reveal-on-scroll">
+            <div class="service-image-wrapper">
+              <img src="assets/images/service-alimentacao.jpg" alt="Alimentação saudável e hábitos equilibrados" class="service-img" loading="lazy" width="400" height="250">
+              <div class="service-icon-floating">
+                <svg class="service-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="service-body">
+              <h3 class="service-title">Alimentação Saudável</h3>
+              <p class="service-desc">Orientações e materiais relacionados a hábitos alimentares saudáveis, deixando claro que prescrição nutricional deve ser realizada por nutricionista habilitado.</p>
+              <button type="button" class="btn btn--sm btn--secondary service-btn" data-whatsapp-msg="serviceAlimentacao">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                </svg>
+                Falar sobre Hábitos Saudáveis
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Aviso Regulatório Obrigatório -->
+        <div class="notice-card reveal-on-scroll">
+          <svg class="notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div>
+            <strong>Orientações e Segurança em Saúde:</strong>
+            Programas para gestantes devem ser realizados conforme orientação e liberação do profissional de saúde responsável. Conteúdos sobre alimentação têm caráter informativo e não substituem consulta com nutricionista.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         6. COMBOS DE TREINAMENTO
+         ====================================================================== -->
+    <section id="combos" class="section" aria-labelledby="combos-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Combos de Treinamento</span>
+          <h2 id="combos-heading" class="section-title">Escolha a frequência que combina com sua rotina</h2>
+          <p class="section-subtitle">Planos flexíveis por hora/aula para quem busca personalização de acordo com a sua agenda.</p>
+        </header>
+
+        <div class="combos-grid">
+          
+          <!-- Card: Aula Avulsa -->
+          <article class="pricing-card reveal-on-scroll">
+            <div class="pricing-header">
+              <span class="badge badge--accent">Flexibilidade</span>
+              <h3 class="pricing-title">Aula Avulsa</h3>
+              <div class="pricing-amount-group">
+                <span class="pricing-value" data-price="singleClass">R$ 120</span>
+                <span class="pricing-unit">por hora/aula</span>
+              </div>
+              <p class="pricing-description">Para quem deseja experimentar o acompanhamento personalizado ou contratar aulas pontuais.</p>
+            </div>
+            
+            <ul class="pricing-features">
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Sessão individual com a Rafaela</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Ajuste postural e correção técnica</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Flexibilidade total de agendamento</span>
+              </li>
+            </ul>
+
+            <button type="button" class="btn btn--secondary btn--full" data-whatsapp-msg="singleClass">
+              Quero experimentar
+            </button>
+          </article>
+
+          <!-- Card: Combo 3x por semana -->
+          <article class="pricing-card reveal-on-scroll">
+            <div class="pricing-header">
+              <span class="badge badge--primary">Maior Frequência</span>
+              <h3 class="pricing-title">Combo 3x por semana</h3>
+              <span class="pricing-frequency">3 sessões por semana</span>
+              <div class="pricing-amount-group">
+                <span class="pricing-value" data-price="combo3x">R$ 100</span>
+                <span class="pricing-unit">por hora/aula</span>
+              </div>
+              <p class="pricing-description">Treinamento com maior frequência para quem deseja manter uma rotina consistente.</p>
+            </div>
+
+            <ul class="pricing-features">
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>3 sessões semanais presenciais</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Horários fixos reservados na agenda</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Excelente custo-benefício por sessão</span>
+              </li>
+            </ul>
+
+            <button type="button" class="btn btn--primary btn--full" data-whatsapp-msg="combo3x">
+              Quero esse combo
+            </button>
+          </article>
+
+          <!-- Card: Combo 2x por semana -->
+          <article class="pricing-card reveal-on-scroll">
+            <div class="pricing-header">
+              <span class="badge badge--accent">Equilíbrio</span>
+              <h3 class="pricing-title">Combo 2x por semana</h3>
+              <span class="pricing-frequency">2 sessões por semana</span>
+              <div class="pricing-amount-group">
+                <span class="pricing-value" data-price="combo2x">R$ 150</span>
+                <span class="pricing-unit">por hora/aula</span>
+              </div>
+              <p class="pricing-description">Uma frequência equilibrada para encaixar o treinamento na rotina.</p>
+            </div>
+
+            <ul class="pricing-features">
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>2 sessões semanais presenciais</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Ideal para quem tem rotina dinâmica</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Acompanhamento seguro e focado</span>
+              </li>
+            </ul>
+
+            <button type="button" class="btn btn--secondary btn--full" data-whatsapp-msg="combo2x">
+              Quero esse combo
+            </button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         7. PLANOS MENSAIS
+         ====================================================================== -->
+    <section id="planos" class="section section--alt" aria-labelledby="planos-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Planos Mensais</span>
+          <h2 id="planos-heading" class="section-title">Planos mensais com acompanhamento completo</h2>
+          <p class="section-subtitle">Além dos treinos, você conta com acesso ao aplicativo exclusivo da Rafaela para acompanhar sua evolução.</p>
+        </header>
+
+        <div class="monthly-plans-grid">
+          
+          <!-- Plano Performance -->
+          <article class="pricing-card pricing-card--popular reveal-on-scroll">
+            <div class="pricing-badge-wrapper">
+              <span class="badge badge--highlight">Mais acompanhamento</span>
+            </div>
+            
+            <div class="pricing-header">
+              <span class="pricing-frequency">3X POR SEMANA</span>
+              <h3 class="pricing-title">Plano Performance</h3>
+              <div class="pricing-amount-group">
+                <span class="pricing-value" data-price="monthlyPerformance">R$ 1.500</span>
+                <span class="pricing-unit">/ mês</span>
+              </div>
+              <p class="pricing-description">Acompanhamento contínuo e integrado para alcançar consistência e resultados sólidos.</p>
+            </div>
+
+            <ul class="pricing-features">
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>3 treinos por semana</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Acompanhamento personalizado presencial</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Planejamento de treinamento sob medida</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <strong>Acesso ao aplicativo exclusivo</strong>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Acompanhamento da evolução de medidas e cargas</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Orientação durante o período contratado</span>
+              </li>
+            </ul>
+
+            <button type="button" class="btn btn--primary btn--full btn--lg" data-whatsapp-msg="monthlyPerformance">
+              Quero o Plano Performance
+            </button>
+          </article>
+
+          <!-- Plano Equilíbrio -->
+          <article class="pricing-card reveal-on-scroll">
+            <div class="pricing-header">
+              <span class="pricing-frequency">2X POR SEMANA</span>
+              <h3 class="pricing-title">Plano Equilíbrio</h3>
+              <div class="pricing-amount-group">
+                <span class="pricing-value" data-price="monthlyEquilibrium">R$ 1.350</span>
+                <span class="pricing-unit">/ mês</span>
+              </div>
+              <p class="pricing-description">Equilíbrio perfeito entre rotina de compromissos e saúde com suporte tecnológico.</p>
+            </div>
+
+            <ul class="pricing-features">
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>2 treinos por semana</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Acompanhamento personalizado presencial</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Planejamento de treinamento sob medida</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <strong>Acesso ao aplicativo exclusivo</strong>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Acompanhamento da evolução de medidas e cargas</span>
+              </li>
+              <li class="pricing-feature-item">
+                <svg class="pricing-check-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Orientação durante o período contratado</span>
+              </li>
+            </ul>
+
+            <button type="button" class="btn btn--secondary btn--full btn--lg" data-whatsapp-msg="monthlyEquilibrium">
+              Quero o Plano Equilíbrio
+            </button>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         8. DIFERENÇA ENTRE COMBO E PLANO MENSAL
+         ====================================================================== -->
+    <section class="section" aria-labelledby="diferenca-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Comparativo Transparente</span>
+          <h2 id="diferenca-heading" class="section-title">Qual opção combina com você?</h2>
+          <p class="section-subtitle">Entenda a proposta de cada formato para escolher a melhor alternativa para sua rotina.</p>
+        </header>
+
+        <div class="difference-grid">
+          <!-- Opção 1 -->
+          <article class="difference-card reveal-on-scroll">
+            <h3 class="difference-title">Aula avulsa</h3>
+            <p class="difference-desc">Para quem quer flexibilidade.</p>
+          </article>
+
+          <!-- Opção 2 -->
+          <article class="difference-card reveal-on-scroll">
+            <h3 class="difference-title">Combo semanal</h3>
+            <p class="difference-desc">Para quem deseja contratar aulas de acordo com uma frequência definida.</p>
+          </article>
+
+          <!-- Opção 3 -->
+          <article class="difference-card reveal-on-scroll">
+            <h3 class="difference-title">Plano mensal</h3>
+            <p class="difference-desc">Para quem deseja uma experiência mais completa, com acompanhamento e acesso ao aplicativo exclusivo.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         9. APLICATIVO EXCLUSIVO (COM MOCKUP VISUAL DE SMARTPHONE)
+         ====================================================================== -->
+    <section id="aplicativo" class="section app-section" aria-labelledby="app-heading">
+      <div class="container">
+        <div class="app-grid">
+          
+          <!-- Conteúdo Explicativo -->
+          <div class="app-content reveal-on-scroll">
+            <span class="section-tag">Tecnologia &amp; Suporte</span>
+            <h2 id="app-heading" class="app-title">Seu treinamento também acompanha você fora da aula.</h2>
+            <p class="app-text">
+              Nos planos mensais, você conta com acesso ao aplicativo exclusivo para acompanhar seu treinamento e sua evolução.
+            </p>
+
+            <div class="app-features-list">
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="9 11 12 14 22 4"></polyline>
+                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                </svg>
+                <span>Meu treino</span>
+              </div>
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span>Próximo treino</span>
+              </div>
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 9h12M6 15h12M3 12h18"></path>
+                </svg>
+                <span>Exercícios</span>
+              </div>
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <line x1="18" y1="20" x2="18" y2="10"></line>
+                  <line x1="12" y1="20" x2="12" y2="4"></line>
+                  <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>Evolução</span>
+              </div>
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span>Histórico</span>
+              </div>
+              <div class="app-feature-item">
+                <svg class="app-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>Orientações</span>
+              </div>
+            </div>
+
+            <a href="#planos" class="btn btn--accent btn--lg">Conhecer os planos</a>
+          </div>
+
+          <!-- Mockup Visual de Smartphone Fictício -->
+          <div class="phone-mockup-wrapper reveal-on-scroll">
+            <div class="phone-mockup" aria-hidden="true">
+              <div class="phone-mockup__screen">
+                <div class="phone-mockup__island"></div>
+                
+                <div class="phone-mockup__statusbar">
+                  <span>09:41</span>
+                  <span>5G • 100%</span>
+                </div>
+
+                <div class="phone-mockup__header">
+                  <span class="phone-mockup__brand">RAFAELA APP</span>
+                  <span style="font-size: 10px; color: var(--color-accent);">Aluno VIP</span>
+                </div>
+
+                <div class="phone-mockup__content">
+                  <!-- Widget Treino do Dia -->
+                  <div class="phone-widget">
+                    <span class="phone-widget__tag">Meu Treino</span>
+                    <div class="phone-widget__title">Membros Inferiores &amp; Core</div>
+                    <div class="phone-widget__desc">Sessão estruturada com foco em estabilidade</div>
+                  </div>
+
+                  <!-- Widget Próximo Treino -->
+                  <div class="phone-widget">
+                    <span class="phone-widget__tag">Próximo Treino</span>
+                    <div class="phone-widget__title">Quarta-feira • 08:00</div>
+                    <div class="phone-widget__desc">Acompanhamento presencial com Rafaela</div>
+                  </div>
+
+                  <!-- Widget Exercícios do Módulo -->
+                  <div class="phone-widget">
+                    <span class="phone-widget__tag">Exercícios em Destaque</span>
+                    <div class="phone-exercise-list">
+                      <div class="phone-exercise-item">
+                        <span>Agachamento Livre</span>
+                        <span class="phone-exercise-badge">4 x 10</span>
+                      </div>
+                      <div class="phone-exercise-item">
+                        <span>Elevação Pélvica</span>
+                        <span class="phone-exercise-badge">3 x 12</span>
+                      </div>
+                      <div class="phone-exercise-item">
+                        <span>Prancha Isométrica</span>
+                        <span class="phone-exercise-badge">3 x 45s</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Widget Evolução e Histórico -->
+                  <div class="phone-widget" style="padding: 8px 12px;">
+                    <span class="phone-widget__tag">Evolução &amp; Histórico</span>
+                    <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                      <span style="font-size: 10px; color: #a3b8b3;">Frequência mensal:</span>
+                      <strong style="color: #ffffff; font-size: 10px;">100% cumprida</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Abas Inferiores de Navegação Fictícia -->
+                <div class="phone-tabs">
+                  <div class="phone-tab-item is-active">
+                    <svg class="phone-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    <span>Treino</span>
+                  </div>
+                  <div class="phone-tab-item">
+                    <svg class="phone-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
+                    <span>Histórico</span>
+                  </div>
+                  <div class="phone-tab-item">
+                    <svg class="phone-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                    <span>Evolução</span>
+                  </div>
+                  <div class="phone-tab-item">
+                    <svg class="phone-tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    <span>Orientações</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         10. PROGRAMAS ESPECIAIS
+         ====================================================================== -->
+    <section id="programas" class="section" aria-labelledby="programas-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Programas Especiais</span>
+          <h2 id="programas-heading" class="section-title">Programas pensados para diferentes momentos da vida</h2>
+          <p class="section-subtitle">Cada fase requer atenção a nuances anatômicas e metabólicas específicas, com segurança e respeito aos seus limites.</p>
+        </header>
+
+        <div class="programs-grid">
+          <!-- Card 1 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-gestantes.jpg" alt="Mulher grávida realizando alongamento suave e treino com bola suíça" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Gestantes</h3>
+              <p class="program-desc">Treinamento adaptado e acompanhamento individual para todas as fases da gestação.</p>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-melhor-idade.jpg" alt="Homem idoso ativo realizando treino de força funcional na academia" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Melhor Idade</h3>
+              <p class="program-desc">Força, mobilidade, equilíbrio e autonomia funcional com segurança.</p>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-iniciantes.jpg" alt="Programa para Iniciantes na musculação e treinos" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Iniciantes</h3>
+              <p class="program-desc">Comece de forma gradual, estruturada e sem intimidação na academia.</p>
+            </div>
+          </article>
+
+          <!-- Card 4 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-emagrecimento.jpg" alt="Programa focado em Emagrecimento Saudável" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Emagrecimento</h3>
+              <p class="program-desc">Treinamento alinhado a objetivos de queima calórica e composição corporal consistente.</p>
+            </div>
+          </article>
+
+          <!-- Card 5 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-pos-parto.jpg" alt="Programa de Reabilitação e Treino Pós-parto" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Pós-parto</h3>
+              <p class="program-desc">Programa personalizado conforme liberação e acompanhamento dos profissionais de saúde envolvidos.</p>
+            </div>
+          </article>
+
+          <!-- Card 6 -->
+          <article class="program-card reveal-on-scroll">
+            <div class="program-image-wrapper">
+              <img src="assets/images/program-condicionamento.jpg" alt="Programa de Condicionamento Físico e Resistência" class="program-img" loading="lazy" width="600" height="400">
+            </div>
+            <div class="program-body">
+              <h3 class="program-title">Condicionamento</h3>
+              <p class="program-desc">Para quem deseja elevar sua resistência cardiorrespiratória, força muscular e disposição diária.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         11. ALIMENTAÇÃO SAUDÁVEL
+         ====================================================================== -->
+    <section class="section section--alt" aria-labelledby="alimentacao-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Estilo de Vida</span>
+          <h2 id="alimentacao-heading" class="section-title">Treino e hábitos saudáveis caminham juntos.</h2>
+          <p class="section-subtitle">O processo de evolução envolve muito mais do que o treino. Por isso, o site também apresenta conteúdos e orientações gerais sobre hábitos alimentares saudáveis.</p>
+        </header>
+
+        <div class="nutrition-grid">
+          <div class="nutrition-card reveal-on-scroll">
+            <svg class="nutrition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <h3 class="nutrition-title">Organização das refeições</h3>
+          </div>
+
+          <div class="nutrition-card reveal-on-scroll">
+            <svg class="nutrition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path>
+            </svg>
+            <h3 class="nutrition-title">Hidratação</h3>
+          </div>
+
+          <div class="nutrition-card reveal-on-scroll">
+            <svg class="nutrition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+              <line x1="6" y1="1" x2="6" y2="4"></line>
+              <line x1="10" y1="1" x2="10" y2="4"></line>
+              <line x1="14" y1="1" x2="14" y2="4"></line>
+            </svg>
+            <h3 class="nutrition-title">Alimentação equilibrada</h3>
+          </div>
+
+          <div class="nutrition-card reveal-on-scroll">
+            <svg class="nutrition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <h3 class="nutrition-title">Hábitos sustentáveis</h3>
+          </div>
+
+          <div class="nutrition-card reveal-on-scroll">
+            <svg class="nutrition-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <h3 class="nutrition-title">Rotina saudável</h3>
+          </div>
+        </div>
+
+        <div class="notice-card reveal-on-scroll">
+          <svg class="notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div>
+            <strong>Aviso Legal de Nutrição:</strong>
+            Conteúdos de educação alimentar não substituem acompanhamento nutricional individualizado. Prescrição de dietas e planos alimentares personalizados devem ser realizados por nutricionista habilitado.
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         12. COMO FUNCIONA (TIMELINE)
+         ====================================================================== -->
+    <section class="section" aria-labelledby="como-funciona-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Passo a Passo</span>
+          <h2 id="como-funciona-heading" class="section-title">Como funciona o início dos seus treinos</h2>
+          <p class="section-subtitle">Um processo transparente, estruturado e focado nas suas características individuais.</p>
+        </header>
+
+        <div class="timeline-grid">
+          <!-- Etapa 1 -->
+          <div class="timeline-step reveal-on-scroll">
+            <span class="timeline-number">01</span>
+            <h3 class="timeline-title">Converse com a Rafaela</h3>
+            <p class="timeline-desc">Entre em contato e explique seus objetivos.</p>
+          </div>
+
+          <!-- Etapa 2 -->
+          <div class="timeline-step reveal-on-scroll">
+            <span class="timeline-number">02</span>
+            <h3 class="timeline-title">Avaliação</h3>
+            <p class="timeline-desc">Entenda suas necessidades, rotina e nível atual.</p>
+          </div>
+
+          <!-- Etapa 3 -->
+          <div class="timeline-step reveal-on-scroll">
+            <span class="timeline-number">03</span>
+            <h3 class="timeline-title">Planejamento</h3>
+            <p class="timeline-desc">Definição da estratégia de treinamento adequada.</p>
+          </div>
+
+          <!-- Etapa 4 -->
+          <div class="timeline-step reveal-on-scroll">
+            <span class="timeline-number">04</span>
+            <h3 class="timeline-title">Acompanhamento</h3>
+            <p class="timeline-desc">Treinos, ajustes e acompanhamento da evolução.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         13. DEPOIMENTOS (PLACEHOLDERS ESTRUTURADOS)
+         ====================================================================== -->
+    <section class="section section--alt" aria-labelledby="depoimentos-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Depoimentos</span>
+          <h2 id="depoimentos-heading" class="section-title">A experiência de quem já treina</h2>
+          <p class="section-subtitle">Espaço reservado para relatos de alunos e alunas após a autorização e início do projeto real.</p>
+        </header>
+
+        <div class="testimonials-grid">
+          <!-- Card 1 -->
+          <article class="testimonial-card reveal-on-scroll">
+            <blockquote class="testimonial-quote">
+              "[Depoimento de cliente — Este espaço será preenchido com o relato real e autorizado do aluno sobre sua experiência com os treinos da Rafaela.]"
+            </blockquote>
+            <div class="testimonial-author">
+              <span class="testimonial-name">[Nome do cliente]</span>
+              <span class="testimonial-role">[Objetivo/Perfil]</span>
+            </div>
+          </article>
+
+          <!-- Card 2 -->
+          <article class="testimonial-card reveal-on-scroll">
+            <blockquote class="testimonial-quote">
+              "[Depoimento de cliente — Este espaço será preenchido com o relato real e autorizado do aluno sobre sua experiência com os treinos da Rafaela.]"
+            </blockquote>
+            <div class="testimonial-author">
+              <span class="testimonial-name">[Nome do cliente]</span>
+              <span class="testimonial-role">[Objetivo/Perfil]</span>
+            </div>
+          </article>
+
+          <!-- Card 3 -->
+          <article class="testimonial-card reveal-on-scroll">
+            <blockquote class="testimonial-quote">
+              "[Depoimento de cliente — Este espaço será preenchido com o relato real e autorizado do aluno sobre sua experiência com os treinos da Rafaela.]"
+            </blockquote>
+            <div class="testimonial-author">
+              <span class="testimonial-name">[Nome do cliente]</span>
+              <span class="testimonial-role">[Objetivo/Perfil]</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         14. FAQ (ACCORDION ACESSÍVEL)
+         ====================================================================== -->
+    <section id="faq" class="section" aria-labelledby="faq-heading">
+      <div class="container container--narrow">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Tire suas Dúvidas</span>
+          <h2 id="faq-heading" class="section-title">Perguntas Frequentes</h2>
+          <p class="section-subtitle">Respostas objetivas sobre funcionamento, locais de treino, modalidades e contratações.</p>
+        </header>
+
+        <div class="faq-list">
+          <!-- FAQ 1 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q1" aria-expanded="false" aria-controls="faq-a1">
+              <span>Como funciona a aula experimental?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a1" role="region" aria-labelledby="faq-q1" hidden>
+              <p>A aula experimental é uma oportunidade para conhecer a metodologia da Rafaela, alinhar suas expectativas, realizar uma avaliação inicial de movimento e experimentar o formato do treinamento personalizado. Entre em contato pelo WhatsApp para agendar.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q2" aria-expanded="false" aria-controls="faq-a2">
+              <span>Onde são realizados os treinos?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a2" role="region" aria-labelledby="faq-q2" hidden>
+              <p>Os treinos presenciais podem ser realizados em condomínios, parques, academias parceiras ou residências, conforme a disponibilidade de agenda e alinhamento prévio com a profissional.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q3" aria-expanded="false" aria-controls="faq-a3">
+              <span>Posso fazer apenas uma aula?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a3" role="region" aria-labelledby="faq-q3" hidden>
+              <p>Sim, existe a opção de aula avulsa para quem busca flexibilidade de agenda ou deseja um acompanhamento pontual para ajustes de biomecânica e orientações específicas.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q4" aria-expanded="false" aria-controls="faq-a4">
+              <span>Existe treinamento para gestantes?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a4" role="region" aria-labelledby="faq-q4" hidden>
+              <p>Sim, desde que observadas as orientações e liberações necessárias dos profissionais de saúde responsáveis pelo acompanhamento pré-natal. Os exercícios são devidamente adaptados para cada trimestre da gestação.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q5" aria-expanded="false" aria-controls="faq-a5">
+              <span>Existe treinamento para melhor idade?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a5" role="region" aria-labelledby="faq-q5" hidden>
+              <p>Sim. Os exercícios são adaptados às necessidades e capacidades individuais, com ênfase na manutenção e ganho de força, mobilidade articular, equilíbrio e autonomia para as tarefas diárias.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q6" aria-expanded="false" aria-controls="faq-a6">
+              <span>O plano mensal inclui aplicativo?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a6" role="region" aria-labelledby="faq-q6" hidden>
+              <p>Sim. Os planos mensais apresentados nesta página incluem acesso ao aplicativo exclusivo, permitindo que você visualize seu cronograma, exercícios, evolução e histórico de treinamento.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 7 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q7" aria-expanded="false" aria-controls="faq-a7">
+              <span>Posso treinar duas vezes por semana?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a7" role="region" aria-labelledby="faq-q7" hidden>
+              <p>Sim. Existe o plano mensal de 2 vezes por semana (Plano Equilíbrio) e também a opção de contratação de combo com 2 sessões por semana.</p>
+            </div>
+          </div>
+
+          <!-- FAQ 8 -->
+          <div class="faq-item reveal-on-scroll">
+            <button type="button" class="faq-question" id="faq-q8" aria-expanded="false" aria-controls="faq-a8">
+              <span>Vocês trabalham com alimentação?</span>
+              <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="faq-answer" id="faq-a8" role="region" aria-labelledby="faq-q8" hidden>
+              <p>O site apresenta orientações gerais sobre hábitos saudáveis e estilo de vida. Prescrição nutricional individual e cálculo de dietas devem ser obrigatoriamente realizados por nutricionista habilitado.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         15. CTA FINAL
+         ====================================================================== -->
+    <section class="final-cta-section" aria-labelledby="final-cta-heading">
+      <div class="container">
+        <div class="final-cta-content reveal-on-scroll">
+          <h2 id="final-cta-heading" class="final-cta-title">Pronto para começar?</h2>
+          <p class="final-cta-text">
+            Conte para a Rafaela qual é o seu objetivo e encontre a opção de treinamento que melhor se encaixa na sua rotina.
+          </p>
+          <div class="final-cta-buttons">
+            <button type="button" class="btn btn--whatsapp btn--lg" data-whatsapp-msg="finalCta">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+              </svg>
+              Falar com a Rafaela
+            </button>
+            <a href="#planos" class="btn btn--outline-white btn--lg">Ver planos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         ESTRUTURA PARA FORMULÁRIO FUTURO (PREPARADA PARA BACKEND/API)
+         ====================================================================== -->
+    <section id="contato" class="future-contact-section" aria-labelledby="form-heading">
+      <div class="container">
+        <header class="section-header reveal-on-scroll">
+          <span class="section-tag">Contato &amp; Pré-Agendamento</span>
+          <h2 id="form-heading" class="section-title">Envie uma mensagem</h2>
+          <p class="section-subtitle">Você também pode preencher seus dados preliminares para agilizar o contato.</p>
+        </header>
+
+        <div class="future-form-wrapper reveal-on-scroll">
+          <form id="lead-form" onsubmit="window.handleLeadFormSubmit(event);">
+            <div class="future-form-grid">
+              <div class="form-group">
+                <label for="lead-name" class="form-label">Nome completo</label>
+                <input type="text" id="lead-name" name="name" class="form-input" placeholder="Seu nome" required>
+              </div>
+
+              <div class="form-group">
+                <label for="lead-phone" class="form-label">WhatsApp com DDD</label>
+                <input type="tel" id="lead-phone" name="phone" class="form-input" placeholder="(11) 99999-9999" required>
+              </div>
+
+              <div class="form-group">
+                <label for="lead-goal" class="form-label">Principal Objetivo</label>
+                <select id="lead-goal" name="goal" class="form-select">
+                  <option value="Emagrecimento">Emagrecimento</option>
+                  <option value="Condicionamento físico">Condicionamento físico</option>
+                  <option value="Hipertrofia">Hipertrofia</option>
+                  <option value="Saúde e Qualidade de vida">Saúde e Qualidade de vida</option>
+                  <option value="Gestante / Pós-parto">Gestante / Pós-parto</option>
+                  <option value="Melhor Idade">Melhor Idade</option>
+                  <option value="Outro objetivo">Outro objetivo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="lead-frequency" class="form-label">Frequência Desejada</label>
+                <select id="lead-frequency" name="frequency" class="form-select">
+                  <option value="Plano Mensal (3x por semana)">Plano Mensal (3x por semana)</option>
+                  <option value="Plano Mensal (2x por semana)">Plano Mensal (2x por semana)</option>
+                  <option value="Combo Semanal (3x por semana)">Combo Semanal (3x por semana)</option>
+                  <option value="Combo Semanal (2x por semana)">Combo Semanal (2x por semana)</option>
+                  <option value="Aula Avulsa">Aula Avulsa</option>
+                  <option value="Ainda estou em dúvida">Ainda estou em dúvida</option>
+                </select>
+              </div>
+
+              <div class="form-group future-form-full">
+                <label for="lead-message" class="form-label">Mensagem (opcional)</label>
+                <textarea id="lead-message" name="message" class="form-textarea" rows="3" placeholder="Conte um pouco sobre sua rotina ou melhores horários para treinar..."></textarea>
+              </div>
+
+              <div class="future-form-full" style="margin-top: var(--space-2);">
+                <button type="submit" class="btn btn--whatsapp btn--full btn--lg">
+                  <svg class="btn-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+                  </svg>
+                  Enviar dados para o WhatsApp
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ======================================================================
+       16. FOOTER
+       ====================================================================== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+        
+        <!-- Coluna 1: Marca & Posicionamento -->
+        <div class="footer-brand">
+          <div class="site-logo">
+            <span class="site-logo__name">RAFAELA</span>
+            <span class="site-logo__sub">PERSONAL TRAINER</span>
+          </div>
+          <p class="footer-brand-desc">
+            Treinamento personalizado focado em saúde, força, consistência e longevidade. Uma rotina que você consegue manter.
+          </p>
+        </div>
+
+        <!-- Coluna 2: Navegação Rápida -->
+        <div>
+          <h4 class="footer-heading">Navegação</h4>
+          <ul class="footer-nav-list">
+            <li><a href="#inicio" class="footer-nav-link">Início</a></li>
+            <li><a href="#sobre" class="footer-nav-link">Sobre a Rafaela</a></li>
+            <li><a href="#servicos" class="footer-nav-link">Serviços</a></li>
+            <li><a href="#combos" class="footer-nav-link">Combos de Treino</a></li>
+            <li><a href="#planos" class="footer-nav-link">Planos Mensais</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 3: Modalidades -->
+        <div>
+          <h4 class="footer-heading">Programas</h4>
+          <ul class="footer-nav-list">
+            <li><a href="#programas" class="footer-nav-link">Gestantes</a></li>
+            <li><a href="#programas" class="footer-nav-link">Melhor Idade</a></li>
+            <li><a href="#programas" class="footer-nav-link">Iniciantes</a></li>
+            <li><a href="#aplicativo" class="footer-nav-link">Aplicativo Exclusivo</a></li>
+            <li><a href="#faq" class="footer-nav-link">Perguntas Frequentes</a></li>
+          </ul>
+        </div>
+
+        <!-- Coluna 4: Contato & Redes -->
+        <div>
+          <h4 class="footer-heading">Atendimento</h4>
+          <ul class="footer-nav-list">
+            <li>
+              <span>WhatsApp:</span><br>
+              <a href="javascript:void(0)" class="footer-nav-link" data-whatsapp-msg="default" data-config-phone>(11) 99999-9999</a>
+            </li>
+            <li style="margin-top: var(--space-2);">
+              <span>Instagram:</span><br>
+              <a href="#" class="footer-nav-link" target="_blank" rel="noopener noreferrer" data-config-instagram>@rafaelapersonal</a>
+            </li>
+            <li style="margin-top: var(--space-2);">
+              <span>E-mail:</span><br>
+              <a href="#" class="footer-nav-link" data-config-email>contato@rafaelapersonal.com.br</a>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Aviso Regulatório & Ético -->
+      <div class="footer-disclaimer-bar">
+        <p>
+          <strong>Aviso Ético e Legal:</strong> As informações contidas neste site têm caráter informativo sobre treinamento físico e estilo de vida saudável. Não substituem diagnóstico ou acompanhamento de profissionais médicos e nutricionistas habilitados. Todos os planos e programas de exercícios devem respeitar as diretrizes de segurança e liberações individuais de saúde.
+        </p>
+      </div>
+
+      <!-- Barra de Copyright -->
+      <div class="footer-bottom">
+        <p>© <span id="current-year">2026</span> Rafaela Personal Trainer. Todos os direitos reservados.</p>
+        <p>Design &amp; Arquitetura Técnica de Alto Padrão.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ======================================================================
+       BOTÃO FLUTUANTE DE WHATSAPP
+       ====================================================================== -->
+  <a href="javascript:void(0)" class="whatsapp-floating" data-whatsapp-msg="default" aria-label="Falar com a Rafaela no WhatsApp">
+    <svg class="whatsapp-floating__icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.299.144.347.491 1.199.534 1.286.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.073.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.203c.043.072.043.419-.101.824z"/>
+    </svg>
+    <span class="whatsapp-floating__text">Falar no WhatsApp</span>
+  </a>
+
+  <!-- ======================================================================
+       BOTÃO VOLTAR AO TOPO
+       ====================================================================== -->
+  <button type="button" class="back-to-top" aria-label="Voltar ao topo da página">
+    <svg class="back-to-top__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </button>
+
+</body>
+</html>

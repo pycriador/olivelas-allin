@@ -1,0 +1,110 @@
+@import "tailwindcss";
+
+@variant dark (&:where(.dark, .dark *));
+
+:root {
+  --theme-bg-canvas: #f8fafc;
+  --theme-bg-surface: #ffffff;
+  --theme-bg-subtle: #f1f5f9;
+  --theme-border: #e2e8f0;
+  --theme-primary: #4f46e5;
+  --theme-primary-hover: #4338ca;
+  --theme-primary-light: #eef2ff;
+  --theme-primary-text: #4338ca;
+  --theme-text-main: #0f172a;
+  --theme-text-muted: #64748b;
+  --theme-chart-1: #4f46e5;
+  --theme-chart-2: #06b6d4;
+  --theme-chart-3: #10b981;
+  --theme-chart-4: #f59e0b;
+  --theme-chart-5: #ec4899;
+}
+
+.dark {
+  --theme-bg-canvas: #0b1120;
+  --theme-bg-surface: #0f172a;
+  --theme-bg-subtle: #1e293b;
+  --theme-border: #334155;
+  --theme-primary: #6366f1;
+  --theme-primary-hover: #818cf8;
+  --theme-primary-light: #1e1b4b;
+  --theme-primary-text: #a5b4fc;
+  --theme-text-main: #f8fafc;
+  --theme-text-muted: #94a3b8;
+  --theme-chart-1: #6366f1;
+  --theme-chart-2: #38bdf8;
+  --theme-chart-3: #34d399;
+  --theme-chart-4: #fbbf24;
+  --theme-chart-5: #f472b6;
+}
+
+@theme {
+  --color-theme-canvas: var(--theme-bg-canvas);
+  --color-theme-surface: var(--theme-bg-surface);
+  --color-theme-subtle: var(--theme-bg-subtle);
+  --color-theme-border: var(--theme-border);
+  --color-theme-primary: var(--theme-primary);
+  --color-theme-primary-hover: var(--theme-primary-hover);
+  --color-theme-primary-light: var(--theme-primary-light);
+  --color-theme-primary-text: var(--theme-primary-text);
+  --color-theme-text-main: var(--theme-text-main);
+  --color-theme-text-muted: var(--theme-text-muted);
+}
+
+@layer base {
+  html, body {
+    @apply font-sans antialiased;
+    background-color: var(--theme-bg-canvas, #f8fafc);
+    color: var(--theme-text-main, #0f172a);
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+}
+
+/* Theme Helper Classes to guarantee dynamic variables apply across all elements */
+.bg-theme-canvas {
+  background-color: var(--theme-bg-canvas) !important;
+}
+
+.bg-theme-surface {
+  background-color: var(--theme-bg-surface) !important;
+}
+
+.bg-theme-subtle {
+  background-color: var(--theme-bg-subtle) !important;
+}
+
+.border-theme {
+  border-color: var(--theme-border) !important;
+}
+
+.bg-theme-primary {
+  background-color: var(--theme-primary) !important;
+}
+
+.hover\:bg-theme-primary-hover:hover {
+  background-color: var(--theme-primary-hover) !important;
+}
+
+.bg-theme-primary-light {
+  background-color: var(--theme-primary-light) !important;
+}
+
+.text-theme-primary {
+  color: var(--theme-primary) !important;
+}
+
+.text-theme-primary-text {
+  color: var(--theme-primary-text) !important;
+}
+
+.text-theme-main {
+  color: var(--theme-text-main) !important;
+}
+
+.text-theme-muted {
+  color: var(--theme-text-muted) !important;
+}
+
+.ring-theme-primary:focus-visible {
+  --tw-ring-color: var(--theme-primary) !important;
+}

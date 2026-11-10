@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Como Funciona o Sistema &amp; Manual do Usuário | PB&amp;Cia</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Guia completo de funcionamento, arquitetura, busca inteligente, pipeline de artes, aprovação de imagens, fluxo de pedidos e manual passo a passo do catálogo PB&Cia." />
+  <meta name="author" content="PB&Cia" />
+  <meta name="theme-color" content="#e94560" />
+  <link rel="canonical" href="https://pbecia.com.br/como-funciona.html" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="PB&Cia" />
+  <meta property="og:title" content="Como Funciona o Sistema & Manual do Usuário | PB&Cia" />
+  <meta property="og:description" content="Guia oficial de funcionamento do catálogo digital PB&Cia: busca inteligente, criação e aprovação de artes, cadastro simplificado e manual passo a passo." />
+  <meta property="og:image" content="assets/images/logo.png" />
+  <meta property="og:url" content="https://pbecia.com.br/como-funciona.html" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/images/apple-touch-icon.png" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+  <link rel="stylesheet" href="assets/css/docs.css" />
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="docs-page">
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <a href="index.html" class="header__brand" aria-label="Ir para o Catálogo PB&Cia">
+        <img class="header__logo" src="assets/images/logo.png" alt="Logo PB&Cia" />
+        <span class="header__name">PB&amp;Cia</span>
+      </a>
+
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <span style="font-size: var(--font-size-sm); font-weight: 600; color: var(--text-secondary); display: inline-flex; align-items: center; gap: 6px;">
+          <i data-lucide="book-open" aria-hidden="true" style="color: var(--color-secondary);"></i>
+          Guia &amp; Manual do Sistema
+        </span>
+      </div>
+
+      <nav class="header__actions" aria-label="Navegação da documentação">
+        <a href="index.html" class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px;">
+          <i data-lucide="store" aria-hidden="true"></i>
+          <span>Ver Catálogo</span>
+        </a>
+        <button class="icon-btn theme-toggle" type="button" aria-label="Alternar modo escuro" title="Alternar tema">
+          <i data-lucide="moon" aria-hidden="true"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main role="main">
+    <!-- Hero Section -->
+    <section class="docs-hero">
+      <div class="container">
+        <span class="docs-hero__badge">
+          <i data-lucide="sparkles" aria-hidden="true"></i>
+          Base de Conhecimento Pública &amp; Manual
+        </span>
+        <h1 class="docs-hero__title">Como Funciona o Catálogo Digital PB&amp;Cia</h1>
+        <p class="docs-hero__subtitle">
+          Descubra todos os detalhes técnicos e operacionais: como funciona a busca inteligente, o pipeline de criação e aprovação de artes, a gestão simplificada de pedidos no WhatsApp e o manual passo a passo do usuário.
+        </p>
+
+        <!-- Quick navigation pills -->
+        <nav class="docs-nav-pills" aria-label="Atalhos do guia">
+          <a href="#arquitetura" class="docs-nav-pill"><i data-lucide="cpu"></i> Arquitetura</a>
+          <a href="#busca" class="docs-nav-pill"><i data-lucide="search"></i> Busca Inteligente</a>
+          <a href="#artes" class="docs-nav-pill"><i data-lucide="image"></i> Criação de Artes</a>
+          <a href="#aprovacao" class="docs-nav-pill"><i data-lucide="shield-check"></i> Aprovação de Imagens</a>
+          <a href="#pedidos" class="docs-nav-pill"><i data-lucide="users"></i> Cadastro &amp; Pedidos</a>
+          <a href="#manual" class="docs-nav-pill"><i data-lucide="compass"></i> Manual Passo a Passo</a>
+          <a href="#simulador" class="docs-nav-pill"><i data-lucide="play-circle"></i> Simulador Interativo</a>
+          <a href="#faq" class="docs-nav-pill"><i data-lucide="help-circle"></i> Dúvidas Frequentes</a>
+        </nav>
+      </div>
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="container docs-layout">
+
+      <!-- Table of Contents Sidebar -->
+      <aside class="docs-toc" aria-label="Índice da página">
+        <div class="docs-toc__title">
+          <i data-lucide="list"></i> Tópicos do Guia
+        </div>
+        <nav class="docs-toc__list">
+          <a href="#arquitetura" class="docs-toc__link">1. Visão Geral &amp; Arquitetura</a>
+          <a href="#busca" class="docs-toc__link">2. Evidências de Busca</a>
+          <a href="#artes" class="docs-toc__link">3. Criação de Artes</a>
+          <a href="#aprovacao" class="docs-toc__link">4. Aprovação &amp; Curadoria</a>
+          <a href="#pedidos" class="docs-toc__link">5. Cadastro &amp; Pedidos</a>
+          <a href="#manual" class="docs-toc__link">6. Manual Completo</a>
+          <a href="#simulador" class="docs-toc__link">7. Simulador Interativo</a>
+          <a href="#faq" class="docs-toc__link">8. Dúvidas Frequentes (FAQ)</a>
+        </nav>
+      </aside>
+
+      <!-- Main Documentation Content -->
+      <div class="docs-content">
+
+        <!-- 1. Visão Geral & Arquitetura -->
+        <section id="arquitetura" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="cpu"></i></div>
+            <h2 class="docs-section__title">1. Visão Geral &amp; Arquitetura do Sistema</h2>
+          </header>
+          <p class="docs-section__lead">
+            O PB&amp;Cia foi desenvolvido sob a filosofia <strong>Jamstack / Zero-Backend</strong>, combinando alta velocidade, privacidade, resiliência offline (PWA) e checkout assistido diretamente no WhatsApp de vendas.
+          </p>
+
+          <div class="docs-grid">
+            <div class="docs-card">
+              <div class="docs-card__icon"><i data-lucide="zap"></i></div>
+              <h3 class="docs-card__title">Zero-Backend &amp; Desempenho</h3>
+              <p class="docs-card__text">Carregamento em 0ms. Todo o catálogo de 62 produtos reside em um arquivo estático estruturado, sem dependência de banco de dados relacional ou servidores lentos.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon"><i data-lucide="wifi-off"></i></div>
+              <h3 class="docs-card__title">PWA &amp; Funcionamento Offline</h3>
+              <p class="docs-card__text">Através do Service Worker com cache híbrido, representantes de vendas e clientes conseguem consultar a tabela mesmo em cozinhas e depósitos sem internet.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon"><i data-lucide="lock"></i></div>
+              <h3 class="docs-card__title">Privacidade &amp; LocalStorage</h3>
+              <p class="docs-card__text">Carrinho, produtos favoritos e modo escuro são persistidos no navegador do usuário sem necessidade de senhas ou cadastros burocráticos.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon"><i data-lucide="message-circle"></i></div>
+              <h3 class="docs-card__title">Checkout Conversacional</h3>
+              <p class="docs-card__text">Em vez de formulários complexos de e-commerce, o pedido é formatado automaticamente em mensagem limpa de WhatsApp para validação imediata com o vendedor.</p>
+            </div>
+          </div>
+
+          <div class="docs-alert docs-alert--info">
+            <i data-lucide="info" class="docs-alert__icon"></i>
+            <div>
+              <strong>Design Nativo:</strong> O projeto utiliza JavaScript modular moderno (ES Modules) e CSS puro baseado em variáveis customizadas, sem frameworks pesados como React ou Bootstrap, garantindo leveza absoluta.
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Evidências de Busca -->
+        <section id="busca" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="search"></i></div>
+            <h2 class="docs-section__title">2. Evidências &amp; Mecanismo de Busca Inteligente</h2>
+          </header>
+          <p class="docs-section__lead">
+            O mecanismo de busca em tempo real foi projetado para tolerar digitação rápida, variações ortográficas com ou sem acentuação e buscas multifatoriais por código, nome e categoria.
+          </p>
+
+          <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-bottom: var(--space-3);">Como o Motor de Busca Funciona</h3>
+          <ul style="list-style: disc; padding-left: var(--space-6); color: var(--text-secondary); line-height: 1.8; margin-bottom: var(--space-4);">
+            <li><strong>Normalização Unicode NFD:</strong> Remove automaticamente acentos gráficos e diacríticos. Uma busca por <code>"pao"</code>, <code>"pão"</code> ou <code>"PAO"</code> encontra os mesmos resultados com precisão de 100%.</li>
+            <li><strong>Busca por Código de 5 Dígitos:</strong> Permite que clientes recorrentes digitem códigos de tabela como <code>"00006"</code> ou <code>"00085"</code> e localizem o item instantaneamente.</li>
+            <li><strong>Busca por Categoria Embutida:</strong> Digitar <code>"croissant"</code>, <code>"salgado"</code> ou <code>"queijo"</code> localiza tanto itens que possuem essa palavra no nome quanto na categoria pai.</li>
+            <li><strong>Debounce de 250ms:</strong> Garante digitação suave sem travamentos ou sobrecarga de renderização no navegador do celular.</li>
+          </ul>
+
+          <h3 style="font-size: var(--font-size-lg); font-weight: 700; margin-top: var(--space-6); margin-bottom: var(--space-3);">Tabela de Evidências de Busca Real</h3>
+          <div class="docs-table-wrapper">
+            <table class="docs-table">
+              <thead>
+                <tr>
+                  <th>Termo Digitado</th>
+                  <th>Forma Normalizada</th>
+                  <th>Critério Atendido</th>
+                  <th>Exemplos de Itens Retornados</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>pao de queijo</code></td>
+                  <td><code>pao de queijo</code></td>
+                  <td>Nome e Categoria</td>
+                  <td>Pão de Queijo 15g, 25g, 40g, 70g, 90g e Gourmet</td>
+                </tr>
+                <tr>
+                  <td><code>00039</code></td>
+                  <td><code>00039</code></td>
+                  <td>Código Exato</td>
+                  <td>Pão de Batata Frango c/ Requeijão (130 g)</td>
+                </tr>
+                <tr>
+                  <td><code>folhada</code></td>
+                  <td><code>folhada</code></td>
+                  <td>Categoria / Nome</td>
+                  <td>Pizza Folhada 4 Queijos, Calabresa, Frango c/ Requeijão</td>
+                </tr>
+                <tr>
+                  <td><code>kibe</code></td>
+                  <td><code>kibe</code></td>
+                  <td>Variação Fonética</td>
+                  <td>Kibe Frito com Requeijão, Kibe Tradicional, Mini Kibe</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- 3. Criação de Artes & Ingestão Visual -->
+        <section id="artes" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="image"></i></div>
+            <h2 class="docs-section__title">3. Criação de Artes &amp; Ingestão Visual</h2>
+          </header>
+          <p class="docs-section__lead">
+            Para garantir uma apresentação visual profissional sem a necessidade de sessões de fotos de estúdio custosas, o sistema implementa um pipeline de automação para busca, processamento e download de fotos em alta qualidade.
+          </p>
+
+          <div class="docs-steps">
+            <div class="docs-step">
+              <div class="docs-step__number">1</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Mapeamento Semântico em Inglês (<code>tools/img-terms.mjs</code>)</h4>
+                <p class="docs-step__desc">
+                  Como repositórios de imagens abertas (Openverse, Flickr, Wikimedia) possuem maior cobertura em inglês, cada produto possui uma chave mapeada como <code>pao-de-batata|00085 -> "potato bread cheese"</code> ou <code>salgados-fritos|00048 -> "coxinha chicken"</code>.
+                </p>
+                <span class="docs-step__badge"><i data-lucide="code"></i> tools/img-terms.mjs</span>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">2</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Pipeline CLI Autônomo (<code>tools/fetch-images.mjs</code>)</h4>
+                <p class="docs-step__desc">
+                  O script Node.js consulta a API do Openverse, respeitando rate limits de 1.1s por chamada, filtra apenas licenças permitidas e baixa os arquivos brutos para o diretório <code>assets/images/products/</code>.
+                </p>
+                <span class="docs-step__badge"><i data-lucide="terminal"></i> tools/fetch-images.mjs</span>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">3</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Sistema de Fallback Resiliente em Cascata</h4>
+                <p class="docs-step__desc">
+                  Se a imagem de um produto não puder ser baixada ou falhar durante a navegação, o sistema ativa imediatamente o fallback para o arquivo WebP ultra-leve (<code>assets/images/placeholder.webp</code>) ou o Logo PB&amp;Cia, garantindo que o card nunca fique com layout quebrado.
+                </p>
+                <span class="docs-step__badge"><i data-lucide="shield"></i> img.onerror Safe Handling</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Aprovação de Artes & Curadoria -->
+        <section id="aprovacao" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="shield-check"></i></div>
+            <h2 class="docs-section__title">4. Aprovação de Artes &amp; Curadoria de Qualidade</h2>
+          </header>
+          <p class="docs-section__lead">
+            Toda imagem incorporada ao catálogo passa por 4 camadas obrigatórias de aprovação automatizada e conformidade jurídica.
+          </p>
+
+          <div class="docs-grid">
+            <div class="docs-card">
+              <div class="docs-card__icon" style="color: var(--color-success);"><i data-lucide="check-circle-2"></i></div>
+              <h3 class="docs-card__title">1. Licenças Comerciais Estritas</h3>
+              <p class="docs-card__text">São aceitas unicamente licenças Creative Commons que autorizam uso comercial: <code>CC0</code>, <code>PDM</code>, <code>BY</code>, <code>BY-SA</code> e <code>BY-ND</code>. Imagens com a cláusula <code>-nc</code> (Não Comercial) são descartadas automaticamente.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon" style="color: var(--color-secondary);"><i data-lucide="award"></i></div>
+              <h3 class="docs-card__title">2. Ranqueamento por Resolução &amp; Proporção</h3>
+              <p class="docs-card__text">Imagens com resolução $\ge 1600\text{px}$ recebem pontuação máxima (+30). Imagens na proporção horizontal (landscape) ou quadrada recebem bônus para encaixe perfeito nos cards.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon" style="color: var(--color-accent);"><i data-lucide="binary"></i></div>
+              <h3 class="docs-card__title">3. Validação Binária (Magic Numbers)</h3>
+              <p class="docs-card__text">Os primeiros bytes de cada arquivo baixado são inspecionados no cabeçalho binário (JPG <code>FF D8 FF</code>, PNG <code>89 50 4E 47</code>, WEBP <code>RIFF...WEBP</code>) para prevenir arquivos corrompidos ou HTMLs falsos.</p>
+            </div>
+
+            <div class="docs-card">
+              <div class="docs-card__icon" style="color: var(--color-warning);"><i data-lucide="file-text"></i></div>
+              <h3 class="docs-card__title">4. Registro Legal de Atribuição</h3>
+              <p class="docs-card__text">O pipeline gera e mantém o arquivo <code>CREDITOS.md</code> registrando a fonte e os autores originais, garantindo 100% de conformidade com a legislação de direitos autorais.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Cadastro & Pedidos -->
+        <section id="pedidos" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="users"></i></div>
+            <h2 class="docs-section__title">5. Cadastro de Clientes, Usuários &amp; Pedidos</h2>
+          </header>
+          <p class="docs-section__lead">
+            O PB&amp;Cia elimina a maior causa de abandono de compras no atacado e foodservice: formulários extensos de cadastro e login obrigatório.
+          </p>
+
+          <div class="docs-grid">
+            <div class="docs-card">
+              <h3 class="docs-card__title"><i data-lucide="user-check" style="color: var(--color-success); margin-right: 6px;"></i> Sem Fricção de Cadastro</h3>
+              <p class="docs-card__text">O cliente navega, monta seu carrinho e favorita produtos sem precisar preencher dados pessoais ou criar senhas. A identificação ocorre diretamente pelo número de WhatsApp do cliente ao enviar o pedido.</p>
+            </div>
+
+            <div class="docs-card">
+              <h3 class="docs-card__title"><i data-lucide="building-2" style="color: var(--color-secondary); margin-right: 6px;"></i> Atendimento B2B &amp; B2C</h3>
+              <p class="docs-card__text">Padarias, lanchonetes e revendedores combinam condições de entrega, faturamento no boleto ou Pix diretamente com o atendente da PB&amp;Cia na conversa do WhatsApp.</p>
+            </div>
+
+            <div class="docs-card">
+              <h3 class="docs-card__title"><i data-lucide="heart" style="color: var(--color-danger); margin-right: 6px;"></i> Resiliência a Itens Antigos</h3>
+              <p class="docs-card__text">Se um produto previamente favoritado pelo cliente for descontinuado da tabela de preços, o sistema o sinaliza elegantemente como "Produto indisponível" com opção de desmarcar sem travar a interface.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. Manual Completo Passo a Passo -->
+        <section id="manual" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="compass"></i></div>
+            <h2 class="docs-section__title">6. Manual Completo do Usuário (Passo a Passo)</h2>
+          </header>
+          <p class="docs-section__lead">
+            Siga as instruções abaixo para aproveitar ao máximo todos os recursos do catálogo digital PB&amp;Cia no celular ou computador.
+          </p>
+
+          <div class="docs-steps">
+            <div class="docs-step">
+              <div class="docs-step__number">1</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Navegando pelas 16 Categorias</h4>
+                <p class="docs-step__desc">
+                  No computador, selecione qualquer categoria na barra lateral esquerda (Pão de Batata, Croissant, Salgados Fritos, etc.). No celular, toque no botão <strong>"Categorias"</strong> na barra superior para abrir o menu deslizante.
+                </p>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">2</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Filtrando por Preço Máximo e Ordenação</h4>
+                <p class="docs-step__desc">
+                  Utilize o slider de preço na barra de ferramentas para exibir apenas produtos dentro do seu orçamento (ex: "até R$ 45,00"). Use o menu seletor para ordenar por Mais Baratos, Mais Caros, A-Z ou Z-A.
+                </p>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">3</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Visualizando Detalhes e Ficha Técnica</h4>
+                <p class="docs-step__desc">
+                  Toque sobre qualquer cartão para abrir o modal com o peso unitário em gramas, a quantidade exata de unidades por pacote e o botão de compartilhar via link direto (<code>?p=CODIGO</code>).
+                </p>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">4</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Marcando Produtos Favoritos</h4>
+                <p class="docs-step__desc">
+                  Toque no ícone de coração em qualquer produto para salvá-lo. Toque no coração do cabeçalho para ver exclusivamente a sua lista de itens favoritos salvos.
+                </p>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">5</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Gerenciando o Carrinho de Compras</h4>
+                <p class="docs-step__desc">
+                  Toque no botão de carrinho do cartão para adicionar 1 pacote. Abra a gaveta lateral do carrinho para aumentar ou diminuir as quantidades (+ / -) e acompanhar o valor total estimado em tempo real.
+                </p>
+              </div>
+            </div>
+
+            <div class="docs-step">
+              <div class="docs-step__number">6</div>
+              <div class="docs-step__content">
+                <h4 class="docs-step__title">Finalizando o Pedido no WhatsApp</h4>
+                <p class="docs-step__desc">
+                  Ao clicar em <strong>"Finalizar Pedido"</strong>, seu aplicativo do WhatsApp será aberto automaticamente com a mensagem estruturada pronta contendo itens, quantidades e valor total para envio à central da PB&amp;Cia.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Simulador Interativo -->
+        <section id="simulador" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="play-circle"></i></div>
+            <h2 class="docs-section__title">7. Simuladores Interativos em Tempo Real</h2>
+          </header>
+          <p class="docs-section__lead">
+            Teste interativamente os dois principais motores da aplicação: o normalizador de buscas e o gerador de mensagens do WhatsApp.
+          </p>
+
+          <!-- Search Simulator -->
+          <div class="docs-sandbox">
+            <h3 class="docs-sandbox__title"><i data-lucide="search"></i> Simulador 1: Motor de Busca Normalizada (NFD)</h3>
+            <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-bottom: var(--space-3);">
+              Digite abaixo com ou sem acentos (ex: <code>"pao"</code>, <code>"pão de queijo"</code>, <code>"00006"</code>, <code>"croissant"</code>) e veja como a busca decompõe a string e localiza os produtos no catálogo real:
+            </p>
+            <div class="docs-sandbox__controls">
+              <input type="text" id="sim-search-input" class="docs-sandbox__input" placeholder="Digite um termo ou código..." value="pao" />
+              <span id="sim-search-count" style="align-self: center; font-size: var(--font-size-xs); font-weight: 700; color: var(--color-secondary);">6 encontrados</span>
+            </div>
+            <div id="sim-search-output" class="docs-sandbox__output">Processando busca...</div>
+          </div>
+
+          <!-- Order Message Simulator -->
+          <div class="docs-sandbox" style="margin-top: var(--space-8);">
+            <h3 class="docs-sandbox__title"><i data-lucide="message-square"></i> Simulador 2: Formatador de Mensagens do WhatsApp</h3>
+            <p style="font-size: var(--font-size-sm); color: var(--text-secondary); margin-bottom: var(--space-3);">
+              Adicione produtos de teste e veja a mensagem de pedido gerada dinamicamente:
+            </p>
+            <div class="docs-sandbox__controls">
+              <select id="sim-order-select" class="select-control" style="flex: 2; min-width: 200px;"></select>
+              <input type="number" id="sim-order-qty" class="docs-sandbox__input" style="flex: 0 0 80px;" min="1" value="1" />
+              <button id="sim-order-add" class="btn btn-primary btn-sm" type="button"><i data-lucide="plus"></i> Adicionar</button>
+              <button id="sim-order-clear" class="btn btn-outline btn-sm" type="button">Limpar</button>
+            </div>
+            <div id="sim-order-output" class="docs-sandbox__output">Gerando prévia da mensagem...</div>
+            <div style="margin-top: var(--space-3); display: flex; gap: var(--space-3); flex-wrap: wrap;">
+              <button id="sim-order-copy" class="btn btn-outline btn-sm" type="button"><i data-lucide="copy"></i> Copiar Mensagem</button>
+              <a id="sim-order-whatsapp" href="#" target="_blank" rel="noopener noreferrer" class="btn btn-success btn-sm" style="display: none;">
+                <i data-lucide="message-circle"></i> Testar no WhatsApp Real
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. FAQ Accordion -->
+        <section id="faq" class="docs-section">
+          <header class="docs-section__header">
+            <div class="docs-section__icon"><i data-lucide="help-circle"></i></div>
+            <h2 class="docs-section__title">8. Perguntas Frequentes (FAQ)</h2>
+          </header>
+          <p class="docs-section__lead">
+            Respostas para as dúvidas mais comuns sobre o uso, pedidos e funcionamento técnico do catálogo PB&amp;Cia.
+          </p>
+
+          <div class="docs-accordion">
+            <div class="docs-accordion__item open">
+              <button class="docs-accordion__header" type="button">
+                <span>Como funciona a validade dos preços informados?</span>
+                <i data-lucide="chevron-down" class="docs-accordion__icon"></i>
+              </button>
+              <div class="docs-accordion__body">
+                Os preços exibidos no catálogo seguem a tabela de preços oficial vigente indicada no topo da página. Ao enviar o pedido pelo WhatsApp, a data e os valores são confirmados pelo setor comercial antes da emissão da nota e do faturamento.
+              </div>
+            </div>
+
+            <div class="docs-accordion__item">
+              <button class="docs-accordion__header" type="button">
+                <span>O site funciona sem sinal de internet ou no modo avião?</span>
+                <i data-lucide="chevron-down" class="docs-accordion__icon"></i>
+              </button>
+              <div class="docs-accordion__body">
+                Sim! Graças à tecnologia PWA (Progressive Web App) e ao Service Worker integrado, após o primeiro acesso você pode consultar produtos, categorias e detalhes mesmo totalmente desconectado da internet.
+              </div>
+            </div>
+
+            <div class="docs-accordion__item">
+              <button class="docs-accordion__header" type="button">
+                <span>Como posso instalar o catálogo como aplicativo no meu celular?</span>
+                <i data-lucide="chevron-down" class="docs-accordion__icon"></i>
+              </button>
+              <div class="docs-accordion__body">
+                No Chrome para Android, toque no menu de 3 pontos e escolha "Adicionar à tela inicial" ou "Instalar aplicativo". No iPhone (Safari), toque no botão de compartilhar (quadrado com seta para cima) e selecione "Adicionar à Tela de Início".
+              </div>
+            </div>
+
+            <div class="docs-accordion__item">
+              <button class="docs-accordion__header" type="button">
+                <span>Posso enviar o link de um produto específico para outra pessoa?</span>
+                <i data-lucide="chevron-down" class="docs-accordion__icon"></i>
+              </button>
+              <div class="docs-accordion__body">
+                Sim! Ao abrir o modal de detalhes de qualquer produto, toque no botão <strong>"Compartilhar"</strong>. O sistema gera um link direto (ex: <code>index.html?p=00006</code>) que, ao ser aberto por outra pessoa, exibe automaticamente a ficha daquele item.
+              </div>
+            </div>
+
+            <div class="docs-accordion__item">
+              <button class="docs-accordion__header" type="button">
+                <span>Existe valor mínimo de pedido para entrega?</span>
+                <i data-lucide="chevron-down" class="docs-accordion__icon"></i>
+              </button>
+              <div class="docs-accordion__body">
+                As condições de frete, pedido mínimo e rotas de entrega variam de acordo com a região e o volume de compra. Esses detalhes são alinhados diretamente na conversa do WhatsApp no momento da finalização do pedido.
+              </div>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img class="footer__logo" src="assets/images/logo.png" alt="PB&Cia" />
+        <div>
+          <div class="footer__name">PB&amp;Cia</div>
+          <div class="footer__meta">Catálogo de Produtos &amp; Documentação Oficial</div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div class="footer__cta">
+          <p class="footer__cta-title">Dúvidas sobre produtos ou pedidos?</p>
+          <a
+            class="footer__whatsapp"
+            href="https://wa.me/5511994206655"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Fale conosco no WhatsApp"
+          >
+            <i data-lucide="message-circle" aria-hidden="true"></i>
+            Fale no WhatsApp
+          </a>
+        </div>
+
+        <div class="footer__developed">
+          Desenvolvido por
+          <a href="https://github.com/pycriador" target="_blank" rel="noopener noreferrer">
+            Willian Rosa
+          </a>
+          | <a href="index.html">Voltar ao Catálogo</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating back to top button -->
+  <button class="back-to-top" type="button" aria-label="Voltar ao topo">
+    <i data-lucide="arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Script Controller -->
+  <script type="module" src="assets/js/docs.js"></script>
+</body>
+</html>

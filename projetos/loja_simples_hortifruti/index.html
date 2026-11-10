@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olivelas - Hortifruti & Feira Fresca</title>
+
+  <!-- SEO -->
+  <meta name="description" content="Catálogo online Hortifruti Natural. Frutas, verduras, legumes e ovos frescos de qualidade com pedidos rápidos pelo WhatsApp." />
+  <meta name="author" content="Hortifruti Natural" />
+  <meta name="theme-color" content="#16a34a" />
+  <link rel="canonical" href="https://gnzhortifruti.com.br/" />
+
+  <!-- OpenGraph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Hortifruti Natural" />
+  <meta property="og:title" content="Hortifruti Natural - Catálogo de Produtos Frescos" />
+  <meta property="og:description" content="Catálogo de frutas, verduras, legumes e ovos frescos. Peça pelo WhatsApp!" />
+  <meta property="og:image" content="assets/images/logo.png" />
+  <meta property="og:url" content="https://gnzhortifruti.com.br/" />
+  <meta property="og:locale" content="pt_BR" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Hortifruti Natural - Catálogo de Produtos Frescos" />
+  <meta name="twitter:description" content="Catálogo de frutas, verduras, legumes e ovos frescos. Peça pelo WhatsApp!" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.webmanifest" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+
+  <!-- SEO Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Hortifruti Natural",
+    "description": "Catálogo online de frutas, verduras, legumes e ovos frescos.",
+    "url": "https://gnzhortifruti.com.br/",
+    "image": "assets/images/logo.png",
+    "priceRange": "$$"
+  }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Loading screen -->
+  <div class="loading-screen" role="status" aria-label="Carregando catálogo">
+    <img class="loading-screen__logo" src="assets/images/logo.png" alt="Hortifruti Natural" />
+    <div class="loading-screen__spinner" aria-hidden="true"></div>
+  </div>
+
+  <!-- Header -->
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <a href="#" class="header__brand" aria-label="Ir para o início">
+        <img class="header__logo" src="assets/images/logo.png" alt="Logo Hortifruti Natural" />
+        <span class="header__name">Hortifruti Natural</span>
+      </a>
+
+      <nav class="header__actions" aria-label="Ações do catálogo">
+        <a href="como-funciona.html" class="icon-btn" aria-label="Como funciona o sistema" title="Como Funciona / Manual">
+          <i data-lucide="help-circle" aria-hidden="true"></i>
+        </a>
+        <button class="icon-btn theme-toggle" type="button" aria-label="Alternar modo escuro" title="Alternar tema">
+          <i data-lucide="moon" aria-hidden="true"></i>
+        </button>
+        <button class="icon-btn favorite-toggle favorites-toggle" type="button" aria-label="Ver favoritos" title="Favoritos">
+          <i data-lucide="heart" aria-hidden="true"></i>
+        </button>
+        <button class="icon-btn cart-toggle icon-btn--badge" type="button" aria-label="Abrir carrinho" title="Carrinho">
+          <i data-lucide="shopping-cart" aria-hidden="true"></i>
+          <span class="icon-btn__badge" aria-hidden="true">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main role="main">
+    <!-- Hero -->
+    <section class="hero" aria-label="Apresentação">
+      <div class="container hero__inner">
+        <span class="hero__badge">
+          <i data-lucide="sparkles" aria-hidden="true"></i>
+          <span class="hero__badge-text">Colheita & Produtos Frescos</span>
+        </span>
+        <h1 class="hero__title">Hortifruti Natural</h1>
+        <p class="hero__subtitle">Frutas selecionadas, verduras e legumes frescos direto do produtor. Monte sua feira online e peça pelo WhatsApp com entrega prática!</p>
+        <button class="btn btn-primary hero__btn" type="button">
+          <i data-lucide="arrow-down" aria-hidden="true"></i>
+          Ver Catálogo
+        </button>
+      </div>
+    </section>
+
+    <!-- Sticky filter/tools bar with Showcase Search -->
+    <div class="tools" aria-label="Filtros e ordenação">
+      <div class="container">
+        <div class="tools__inner">
+          <button class="btn btn-outline categories-toggle" type="button" aria-label="Abrir categorias" aria-expanded="false">
+            <i data-lucide="layout-grid" aria-hidden="true"></i>
+            <span>Categorias</span>
+          </button>
+
+          <!-- Showcase Search Bar -->
+          <div class="tools__search" role="search" aria-label="Pesquisar produtos">
+            <i class="tools__search-icon" data-lucide="search" aria-hidden="true"></i>
+            <input
+              type="search"
+              class="tools__search-input"
+              id="catalog-search-input"
+              placeholder="Buscar por nome, código ou categoria (ex: manga, banana, HF001)..."
+              aria-label="Pesquisar produtos no catálogo"
+              autocomplete="off"
+            />
+            <button class="tools__search-clear" id="catalog-search-clear" type="button" aria-label="Limpar busca" title="Limpar busca" style="display:none;">
+              <i data-lucide="x" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="tools__controls">
+            <!-- Sort + price injected by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <section class="section-products" id="produtos" aria-label="Lista de produtos">
+      <div class="container catalog-layout">
+        <!-- Categories sidebar (desktop fixed / mobile drawer) -->
+        <div class="overlay sidebar-overlay" aria-hidden="true"></div>
+        <aside class="sidebar" aria-label="Categorias de produtos">
+          <button class="sidebar__close icon-btn" type="button" aria-label="Fechar categorias">
+            <i data-lucide="x" aria-hidden="true"></i>
+          </button>
+          <nav class="sidebar__nav">
+            <h2 class="sidebar__title">Categorias</h2>
+            <!-- Categories injected by JS -->
+          </nav>
+        </aside>
+
+        <div class="catalog-main">
+          <div class="catalog-toolbar">
+            <p class="results-info"><span class="results-info__count"></span> disponíveis</p>
+            <div class="page-size">
+              <label for="page-size-select">Itens por página</label>
+              <select id="page-size-select" class="select-control" aria-label="Itens por página"></select>
+            </div>
+          </div>
+          <div class="products-grid">
+            <!-- Product cards injected by JS -->
+          </div>
+          <nav class="pagination" aria-label="Paginação de produtos">
+            <!-- Pagination injected by JS -->
+          </nav>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__grid">
+      <div class="footer__brand">
+        <img class="footer__logo" src="assets/images/logo.png" alt="Hortifruti Natural" />
+        <div>
+          <div class="footer__name">Hortifruti Natural</div>
+          <div class="footer__meta" id="footer-vigencia">Preços do Dia</div>
+        </div>
+      </div>
+
+      <div class="footer__bottom">
+        <div class="footer__cta">
+          <p class="footer__cta-title">Quer um site igual a esse?</p>
+          <a
+            class="footer__whatsapp"
+            href="https://wa.me/5511963820374"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Fale conosco no WhatsApp"
+          >
+            <i data-lucide="message-circle" aria-hidden="true"></i>
+            Fale conosco
+          </a>
+        </div>
+
+        <div class="footer__developed">
+          Desenvolvido por
+          <a href="https://github.com/pycriador" target="_blank" rel="noopener noreferrer">
+            Willian Rosa
+          </a>
+          <span style="opacity: 0.3; margin: 0 6px;">•</span>
+          <a href="como-funciona.html" class="footer__doc-link" style="color: inherit; text-decoration: underline; font-size: 0.8125rem;">
+            Como Funciona / Manual
+          </a>
+          <span style="opacity: 0.3; margin: 0 6px;">•</span>
+          <a href="admin/" class="footer__admin-link" style="color: inherit; text-decoration: underline; font-size: 0.8125rem;">
+            Painel Administrativo
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product modal -->
+  <div class="overlay" aria-hidden="true"></div>
+  <div class="modal product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal__close" type="button" aria-label="Fechar">
+      <i data-lucide="x" aria-hidden="true"></i>
+    </button>
+    <div class="modal__content"></div>
+  </div>
+
+  <!-- Cart sidebar -->
+  <div class="overlay cart-overlay" aria-hidden="true"></div>
+  <aside class="cart" role="dialog" aria-modal="true" aria-label="Carrinho de compras">
+    <header class="cart__header">
+      <h2 class="cart__title">
+        <i data-lucide="shopping-cart" aria-hidden="true"></i>
+        Carrinho
+      </h2>
+      <button class="icon-btn cart__close" type="button" aria-label="Fechar carrinho">
+        <i data-lucide="x" aria-hidden="true"></i>
+      </button>
+    </header>
+    <div class="cart__items"></div>
+    <footer class="cart__footer">
+      <div class="cart__total">
+        <span class="cart__total-text">Total</span>
+        <span class="cart__total-value">—</span>
+      </div>
+      <button class="btn btn-success cart__checkout btn-full" type="button">
+        <i data-lucide="message-circle" aria-hidden="true"></i>
+        Finalizar Pedido
+      </button>
+      <button class="btn btn-ghost cart__clear btn-full" type="button">Limpar carrinho</button>
+    </footer>
+  </aside>
+
+  <!-- Floating actions -->
+  <button class="back-to-top" type="button" aria-label="Voltar ao topo">
+    <i data-lucide="arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Toasts -->
+  <div class="toast-container" aria-live="polite"></div>
+
+  <!-- App scripts -->
+  <script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

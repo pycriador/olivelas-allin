@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Como Funciona o Sistema | Manual & Documentação Oficial — Hortifruti Natural</title>
+  <meta name="description" content="Manual completo e documentação pública do Hortifruti Natural. Conheça as evidências de busca inteligente, cadastro de produtos, ciclo de estoque e jornada do cliente." />
+  <link rel="icon" type="image/svg+xml" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Global Design System -->
+  <link rel="stylesheet" href="assets/css/variables.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/responsive.css" />
+
+  <style>
+    /* ==========================================================================
+       Specific Styles for Public Documentation & Manual
+       ========================================================================== */
+    .docs-body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-family);
+      line-height: 1.65;
+    }
+
+    /* Top Navigation bar */
+    .docs-header {
+      position: sticky;
+      top: 0;
+      z-index: var(--z-header);
+      background: rgba(255, 255, 255, 0.94);
+      border-bottom: 1px solid var(--border-color);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: background-color var(--transition-base), border-color var(--transition-base);
+    }
+
+    [data-theme="dark"] .docs-header {
+      background: rgba(15, 23, 42, 0.94);
+      border-bottom-color: #334155;
+    }
+
+    .docs-header__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-block: 0.85rem;
+    }
+
+    .docs-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+    }
+
+    .docs-brand__logo {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--border-radius-md);
+      object-fit: contain;
+      background: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .docs-brand__title-wrap {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .docs-brand__title {
+      font-size: 1.125rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      line-height: 1.2;
+      letter-spacing: -0.01em;
+    }
+
+    .docs-brand__badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .docs-header__nav {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
+    .docs-header__link {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: color var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .docs-header__link:hover {
+      color: var(--color-primary);
+    }
+
+    .docs-header__actions {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+
+    /* Hero section */
+    .docs-hero {
+      padding-top: var(--space-12);
+      padding-bottom: var(--space-12);
+      background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%);
+      border-bottom: 1px solid var(--border-color);
+      text-align: center;
+      position: relative;
+    }
+
+    [data-theme="dark"] .docs-hero {
+      background: linear-gradient(180deg, #11221b 0%, #0b1319 100%);
+      border-bottom-color: #334155;
+    }
+
+    .docs-hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1.1rem;
+      border-radius: var(--border-radius-full);
+      background: #e8f5e9;
+      color: #007a33;
+      border: 1px solid #c8e6c9;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      margin-bottom: var(--space-4);
+    }
+
+    [data-theme="dark"] .docs-hero__badge {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+      border-color: rgba(34, 197, 94, 0.3);
+    }
+
+    .docs-hero__title {
+      font-size: clamp(1.85rem, 4vw, 2.75rem);
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-3);
+      max-width: 820px;
+      margin-inline: auto;
+    }
+
+    .docs-hero__subtitle {
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin-inline: auto;
+      margin-bottom: var(--space-8);
+    }
+
+    /* Key Metrics Chips */
+    .docs-chips-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+      max-width: 900px;
+      margin-inline: auto;
+    }
+
+    .docs-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.95rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .docs-chip i {
+      color: var(--color-primary);
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Filter & Quick Search Controls */
+    .docs-filter-bar {
+      position: sticky;
+      top: 68px;
+      z-index: 90;
+      background: var(--bg-primary);
+      border-bottom: 1px solid var(--border-color);
+      padding-block: var(--space-4);
+      box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    }
+
+    .docs-filter-bar__inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .docs-tabs-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .docs-tab-btn {
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius-full);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .docs-tab-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .docs-tab-btn.is-active {
+      background: #e8f5e9;
+      color: #007a33;
+      border-color: #008837;
+      box-shadow: 0 2px 8px rgba(0, 136, 55, 0.15);
+    }
+
+    [data-theme="dark"] .docs-tab-btn.is-active {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+      border-color: #4ade80;
+    }
+
+    .docs-search-box {
+      position: relative;
+      flex: 1;
+      max-width: 380px;
+      min-width: 240px;
+    }
+
+    .docs-search-box i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-tertiary);
+      pointer-events: none;
+      width: 18px;
+      height: 18px;
+    }
+
+    .docs-search-input {
+      width: 100%;
+      padding: 0.55rem 1rem 0.55rem 2.6rem;
+      border-radius: var(--border-radius-full);
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 0.84rem;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .docs-search-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(0, 122, 51, 0.12);
+    }
+
+    /* Main layout with sidebar & content */
+    .docs-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--space-10);
+      align-items: start;
+      padding-top: var(--space-8);
+      padding-bottom: var(--space-20);
+    }
+
+    /* Sidebar Navigation */
+    .docs-sidebar {
+      position: sticky;
+      top: 140px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .docs-sidebar__title {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .docs-sidebar__menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .docs-sidebar__item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: var(--border-radius-md);
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--transition-fast);
+    }
+
+    .docs-sidebar__item:hover {
+      background: var(--bg-secondary);
+      color: var(--color-primary);
+      transform: translateX(3px);
+    }
+
+    .docs-sidebar__item.is-active {
+      background: #e8f5e9;
+      color: #007a33;
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .docs-sidebar__item.is-active {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+    }
+
+    /* Main Sections */
+    .docs-section {
+      margin-bottom: var(--space-16);
+      scroll-margin-top: 130px;
+    }
+
+    .docs-section__header {
+      margin-bottom: var(--space-6);
+    }
+
+    .docs-section__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .docs-section__title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin-bottom: 0.5rem;
+    }
+
+    .docs-section__desc {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      max-width: 820px;
+    }
+
+    /* Evidence Cards Grid */
+    .evidence-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: var(--space-6);
+      margin-top: var(--space-6);
+    }
+
+    .evidence-card {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--border-radius-lg);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-card);
+      transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .evidence-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-card-hover);
+      border-color: #008837;
+    }
+
+    .evidence-card__header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: var(--space-4);
+    }
+
+    .evidence-card__icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--border-radius-md);
+      background: #e8f5e9;
+      color: #007a33;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    [data-theme="dark"] .evidence-card__icon-box {
+      background: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+    }
+
+    .evidence-card__tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.25rem 0.65rem;
+      border-radius: var(--border-radius-full);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .evidence-card__title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.4rem;
+    }
+
+    .evidence-card__desc {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+      flex: 1;
+    }
+
+    /* Mockup Simulation Container inside cards */
+    .mockup-preview {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: var(--space-4);
+      margin-block: var(--space-3);
+      font-size: 0.8125rem;
+    }
+
+    .mockup-preview__header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .mockup-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+
+    .mockup-dot--red { background: #f87171; }
+    .mockup-dot--yellow { background: #fbbf24; }
+    .mockup-dot--green { background: #4ade80; }
+
+    .mockup-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-tertiary);
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+
+    /* Step List Items */
+    .evidence-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .evidence-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+      font-size: 0.84rem;
+      color: var(--text-secondary);
+    }
+
+    .step-number {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e8f5e9;
+      color: #007a33;
+      font-size: 0.7rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    [data-theme="dark"] .step-number {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    /* Stock Badge Comparative Matrix */
+    .status-matrix {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: var(--space-4);
+    }
+
+    .status-matrix-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
+    }
+
+    .status-matrix-item .badge {
+      font-size: 0.78rem;
+      padding: 0.35rem 0.75rem;
+    }
+
+    .status-matrix-item small {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    /* Callout Boxes (Info, Tip, Warning) */
+    .docs-callout {
+      border-left: 4px solid var(--color-primary);
+      background: #f0fdf4;
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+      margin-block: var(--space-4);
+      display: flex;
+      gap: 0.75rem;
+      align-items: flex-start;
+    }
+
+    [data-theme="dark"] .docs-callout {
+      background: rgba(34, 197, 94, 0.1);
+      border-left-color: #4ade80;
+    }
+
+    .docs-callout--warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+
+    [data-theme="dark"] .docs-callout--warning {
+      background: rgba(245, 158, 11, 0.1);
+      border-left-color: #fbbf24;
+    }
+
+    .docs-callout i {
+      color: inherit;
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .docs-callout p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+    }
+
+    /* Interactive FAQ Accordion */
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: var(--space-6);
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--border-radius-md);
+      overflow: hidden;
+      transition: border-color var(--transition-fast);
+    }
+
+    .faq-item:hover {
+      border-color: #008837;
+    }
+
+    .faq-question {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-align: left;
+    }
+
+    .faq-question i {
+      transition: transform var(--transition-base);
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+
+    .faq-item.is-open .faq-question i {
+      transform: rotate(180deg);
+    }
+
+    .faq-answer {
+      padding: 0 1.25rem 1.25rem;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      display: none;
+    }
+
+    .faq-item.is-open .faq-answer {
+      display: block;
+    }
+
+    /* WhatsApp Order Preview */
+    .wa-preview {
+      background: #eef2f5;
+      border-radius: var(--border-radius-md);
+      padding: 1rem;
+      font-family: monospace;
+      font-size: 0.8125rem;
+      color: #1e293b;
+      white-space: pre-wrap;
+      border: 1px solid #cbd5e1;
+      line-height: 1.5;
+    }
+
+    [data-theme="dark"] .wa-preview {
+      background: #0f172a;
+      color: #cbd5e1;
+      border-color: #334155;
+    }
+
+    /* Footer */
+    .docs-footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-color);
+      padding-block: var(--space-12);
+      text-align: center;
+    }
+
+    .docs-footer__inner {
+      max-width: 800px;
+      margin-inline: auto;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 1024px) {
+      .docs-layout {
+        grid-template-columns: 1fr;
+      }
+      .docs-sidebar {
+        display: none;
+      }
+      .docs-header__nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .docs-filter-bar__inner {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .docs-search-box {
+        max-width: 100%;
+      }
+      .docs-tabs-group {
+        width: 100%;
+        justify-content: flex-start;
+      }
+      .evidence-grid {
+        grid-template-columns: 1fr;
+      }
+      .status-matrix {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="docs-body">
+
+  <!-- Top Navigation Header -->
+  <header class="docs-header" role="banner">
+    <div class="container docs-header__inner">
+      <a href="index.html" class="docs-brand" title="Ir para a vitrine da loja">
+        <img src="assets/images/logo.png" alt="Hortifruti Natural" class="docs-brand__logo" />
+        <div class="docs-brand__title-wrap">
+          <span class="docs-brand__title">Hortifruti Natural</span>
+          <span class="docs-brand__badge">Como Funciona • Manual</span>
+        </div>
+      </a>
+
+      <nav class="docs-header__nav" aria-label="Navegação do manual">
+        <a href="#visao-geral" class="docs-header__link">Visão Geral</a>
+        <a href="#busca-filtros" class="docs-header__link">Busca & Filtros</a>
+        <a href="#cadastro-produtos" class="docs-header__link">Cadastro de Produtos</a>
+        <a href="#estoque-disponibilidade" class="docs-header__link">Estoque & Aprovação</a>
+        <a href="#gestao-loja" class="docs-header__link">Gestão da Loja</a>
+        <a href="#manual-cliente" class="docs-header__link">Jornada do Pedido</a>
+        <a href="#faq" class="docs-header__link">Dúvidas Frequentes</a>
+      </nav>
+
+      <div class="docs-header__actions">
+        <button type="button" class="icon-btn" id="docs-theme-toggle" aria-label="Alternar modo escuro" title="Alternar tema claro/escuro">
+          <i data-lucide="moon" aria-hidden="true"></i>
+        </button>
+        <a href="index.html" class="btn btn-outline" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;">
+          <i data-lucide="shopping-bag" aria-hidden="true"></i>
+          <span>Ver Vitrine</span>
+        </a>
+        <a href="admin/" class="btn btn-primary" style="padding: 0.45rem 0.9rem; font-size: 0.8125rem;">
+          <i data-lucide="sliders" aria-hidden="true"></i>
+          <span>Painel Admin</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="docs-hero" aria-label="Apresentação do manual">
+    <div class="container">
+      <span class="docs-hero__badge">
+        <i data-lucide="book-open" aria-hidden="true"></i>
+        <span>Manual Completo & Documentação Pública</span>
+      </span>
+      <h1 class="docs-hero__title">Como Funciona o Sistema Hortifruti Natural</h1>
+      <p class="docs-hero__subtitle">
+        Conheça detalhadamente cada módulo da aplicação: o motor de busca rápida, a criação e edição de produtos, o ciclo de aprovação de disponibilidade, a gestão do catálogo e a experiência de compra com pedidos via WhatsApp.
+      </p>
+
+      <!-- Key Metrics / Capability Chips -->
+      <div class="docs-chips-grid">
+        <div class="docs-chip">
+          <i data-lucide="zap" aria-hidden="true"></i>
+          <span>Arquitetura Zero-Backend</span>
+        </div>
+        <div class="docs-chip">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <span>Busca Inteligente Multi-termo</span>
+        </div>
+        <div class="docs-chip">
+          <i data-lucide="layers" aria-hidden="true"></i>
+          <span>Múltiplos Formatos de Venda</span>
+        </div>
+        <div class="docs-chip">
+          <i data-lucide="check-circle-2" aria-hidden="true"></i>
+          <span>5 Estados de Disponibilidade</span>
+        </div>
+        <div class="docs-chip">
+          <i data-lucide="message-circle" aria-hidden="true"></i>
+          <span>Checkout Direto no WhatsApp</span>
+        </div>
+        <div class="docs-chip">
+          <i data-lucide="smartphone" aria-hidden="true"></i>
+          <span>100% Responsivo & PWA Offline</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sticky Filter Bar with Audience Switcher & Live Search -->
+  <div class="docs-filter-bar" aria-label="Filtro de tópicos do manual">
+    <div class="container docs-filter-bar__inner">
+      <div class="docs-tabs-group" role="tablist">
+        <button type="button" class="docs-tab-btn is-active" data-filter="all" role="tab" aria-selected="true">
+          <i data-lucide="grid" aria-hidden="true"></i>
+          <span>Todos os Tópicos</span>
+        </button>
+        <button type="button" class="docs-tab-btn" data-filter="cliente" role="tab" aria-selected="false">
+          <i data-lucide="user" aria-hidden="true"></i>
+          <span>Visão do Cliente</span>
+        </button>
+        <button type="button" class="docs-tab-btn" data-filter="lojista" role="tab" aria-selected="false">
+          <i data-lucide="store" aria-hidden="true"></i>
+          <span>Visão do Lojista (Admin)</span>
+        </button>
+        <button type="button" class="docs-tab-btn" data-filter="tecnico" role="tab" aria-selected="false">
+          <i data-lucide="code-2" aria-hidden="true"></i>
+          <span>Arquitetura & Especificações</span>
+        </button>
+      </div>
+
+      <div class="docs-search-box">
+        <i data-lucide="search" aria-hidden="true"></i>
+        <input
+          type="search"
+          class="docs-search-input"
+          id="docs-quick-search"
+          placeholder="Buscar no manual (ex: busca, estoque, whatsapp, preco, cadastro)..."
+          aria-label="Buscar tópicos no manual"
+        />
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Container with Sidebar & Sections -->
+  <div class="container docs-layout">
+
+    <!-- Sticky Navigation Index (Desktop) -->
+    <aside class="docs-sidebar" aria-label="Sumário da documentação">
+      <div class="docs-sidebar__title">
+        <i data-lucide="list-checks" aria-hidden="true"></i>
+        <span>Sumário Rápido</span>
+      </div>
+      <nav class="docs-sidebar__menu">
+        <a href="#visao-geral" class="docs-sidebar__item is-active">
+          <i data-lucide="cpu" aria-hidden="true"></i>
+          <span>1. Visão Geral da Solução</span>
+        </a>
+        <a href="#busca-filtros" class="docs-sidebar__item">
+          <i data-lucide="search" aria-hidden="true"></i>
+          <span>2. Evidências de Busca & Filtros</span>
+        </a>
+        <a href="#cadastro-produtos" class="docs-sidebar__item">
+          <i data-lucide="plus-circle" aria-hidden="true"></i>
+          <span>3. Criação & Cadastro de Itens</span>
+        </a>
+        <a href="#estoque-disponibilidade" class="docs-sidebar__item">
+          <i data-lucide="package-check" aria-hidden="true"></i>
+          <span>4. Estoque & Aprovação</span>
+        </a>
+        <a href="#gestao-loja" class="docs-sidebar__item">
+          <i data-lucide="settings" aria-hidden="true"></i>
+          <span>5. Gestão da Loja & Dados</span>
+        </a>
+        <a href="#manual-cliente" class="docs-sidebar__item">
+          <i data-lucide="shopping-cart" aria-hidden="true"></i>
+          <span>6. Jornada do Cliente & Pedido</span>
+        </a>
+        <a href="#faq" class="docs-sidebar__item">
+          <i data-lucide="help-circle" aria-hidden="true"></i>
+          <span>7. Dúvidas Frequentes (FAQ)</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="docs-main" id="docs-content" role="main">
+
+      <!-- ===================================================================
+           SECTION 1: VISÃO GERAL & ARQUITETURA
+           =================================================================== -->
+      <section class="docs-section" id="visao-geral" data-category="tecnico lojista cliente">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="sparkles" aria-hidden="true"></i>
+            <span>Fundamentos da Plataforma</span>
+          </span>
+          <h2 class="docs-section__title">1. Visão Geral e Arquitetura do Sistema</h2>
+          <p class="docs-section__desc">
+            O <strong>Hortifruti Natural</strong> foi projetado sob a filosofia <em>Zero-Backend</em>: uma loja virtual completa, ultra rápida e leve que roda 100% no navegador do cliente e do lojista, sem custos com servidores de banco de dados ou dependências pesadas.
+          </p>
+        </div>
+
+        <div class="evidence-grid">
+          <!-- Card 1: Zero-Backend & Performance -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="gauge" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Zero-Backend</span>
+            </div>
+            <h3 class="evidence-card__title">Alta Velocidade & Carregamento Instantâneo</h3>
+            <p class="evidence-card__desc">
+              Construído em HTML5 semântico, CSS3 moderno com variáveis de design e módulos Vanilla ES6. O site abre instantaneamente mesmo em conexões móveis 3G/4G, garantindo experiência fluida de feira online.
+            </p>
+            <div class="mockup-preview">
+              <div class="mockup-preview__header">
+                <span class="mockup-dot mockup-dot--red"></span>
+                <span class="mockup-dot mockup-dot--yellow"></span>
+                <span class="mockup-dot mockup-dot--green"></span>
+                <span class="mockup-title">Core Web Vitals & Arquitetura</span>
+              </div>
+              <div style="font-family: monospace; font-size: 0.78rem;">
+                ✓ LCP: &lt; 0.8s (Carregamento ultra rápido)<br />
+                ✓ CLS: 0.00 (Zero oscilação de layout)<br />
+                ✓ Frameworks pesados: 0 MB (100% Vanilla JS)
+              </div>
+            </div>
+          </article>
+
+          <!-- Card 2: LocalStorage & Persistência Híbrida -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="hard-drive" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Persistência Híbrida</span>
+            </div>
+            <h3 class="evidence-card__title">Sincronização Local com Fallback Seguro</h3>
+            <p class="evidence-card__desc">
+              A vitrine lê a base inicial de <code>data/produtos.json</code>. Quando o administrador adiciona ou altera produtos no Painel Admin, os dados são salvos em <code>localStorage</code> com prioridade de leitura imediata.
+            </p>
+            <div class="mockup-preview">
+              <div class="mockup-preview__header">
+                <span class="mockup-dot mockup-dot--red"></span>
+                <span class="mockup-dot mockup-dot--yellow"></span>
+                <span class="mockup-dot mockup-dot--green"></span>
+                <span class="mockup-title">Ordem de Prioridade de Dados</span>
+              </div>
+              <div style="font-size: 0.78rem;">
+                <strong>1º:</strong> <code>catalog:custom_data</code> (Edições salvas no navegador)<br />
+                <strong>2º:</strong> <code>data/produtos.json</code> (Catálogo original de backup)
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="docs-callout">
+          <i data-lucide="info" aria-hidden="true"></i>
+          <p>
+            <strong>Privacidade & Segurança:</strong> Nenhum dado de clientes ou histórico de pedidos é compartilhado com terceiros. As transações são conduzidas diretamente entre cliente e lojista pelo canal oficial do WhatsApp.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 2: EVIDÊNCIAS DE BUSCA & FILTROS
+           =================================================================== -->
+      <section class="docs-section" id="busca-filtros" data-category="cliente tecnico">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="search" aria-hidden="true"></i>
+            <span>Mecanismo de Pesquisa</span>
+          </span>
+          <h2 class="docs-section__title">2. Evidências do Motor de Busca & Filtros Inteligentes</h2>
+          <p class="docs-section__desc">
+            A vitrine possui um motor de busca reativo que filtra produtos instantaneamente em tempo real à medida que o usuário digita, sem recarregar a página.
+          </p>
+        </div>
+
+        <div class="evidence-grid">
+          <!-- Card: Algoritmo de Busca -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="filter" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Algoritmo Inteligente</span>
+            </div>
+            <h3 class="evidence-card__title">Normalização Sem Acento & Multi-Campos</h3>
+            <p class="evidence-card__desc">
+              O sistema normaliza caracteres acentuados usando <code>NFD</code>. Uma busca por "maca", "manga" ou "mamao" encontra com perfeição os produtos correspondentes.
+            </p>
+            <ul class="evidence-steps">
+              <li class="evidence-step">
+                <span class="step-number">1</span>
+                <span><strong>Busca por Nome:</strong> Digite "banana", "melancia", "alface".</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">2</span>
+                <span><strong>Busca por Código SKU:</strong> Digite "HF001", "HF015" para localizar o item exato.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">3</span>
+                <span><strong>Busca por Categoria:</strong> Digite "frutas", "verduras", "legumes".</span>
+              </li>
+            </ul>
+          </article>
+
+          <!-- Card: Simulação Visual da Busca -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="eye" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Evidência Visual</span>
+            </div>
+            <h3 class="evidence-card__title">Simulação Visual da Busca Ativa</h3>
+            <p class="evidence-card__desc">
+              Exemplo real de como a barra de busca apresenta o resultado filtrado e a contagem de produtos atualizada:
+            </p>
+
+            <!-- Mockup Visual de Busca Ativa -->
+            <div class="mockup-preview" style="background: var(--bg-card); border: 1.5px solid var(--border-color);">
+              <div style="display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: var(--bg-secondary); border-radius: 20px; border: 1px solid var(--border-color); margin-bottom: 8px;">
+                <i data-lucide="search" style="width: 14px; height: 14px; color: var(--color-primary);"></i>
+                <span style="font-weight: 700; color: var(--text-primary); font-size: 0.8125rem;">manga</span>
+                <span style="margin-left: auto; font-size: 0.7rem; color: #007a33; font-weight: 700; background: #e8f5e9; padding: 2px 6px; border-radius: 10px;">1 encontrado</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 8px; background: var(--bg-secondary);">
+                <img src="assets/images/products/hf002.svg" alt="Manga Tommy" style="width: 32px; height: 32px; object-fit: contain;" />
+                <div style="flex: 1;">
+                  <strong style="font-size: 0.8125rem; display: block;">Manga Tommy Fresca</strong>
+                  <small style="color: var(--text-secondary); font-size: 0.72rem;">Código: HF002 • R$ 8,99 / Kg</small>
+                </div>
+                <span class="badge badge--success" style="font-size: 0.68rem; padding: 2px 6px;">Pronta Entrega</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Card: Deep Linking -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="link" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Deep Linking</span>
+            </div>
+            <h3 class="evidence-card__title">Link Direto para o Produto (?p=CODIGO)</h3>
+            <p class="evidence-card__desc">
+              Cada produto possui um endereço único que pode ser compartilhado em anúncios, redes sociais ou mensagens no WhatsApp:
+            </p>
+            <div class="mockup-preview">
+              <code style="word-break: break-all; color: var(--color-primary); font-weight: 700;">
+                https://seusite.com.br/?p=HF001
+              </code>
+              <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 6px; margin-bottom: 0;">
+                Ao carregar a página com o parâmetro <code>?p=HF001</code>, o catálogo abre imediatamente a modal de detalhes do produto, pronta para pedido!
+              </p>
+            </div>
+          </article>
+
+          <!-- Card: Estado Vazio -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="alert-circle" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Estado Vazio</span>
+            </div>
+            <h3 class="evidence-card__title">Feedback Claro de Pesquisa Sem Resultados</h3>
+            <p class="evidence-card__desc">
+              Quando nenhum produto corresponde ao filtro pesquisado, a vitrine apresenta um Empty State amigável:
+            </p>
+            <div class="mockup-preview" style="text-align: center; padding: 12px;">
+              <i data-lucide="search-x" style="width: 28px; height: 28px; color: var(--text-tertiary); margin-bottom: 4px;"></i>
+              <strong style="display: block; font-size: 0.8125rem;">Nenhum produto encontrado</strong>
+              <small style="color: var(--text-secondary); display: block; margin-bottom: 8px;">Tente buscar com outros termos ou limpar os filtros.</small>
+              <span class="btn btn-primary" style="font-size: 0.72rem; padding: 3px 8px; display: inline-flex;">Limpar Filtros</span>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 3: CRIAÇÃO & CADASTRO DE PRODUTOS
+           =================================================================== -->
+      <section class="docs-section" id="cadastro-produtos" data-category="lojista">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="package-plus" aria-hidden="true"></i>
+            <span>Gestão do Catálogo</span>
+          </span>
+          <h2 class="docs-section__title">3. Criação, Edição & Cadastro de Produtos</h2>
+          <p class="docs-section__desc">
+            No Painel Administrativo (<code>/admin/</code>), o lojista conta com um formulário profissional e flexível para cadastrar novos produtos, fotos, descrições e formatos de venda múltiplos.
+          </p>
+        </div>
+
+        <div class="evidence-grid">
+          <!-- Card: Passo a Passo de Cadastro -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="form-input" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Passo a Passo</span>
+            </div>
+            <h3 class="evidence-card__title">Como Cadastrar um Novo Produto</h3>
+            <p class="evidence-card__desc">
+              O processo de cadastro é dividido em abas intuitivas no painel:
+            </p>
+            <ul class="evidence-steps">
+              <li class="evidence-step">
+                <span class="step-number">1</span>
+                <span><strong>Dados Principais:</strong> Informe Nome, Código SKU (ex: HF034), Categoria e Selo de Destaque.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">2</span>
+                <span><strong>Ilustração / Foto:</strong> Selecione um dos 33 ícones SVG integrados ou informe a URL de uma foto própria com preview em tempo real.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">3</span>
+                <span><strong>Formatos & Preços:</strong> Cadastre as opções de venda (Kg, Unidade, Bandeja, Caixa) e os respectivos preços.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">4</span>
+                <span><strong>Salvar:</strong> Clique em "Salvar Produto". O catálogo da vitrine atualiza imediatamente!</span>
+              </li>
+            </ul>
+          </article>
+
+          <!-- Card: Múltiplos Formatos de Venda -->
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="tags" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Preços Flexíveis</span>
+            </div>
+            <h3 class="evidence-card__title">Formatos de Venda & Precificação Dinâmica</h3>
+            <p class="evidence-card__desc">
+              Um grande diferencial do sistema é permitir que o mesmo produto tenha múltiplos preços dependendo da unidade de medida:
+            </p>
+            <div class="mockup-preview">
+              <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border-color);">
+                <span>• Quilograma (Kg)</span>
+                <strong>R$ 8,99</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border-color);">
+                <span>• Bandeja Selecionada</span>
+                <strong>R$ 12,00</strong>
+              </div>
+              <div style="display: flex; justify-content: space-between; padding: 4px 0;">
+                <span>• Caixa Fechada (Atacado)</span>
+                <strong>R$ 45,00</strong>
+              </div>
+            </div>
+            <small style="color: var(--text-secondary); display: block; margin-top: 6px;">
+              O cliente pode alternar entre esses formatos na modal do produto com recálculo automático do total!
+            </small>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 4: ESTOQUE, DISPONIBILIDADE & APROVAÇÃO
+           =================================================================== -->
+      <section class="docs-section" id="estoque-disponibilidade" data-category="lojista cliente">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="shield-check" aria-hidden="true"></i>
+            <span>Controle em Tempo Real</span>
+          </span>
+          <h2 class="docs-section__title">4. Ciclo de Aprovação, Disponibilidade & Estoque</h2>
+          <p class="docs-section__desc">
+            Cada item no catálogo transita por 5 estados oficiais de estoque. O lojista pode alternar o status de qualquer produto com <strong>apenas 1 clique</strong> diretamente na tabela do painel administrativo.
+          </p>
+        </div>
+
+        <!-- Matriz Comparativa de Status -->
+        <div class="status-matrix">
+          <div class="status-matrix-item">
+            <span class="badge badge--success">Pronta Entrega</span>
+            <small>Estoque pleno. Compra liberada na vitrine sem restrições.</small>
+          </div>
+          <div class="status-matrix-item">
+            <span class="badge badge--warning">Poucas Unidades</span>
+            <small>Alerta suave de escassez que estimula a decisão rápida.</small>
+          </div>
+          <div class="status-matrix-item">
+            <span class="badge badge--last-unit">Última Unidade</span>
+            <small>Badge sólido de alta visibilidade. Estoque em finalização.</small>
+          </div>
+          <div class="status-matrix-item">
+            <span class="badge badge--custom-order">Sob Encomenda</span>
+            <small>Item especial ou colheita sob pedido agendado.</small>
+          </div>
+          <div class="status-matrix-item">
+            <span class="badge badge--danger">Esgotado</span>
+            <small>Produto bloqueado. Botão de adicionar ao carrinho desabilitado.</small>
+          </div>
+        </div>
+
+        <div class="evidence-grid" style="margin-top: var(--space-6);">
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="refresh-cw" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Agilidade</span>
+            </div>
+            <h3 class="evidence-card__title">Ciclo Rápido com 1 Clique no Admin</h3>
+            <p class="evidence-card__desc">
+              Não é necessário abrir a modal de edição para mudar o estoque. Na tabela do painel administrativo, basta clicar no badge de status do produto para alternar sequencialmente:
+            </p>
+            <div class="mockup-preview" style="text-align: center; font-size: 0.78rem;">
+              <code>Pronta Entrega</code> ➔ <code>Últimas Unidades</code> ➔ <code>Esgotado</code> ➔ <code>Sob Encomenda</code>
+            </div>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="shield-alert" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Proteção</span>
+            </div>
+            <h3 class="evidence-card__title">Bloqueio Automático para Itens Esgotados</h3>
+            <p class="evidence-card__desc">
+              Quando um item atinge o estado <code>Esgotado</code>, o sistema desabilita automaticamente o botão de adicionar ao carrinho, exibindo a mensagem "Produto Indisponível no Momento". Isso evita pedidos de produtos que não estão na banca!
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 5: GESTÃO DA LOJA & DADOS ADMINISTRATIVOS
+           =================================================================== -->
+      <section class="docs-section" id="gestao-loja" data-category="lojista tecnico">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="store" aria-hidden="true"></i>
+            <span>Configurações do Estabelecimento</span>
+          </span>
+          <h2 class="docs-section__title">5. Gestão da Loja, Dados Mestres & Backup</h2>
+          <p class="docs-section__desc">
+            No menu superior do Painel Admin, o lojista pode configurar os parâmetros gerais do negócio e gerenciar backups do catálogo com segurança.
+          </p>
+        </div>
+
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="phone-call" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Parâmetros Mestres</span>
+            </div>
+            <h3 class="evidence-card__title">Configuração do WhatsApp & Tabela de Preços</h3>
+            <p class="evidence-card__desc">
+              Ajuste o número para onde os pedidos serão enviados e a data de vigência exibida no rodapé da loja:
+            </p>
+            <ul class="evidence-steps">
+              <li class="evidence-step">
+                <span class="step-number">•</span>
+                <span><strong>WhatsApp de Atendimento:</strong> Formato com DDI e DDD (ex: <code>5511963820374</code>).</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">•</span>
+                <span><strong>Vigência da Tabela:</strong> Mensagem de data (ex: "Preços de 15/09/2026").</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">•</span>
+                <span><strong>Nome da Loja & Slogan:</strong> Atualiza os títulos da página e redes sociais.</span>
+              </li>
+            </ul>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="database" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Backup & Restauração</span>
+            </div>
+            <h3 class="evidence-card__title">Download JSON & Restauração de Fábrica</h3>
+            <p class="evidence-card__desc">
+              O lojista tem controle total dos dados:
+            </p>
+            <ul class="evidence-steps">
+              <li class="evidence-step">
+                <span class="step-number">1</span>
+                <span><strong>Baixar JSON:</strong> Exporta um backup completo de todos os produtos e categorias para o computador.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">2</span>
+                <span><strong>Carregar JSON:</strong> Importa um catálogo salvo anteriormente.</span>
+              </li>
+              <li class="evidence-step">
+                <span class="step-number">3</span>
+                <span><strong>Restaurar Padrão:</strong> Limpa o LocalStorage e restaura o catálogo baseline de <code>produtos.json</code>.</span>
+              </li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 6: JORNADA DO CLIENTE & PEDIDO WHATSAPP
+           =================================================================== -->
+      <section class="docs-section" id="manual-cliente" data-category="cliente">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="shopping-cart" aria-hidden="true"></i>
+            <span>Experiência do Consumidor</span>
+          </span>
+          <h2 class="docs-section__title">6. Jornada do Cliente: Da Vitrine ao WhatsApp</h2>
+          <p class="docs-section__desc">
+            A jornada de compra foi desenhada para ser simples, rápida e sem atritos, perfeita para quem compra feira online pelo celular.
+          </p>
+        </div>
+
+        <div class="evidence-grid">
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="layout-grid" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Passo 1 & 2</span>
+            </div>
+            <h3 class="evidence-card__title">1. Navegação, Filtros & Detalhes</h3>
+            <p class="evidence-card__desc">
+              O cliente navega pelas categorias (Frutas, Legumes, Verduras, Ovos) ou pesquisa pelo nome do item. Ao clicar em um produto, abre-se a modal com fotos, descrição e seleção de quantidade com cálculo em tempo real.
+            </p>
+          </article>
+
+          <article class="evidence-card">
+            <div class="evidence-card__header">
+              <div class="evidence-card__icon-box">
+                <i data-lucide="shopping-bag" aria-hidden="true"></i>
+              </div>
+              <span class="evidence-card__tag">Passo 3 & 4</span>
+            </div>
+            <h3 class="evidence-card__title">2. Carrinho & Pedido Formatado</h3>
+            <p class="evidence-card__desc">
+              Ao clicar em <strong>"Finalizar Pedido"</strong>, o carrinho gera uma mensagem organizada e profissional que é enviada diretamente para o WhatsApp oficial da loja:
+            </p>
+            <div class="wa-preview">
+Olá! Gostaria de fazer um pedido no Hortifruti Natural:
+
+• 2x Banana Prata (Quilograma) - R$ 15,98
+• 1x Manga Tommy (Bandeja 500g) - R$ 12,00
+• 1x Alface Crespa (Unidade) - R$ 3,50
+
+Total Estimado: R$ 31,48
+Forma de Pagamento / Endereço de Entrega:
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ===================================================================
+           SECTION 7: FAQ (DÚVIDAS FREQUENTES)
+           =================================================================== -->
+      <section class="docs-section" id="faq" data-category="cliente lojista tecnico">
+        <div class="docs-section__header">
+          <span class="docs-section__badge">
+            <i data-lucide="help-circle" aria-hidden="true"></i>
+            <span>Tire Suas Dúvidas</span>
+          </span>
+          <h2 class="docs-section__title">7. Perguntas Frequentes (FAQ)</h2>
+          <p class="docs-section__desc">
+            Respostas diretas para as dúvidas mais comuns sobre o funcionamento do catálogo e da plataforma.
+          </p>
+        </div>
+
+        <div class="faq-list">
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>Como as edições do catálogo ficam salvas sem banco de dados SQL?</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              As alterações feitas no Painel Administrativo ficam gravadas com segurança no <code>localStorage</code> do navegador do administrador. Para compartilhar ou fazer backup de todo o catálogo, basta clicar no botão <strong>"Baixar JSON"</strong> no painel admin e salvar o arquivo de backup.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>O site funciona caso o cliente fique sem sinal de internet momentaneamente?</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              Sim! O Hortifruti Natural possui suporte a PWA (Progressive Web App) com Service Worker registrado. Os arquivos essenciais da vitrine e imagens ficam em cache, permitindo navegar pelos produtos mesmo em condições de conexão instável.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>Como enviar o link de um produto específico para um cliente no WhatsApp?</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              Basta copiar o link da barra de navegação com o código do produto (por exemplo, <code>?p=HF001</code>). Quando o cliente clicar no link recebido, a loja abrirá diretamente a modal daquele produto específico!
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>Como funciona a paginação no celular e no computador?</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              No celular, a paginação é configurada com no mínimo 10 itens por página para manter uma listagem rica. Ao clicar para mudar de página (avançar, voltar ou selecionar número), o sistema rola suavemente a tela para o primeiro item do grid, compensando a altura do cabeçalho fixo.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button type="button" class="faq-question">
+              <span>Como alternar entre tema claro e tema escuro?</span>
+              <i data-lucide="chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              Basta clicar no ícone de lua/sol presente no canto superior direito de qualquer página. A sua preferência fica gravada no navegador e é sincronizada tanto na vitrine quanto no painel de administração e nesta página de manual.
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Footer -->
+  <footer class="docs-footer" role="contentinfo">
+    <div class="container docs-footer__inner">
+      <img src="assets/images/logo.png" alt="Hortifruti Natural" style="width: 48px; height: 48px; margin-inline: auto; margin-bottom: 0.75rem;" />
+      <h3 style="font-size: 1.125rem; font-weight: 800; color: var(--color-primary); margin-bottom: 0.25rem;">Hortifruti Natural</h3>
+      <p style="font-size: 0.84rem; color: var(--text-secondary); margin-bottom: 1rem;">
+        Catálogo Online de Produtos Frescos • Arquitetura Zero-Backend Vanilla ES6
+      </p>
+      <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; font-size: 0.8125rem;">
+        <a href="index.html" style="text-decoration: underline; color: inherit;">Vitrine da Loja</a>
+        <span>•</span>
+        <a href="admin/" style="text-decoration: underline; color: inherit;">Painel Administrativo</a>
+        <span>•</span>
+        <a href="docs/pt-BR/" style="text-decoration: underline; color: inherit;">Documentação Técnica Markdown</a>
+        <span>•</span>
+        <a href="https://github.com/pycriador/loja-produtos" target="_blank" rel="noopener" style="text-decoration: underline; color: inherit;">Repositório GitHub</a>
+      </div>
+      <p style="font-size: 0.75rem; color: var(--text-tertiary); margin-top: 1.5rem;">
+        Desenvolvido por Willian Rosa. Todos os direitos reservados.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Floating Back to Top Button -->
+  <button class="back-to-top" id="docs-back-to-top" type="button" aria-label="Voltar ao topo da página">
+    <i data-lucide="arrow-up" aria-hidden="true"></i>
+  </button>
+
+  <!-- Interactive Logic Script -->
+  <script type="module">
+    // Theme Engine Synchronization
+    const THEME_KEY = 'catalog:theme';
+
+    function initTheme() {
+      let saved = 'light';
+      try {
+        const raw = localStorage.getItem(THEME_KEY);
+        if (raw) saved = JSON.parse(raw);
+      } catch (e) {}
+
+      const currentTheme = saved === 'dark' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', currentTheme);
+      updateThemeIcon(currentTheme);
+
+      document.getElementById('docs-theme-toggle')?.addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'light';
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        try {
+          localStorage.setItem(THEME_KEY, JSON.stringify(next));
+        } catch (e) {}
+        updateThemeIcon(next);
+      });
+    }
+
+    function updateThemeIcon(theme) {
+      const btn = document.getElementById('docs-theme-toggle');
+      if (!btn) return;
+      btn.innerHTML = theme === 'dark'
+        ? '<i data-lucide="sun" aria-hidden="true"></i>'
+        : '<i data-lucide="moon" aria-hidden="true"></i>';
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Interactive Audience Filter Tabs
+    function initFilterTabs() {
+      const tabs = document.querySelectorAll('.docs-tab-btn');
+      const sections = document.querySelectorAll('.docs-section');
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', () => {
+          tabs.forEach((t) => {
+            t.classList.remove('is-active');
+            t.setAttribute('aria-selected', 'false');
+          });
+          tab.classList.add('is-active');
+          tab.setAttribute('aria-selected', 'true');
+
+          const filter = tab.getAttribute('data-filter');
+          sections.forEach((sec) => {
+            if (filter === 'all') {
+              sec.style.display = 'block';
+            } else {
+              const cats = sec.getAttribute('data-category') || '';
+              sec.style.display = cats.includes(filter) ? 'block' : 'none';
+            }
+          });
+        });
+      });
+    }
+
+    // Live Documentation Quick Search
+    function initQuickSearch() {
+      const searchInput = document.getElementById('docs-quick-search');
+      if (!searchInput) return;
+
+      searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.trim().toLowerCase();
+        const cards = document.querySelectorAll('.evidence-card');
+        const sections = document.querySelectorAll('.docs-section');
+
+        if (!term) {
+          cards.forEach((c) => (c.style.display = 'flex'));
+          sections.forEach((s) => (s.style.display = 'block'));
+          return;
+        }
+
+        sections.forEach((sec) => {
+          let hasMatchInSection = false;
+          const secCards = sec.querySelectorAll('.evidence-card');
+
+          secCards.forEach((card) => {
+            const text = card.textContent.toLowerCase();
+            const match = text.includes(term);
+            card.style.display = match ? 'flex' : 'none';
+            if (match) hasMatchInSection = true;
+          });
+
+          // Also check section title / description
+          const secText = (sec.querySelector('.docs-section__header')?.textContent || '').toLowerCase();
+          if (secText.includes(term)) {
+            hasMatchInSection = true;
+          }
+
+          sec.style.display = hasMatchInSection ? 'block' : 'none';
+        });
+      });
+    }
+
+    // Interactive FAQ Accordion
+    function initFaq() {
+      const faqItems = document.querySelectorAll('.faq-item');
+      faqItems.forEach((item) => {
+        const btn = item.querySelector('.faq-question');
+        btn?.addEventListener('click', () => {
+          const isOpen = item.classList.contains('is-open');
+          // Close others
+          faqItems.forEach((other) => other.classList.remove('is-open'));
+          if (!isOpen) {
+            item.classList.add('is-open');
+          }
+        });
+      });
+    }
+
+    // Back to Top Button & Scrollspy for Sidebar
+    function initScrollFeatures() {
+      const backBtn = document.getElementById('docs-back-to-top');
+      window.addEventListener('scroll', () => {
+        if (backBtn) {
+          backBtn.classList.toggle('visible', window.scrollY > 400);
+        }
+      });
+
+      backBtn?.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      // Active sidebar link highlight on scroll
+      const navLinks = document.querySelectorAll('.docs-sidebar__item');
+      const sections = document.querySelectorAll('.docs-section');
+
+      window.addEventListener('scroll', () => {
+        let currentSectionId = '';
+        sections.forEach((sec) => {
+          const top = sec.getBoundingClientRect().top;
+          if (top <= 160) {
+            currentSectionId = sec.getAttribute('id');
+          }
+        });
+
+        if (currentSectionId) {
+          navLinks.forEach((link) => {
+            const href = link.getAttribute('href');
+            link.classList.toggle('is-active', href === `#${currentSectionId}`);
+          });
+        }
+      });
+    }
+
+    // Initialize all features on DOMContentLoaded
+    document.addEventListener('DOMContentLoaded', () => {
+      initTheme();
+      initFilterTabs();
+      initQuickSearch();
+      initFaq();
+      initScrollFeatures();
+      if (window.lucide) window.lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

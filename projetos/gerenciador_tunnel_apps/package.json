@@ -1,0 +1,56 @@
+{
+  "name": "olivelas-local-tunnel",
+  "version": "1.0.0",
+  "description": "Gerenciador de aplicações locais e túneis públicos (Cloudflared, Ngrok, LocalTunnel e processos customizados)",
+  "author": "Olivelas <pycriador@users.noreply.github.com>",
+  "main": "dist-server/electron/main.js",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n \"SERVER,CLIENT\" -c \"blue,green\" \"tsx watch src/server/index.ts\" \"vite\"",
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:client": "vite",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json && node scripts/prepare-build.mjs",
+    "build": "npm run build:client && npm run build:server",
+    "start": "tsx src/server/index.ts",
+    "start:prod": "node dist-server/server/index.js",
+    "electron:dev": "node scripts/dev-electron.mjs",
+    "electron:start": "npm run build && electron --no-sandbox dist-server/electron/main.js",
+    "electron:build": "npm run build && electron-builder",
+    "electron:build:linux": "npm run build && electron-builder --linux",
+    "electron:build:win": "npm run build && electron-builder --win",
+    "electron:build:mac": "npm run build && electron-builder --mac"
+  },
+  "bugs": {
+    "url": "https://github.com/pycriador/olivelas-local-tunnel/issues"
+  },
+  "homepage": "https://github.com/pycriador/olivelas-local-tunnel#readme",
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.3",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/better-sqlite3": "^9.6.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.2",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "clsx": "^2.1.1",
+    "concurrently": "^10.0.5",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "lucide-react": "^1.48.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "tailwind-merge": "^3.7.0",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  }
+}

@@ -1,0 +1,394 @@
+{
+  "app": {
+    "name": "Nexus Data",
+    "tagline": "Plataforma corporativa de dados e analytics"
+  },
+  "auth": {
+    "welcome": "Bem-vindo de volta",
+    "createAccount": "Crie sua conta",
+    "login": "Entrar",
+    "signup": "Cadastrar",
+    "email": "E-mail",
+    "password": "Senha",
+    "fullName": "Nome completo",
+    "forgotPassword": "Esqueci minha senha",
+    "noAccount": "Não tem conta?",
+    "hasAccount": "Já tem conta?",
+    "signUpHere": "Cadastre-se",
+    "signInHere": "Entrar",
+    "orContinueWith": "ou continue com",
+    "comingSoon": "Em breve",
+    "resetPassword": "Redefinir senha",
+    "sendResetLink": "Enviar link de recuperação",
+    "newPassword": "Nova senha",
+    "confirmPassword": "Confirmar senha",
+    "updatePassword": "Atualizar senha",
+    "backToLogin": "Voltar ao login",
+    "logout": "Sair",
+    "pitchTitle": "Unifique dados, relatórios e decisões",
+    "pitchDesc": "Uma plataforma moderna para administrar bancos de dados, construir relatórios e explorar dashboards corporativos.",
+    "benefits": {
+      "one": "Governança e segurança multi-tenant",
+      "two": "Construção visual de relatórios e dashboards",
+      "three": "Analytics em tempo real com IA"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "reports": "Relatórios",
+    "dashboards": "Dashboards",
+    "analytics": "Analytics",
+    "favorites": "Favoritos",
+    "admin": "Administração",
+    "profile": "Perfil",
+    "settings": "Configurações",
+    "help": "Ajuda",
+    "workspace": "Workspace",
+    "personal": "Pessoal",
+    "data": "Dados",
+    "dataSources": "Data Sources",
+    "dataCatalog": "Data Catalog",
+    "explorer": "Explorer",
+    "schemas": "Schemas",
+    "views": "Views",
+    "metadata": "Metadata"
+  },
+  "home": {
+    "greeting": "Olá, {{name}}",
+    "subtitle": "Aqui está um panorama da sua organização hoje.",
+    "kpis": {
+      "employees": "Funcionários",
+      "reports": "Relatórios",
+      "dashboards": "Dashboards",
+      "revenue": "Receita (mês)"
+    },
+    "sections": {
+      "recentReports": "Relatórios recentes",
+      "favorites": "Favoritos",
+      "dashboards": "Dashboards",
+      "activities": "Atividades recentes"
+    },
+    "empty": "Nenhum item ainda"
+  },
+  "common": {
+    "search": "Buscar...",
+    "loading": "Carregando",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
+    "themeSystem": "Sistema",
+    "openMenu": "Abrir menu",
+    "commandPalette": "Paleta de comandos"
+  },
+  "settings": {
+    "title": "Configurações",
+    "subtitle": "Gerencie preferências da sua conta e da organização",
+    "tabs": {
+      "general": "Geral",
+      "theme": "Tema",
+      "language": "Idioma",
+      "notifications": "Notificações",
+      "ai": "IA",
+      "integrations": "Integrações",
+      "security": "Segurança"
+    },
+    "placeholder": "Este módulo será disponibilizado em breve."
+  },
+  "pages": {
+    "reports": {
+      "title": "Relatórios",
+      "subtitle": "Explore relatórios corporativos pré-configurados"
+    },
+    "dashboards": {
+      "title": "Dashboards",
+      "subtitle": "Painéis executivos e operacionais"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Métricas avançadas do seu negócio"
+    },
+    "favorites": {
+      "title": "Favoritos",
+      "subtitle": "Seus relatórios e dashboards favoritos"
+    },
+    "admin": {
+      "title": "Administração",
+      "subtitle": "Usuários, papéis e permissões"
+    },
+    "profile": {
+      "title": "Perfil",
+      "subtitle": "Suas informações pessoais"
+    },
+    "help": {
+      "title": "Ajuda",
+      "subtitle": "Central de ajuda e recursos"
+    }
+  },
+  "errors": {
+    "signInFailed": "Falha ao entrar. Verifique suas credenciais.",
+    "signUpFailed": "Falha ao cadastrar. Tente outro e-mail.",
+    "invalidEmail": "E-mail inválido",
+    "passwordShort": "Senha deve ter ao menos 8 caracteres",
+    "nameRequired": "Nome é obrigatório",
+    "resetSent": "Se o e-mail existir, enviaremos as instruções.",
+    "passwordUpdated": "Senha atualizada com sucesso.",
+    "required": "Campo obrigatório"
+  },
+  "admin": {
+    "notAllowed": {
+      "title": "Acesso restrito",
+      "desc": "Você não tem permissão para acessar esta área."
+    },
+    "tabs": {
+      "dashboard": "Dashboard",
+      "org": "Organização",
+      "users": "Usuários",
+      "invitations": "Convites",
+      "groups": "Grupos",
+      "workspaces": "Workspaces",
+      "permissions": "Permissões",
+      "audit": "Auditoria"
+    },
+    "kpis": {
+      "members": "Membros",
+      "workspaces": "Workspaces",
+      "groups": "Grupos",
+      "pendingInvites": "Convites pendentes",
+      "byRole": "Usuários por perfil",
+      "recentAudit": "Últimos eventos"
+    },
+    "users": {
+      "title": "Usuários",
+      "subtitle": "Membros da organização",
+      "invite": "Convidar",
+      "sendInvite": "Enviar convite",
+      "inviteSent": "Convite criado",
+      "role": "Perfil",
+      "name": "Nome",
+      "department": "Departamento",
+      "status": "Status",
+      "roleUpdated": "Perfil atualizado"
+    },
+    "groups": {
+      "title": "Grupos",
+      "subtitle": "Organize usuários em grupos",
+      "new": "Novo grupo",
+      "name": "Nome",
+      "description": "Descrição",
+      "color": "Cor",
+      "created": "Grupo criado",
+      "deleted": "Grupo removido"
+    },
+    "workspaces": {
+      "title": "Workspaces",
+      "subtitle": "Áreas de trabalho da organização",
+      "new": "Novo workspace",
+      "name": "Nome",
+      "description": "Descrição",
+      "color": "Cor",
+      "created": "Workspace criado",
+      "deleted": "Workspace removido"
+    },
+    "permissions": {
+      "title": "Matriz de permissões",
+      "subtitle": "Permissões padrão por perfil",
+      "permission": "Permissão"
+    },
+    "invitations": {
+      "title": "Convites",
+      "subtitle": "Convites enviados",
+      "status": "Status",
+      "expires": "Expira em",
+      "actions": "Ações",
+      "revoked": "Convite revogado",
+      "copied": "Link copiado"
+    },
+    "audit": {
+      "title": "Auditoria",
+      "subtitle": "Eventos recentes da organização",
+      "date": "Data",
+      "action": "Ação",
+      "resource": "Recurso",
+      "user": "Usuário"
+    },
+    "org": {
+      "title": "Organização",
+      "subtitle": "Configurações gerais",
+      "name": "Nome",
+      "description": "Descrição",
+      "primaryColor": "Cor primária",
+      "locale": "Idioma padrão",
+      "timezone": "Fuso horário",
+      "dateFormat": "Formato de data",
+      "currency": "Moeda",
+      "saved": "Organização atualizada"
+    }
+  },
+  "profile": {
+    "tabs": {
+      "info": "Dados",
+      "security": "Segurança",
+      "permissions": "Permissões"
+    },
+    "info": "Informações pessoais",
+    "security": "Segurança da conta",
+    "permissions": "Suas permissões",
+    "firstName": "Nome",
+    "lastName": "Sobrenome",
+    "displayName": "Nome de exibição",
+    "jobTitle": "Cargo",
+    "department": "Departamento",
+    "phone": "Telefone",
+    "saved": "Perfil atualizado"
+  },
+  "invite": {
+    "title": "Aceitar convite",
+    "subtitle": "Você foi convidado para {{org}}",
+    "accept": "Aceitar e entrar",
+    "accepted": "Bem-vindo!",
+    "invalid": "Convite inválido",
+    "expired": "Convite expirado"
+  },
+  "ds": {
+    "catalogOnly": "somente catálogo",
+    "searchSources": "Buscar por nome, host ou tipo…",
+    "searchCatalog": "Buscar tabelas, views e colunas…",
+    "typeToSearch": "Digite pelo menos 2 caracteres para buscar colunas",
+    "noResults": "Nenhum resultado encontrado",
+    "noObjects": "Nenhum objeto catalogado",
+    "notSynced": "Fonte ainda não sincronizada",
+    "selectObject": "Selecione um objeto na árvore",
+    "noDefinition": "Definição não disponível",
+    "none": "Nenhum registro",
+    "rows": "linhas",
+    "page": {
+      "sources": {
+        "title": "Data Sources",
+        "subtitle": "Gerencie conexões, credenciais, health check e sincronização de metadados."
+      },
+      "catalog": {
+        "title": "Data Catalog",
+        "subtitle": "Catálogo corporativo de dados com nomes amigáveis, descrições e tags."
+      },
+      "explorer": {
+        "title": "Database Explorer",
+        "subtitle": "Navegue por banco, schema, tabela, colunas, índices e constraints."
+      },
+      "schemas": {
+        "title": "Schemas",
+        "subtitle": "Todos os schemas descobertos nas fontes conectadas."
+      },
+      "views": {
+        "title": "Views",
+        "subtitle": "Views e materialized views catalogadas, com definição SQL."
+      },
+      "metadata": {
+        "title": "Metadata",
+        "subtitle": "Cobertura de documentação e histórico de sincronizações."
+      }
+    },
+    "action": {
+      "new": "Nova conexão",
+      "test": "Testar",
+      "sync": "Sincronizar",
+      "seedDemo": "Fonte demo",
+      "clearSearch": "Limpar busca"
+    },
+    "form": {
+      "newTitle": "Nova fonte de dados",
+      "editTitle": "Editar fonte de dados"
+    },
+    "field": {
+      "name": "Nome",
+      "type": "Tipo",
+      "description": "Descrição",
+      "environment": "Ambiente",
+      "host": "Host",
+      "httpHost": "Endpoint HTTP",
+      "libsqlUrl": "URL libSQL",
+      "port": "Porta",
+      "database": "Banco de dados",
+      "schema": "Schema padrão",
+      "username": "Usuário",
+      "password": "Senha",
+      "passwordKeep": "Deixe vazio para manter a atual",
+      "ssl": "SSL/TLS",
+      "active": "Ativa",
+      "friendlyName": "Nome amigável",
+      "dataType": "Tipo de dado",
+      "nullable": "Nulo",
+      "keys": "Chaves"
+    },
+    "env": {
+      "production": "Produção",
+      "staging": "Staging",
+      "development": "Desenvolvimento"
+    },
+    "health": {
+      "unknown": "Desconhecido",
+      "online": "Online",
+      "offline": "Offline",
+      "unstable": "Instável",
+      "timeout": "Timeout",
+      "invalid_credentials": "Credenciais inválidas"
+    },
+    "stat": {
+      "schemas": "Schemas",
+      "tables": "Tabelas",
+      "views": "Views",
+      "columns": "Colunas"
+    },
+    "tab": {
+      "objects": "Objetos",
+      "columns": "Colunas",
+      "indexes": "Índices",
+      "constraints": "Constraints",
+      "definition": "Definição"
+    },
+    "objectType": {
+      "table": "Tabela",
+      "view": "View",
+      "materialized_view": "Materialized view",
+      "function": "Função",
+      "procedure": "Procedure"
+    },
+    "syncStatus": {
+      "running": "Em execução",
+      "success": "Sucesso",
+      "failed": "Falhou"
+    },
+    "empty": {
+      "title": "Nenhuma fonte de dados",
+      "description": "Cadastre uma conexão ou use a fonte demo da plataforma."
+    },
+    "catalogEmpty": {
+      "title": "Catálogo vazio",
+      "description": "Sincronize uma fonte de dados para descobrir schemas e tabelas."
+    },
+    "toast": {
+      "saved": "Alterações salvas",
+      "deleted": "Fonte removida",
+      "synced": "Sincronizado: {{tables}} tabelas e {{views}} views"
+    },
+    "meta": {
+      "named": "Objetos com nome amigável",
+      "described": "Objetos descritos",
+      "tagged": "Objetos com tags",
+      "columnsDescribed": "Colunas descritas",
+      "undocumented": "Objetos sem documentação",
+      "missingName": "sem nome amigável",
+      "missingDescription": "sem descrição",
+      "recentSyncs": "Sincronizações recentes"
+    },
+    "hint": {
+      "postgresql": "Conexão TCP direta. Informe host, porta, banco e credenciais.",
+      "mysql": "Conexão via endpoint HTTP serverless (PlanetScale ou gateway mysql-http compatível).",
+      "mariadb": "Conexão via endpoint HTTP serverless (PlanetScale ou gateway mysql-http compatível).",
+      "sqlite": "SQLite remoto via libSQL/Turso. Use a URL do banco e o token de acesso como senha.",
+      "planned": "Este motor pode ser catalogado, mas ainda não possui driver de conexão ativo."
+    }
+  }
+}

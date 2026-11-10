@@ -1,0 +1,836 @@
+{
+  "loja": {
+    "nome": "Hortifruti Natural",
+    "slogan": "Colheita & Produtos Frescos",
+    "descricao": "Frutas selecionadas, verduras e legumes frescos direto do produtor. Monte sua feira online e peça pelo WhatsApp com entrega prática!",
+    "vigenciaTabela": "15/09/2026",
+    "observacao": "Preços por unidade de venda - sujeitos a alteração sem aviso prévio.",
+    "formas_pedido": "WhatsApp e Feira Online",
+    "disponibilidade_padrao": "Pronta Entrega",
+    "whatsapp": "5511963820374",
+    "moeda": "BRL"
+  },
+  "estabelecimento": "Hortifruti Natural",
+  "moeda": "BRL",
+  "observacao": "Preços por unidade de venda - sujeitos a alteração sem aviso prévio.",
+  "categorias": [
+    {
+      "categoria": "Frutas",
+      "slug": "frutas",
+      "produtos": [
+        {
+          "codigo": "HF001",
+          "nome": "Morango Gold",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 8.5,
+          "preco": 8.5,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 8.5
+            }
+          ],
+          "imagem": "assets/images/products/hf001.svg",
+          "descricao": "Morangos Gold selecionados, doces e de coloração viva, ideais para sobremesas e consumo in natura.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF002",
+          "nome": "Morango Premium",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 11.5,
+          "preco": 11.5,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 11.5
+            }
+          ],
+          "imagem": "assets/images/products/hf002.svg",
+          "descricao": "Morangos Premium de calibre superior, colhidos no ponto ideal de maturação para máximo sabor e aroma.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF003",
+          "nome": "Melão Amarelo",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 11.9,
+          "preco": 11.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 11.9
+            }
+          ],
+          "imagem": "assets/images/products/hf003.svg",
+          "descricao": "Melão Amarelo de polpa doce, suculenta e refrescante, rico em vitaminas e hidratação.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF004",
+          "nome": "Melancia",
+          "categoria": "Frutas",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1/4 unidade",
+          "unidadesPorPacote": "1/4 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 12.9,
+          "preco": 12.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 0.25,
+              "unidade": "unidade",
+              "descricao_quantidade": "1/4 unidade",
+              "preco": 12.9
+            }
+          ],
+          "imagem": "assets/images/products/hf004.svg",
+          "descricao": "Melancia fresca, fatiada e embalada com higiene, doce e extremamente refrescante.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF005",
+          "nome": "Banana Nanica",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 7.8,
+          "preco": 7.8,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 7.8
+            }
+          ],
+          "imagem": "assets/images/products/hf005.svg",
+          "descricao": "Banana Nanica selecionada, rica em potássio, muito doce e perfeita para lanches e receitas.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF006",
+          "nome": "Banana Prata",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 9.33,
+          "preco": 9.33,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 9.33
+            }
+          ],
+          "imagem": "assets/images/products/hf006.svg",
+          "descricao": "Banana Prata de excelente consistência e durabilidade, ideal para o consumo diário da família.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF007",
+          "nome": "Kiwi Gold",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 18.57,
+          "preco": 18.57,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 18.57
+            },
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 30.95,
+              "observacao": "Opção selecionada por kg"
+            }
+          ],
+          "imagem": "assets/images/products/hf007.svg",
+          "descricao": "Kiwi Gold importado de polpa dourada, sabor suave e doce com elevado teor de vitamina C.",
+          "disponibilidade": "Últimas Unidades",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 1
+        },
+        {
+          "codigo": "HF008",
+          "nome": "Manga Palmer",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 10.42,
+          "preco": 10.42,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 10.42
+            }
+          ],
+          "imagem": "assets/images/products/hf008.svg",
+          "descricao": "Manga Palmer com polpa firme e sem fiapos, doce e aromática, excelente para saladas e sucos.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF009",
+          "nome": "Abacaxi",
+          "categoria": "Frutas",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 9.15,
+          "preco": 9.15,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 9.15
+            }
+          ],
+          "imagem": "assets/images/products/hf009.svg",
+          "descricao": "Abacaxi Pérola doce e suculento, perfeito para sobremesas, sucos naturais e preparações culinárias.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF010",
+          "nome": "Mexirica Murgote",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 10.9,
+          "preco": 10.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 10.9
+            }
+          ],
+          "imagem": "assets/images/products/hf010.svg",
+          "descricao": "Mexirica Murcote fácil de descascar, muito suculenta e com equilíbrio perfeito entre doce e cítrico.",
+          "disponibilidade": "Últimas Unidades",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 3
+        },
+        {
+          "codigo": "HF011",
+          "nome": "Mexirica Carioca",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 10.9,
+          "preco": 10.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 10.9
+            }
+          ],
+          "imagem": "assets/images/products/hf011.svg",
+          "descricao": "Mexirica Carioca fresca e aromática, fonte de vitamina C e excelente para lanches rápidos.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF012",
+          "nome": "Laranja Pera Rio",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 5.9,
+          "preco": 5.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 5.9
+            }
+          ],
+          "imagem": "assets/images/products/hf012.svg",
+          "descricao": "Laranja Pêra Rio selecionada para mesa ou suco, doce, com muito caldo e ótimo rendimento.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF013",
+          "nome": "Uva Premium",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 13.8,
+          "preco": 13.8,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 13.8
+            }
+          ],
+          "imagem": "assets/images/products/hf013.svg",
+          "descricao": "Uva Premium fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF014",
+          "nome": "Uva Vitória",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 12.9,
+          "preco": 12.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 12.9
+            }
+          ],
+          "imagem": "assets/images/products/hf014.svg",
+          "descricao": "Uva Vitória preta sem sementes, sabor intenso e adocicado com alto valor antioxidante.",
+          "disponibilidade": "Sob Encomenda",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": null
+        },
+        {
+          "codigo": "HF015",
+          "nome": "Caju",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 12.4,
+          "preco": 12.4,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 12.4
+            }
+          ],
+          "imagem": "assets/images/products/hf015.svg",
+          "descricao": "Caju fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF016",
+          "nome": "Mamão Papaia",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 10.9,
+          "preco": 10.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 10.9
+            }
+          ],
+          "imagem": "assets/images/products/hf016.svg",
+          "descricao": "Mamão Papaia individual de sabor adocicado e textura aveludada, rico em fibras e nutrientes.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF017",
+          "nome": "Jaboticaba",
+          "categoria": "Frutas",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 32.0,
+          "preco": 32.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 32.0
+            }
+          ],
+          "imagem": "assets/images/products/hf017.svg",
+          "descricao": "Jaboticaba fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF018",
+          "nome": "Maracujá",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 18.8,
+          "preco": 18.8,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 18.8
+            }
+          ],
+          "imagem": "assets/images/products/hf018.svg",
+          "descricao": "Maracujá fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Esgotado",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 0
+        },
+        {
+          "codigo": "HF019",
+          "nome": "Maçã Fuji",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 13.9,
+          "preco": 13.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 13.9
+            }
+          ],
+          "imagem": "assets/images/products/hf019.svg",
+          "descricao": "Maçã Fuji crocante, suculenta e com doçura marcante, ótima conservação e sabor inconfundível.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF020",
+          "nome": "Pinha",
+          "categoria": "Frutas",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 28.99,
+          "preco": 28.99,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 28.99
+            }
+          ],
+          "imagem": "assets/images/products/hf020.svg",
+          "descricao": "Pinha fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        }
+      ]
+    },
+    {
+      "categoria": "Verduras e Legumes",
+      "slug": "verduras-e-legumes",
+      "produtos": [
+        {
+          "codigo": "HF021",
+          "nome": "Pimentão Amarelo",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 21.8,
+          "preco": 21.8,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 21.8
+            }
+          ],
+          "imagem": "assets/images/products/hf021.svg",
+          "descricao": "Pimentão Amarelo fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF022",
+          "nome": "Pimentão Vermelho",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 21.8,
+          "preco": 21.8,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 21.8
+            }
+          ],
+          "imagem": "assets/images/products/hf022.svg",
+          "descricao": "Pimentão Vermelho fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF023",
+          "nome": "Pimentão Verde",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 13.9,
+          "preco": 13.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 13.9
+            }
+          ],
+          "imagem": "assets/images/products/hf023.svg",
+          "descricao": "Pimentão Verde fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF024",
+          "nome": "Cebola Nacional",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 7.5,
+          "preco": 7.5,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 7.5
+            }
+          ],
+          "imagem": "assets/images/products/hf024.svg",
+          "descricao": "Cebola Nacional de sabor marcante e casca firme, indispensável em qualquer refogado.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF025",
+          "nome": "Tomate Carmem",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "kg",
+          "descricaoUnidade": "1 kg",
+          "unidadesPorPacote": "1 kg",
+          "pesoUnitario": "Preço por kg",
+          "precoPacote": 10.9,
+          "preco": 10.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "kg",
+              "preco": 10.9
+            }
+          ],
+          "imagem": "assets/images/products/hf025.svg",
+          "descricao": "Tomate Carmem fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF026",
+          "nome": "Tomate Cereja",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "bandeja",
+          "descricaoUnidade": "1 bandeja",
+          "unidadesPorPacote": "1 bandeja",
+          "pesoUnitario": "Preço por bandeja",
+          "precoPacote": 6.9,
+          "preco": 6.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "bandeja",
+              "preco": 6.9
+            }
+          ],
+          "imagem": "assets/images/products/hf026.svg",
+          "descricao": "Tomate Cereja fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF027",
+          "nome": "Alface Crespa",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 6.0,
+          "preco": 6.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 6.0
+            }
+          ],
+          "imagem": "assets/images/products/hf027.svg",
+          "descricao": "Alface Crespa higienizada, folhas soltas e delicadas, colhida diariamente do produtor.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF028",
+          "nome": "Alface Americana",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 6.0,
+          "preco": 6.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 6.0
+            }
+          ],
+          "imagem": "assets/images/products/hf028.svg",
+          "descricao": "Alface Americana de folhas crocantes e textura firme, base perfeita para saladas refrescantes.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF029",
+          "nome": "Brócolis Ninja",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 7.0,
+          "preco": 7.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 7.0
+            }
+          ],
+          "imagem": "assets/images/products/hf029.svg",
+          "descricao": "Brócolis Ninja fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF030",
+          "nome": "Brócolis Rama",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 12.0,
+          "preco": 12.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 12.0
+            }
+          ],
+          "imagem": "assets/images/products/hf030.svg",
+          "descricao": "Brócolis Rama fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF031",
+          "nome": "Shimeji",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 12.3,
+          "preco": 12.3,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 12.3
+            }
+          ],
+          "imagem": "assets/images/products/hf031.svg",
+          "descricao": "Shimeji fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        },
+        {
+          "codigo": "HF032",
+          "nome": "Couve",
+          "categoria": "Verduras e Legumes",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "1 unidade",
+          "unidadesPorPacote": "1 unidade",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 5.9,
+          "preco": 5.9,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "preco": 5.9
+            }
+          ],
+          "imagem": "assets/images/products/hf032.svg",
+          "descricao": "Couve fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        }
+      ]
+    },
+    {
+      "categoria": "Ovos",
+      "slug": "ovos",
+      "produtos": [
+        {
+          "codigo": "HF033",
+          "nome": "Ovo Extra Branco",
+          "categoria": "Ovos",
+          "unidadeVenda": "unidade",
+          "descricaoUnidade": "Cartela / Dúzia",
+          "unidadesPorPacote": "Cartela / Dúzia",
+          "pesoUnitario": "Preço por unidade",
+          "precoPacote": 30.0,
+          "preco": 30.0,
+          "opcoes_venda": [
+            {
+              "quantidade": 1,
+              "unidade": "unidade",
+              "descricao_quantidade": "Cartela / Dúzia",
+              "preco": 30.0
+            }
+          ],
+          "imagem": "assets/images/products/hf033.svg",
+          "descricao": "Ovo Extra Branco fresco e selecionado com rigor de qualidade.",
+          "disponibilidade": "Pronta Entrega",
+          "procedencia": "Produtor Regional Selecionado",
+          "vigenciaPreco": "15/09/2026",
+          "estoque": 15
+        }
+      ]
+    }
+  ]
+}

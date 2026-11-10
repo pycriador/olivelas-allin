@@ -1,0 +1,6 @@
+{
+  "name": "AI Survey Analyzer",
+  "description": "Plataforma especializada para análise de pesquisas com Google Forms, Data Profiler para XLSX/CSV/Sheets/URLs, Statistics Engine quantitativo e camada de análise qualitativa semântica com Gemini.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

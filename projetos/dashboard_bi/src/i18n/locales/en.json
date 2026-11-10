@@ -1,0 +1,279 @@
+{
+  "app": {
+    "name": "Nexus Data",
+    "tagline": "Enterprise data & analytics platform"
+  },
+  "auth": {
+    "welcome": "Welcome back",
+    "createAccount": "Create your account",
+    "login": "Sign in",
+    "signup": "Sign up",
+    "email": "Email",
+    "password": "Password",
+    "fullName": "Full name",
+    "forgotPassword": "Forgot password",
+    "noAccount": "No account?",
+    "hasAccount": "Already have an account?",
+    "signUpHere": "Sign up",
+    "signInHere": "Sign in",
+    "orContinueWith": "or continue with",
+    "comingSoon": "Coming soon",
+    "resetPassword": "Reset password",
+    "sendResetLink": "Send reset link",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePassword": "Update password",
+    "backToLogin": "Back to login",
+    "logout": "Sign out",
+    "pitchTitle": "Unify data, reports and decisions",
+    "pitchDesc": "A modern platform to administer databases, build reports and explore enterprise dashboards.",
+    "benefits": {
+      "one": "Multi-tenant governance & security",
+      "two": "Visual reports and dashboards builder",
+      "three": "Real-time analytics powered by AI"
+    }
+  },
+  "nav": {
+    "home": "Home",
+    "reports": "Reports",
+    "dashboards": "Dashboards",
+    "analytics": "Analytics",
+    "favorites": "Favorites",
+    "admin": "Administration",
+    "profile": "Profile",
+    "settings": "Settings",
+    "help": "Help",
+    "workspace": "Workspace",
+    "personal": "Personal",
+    "data": "Data",
+    "dataSources": "Data Sources",
+    "dataCatalog": "Data Catalog",
+    "explorer": "Explorer",
+    "schemas": "Schemas",
+    "views": "Views",
+    "metadata": "Metadata"
+  },
+  "home": {
+    "greeting": "Hi, {{name}}",
+    "subtitle": "Here is a snapshot of your organization today.",
+    "kpis": {
+      "employees": "Employees",
+      "reports": "Reports",
+      "dashboards": "Dashboards",
+      "revenue": "Revenue (mo)"
+    },
+    "sections": {
+      "recentReports": "Recent reports",
+      "favorites": "Favorites",
+      "dashboards": "Dashboards",
+      "activities": "Recent activity"
+    },
+    "empty": "Nothing yet"
+  },
+  "common": {
+    "search": "Search...",
+    "loading": "Loading",
+    "cancel": "Cancel",
+    "save": "Save",
+    "language": "Language",
+    "theme": "Theme",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "System",
+    "openMenu": "Open menu",
+    "commandPalette": "Command palette"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and organization preferences",
+    "tabs": {
+      "general": "General",
+      "theme": "Theme",
+      "language": "Language",
+      "notifications": "Notifications",
+      "ai": "AI",
+      "integrations": "Integrations",
+      "security": "Security"
+    },
+    "placeholder": "This module will be available soon."
+  },
+  "pages": {
+    "reports": {
+      "title": "Reports",
+      "subtitle": "Explore pre-built enterprise reports"
+    },
+    "dashboards": {
+      "title": "Dashboards",
+      "subtitle": "Executive and operational panels"
+    },
+    "analytics": {
+      "title": "Analytics",
+      "subtitle": "Advanced business metrics"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "subtitle": "Your favorite reports and dashboards"
+    },
+    "admin": {
+      "title": "Administration",
+      "subtitle": "Users, roles and permissions"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Your personal information"
+    },
+    "help": {
+      "title": "Help",
+      "subtitle": "Help center and resources"
+    }
+  },
+  "errors": {
+    "signInFailed": "Sign in failed. Check your credentials.",
+    "signUpFailed": "Sign up failed. Try a different email.",
+    "invalidEmail": "Invalid email",
+    "passwordShort": "Password must be at least 8 characters",
+    "nameRequired": "Name is required",
+    "resetSent": "If the email exists, we will send instructions.",
+    "passwordUpdated": "Password updated successfully.",
+    "required": "Required field"
+  },
+  "ds": {
+    "catalogOnly": "catalog only",
+    "searchSources": "Search by name, host or type…",
+    "searchCatalog": "Search tables, views and columns…",
+    "typeToSearch": "Type at least 2 characters to search columns",
+    "noResults": "No results found",
+    "noObjects": "No catalogued objects",
+    "notSynced": "Source not synced yet",
+    "selectObject": "Select an object in the tree",
+    "noDefinition": "Definition not available",
+    "none": "No records",
+    "rows": "rows",
+    "page": {
+      "sources": {
+        "title": "Data Sources",
+        "subtitle": "Manage connections, credentials, health checks and metadata sync."
+      },
+      "catalog": {
+        "title": "Data Catalog",
+        "subtitle": "Corporate data catalog with friendly names, descriptions and tags."
+      },
+      "explorer": {
+        "title": "Database Explorer",
+        "subtitle": "Browse database, schema, table, columns, indexes and constraints."
+      },
+      "schemas": {
+        "title": "Schemas",
+        "subtitle": "Every schema discovered across connected sources."
+      },
+      "views": {
+        "title": "Views",
+        "subtitle": "Catalogued views and materialized views, with SQL definition."
+      },
+      "metadata": {
+        "title": "Metadata",
+        "subtitle": "Documentation coverage and sync history."
+      }
+    },
+    "action": {
+      "new": "New connection",
+      "test": "Test",
+      "sync": "Sync",
+      "seedDemo": "Demo source",
+      "clearSearch": "Clear search"
+    },
+    "form": {
+      "newTitle": "New data source",
+      "editTitle": "Edit data source"
+    },
+    "field": {
+      "name": "Name",
+      "type": "Type",
+      "description": "Description",
+      "environment": "Environment",
+      "host": "Host",
+      "httpHost": "HTTP endpoint",
+      "libsqlUrl": "libSQL URL",
+      "port": "Port",
+      "database": "Database",
+      "schema": "Default schema",
+      "username": "Username",
+      "password": "Password",
+      "passwordKeep": "Leave empty to keep current",
+      "ssl": "SSL/TLS",
+      "active": "Active",
+      "friendlyName": "Friendly name",
+      "dataType": "Data type",
+      "nullable": "Nullable",
+      "keys": "Keys"
+    },
+    "env": {
+      "production": "Production",
+      "staging": "Staging",
+      "development": "Development"
+    },
+    "health": {
+      "unknown": "Unknown",
+      "online": "Online",
+      "offline": "Offline",
+      "unstable": "Unstable",
+      "timeout": "Timeout",
+      "invalid_credentials": "Invalid credentials"
+    },
+    "stat": {
+      "schemas": "Schemas",
+      "tables": "Tables",
+      "views": "Views",
+      "columns": "Columns"
+    },
+    "tab": {
+      "objects": "Objects",
+      "columns": "Columns",
+      "indexes": "Indexes",
+      "constraints": "Constraints",
+      "definition": "Definition"
+    },
+    "objectType": {
+      "table": "Table",
+      "view": "View",
+      "materialized_view": "Materialized view",
+      "function": "Function",
+      "procedure": "Procedure"
+    },
+    "syncStatus": {
+      "running": "Running",
+      "success": "Success",
+      "failed": "Failed"
+    },
+    "empty": {
+      "title": "No data sources",
+      "description": "Create a connection or use the platform demo source."
+    },
+    "catalogEmpty": {
+      "title": "Empty catalog",
+      "description": "Sync a data source to discover schemas and tables."
+    },
+    "toast": {
+      "saved": "Changes saved",
+      "deleted": "Source removed",
+      "synced": "Synced: {{tables}} tables and {{views}} views"
+    },
+    "meta": {
+      "named": "Objects with friendly name",
+      "described": "Described objects",
+      "tagged": "Tagged objects",
+      "columnsDescribed": "Described columns",
+      "undocumented": "Undocumented objects",
+      "missingName": "missing friendly name",
+      "missingDescription": "missing description",
+      "recentSyncs": "Recent syncs"
+    },
+    "hint": {
+      "postgresql": "Direct TCP connection. Provide host, port, database and credentials.",
+      "mysql": "Connect through a serverless HTTP endpoint (PlanetScale or a compatible mysql-http gateway).",
+      "mariadb": "Connect through a serverless HTTP endpoint (PlanetScale or a compatible mysql-http gateway).",
+      "sqlite": "Remote SQLite via libSQL/Turso. Use the database URL and the auth token as password.",
+      "planned": "This engine can be catalogued, but has no live driver yet."
+    }
+  }
+}

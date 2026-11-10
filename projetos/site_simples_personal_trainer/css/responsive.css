@@ -1,0 +1,333 @@
+/**
+ * SITE PERSONAL RAFAELA — Estilos Responsivos & Media Queries
+ * 
+ * Garante layout fluido, ausência total de scroll horizontal
+ * e usabilidade perfeita de 320px até telas ultra-wide.
+ */
+
+/* ==========================================================================
+   Telas Médias e Tablets (max-width: 1023px)
+   ========================================================================== */
+@media (max-width: 1023px) {
+  :root {
+    --header-height: 72px;
+  }
+
+  /* --- Menu Mobile Drawer --- */
+  .menu-toggle {
+    display: flex;
+  }
+
+  .nav-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 300px;
+    max-width: 85vw;
+    height: 100vh;
+    background-color: #ffffff;
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: calc(var(--header-height) + var(--space-6)) var(--space-8) var(--space-8);
+    transform: translateX(100%);
+    transition: transform var(--transition-base);
+    z-index: var(--z-drawer);
+    overflow-y: auto;
+  }
+
+  .nav-menu.is-open {
+    transform: translateX(0);
+  }
+
+  .nav-list {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    gap: var(--space-4);
+  }
+
+  .nav-link {
+    font-size: var(--font-size-md);
+    width: 100%;
+    padding: 0.65rem 0;
+    display: block;
+  }
+
+  .nav-action-btn {
+    width: 100%;
+    margin-top: var(--space-6);
+  }
+
+  .nav-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(7, 36, 30, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: var(--z-overlay);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility var(--transition-base);
+  }
+
+  .nav-overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* --- Ajustes de Seções --- */
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    text-align: center;
+  }
+
+  .hero-content {
+    align-items: center;
+  }
+
+  .hero-title {
+    font-size: var(--font-size-3xl);
+  }
+
+  .hero-text {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-ctas {
+    justify-content: center;
+  }
+
+  .hero-features-strip {
+    justify-content: center;
+  }
+
+  .hero-float-badge {
+    left: 10px;
+    bottom: 10px;
+    max-width: calc(100% - 20px);
+  }
+
+  .differentials-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+  }
+
+  .about-quote {
+    font-size: var(--font-size-xl);
+  }
+
+  .services-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .combos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .monthly-plans-grid {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .pricing-card--popular {
+    transform: none;
+  }
+
+  .pricing-card--popular:hover {
+    transform: translateY(-6px);
+  }
+
+  .app-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-10);
+    text-align: center;
+  }
+
+  .app-content {
+    align-items: center;
+  }
+
+  .programs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .nutrition-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .timeline-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    max-width: 540px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-8);
+  }
+}
+
+/* ==========================================================================
+   Smartphones e Telas Pequenas (max-width: 767px)
+   ========================================================================== */
+@media (max-width: 767px) {
+  .section {
+    padding-top: var(--space-14);
+    padding-bottom: var(--space-14);
+  }
+
+  .section-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-ctas {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-ctas .btn {
+    width: 100%;
+  }
+
+  .differentials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-credentials-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .combos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .difference-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-features-list {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-mockup {
+    width: 290px;
+    height: 580px;
+  }
+
+  .programs-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .nutrition-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .timeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .future-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .future-form-full {
+    grid-column: span 1;
+  }
+
+  .final-cta-title {
+    font-size: var(--font-size-2xl);
+  }
+
+  .final-cta-buttons {
+    flex-direction: column;
+  }
+
+  .final-cta-buttons .btn {
+    width: 100%;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    gap: var(--space-3);
+    text-align: center;
+  }
+
+  .whatsapp-floating {
+    bottom: var(--space-4);
+    right: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .whatsapp-floating__text {
+    display: none; /* Em smartphones mantém apenas o ícone redondo para não cobrir a tela */
+  }
+
+  .whatsapp-floating {
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+
+  .back-to-top {
+    bottom: var(--space-4);
+    left: var(--space-4);
+  }
+}
+
+/* ==========================================================================
+   Telas Muito Pequenas (ex: 320px - 360px)
+   ========================================================================== */
+@media (max-width: 360px) {
+  .container {
+    padding-left: var(--space-4);
+    padding-right: var(--space-4);
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .nutrition-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .phone-mockup {
+    width: 100%;
+    max-width: 270px;
+    height: 540px;
+  }
+
+  .pricing-value {
+    font-size: var(--font-size-3xl);
+  }
+}

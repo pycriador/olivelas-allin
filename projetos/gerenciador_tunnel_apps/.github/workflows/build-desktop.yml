@@ -1,0 +1,58 @@
+name: Build Desktop Executables (Linux, Windows, macOS)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+            script: electron:build:linux
+          - os: windows-latest
+            platform: windows
+            script: electron:build:win
+          - os: macos-latest
+            platform: macos
+            script: electron:build:mac
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Web + Server + Electron Bundle
+        run: npm run build
+
+      - name: Package Electron Desktop App (${{ matrix.platform }})
+        run: npm run ${{ matrix.script }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Artifacts (${{ matrix.platform }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: olivelas-local-tunnel-${{ matrix.platform }}
+          path: |
+            release/*.AppImage
+            release/*.deb
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+          if-no-files-found: ignore

@@ -1,0 +1,168 @@
+/**
+ * SITE PERSONAL RAFAELA — Estilos Globais & Acessibilidade
+ */
+
+body {
+  font-family: var(--font-family-base);
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Evita rolagem da página quando o menu drawer mobile está aberto */
+body.menu-open {
+  overflow: hidden;
+}
+
+/* --- Container Principal --- */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+.container--narrow {
+  max-width: var(--container-narrow-width);
+}
+
+/* --- Tipografia de Seções --- */
+.section-header {
+  margin-bottom: var(--space-12);
+  text-align: center;
+}
+
+.section-header--left {
+  text-align: left;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  background-color: var(--color-primary-subtle);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-4);
+}
+
+.section-title {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+}
+
+.section-subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+.section-header--left .section-subtitle {
+  margin-left: 0;
+}
+
+/* --- Seções Padrão --- */
+.section {
+  padding-top: var(--space-20);
+  padding-bottom: var(--space-20);
+  position: relative;
+}
+
+.section--alt {
+  background-color: var(--color-surface);
+}
+
+.section--dark {
+  background-color: var(--color-primary-dark);
+  color: var(--color-text-inverse);
+}
+
+.section--dark .section-title {
+  color: var(--color-text-inverse);
+}
+
+.section--dark .section-subtitle {
+  color: var(--color-text-inverse-muted);
+}
+
+.section--dark .section-tag {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--color-accent);
+}
+
+/* --- Acessibilidade: Foco de Teclado --- */
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* Utilitário para leitores de tela */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* --- Microinteração: Scroll Reveal --- */
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+  will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Suporte a Usuários com Sensibilidade a Movimento */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal-on-scroll {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

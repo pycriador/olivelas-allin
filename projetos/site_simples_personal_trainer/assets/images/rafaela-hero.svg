@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a2a22"/>
+      <stop offset="50%" stop-color="#0f3d32"/>
+      <stop offset="100%" stop-color="#185647"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0d5a3"/>
+      <stop offset="100%" stop-color="#c99846"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#000000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="800" height="1000" fill="url(#bgGrad)"/>
+
+  <!-- Decorative Architectural Lines -->
+  <circle cx="400" cy="400" r="320" fill="none" stroke="url(#gold)" stroke-width="2" stroke-opacity="0.25" stroke-dasharray="8 8"/>
+  <circle cx="400" cy="400" r="260" fill="none" stroke="#ffffff" stroke-width="1" stroke-opacity="0.1"/>
+  <circle cx="400" cy="400" r="200" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-opacity="0.2"/>
+
+  <!-- Silhouette / Avatar Graphic Placeholder -->
+  <g transform="translate(400, 390)" filter="url(#shadow)">
+    <!-- Aura -->
+    <circle cx="0" cy="0" r="110" fill="#124b3e" stroke="url(#gold)" stroke-width="2"/>
+    <!-- Head -->
+    <circle cx="0" cy="-30" r="42" fill="#e8edea"/>
+    <!-- Torso -->
+    <path d="M-65 65 C-65 15, -45 15, 0 15 C45 15, 65 15, 65 65 Z" fill="#e8edea"/>
+  </g>
+
+  <!-- Placeholder Badge Container -->
+  <rect x="140" y="650" width="520" height="220" rx="20" fill="#ffffff" fill-opacity="0.08" stroke="url(#gold)" stroke-width="1.5" backdrop-filter="blur(10px)"/>
+
+  <text x="400" y="705" text-anchor="middle" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="24" font-weight="700" fill="#ffffff" letter-spacing="3">FOTO OFICIAL DA RAFAELA</text>
+  <text x="400" y="745" text-anchor="middle" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="16" font-weight="500" fill="#c99846">Placeholder Elegante para Substituição</text>
+  <text x="400" y="785" text-anchor="middle" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="14" fill="#a4b8b3">Arquivo de destino: /assets/images/rafaela-hero.jpg</text>
+  <text x="400" y="820" text-anchor="middle" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="13" fill="#809993">Dimensão recomendada: 1200 x 1500 px (Retrato)</text>
+</svg>

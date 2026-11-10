@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Você está offline - PB&amp;Cia</title>
+  <meta name="theme-color" content="#e94560" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; color: #0f172a; min-height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; padding: 24px; }
+    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,.08); padding: 48px; max-width: 420px; }
+    .icon { width: 72px; height: 72px; margin: 0 auto 24px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; }
+    h1 { font-size: 24px; margin-bottom: 12px; }
+    p { color: #475569; margin-bottom: 24px; line-height: 1.6; }
+    .btn { display: inline-block; background: #e94560; color: #fff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: 600; }
+    .btn:hover { background: #d63851; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon" aria-hidden="true">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+      </svg>
+    </div>
+    <h1>Você está offline</h1>
+    <p>Parece que você perdeu a conexão com a internet. Quando a conexão voltar, o catálogo estará disponível novamente.</p>
+    <button class="btn" onclick="location.reload()">Tentar novamente</button>
+  </div>
+</body>
+</html>

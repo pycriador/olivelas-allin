@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olivelas - Hortifruti & Feira Fresca</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@0.344.0/dist/umd/lucide.min.js"></script>
+
+  <!-- Global & Admin Styles -->
+  <link rel="stylesheet" href="../assets/css/variables.css" />
+  <link rel="stylesheet" href="../assets/css/base.css" />
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body class="admin-body">
+  <!-- Top Navigation Header -->
+  <header class="admin-header">
+    <div class="admin-header__container">
+      <div class="admin-header__brand">
+        <a href="../" class="admin-header__logo-link" title="Ir para a vitrine da loja">
+          <img src="../assets/images/logo.png" alt="Hortifruti Natural" class="admin-header__logo" />
+        </a>
+        <div class="admin-header__title-group">
+          <h1 class="admin-header__title">Painel de Gestão</h1>
+          <span class="admin-header__badge" id="storage-status-badge">
+            <span class="pulse-dot"></span>
+            <span id="storage-status-text">Dados Locais (LocalStorage)</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="admin-header__actions">
+        <a href="../como-funciona.html" class="btn-modern btn-modern--subtle" title="Ver manual completo do sistema" target="_blank" rel="noopener">
+          <i data-lucide="help-circle"></i>
+          <span>Manual</span>
+        </a>
+        <button type="button" class="btn-modern btn-modern--outline" id="btn-store-settings">
+          <i data-lucide="store"></i>
+          <span>Dados da Loja</span>
+        </button>
+        <button type="button" class="btn-modern btn-modern--subtle" id="btn-reset-data" title="Restaurar dados originais do arquivo produtos.json">
+          <i data-lucide="rotate-ccw"></i>
+          <span>Restaurar Padrão</span>
+        </button>
+        <a href="../" class="btn-modern btn-modern--primary" target="_blank" rel="noopener">
+          <i data-lucide="external-link"></i>
+          <span>Ver Vitrine</span>
+        </a>
+        <button type="button" class="admin-header__icon-btn" id="btn-theme-toggle" aria-label="Alternar tema claro/escuro">
+          <i data-lucide="moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="admin-main">
+    <div class="admin-container">
+
+      <!-- Welcome Banner -->
+      <section class="admin-welcome-bar" aria-label="Resumo do catálogo">
+        <div class="admin-welcome-text">
+          <div class="admin-welcome-pill">
+            <i data-lucide="sparkles"></i>
+            <span>Painel do Lojista</span>
+          </div>
+          <h2>Catálogo de Produtos & Estoque</h2>
+          <p>Gerencie produtos, múltiplos formatos de venda e controle a disponibilidade em tempo real.</p>
+        </div>
+        <div class="admin-welcome-meta">
+          <div class="admin-store-tag">
+            <i data-lucide="calendar"></i>
+            <div>
+              <small>Tabela Vigente</small>
+              <strong id="welcome-vigencia-val">15/09/2026</strong>
+            </div>
+          </div>
+          <div class="admin-store-tag">
+            <i data-lucide="message-circle"></i>
+            <div>
+              <small>WhatsApp</small>
+              <strong id="welcome-whatsapp-val">5511963820374</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Metrics Grid -->
+      <section class="admin-metrics" aria-label="Métricas do catálogo">
+        <div class="metric-card">
+          <div class="metric-card__icon metric-card__icon--primary">
+            <i data-lucide="shopping-bag"></i>
+          </div>
+          <div class="metric-card__info">
+            <span class="metric-card__label">Total de Itens</span>
+            <strong class="metric-card__value" id="metric-total-products">0</strong>
+          </div>
+          <span class="metric-card__chip metric-card__chip--primary">Catálogo</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card__icon metric-card__icon--success">
+            <i data-lucide="check-circle-2"></i>
+          </div>
+          <div class="metric-card__info">
+            <span class="metric-card__label">Pronta Entrega</span>
+            <strong class="metric-card__value" id="metric-in-stock">0</strong>
+          </div>
+          <span class="metric-card__chip metric-card__chip--success">Disponível</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card__icon metric-card__icon--warning">
+            <i data-lucide="alert-triangle"></i>
+          </div>
+          <div class="metric-card__info">
+            <span class="metric-card__label">Últimas Unidades</span>
+            <strong class="metric-card__value" id="metric-low-stock">0</strong>
+          </div>
+          <span class="metric-card__chip metric-card__chip--warning">Atenção</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card__icon metric-card__icon--danger">
+            <i data-lucide="x-circle"></i>
+          </div>
+          <div class="metric-card__info">
+            <span class="metric-card__label">Esgotados</span>
+            <strong class="metric-card__value" id="metric-out-stock">0</strong>
+          </div>
+          <span class="metric-card__chip metric-card__chip--danger">Sem Estoque</span>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-card__icon metric-card__icon--info">
+            <i data-lucide="folder-tree"></i>
+          </div>
+          <div class="metric-card__info">
+            <span class="metric-card__label">Categorias</span>
+            <strong class="metric-card__value" id="metric-categories">0</strong>
+          </div>
+          <span class="metric-card__chip metric-card__chip--info">Setores</span>
+        </div>
+      </section>
+
+      <!-- Action & Filter Bar -->
+      <section class="admin-toolbar" aria-label="Barra de ferramentas de catálogo">
+        <div class="admin-toolbar__search-group">
+          <div class="admin-search-box">
+            <i data-lucide="search"></i>
+            <input type="text" id="admin-search-input" placeholder="Buscar por código, nome, categoria..." autocomplete="off" />
+            <button type="button" id="admin-search-clear" class="admin-search-clear" aria-label="Limpar busca" style="display: none;">
+              <i data-lucide="x"></i>
+            </button>
+          </div>
+
+          <div class="admin-filters">
+            <select id="filter-category" class="admin-select" aria-label="Filtrar por categoria">
+              <option value="">Todas as Categorias</option>
+            </select>
+
+            <select id="filter-stock" class="admin-select" aria-label="Filtrar por estoque">
+              <option value="">Todos os Status</option>
+              <option value="Pronta Entrega">Pronta Entrega</option>
+              <option value="Últimas Unidades">Últimas Unidades</option>
+              <option value="Esgotado">Esgotado</option>
+              <option value="Sob Encomenda">Sob Encomenda</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-toolbar__buttons">
+          <button type="button" class="btn-modern btn-modern--outline" id="btn-upload-json" title="Carregar arquivo produtos.json do computador">
+            <i data-lucide="upload-cloud"></i>
+            <span>Subir JSON</span>
+          </button>
+          <input type="file" id="json-file-input" accept=".json,application/json" style="display: none;" />
+
+          <button type="button" class="btn-modern btn-modern--outline" id="btn-download-json" title="Baixar arquivo produtos.json formatado para colocar no diretório data/">
+            <i data-lucide="download-cloud"></i>
+            <span>Baixar JSON</span>
+          </button>
+
+          <button type="button" class="btn-modern btn-modern--primary" id="btn-add-product">
+            <i data-lucide="plus-circle"></i>
+            <span>+ Novo Produto</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Products Table Section (Clean & Fitted, No Horizontal Overflow) -->
+      <section class="admin-table-section">
+        <div class="admin-table-header">
+          <div class="admin-table-summary">
+            <div class="summary-badge">
+              <i data-lucide="layers"></i>
+              <span id="table-results-count">Exibindo 0 produtos</span>
+            </div>
+          </div>
+          <div class="admin-table-tools">
+            <label for="admin-sort" class="admin-sort-label">Ordenar:</label>
+            <select id="admin-sort" class="admin-select admin-select--sm">
+              <option value="codigo-asc">Código (Crescente)</option>
+              <option value="codigo-desc">Código (Decrescente)</option>
+              <option value="nome-asc">Nome (A - Z)</option>
+              <option value="nome-desc">Nome (Z - A)</option>
+              <option value="categoria-asc">Categoria (A - Z)</option>
+              <option value="preco-asc">Menor Preço</option>
+              <option value="preco-desc">Maior Preço</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="admin-table-wrapper">
+          <table class="admin-table" id="products-table">
+            <thead>
+              <tr>
+                <th class="col-thumb">Foto</th>
+                <th class="col-code">Código</th>
+                <th class="col-name">Produto</th>
+                <th class="col-category">Categoria</th>
+                <th class="col-variants">Opções & Preço</th>
+                <th class="col-stock">Status de Estoque</th>
+                <th class="col-actions">Ações</th>
+              </tr>
+            </thead>
+            <tbody id="products-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+
+          <!-- Empty search state -->
+          <div class="admin-empty" id="admin-empty-state" style="display: none;">
+            <div class="admin-empty__icon-wrapper">
+              <i data-lucide="search-x"></i>
+            </div>
+            <h3>Nenhum produto encontrado</h3>
+            <p>Tente ajustar seus termos de busca ou filtros selecionados.</p>
+            <button type="button" class="btn-modern btn-modern--outline" id="btn-clear-filters">Limpar Filtros</button>
+          </div>
+        </div>
+
+        <!-- Smart Pagination Bar -->
+        <div class="admin-pagination" id="admin-pagination">
+          <div class="admin-pagination__info">
+            <span id="pagination-info-text">Mostrando 1 a 12 de 33 produtos</span>
+            <div class="admin-pagination__per-page">
+              <label for="admin-per-page">Exibir:</label>
+              <select id="admin-per-page" class="admin-select admin-select--sm">
+                <option value="8">8 itens</option>
+                <option value="12" selected>12 itens</option>
+                <option value="20">20 itens</option>
+                <option value="35">35 itens</option>
+                <option value="all">Todos</option>
+              </select>
+            </div>
+          </div>
+          <div class="admin-pagination__nav">
+            <button type="button" class="btn-modern btn-modern--subtle admin-page-nav-btn" id="btn-page-prev" title="Página anterior">
+              <i data-lucide="chevron-left"></i>
+              <span>Anterior</span>
+            </button>
+            <div class="admin-page-numbers" id="admin-page-numbers">
+              <!-- Page buttons rendered dynamically -->
+            </div>
+            <button type="button" class="btn-modern btn-modern--subtle admin-page-nav-btn" id="btn-page-next" title="Próxima página">
+              <span>Próxima</span>
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Info Banner -->
+      <section class="admin-notice-banner">
+        <div class="admin-notice-icon">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <div class="admin-notice-content">
+          <h4>Sincronização & Persistência Local:</h4>
+          <p>As alterações feitas neste painel são salvas automaticamente no <strong>LocalStorage</strong> e já refletem na vitrine da loja. Para publicar no servidor de produção, clique em <strong>"Baixar JSON"</strong> e substitua o arquivo em <code>data/produtos.json</code>.</p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ==================== MODALS REDESIGNED ==================== -->
+
+  <!-- Modal: Product (Create / Edit) with Modern Tabbed Navigation -->
+  <div class="admin-modal-overlay" id="product-modal-overlay">
+    <div class="admin-modal admin-modal--product" role="dialog" aria-modal="true" aria-labelledby="product-modal-title">
+      <!-- Modal Header -->
+      <div class="admin-modal__header">
+        <div class="admin-modal__title-group">
+          <div class="modal-icon-badge" id="product-modal-icon-badge">
+            <i data-lucide="package-plus" id="product-modal-icon"></i>
+          </div>
+          <div>
+            <div class="modal-header-top">
+              <h2 class="admin-modal__title" id="product-modal-title">Novo Produto</h2>
+              <span class="modal-sku-tag" id="product-modal-sku-tag">HF001</span>
+            </div>
+            <span class="admin-modal__subtitle">Configure as informações, formatos de venda e imagens</span>
+          </div>
+        </div>
+        <button type="button" class="admin-modal__close" id="btn-close-product-modal" aria-label="Fechar modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <!-- Modern Tabs Navigation -->
+      <div class="modal-tabs">
+        <button type="button" class="modal-tab-btn is-active" data-tab="tab-basic">
+          <i data-lucide="info"></i>
+          <span>Dados Principais</span>
+        </button>
+        <button type="button" class="modal-tab-btn" data-tab="tab-variants">
+          <i data-lucide="layers"></i>
+          <span>Formatos de Venda & Preços</span>
+          <span class="tab-badge" id="variants-count-badge">1</span>
+        </button>
+        <button type="button" class="modal-tab-btn" data-tab="tab-details">
+          <i data-lucide="image"></i>
+          <span>Imagem & Detalhes</span>
+        </button>
+      </div>
+
+      <form id="product-form" class="admin-form" novalidate>
+        <input type="hidden" id="form-product-mode" value="create" />
+        <input type="hidden" id="form-original-code" value="" />
+
+        <div class="admin-form__body">
+
+          <!-- TAB 1: Dados Principais -->
+          <div class="modal-tab-content is-active" id="tab-basic">
+            <div class="form-card">
+              <div class="form-card__header">
+                <i data-lucide="tag"></i>
+                <span>Identificação do Produto</span>
+              </div>
+              <div class="form-card__grid form-card__grid--3">
+                <div class="form-field">
+                  <label for="p-codigo">Código SKU <span class="required">*</span></label>
+                  <div class="input-with-icon">
+                    <i data-lucide="hash"></i>
+                    <input type="text" id="p-codigo" name="codigo" required placeholder="Ex: HF034" />
+                  </div>
+                </div>
+
+                <div class="form-field form-field--span2">
+                  <label for="p-nome">Nome do Produto <span class="required">*</span></label>
+                  <div class="input-with-icon">
+                    <i data-lucide="shopping-bag"></i>
+                    <input type="text" id="p-nome" name="nome" required placeholder="Ex: Manga Palmer Especial" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-card__grid form-card__grid--3">
+                <div class="form-field">
+                  <label for="p-categoria">Categoria <span class="required">*</span></label>
+                  <div class="input-action-group">
+                    <select id="p-categoria" name="categoria" required>
+                      <!-- Filled dynamically -->
+                    </select>
+                    <button type="button" class="btn-modern btn-modern--outline btn-sm" id="btn-new-category" title="Criar nova categoria">
+                      <i data-lucide="plus"></i>
+                      <span>Nova</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="form-field">
+                  <label for="p-disponibilidade">Status de Estoque</label>
+                  <select id="p-disponibilidade" name="disponibilidade">
+                    <option value="Pronta Entrega">🟢 Pronta Entrega (Em estoque)</option>
+                    <option value="Últimas Unidades">🟡 Últimas Unidades (Baixo estoque)</option>
+                    <option value="Esgotado">🔴 Esgotado (Sem estoque)</option>
+                    <option value="Sob Encomenda">🔵 Sob Encomenda</option>
+                  </select>
+                </div>
+
+                <div class="form-field">
+                  <label for="p-estoque">Qtd. em Estoque</label>
+                  <div class="input-with-icon">
+                    <i data-lucide="boxes"></i>
+                    <input type="number" id="p-estoque" name="estoque" min="0" placeholder="Ex: 1 (ou vazio)" title="Deixe vazio para estoque ilimitado" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="p-descricao">Descrição do Produto</label>
+                <textarea id="p-descricao" name="descricao" rows="2" placeholder="Descreva os diferenciais, sabor, frescor e qualidade do produto..."></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: Formatos de Venda & Preços -->
+          <div class="modal-tab-content" id="tab-variants">
+            <div class="form-card">
+              <div class="form-card__header-flex">
+                <div class="form-card__header-title">
+                  <i data-lucide="coins"></i>
+                  <div>
+                    <strong>Opções e Preços de Venda</strong>
+                    <p>Cadastre diferentes formatos para o mesmo produto (ex: 1 un por R$ 5, 1 bandeja por R$ 12, 1 kg por R$ 18).</p>
+                  </div>
+                </div>
+                <button type="button" class="btn-modern btn-modern--outline btn-sm" id="btn-add-variant">
+                  <i data-lucide="plus"></i>
+                  <span>+ Formato</span>
+                </button>
+              </div>
+
+              <div class="variant-cards-list" id="variants-container">
+                <!-- Filled dynamically with modern variant cards -->
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 3: Imagem & Detalhes -->
+          <div class="modal-tab-content" id="tab-details">
+            <div class="form-card">
+              <div class="form-card__header">
+                <i data-lucide="image"></i>
+                <span>Ilustração do Produto</span>
+              </div>
+
+              <div class="image-selector-layout">
+                <div class="image-preview-box">
+                  <img id="image-preview-el" src="../assets/images/favicon.svg" alt="Preview da Imagem" />
+                  <span class="image-preview-label">Visualização</span>
+                </div>
+
+                <div class="image-inputs-box">
+                  <div class="form-field">
+                    <label for="p-imagem">Caminho da Imagem ou URL</label>
+                    <input type="text" id="p-imagem" name="imagem" placeholder="assets/images/products/hf001.svg" />
+                  </div>
+
+                  <div class="svg-quick-picker">
+                    <label>Ou selecione um ícone da galeria:</label>
+                    <div class="svg-thumbnails-grid" id="svg-gallery-picker">
+                      <!-- Rendered dynamically with SVGs hf001 to hf033 -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-card">
+              <div class="form-card__header">
+                <i data-lucide="sliders"></i>
+                <span>Especificações Técnicas</span>
+              </div>
+
+              <div class="form-card__grid form-card__grid--3">
+                <div class="form-field">
+                  <label for="p-unidades-pacote">Embalagem / Pacote</label>
+                  <input type="text" id="p-unidades-pacote" name="unidadesPorPacote" placeholder="Ex: 1 unidade, 1 bandeja com 4 un" />
+                </div>
+
+                <div class="form-field">
+                  <label for="p-peso-unitario">Preço de Referência</label>
+                  <input type="text" id="p-peso-unitario" name="pesoUnitario" placeholder="Ex: Preço por kg, Preço por unidade" />
+                </div>
+
+                <div class="form-field">
+                  <label for="p-vigencia">Vigência de Preço</label>
+                  <input type="text" id="p-vigencia" name="vigenciaPreco" placeholder="15/09/2026" value="15/09/2026" />
+                </div>
+              </div>
+
+              <div class="form-field">
+                <label for="p-procedencia">Procedência</label>
+                <input type="text" id="p-procedencia" name="procedencia" placeholder="Ex: Produtor Regional Selecionado" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="admin-modal__footer">
+          <button type="button" class="btn-modern btn-modern--ghost" id="btn-cancel-product">Cancelar</button>
+          <button type="submit" class="btn-modern btn-modern--primary btn-lg" id="btn-save-product">
+            <i data-lucide="check"></i>
+            <span>Salvar Alterações</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Store Settings -->
+  <div class="admin-modal-overlay" id="store-modal-overlay">
+    <div class="admin-modal admin-modal--md" role="dialog" aria-modal="true" aria-labelledby="store-modal-title">
+      <div class="admin-modal__header">
+        <div class="admin-modal__title-group">
+          <div class="modal-icon-badge">
+            <i data-lucide="store"></i>
+          </div>
+          <div>
+            <h2 class="admin-modal__title" id="store-modal-title">Configurações da Loja</h2>
+            <span class="admin-modal__subtitle">Altere os dados de contato, vigência e identidade</span>
+          </div>
+        </div>
+        <button type="button" class="admin-modal__close" id="btn-close-store-modal" aria-label="Fechar modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+
+      <form id="store-form" class="admin-form">
+        <div class="admin-form__body">
+          <div class="form-card">
+            <div class="form-field">
+              <label for="s-nome">Nome do Estabelecimento</label>
+              <input type="text" id="s-nome" name="nome" required />
+            </div>
+
+            <div class="form-field">
+              <label for="s-slogan">Slogan da Loja</label>
+              <input type="text" id="s-slogan" name="slogan" />
+            </div>
+
+            <div class="form-field">
+              <label for="s-descricao">Descrição da Loja (Hero Banner)</label>
+              <textarea id="s-descricao" name="descricao" rows="2"></textarea>
+            </div>
+
+            <div class="form-card__grid form-card__grid--2">
+              <div class="form-field">
+                <label for="s-whatsapp">WhatsApp (com DDI e DDD)</label>
+                <input type="text" id="s-whatsapp" name="whatsapp" placeholder="5511963820374" required />
+              </div>
+
+              <div class="form-field">
+                <label for="s-vigencia">Vigência Geral da Tabela</label>
+                <input type="text" id="s-vigencia" name="vigenciaTabela" placeholder="15/09/2026" />
+              </div>
+            </div>
+
+            <div class="form-card__grid form-card__grid--2">
+              <div class="form-field">
+                <label for="s-formas-pedido">Formas de Pedido</label>
+                <input type="text" id="s-formas-pedido" name="formas_pedido" value="WhatsApp e Feira Online" />
+              </div>
+
+              <div class="form-field">
+                <label for="s-disponibilidade-padrao">Disponibilidade Padrão</label>
+                <input type="text" id="s-disponibilidade-padrao" name="disponibilidade_padrao" value="Pronta Entrega" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-modal__footer">
+          <button type="button" class="btn-modern btn-modern--ghost" id="btn-cancel-store">Cancelar</button>
+          <button type="submit" class="btn-modern btn-modern--primary">
+            <i data-lucide="check"></i>
+            <span>Salvar Configurações</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: New Category -->
+  <div class="admin-modal-overlay" id="category-modal-overlay">
+    <div class="admin-modal admin-modal--sm" role="dialog" aria-modal="true" aria-labelledby="cat-modal-title">
+      <div class="admin-modal__header">
+        <div class="admin-modal__title-group">
+          <div class="modal-icon-badge">
+            <i data-lucide="folder-plus"></i>
+          </div>
+          <div>
+            <h2 class="admin-modal__title" id="cat-modal-title">Nova Categoria</h2>
+          </div>
+        </div>
+        <button type="button" class="admin-modal__close" id="btn-close-category-modal" aria-label="Fechar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <form id="category-form" class="admin-form">
+        <div class="admin-form__body">
+          <div class="form-field">
+            <label for="new-cat-name">Nome da Categoria</label>
+            <input type="text" id="new-cat-name" placeholder="Ex: Orgânicos & Especiais" required />
+          </div>
+        </div>
+        <div class="admin-modal__footer">
+          <button type="button" class="btn-modern btn-modern--ghost" id="btn-cancel-category">Cancelar</button>
+          <button type="submit" class="btn-modern btn-modern--primary">Criar Categoria</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Delete Confirmation -->
+  <div class="admin-modal-overlay" id="delete-modal-overlay">
+    <div class="admin-modal admin-modal--sm" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+      <div class="admin-modal__header">
+        <div class="admin-modal__title-group admin-modal__title-group--danger">
+          <div class="modal-icon-badge modal-icon-badge--danger">
+            <i data-lucide="alert-triangle"></i>
+          </div>
+          <div>
+            <h2 class="admin-modal__title" id="delete-modal-title">Excluir Produto</h2>
+          </div>
+        </div>
+        <button type="button" class="admin-modal__close" id="btn-close-delete-modal" aria-label="Fechar">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="admin-form__body">
+        <div class="delete-confirmation-box">
+          <p>Tem certeza que deseja excluir o produto <strong id="delete-product-name">---</strong> (<span id="delete-product-code">---</span>)?</p>
+          <span class="delete-warning-text">Essa ação removerá o produto do catálogo local.</span>
+        </div>
+      </div>
+      <div class="admin-modal__footer">
+        <button type="button" class="btn-modern btn-modern--ghost" id="btn-cancel-delete">Cancelar</button>
+        <button type="button" class="btn-modern btn-modern--danger" id="btn-confirm-delete">
+          <i data-lucide="trash-2"></i>
+          <span>Excluir Definitivamente</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="admin-toast-container" id="admin-toast-container"></div>
+
+  <!-- Script Modules -->
+  <script type="module" src="admin.js"></script>
+</body>
+</html>

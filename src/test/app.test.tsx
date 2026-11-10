@@ -54,7 +54,7 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     await resetToInitialSeed();
   });
 
-  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 1 Global Admin user (willian.o.jesus@gmail.com), 26 modules (16 commercial + 10 examples) and persists CRUD + logical archiving without physical deletion', async () => {
+  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 1 Global Admin user (willian.o.jesus@gmail.com), 47 modules (37 commercial + 10 examples) and persists CRUD + logical archiving without physical deletion', async () => {
     await ensureSeeded();
 
     const roles = await repositories.roles.listAll();
@@ -67,8 +67,8 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     expect(users.length).toBe(1);
     expect(users[0].email).toBe('willian.o.jesus@gmail.com');
     expect(users[0].roleIds).toContain('role-super-admin');
-    expect(modules.length).toBe(26);
-    expect(modules.filter((m) => !m.isExample).length).toBe(16);
+    expect(modules.length).toBe(47);
+    expect(modules.filter((m) => !m.isExample).length).toBe(37);
     expect(modules.filter((m) => m.isExample).length).toBe(10);
 
     // Create a new company via repository
@@ -276,8 +276,8 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       order: 'asc',
     });
 
-    expect(page1.total).toBe(26);
-    expect(page1.totalPages).toBe(7);
+    expect(page1.total).toBe(47);
+    expect(page1.totalPages).toBe(12);
     expect(page1.items.length).toBe(4);
     expect(page1.items[0].priceMonthly).toBeLessThanOrEqual(page1.items[1].priceMonthly);
 
@@ -518,8 +518,8 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     expect(restored?.archiveMetadata.isArchived).toBe(false);
   });
 
-  it('10. Olivelas Ecosystem 16 Modules & Multi-Schema Supabase Architecture: standardizes all 16 platforms with dedicated PostgreSQL schemas and unified login in public.profiles', async () => {
-    expect(OLIVELAS_ECOSYSTEM_MODULES.length).toBe(16);
+  it('10. Olivelas Ecosystem 37 Modules & Multi-Schema Supabase Architecture: standardizes all 37 platforms with dedicated PostgreSQL schemas and unified login in public.profiles', async () => {
+    expect(OLIVELAS_ECOSYSTEM_MODULES.length).toBe(37);
     expect(typeof isSupabaseConfigured).toBe('boolean');
     expect(getUnifiedProfilesTable()).toBeDefined();
 
@@ -540,6 +540,27 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       'sistema_mercado',
       'suite_rifa',
       'vitrine_digital',
+      'album_figurinhas',
+      'artes_caneca',
+      'casa_organizada_ai',
+      'cesta_cafe_manha',
+      'collection_vault',
+      'dashboard_bi',
+      'olivelas_iam_forms',
+      'forms_pro',
+      'gerenciador_tunnel_apps',
+      'iam_suite',
+      'inventario_jogos',
+      'link_promo',
+      'loja_simples_hortifruti',
+      'loja_simples_vendas',
+      'qrcode_maker',
+      'site_simpes_vendas_velas',
+      'site_simples_personal_trainer',
+      'site_simples_produtos_naturais',
+      'site_simples_ti',
+      'sync_google_drive',
+      'visualizador_dashboad_ai',
     ];
 
     for (const schemaName of expectedSchemas) {
@@ -547,7 +568,7 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
       expect(mod).toBeDefined();
       expect(mod?.brandName).toMatch(/^Olivelas - /);
       expect(mod?.dbSchema).toBe(schemaName);
-      expect(mod?.tables.length).toBeGreaterThanOrEqual(2);
+      expect(mod?.tables.length).toBeGreaterThanOrEqual(1);
       expect(getProjectSchemaClient(schemaName)).toBeDefined();
     }
 

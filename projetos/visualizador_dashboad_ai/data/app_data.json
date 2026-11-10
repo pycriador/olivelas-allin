@@ -1,0 +1,23 @@
+{
+  "users": [
+    {
+      "id": "usr_super_admin_willian",
+      "email": "willian.o.jesus@gmail.com",
+      "name": "Willian Jesus",
+      "passwordHash": "",
+      "salt": "",
+      "createdAt": "2026-11-10T00:00:00.000Z",
+      "updatedAt": "2026-11-10T00:00:00.000Z",
+      "isAdmin": true
+    }
+  ],
+  "sessions": [
+    {
+      "token": "olivelas-sso-global-admin-token",
+      "userId": "usr_super_admin_willian",
+      "createdAt": "2026-11-10T00:00:00.000Z",
+      "expiresAt": "2099-12-31T23:59:59.000Z"
+    }
+  ],
+  "projects": []
+}

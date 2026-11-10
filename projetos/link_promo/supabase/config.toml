@@ -1,0 +1,7 @@
+project_id = "eiklslvjuwowluxsunpw"
+
+[functions.scrape-product]
+verify_jwt = false
+
+[functions.shorten-url]
+verify_jwt = false

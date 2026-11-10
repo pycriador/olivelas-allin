@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="circleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#86efac" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#22c55e" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+  <rect width="100%" height="100%" fill="url(#bgGrad)"/>
+  <circle cx="200" cy="150" r="110" fill="url(#circleGrad)"/>
+  <text x="200" y="165" font-size="100" text-anchor="middle" dominant-baseline="middle">🍍</text>
+</svg>

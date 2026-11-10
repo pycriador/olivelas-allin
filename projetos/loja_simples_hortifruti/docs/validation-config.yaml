@@ -1,0 +1,58 @@
+# Validation Configuration for Hortifruti Natural Documentation
+roots:
+  - docs/en
+  - docs/pt-BR
+
+manifests:
+  - docs/en/manifest.yaml
+  - docs/pt-BR/manifest.yaml
+
+metadata:
+  allowed_statuses:
+    - ACCEPTED
+    - PROPOSED
+    - DRAFT
+    - DEPRECATED
+  allowed_authority:
+    - Authoritative
+    - Supporting
+    - Standard
+    - Reference
+  require_owner_for_manifest_authoritative: true
+  warn_missing_owner_when_accepted: true
+  validate_when_present: true
+
+ids:
+  pattern: "^[A-Z0-9_-]+$"
+  detect_duplicates: true
+  require_id_for_manifest_entries: true
+
+links:
+  check_internal_markdown: true
+  fail_on_broken: true
+  check_bare_relative_md_paths: true
+
+freshness:
+  enabled: true
+  stale_after_days: 365
+
+ai_readiness:
+  require_ai_context_exists: true
+  ai_context_paths:
+    - docs/en/ai-context.md
+    - docs/pt-BR/ai-context.md
+
+claims:
+  validate_claim_status_tokens: false
+
+exceptions:
+  detect_expired: true
+  directory_globs: []
+
+relationships:
+  validate_relationship_docs: false
+
+manifest:
+  require_listed_paths_exist: true
+  info_unlisted_markdown: false
+  warn_unlisted_markdown: false

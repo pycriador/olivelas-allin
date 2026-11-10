@@ -1,0 +1,41 @@
+---
+description: Documentation prose — clear language, no undefined jargon; align with Documentation Standard style-guide
+globs:
+  - "**/*.md"
+  - "docs/**"
+  - "examples/**"
+  - "**/*README*"
+alwaysApply: true
+---
+
+# Clear language (Documentation Standard)
+
+Applies when creating, editing, or reviewing Markdown under this framework.
+
+Goal: a new reader (engineer, operator, or next-session agent) understands on the **first read**.
+
+## Rules
+
+1. Prefer **direct, technical prose**. Follow [docs/en/style-guide.md](docs/en/style-guide.md) (pt-BR: [docs/pt-BR/style-guide.md](docs/pt-BR/style-guide.md)).
+2. **Code identifiers stay in English** (paths, APIs, env names, status tokens). In human prose, put the identifier in backticks and state the meaning in the same sentence.
+3. Do not use jargon alone on first appearance in a section — define it once (or link the glossary).
+4. Numbers need units; lists that matter must be complete or marked Unknown / not applicable.
+5. One idea per section; prefer tables and lists over long narrative.
+
+## Ambiguity check (before closing a doc edit)
+
+- [ ] Abbreviations / anglicisms defined or linked
+- [ ] Claims use Confirmed / Inferred / Unknown / Proposed when classification applies
+- [ ] No secrets or PII in examples — placeholders only
+- [ ] Canonical names reused (no synonym drift) — [document-identity.md](docs/en/document-identity.md)
+
+## Anti-patterns
+
+- Marketing tone or unmeasurable adjectives ("robust", "seamless") without metrics
+- Leaving knowledge only in chat while the doc stays vague
+- Inventing synonyms for the same component or contract
+
+## Related
+
+- Skill: `.cursor/skills/document-after-change`
+- [standards.md](docs/en/standards.md), [language.md](docs/en/language.md), [glossary.md](docs/en/glossary.md)

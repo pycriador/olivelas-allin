@@ -1,0 +1,303 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * HomeFlow — Design System
+ * Modern SaaS aesthetic inspired by Linear, Notion, Todoist.
+ * Accent: electric violet. Neutral surfaces. Soft geometric shadows.
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
+  --color-brand-glow: var(--brand-glow);
+}
+
+:root {
+  --radius: 0.875rem;
+  --font-heading: "Fraunces", ui-serif, Georgia, serif;
+  --font-body: "Inter", ui-sans-serif;
+  --background: oklch(0.985 0.006 92);
+  --foreground: oklch(0.24 0.02 145);
+  --card: oklch(0.995 0.004 92);
+  --card-foreground: oklch(0.24 0.02 145);
+  --popover: oklch(0.995 0.004 92);
+  --popover-foreground: oklch(0.24 0.02 145);
+  --primary: oklch(0.38 0.055 155);
+  --primary-foreground: oklch(0.97 0.012 92);
+  --secondary: oklch(0.955 0.012 92);
+  --secondary-foreground: oklch(0.3 0.03 150);
+  --muted: oklch(0.955 0.012 92);
+  --muted-foreground: oklch(0.52 0.015 130);
+  --accent: oklch(0.93 0.03 85);
+  --accent-foreground: oklch(0.34 0.05 80);
+  --destructive: oklch(0.55 0.16 28);
+  --destructive-foreground: oklch(0.98 0.008 92);
+  --success: oklch(0.55 0.1 155);
+  --success-foreground: oklch(0.98 0.008 92);
+  --warning: oklch(0.72 0.11 80);
+  --warning-foreground: oklch(0.26 0.05 80);
+  --brand: oklch(0.38 0.055 155);
+  --brand-foreground: oklch(0.97 0.012 92);
+  --brand-glow: oklch(0.68 0.1 82);
+  --border: oklch(0.9 0.012 92);
+  --input: oklch(0.9 0.012 92);
+  --ring: oklch(0.38 0.055 155);
+  --chart-1: oklch(0.38 0.055 155);
+  --chart-2: oklch(0.68 0.1 82);
+  --chart-3: oklch(0.55 0.06 200);
+  --chart-4: oklch(0.62 0.09 45);
+  --chart-5: oklch(0.48 0.04 130);
+  --sidebar: oklch(0.975 0.008 92);
+  --sidebar-foreground: oklch(0.28 0.02 145);
+  --sidebar-primary: oklch(0.38 0.055 155);
+  --sidebar-primary-foreground: oklch(0.97 0.012 92);
+  --sidebar-accent: oklch(0.94 0.015 92);
+  --sidebar-accent-foreground: oklch(0.3 0.04 150);
+  --sidebar-border: oklch(0.9 0.012 92);
+  --sidebar-ring: oklch(0.38 0.055 155);
+  --gradient-hero: radial-gradient(ellipse 90% 60% at 50% -10%, oklch(0.93 0.025 92), transparent 70%);
+  --gradient-brand: linear-gradient(135deg, oklch(0.34 0.05 158), oklch(0.44 0.06 150));
+  --gradient-subtle: linear-gradient(180deg, oklch(0.975 0.01 92), oklch(0.99 0.004 92));
+  --shadow-elegant: 0 24px 60px -28px oklch(0.24 0.03 145 / 0.28);
+  --shadow-glow: 0 0 70px -20px oklch(0.68 0.1 82 / 0.35);
+  --shadow-card: 0 1px 2px oklch(0.24 0.02 145 / 0.05), 0 10px 30px -14px oklch(0.24 0.02 145 / 0.12);
+}
+
+.dark {
+  --background: oklch(0.19 0.015 150);
+  --foreground: oklch(0.94 0.01 92);
+  --card: oklch(0.23 0.018 150);
+  --card-foreground: oklch(0.94 0.01 92);
+  --popover: oklch(0.23 0.018 150);
+  --popover-foreground: oklch(0.94 0.01 92);
+  --primary: oklch(0.78 0.09 92);
+  --primary-foreground: oklch(0.2 0.02 150);
+  --secondary: oklch(0.27 0.02 150);
+  --secondary-foreground: oklch(0.94 0.01 92);
+  --muted: oklch(0.26 0.018 150);
+  --muted-foreground: oklch(0.72 0.015 92);
+  --accent: oklch(0.32 0.03 120);
+  --accent-foreground: oklch(0.92 0.03 92);
+  --destructive: oklch(0.62 0.17 28);
+  --destructive-foreground: oklch(0.98 0.008 92);
+  --success: oklch(0.7 0.11 155);
+  --success-foreground: oklch(0.2 0.02 150);
+  --warning: oklch(0.8 0.11 82);
+  --warning-foreground: oklch(0.2 0.02 150);
+  --brand: oklch(0.78 0.09 92);
+  --brand-foreground: oklch(0.2 0.02 150);
+  --brand-glow: oklch(0.86 0.07 92);
+  --border: oklch(0.94 0.01 92 / 12%);
+  --input: oklch(0.94 0.01 92 / 16%);
+  --ring: oklch(0.78 0.09 92);
+  --chart-1: oklch(0.78 0.09 92);
+  --chart-2: oklch(0.66 0.09 155);
+  --chart-3: oklch(0.62 0.07 200);
+  --chart-4: oklch(0.7 0.1 45);
+  --chart-5: oklch(0.58 0.05 130);
+  --sidebar: oklch(0.22 0.018 150);
+  --sidebar-foreground: oklch(0.92 0.01 92);
+  --sidebar-primary: oklch(0.78 0.09 92);
+  --sidebar-primary-foreground: oklch(0.2 0.02 150);
+  --sidebar-accent: oklch(0.28 0.025 150);
+  --sidebar-accent-foreground: oklch(0.92 0.03 92);
+  --sidebar-border: oklch(0.94 0.01 92 / 12%);
+  --sidebar-ring: oklch(0.78 0.09 92);
+  --gradient-hero: radial-gradient(ellipse 90% 60% at 50% -10%, oklch(0.3 0.03 140), transparent 70%);
+  --gradient-brand: linear-gradient(135deg, oklch(0.32 0.04 158), oklch(0.26 0.03 150));
+  --gradient-subtle: linear-gradient(180deg, oklch(0.22 0.018 150), oklch(0.19 0.015 150));
+  --shadow-elegant: 0 24px 60px -28px oklch(0 0 0 / 0.6);
+  --shadow-glow: 0 0 70px -20px oklch(0.78 0.09 92 / 0.25);
+  --shadow-card: 0 1px 2px oklch(0 0 0 / 0.35), 0 10px 30px -14px oklch(0 0 0 / 0.45);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.015em;
+    font-weight: 500;
+  }
+}
+
+@utility bg-gradient-hero { background-image: var(--gradient-hero); }
+@utility bg-gradient-brand { background-image: var(--gradient-brand); }
+@utility bg-gradient-subtle { background-image: var(--gradient-subtle); }
+@utility shadow-elegant { box-shadow: var(--shadow-elegant); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
+@utility shadow-card { box-shadow: var(--shadow-card); }
+@utility text-gradient-brand {
+  background-image: var(--gradient-brand);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* ============================================================
+ * PDF / Print styles — used by Print Studio (src/modules/pdf)
+ * ============================================================ */
+.pdf-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+  color: var(--pdf-fg, #1a1a1a);
+}
+.pdf-page {
+  position: relative;
+  width: var(--pdf-w);
+  height: var(--pdf-h);
+  background: var(--pdf-bg, #fff);
+  color: var(--pdf-fg, #1a1a1a);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  padding: var(--pdf-mt) var(--pdf-mr) var(--pdf-mb) var(--pdf-ml);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.pdf-page:last-child { page-break-after: auto; break-after: auto; }
+.pdf-header {
+  position: absolute;
+  top: 6mm;
+  left: var(--pdf-ml);
+  right: var(--pdf-mr);
+  font-size: 0.75em;
+  color: color-mix(in srgb, var(--pdf-fg) 60%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--pdf-fg) 10%, transparent);
+  padding-bottom: 2mm;
+}
+.pdf-footer {
+  position: absolute;
+  bottom: 6mm;
+  left: var(--pdf-ml);
+  right: var(--pdf-mr);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.7em;
+  color: color-mix(in srgb, var(--pdf-fg) 55%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--pdf-fg) 10%, transparent);
+  padding-top: 2mm;
+}
+.pdf-content { flex: 1; overflow: hidden; }
+.pdf-page-title {
+  font-family: var(--font-display);
+  font-size: 1.6em;
+  font-weight: 600;
+  margin: 0 0 4mm;
+  color: var(--pdf-primary);
+}
+.pdf-page-desc { font-size: 0.9em; opacity: 0.7; margin: 0 0 6mm; }
+.pdf-fields { display: flex; flex-direction: column; gap: 5mm; }
+.pdf-field { break-inside: avoid; }
+.pdf-field-label { display: block; font-weight: 600; font-size: 0.9em; margin-bottom: 1.5mm; }
+.pdf-required { color: #dc2626; margin-left: 2px; }
+.pdf-field-desc { font-size: 0.75em; opacity: 0.65; margin: 0 0 2mm; }
+.pdf-field-control input,
+.pdf-field-control textarea,
+.pdf-field-control select {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--pdf-fg) 25%, transparent);
+  border-radius: 4px;
+  padding: 2mm 3mm;
+  background: transparent;
+  color: var(--pdf-fg);
+  font-size: 0.9em;
+}
+.pdf-cover { padding: 0; }
+.pdf-cover-hero { height: 55%; width: 100%; }
+.pdf-cover-body {
+  padding: 15mm var(--pdf-mr);
+  display: flex;
+  flex-direction: column;
+  gap: 4mm;
+}
+.pdf-cover-title {
+  font-family: var(--font-display);
+  font-size: 2.4em;
+  font-weight: 700;
+  margin: 0;
+  color: var(--pdf-primary);
+}
+.pdf-cover-subtitle { font-size: 1.1em; opacity: 0.75; margin: 0; }
+.pdf-cover-meta { display: flex; gap: 8mm; font-size: 0.85em; opacity: 0.6; margin-top: auto; }
+
+/* Print mode: hide app shell, show only the pdf document */
+@media print {
+  @page { size: auto; margin: 0; }
+  html, body { background: #fff !important; }
+  body > * { visibility: hidden; }
+  .pdf-print-root, .pdf-print-root * { visibility: visible; }
+  .pdf-print-root {
+    position: absolute;
+    inset: 0;
+    display: block;
+  }
+  .pdf-doc { gap: 0; }
+  .pdf-page {
+    box-shadow: none;
+    margin: 0;
+  }
+}
