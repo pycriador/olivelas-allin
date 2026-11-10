@@ -52,7 +52,6 @@ export const GlobalModulesCatalogPage: React.FC = () => {
     notify,
     t,
   } = useApp();
-  const navigate = useNavigate();
   const [archiveTarget, setArchiveTarget] = useState<CatalogModuleEntity | null>(null);
   const [catalogTab, setCatalogTab] = useState<'commercial' | 'examples'>('commercial');
   const activeCompany =
@@ -153,125 +152,6 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Interactive Showcase Grid for the 16 Commercial Olivelas Modules */}
-      {catalogTab === 'commercial' && (
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-            gap: '1.1rem',
-          }}
-        >
-          {commercialModules
-            .filter((m) => !m.archiveMetadata.isArchived)
-            .map((mod) => {
-              const demoSlug = mod.ecosystemSlug || mod.code;
-              const srvSpec = getModuleInstanceServerSpec(demoSlug);
-              const launchInfo = buildModuleInstanceLaunchUrl({
-                moduleSlug: demoSlug,
-                companyId: activeCompany?.id || 'emp-olivelas-matriz',
-                companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
-                userId: currentUser?.id,
-                userEmail: currentUser?.email,
-                userName: currentUser?.name,
-              });
-              const activeCount = companyModules.filter(
-                (cm) => cm.moduleId === mod.id && cm.status === 'active',
-              ).length;
-              return (
-                <div
-                  key={mod.id}
-                  onClick={() => handleOpenInstance(demoSlug)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      handleOpenInstance(demoSlug);
-                    }
-                  }}
-                  className="card card-interactive"
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    justifyContent: 'space-between',
-                  }}
-                >
-                  <div className="card-body flex flex-col gap-2.5">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <span className="badge badge-info">{mod.category}</span>
-                      <div className="flex items-center gap-1">
-                        <span className="badge badge-teal mono" title="Porta dedicada da instância">
-                          :{srvSpec.port}
-                        </span>
-                        {mod.dbSchema && (
-                          <span className="badge badge-success mono">
-                            <Database size={11} /> {mod.dbSchema}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>
-                        {mod.name[session.language]}
-                      </h3>
-                      {mod.tagline && (
-                        <p className="text-xs text-muted mt-0.5">{mod.tagline}</p>
-                      )}
-                    </div>
-
-                    <p className="text-xs text-muted leading-relaxed">
-                      {mod.description[session.language]}
-                    </p>
-
-                    <div className="text-xs mono text-muted" style={{ fontSize: '0.68rem' }}>
-                      Instância Alocada: <strong>{launchInfo.instanceId}</strong>
-                    </div>
-
-                    {mod.features && mod.features.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        {mod.features.slice(0, 3).map((feat) => (
-                          <span key={feat} className="badge badge-neutral" style={{ fontSize: '0.66rem' }}>
-                            {feat}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="card-footer" onClick={(e) => e.stopPropagation()}>
-                    <div>
-                      <div className="font-bold tabular" style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>
-                        {formatCurrency(mod.priceMonthly, mod.currency, session.language)}/mês
-                      </div>
-                      <span className="text-xs text-muted">{activeCount} empresa(s) ativa(s)</span>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <Link
-                        to={`/app/global/modulos/${mod.id}`}
-                        className="btn btn-secondary btn-sm"
-                      >
-                        Ficha
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenInstance(demoSlug)}
-                        className="btn btn-primary btn-sm"
-                        title={`Abrir instância completa em nova aba (${launchInfo.url})`}
-                      >
-                        <ExternalLink size={12} />
-                        Abrir Demo
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-        </div>
-      )}
-
       <UrlDataTable<CatalogModuleEntity>
         tableId="global-modules-table"
         caption="Catálogo comercial de módulos da plataforma Olivelas Allin"
@@ -284,13 +164,15 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         }
         searchPlaceholder={
           catalogTab === 'commercial'
-            ? 'Buscar plataforma Olivelas, schema PostgreSQL ou categoria...'
+            ? 'Buscar plataforma Olivelas, schema PostgreSQL, instância ou categoria...'
             : 'Buscar módulo de exemplo por código ou nome...'
         }
         statusExtractor={(m) => m.commercialStatus}
-        searchExtractor={(m) =>
-          `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits} ${m.dbSchema || ''}`
-        }
+        searchExtractor={(m) => {
+          const demoSlug = m.ecosystemSlug || m.code;
+          const srvSpec = getModuleInstanceServerSpec(demoSlug);
+          return `${m.code} ${m.name['pt-BR']} ${m.name.en} ${m.category} ${m.usageLimits} ${m.dbSchema || ''} :${srvSpec.port}`;
+        }}
         statusOptions={[
           { value: 'active', label: t('status.active') },
           { value: 'beta', label: 'Beta' },
@@ -340,6 +222,39 @@ export const GlobalModulesCatalogPage: React.FC = () => {
                 </span>
               </div>
             ),
+          },
+          {
+            key: 'instance',
+            header: 'Instância Alocada & Porta SSO',
+            csvValue: (m) => {
+              if (m.isExample) return 'Módulo Base';
+              const demoSlug = m.ecosystemSlug || m.code;
+              const launchInfo = buildModuleInstanceLaunchUrl({
+                moduleSlug: demoSlug,
+                companyId: activeCompany?.id || 'emp-olivelas-matriz',
+                companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+              });
+              return `${launchInfo.instanceId} (:${launchInfo.port})`;
+            },
+            render: (m) => {
+              if (m.isExample) {
+                return <span className="text-xs text-muted">Fundação / Exemplo</span>;
+              }
+              const demoSlug = m.ecosystemSlug || m.code;
+              const launchInfo = buildModuleInstanceLaunchUrl({
+                moduleSlug: demoSlug,
+                companyId: activeCompany?.id || 'emp-olivelas-matriz',
+                companyName: activeCompany?.tradeName || 'Olivelas Nebula Holdings',
+              });
+              return (
+                <div className="flex flex-col gap-1">
+                  <span className="badge badge-teal mono">{launchInfo.instanceId}</span>
+                  <span className="text-xs text-muted mono">
+                    Porta :{launchInfo.port}{launchInfo.serverSpec.adminPath}
+                  </span>
+                </div>
+              );
+            },
           },
           {
             key: 'priceMonthly',
@@ -941,7 +856,6 @@ export const ModuleDetailPage: React.FC = () => {
 
 export const CompanyModulesSubscriptionPage: React.FC = () => {
   const { empresaId } = useParams<{ empresaId: string }>();
-  const navigate = useNavigate();
   const {
     companies,
     modules,
@@ -1080,127 +994,131 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         </span>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(330px, 1fr))',
-          gap: '1.15rem',
-        }}
-      >
-        {visibleModules.map((mod) => {
+      <UrlDataTable<CatalogModuleEntity>
+        tableId={`company-modules-table-${company.id}`}
+        caption={`Módulos comerciais e assinaturas da empresa ${company.tradeName}`}
+        items={visibleModules}
+        defaultSortField="code"
+        csvFilename={`modulos-${company.id}.csv`}
+        searchPlaceholder="Buscar plataforma Olivelas, schema PostgreSQL, instância ou categoria..."
+        statusExtractor={(mod) => {
           const sub = mySubs.find((s) => s.moduleId === mod.id);
-          const active = sub?.status === 'active';
+          return sub?.status === 'active' ? 'active' : 'pending';
+        }}
+        searchExtractor={(mod) => {
           const demoSlug = mod.ecosystemSlug || mod.code;
-          const instInfo = !mod.isExample
-            ? buildModuleInstanceLaunchUrl({
+          const srvSpec = getModuleInstanceServerSpec(demoSlug);
+          return `${mod.code} ${mod.name['pt-BR']} ${mod.category} ${mod.dbSchema || ''} :${srvSpec.port} ${mod.usageLimits}`;
+        }}
+        statusOptions={[
+          { value: 'active', label: 'Contratado / Ativo' },
+          { value: 'pending', label: 'Disponível para Contratação' },
+        ]}
+        columns={[
+          {
+            key: 'code',
+            header: catalogTab === 'commercial' ? 'Plataforma Comercial Olivelas' : 'Módulo Base',
+            sortable: true,
+            csvValue: (mod) => `${mod.name[session.language]} (${mod.code})`,
+            render: (mod) => (
+              <div>
+                <div className="font-semibold">{mod.name[session.language]}</div>
+                <div className="text-xs text-muted mono">
+                  {mod.code} • v{mod.version}
+                  {mod.dbSchema ? ` • schema: ${mod.dbSchema}` : ''}
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'category',
+            header: 'Categoria & Escopo',
+            render: (mod) => (
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1 flex-wrap">
+                  <span className="badge badge-info">{mod.category}</span>
+                  {mod.dbSchema && (
+                    <span className="badge badge-teal mono">
+                      <Database size={11} /> {mod.dbSchema}
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs text-muted">{mod.usageLimits}</span>
+              </div>
+            ),
+          },
+          {
+            key: 'instance',
+            header: 'Instância Alocada & Porta SSO',
+            csvValue: (mod) => {
+              if (mod.isExample) return 'Módulo Base';
+              const demoSlug = mod.ecosystemSlug || mod.code;
+              const instInfo = buildModuleInstanceLaunchUrl({
                 moduleSlug: demoSlug,
                 companyId: company.id,
                 companyName: company.tradeName,
-                userId: currentUser?.id,
-                userEmail: currentUser?.email,
-                userName: currentUser?.name,
-              })
-            : null;
-          const targetDemoRoute = !mod.isExample
-            ? `/app/empresa/${company.id}/ecossistema/${demoSlug}`
-            : mod.code === 'allin_estoque'
-              ? `/app/empresa/${company.id}/operacao/estoque`
-              : mod.code === 'allin_vendas'
-                ? `/app/empresa/${company.id}/operacao/vendas`
-                : mod.code === 'allin_crm'
-                  ? `/app/empresa/${company.id}/operacao/crm`
-                  : `/app/empresa/${company.id}`;
-
-          return (
-            <div
-              key={mod.id}
-              onClick={() => {
-                if (!mod.isExample) {
-                  handleLaunchCompanyInstance(demoSlug);
-                } else {
-                  navigate(targetDemoRoute);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  if (!mod.isExample) {
-                    handleLaunchCompanyInstance(demoSlug);
-                  } else {
-                    navigate(targetDemoRoute);
-                  }
-                }
-              }}
-              className="card card-interactive"
-              style={{
-                border: active
-                  ? '1px solid color-mix(in srgb, var(--accent-teal) 55%, var(--border-subtle))'
-                  : '1px solid var(--border-subtle)',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-between',
-              }}
-            >
-              <div className="card-body flex flex-col gap-2.5">
-                <div className="flex items-center justify-between gap-2 flex-wrap">
-                  <div className="flex items-center gap-1.5">
-                    <span className="badge badge-info">{mod.category}</span>
-                    {instInfo && (
-                      <span className="badge badge-teal mono">:{instInfo.port}</span>
-                    )}
-                    {mod.dbSchema && (
-                      <span className="badge badge-teal mono">
-                        <Database size={11} /> {mod.dbSchema}
-                      </span>
-                    )}
-                    {mod.isExample && <span className="badge badge-warning">Exemplo</span>}
-                  </div>
-                  <StatusBadge status={active ? 'active' : 'pending'} />
-                </div>
-
-                <div>
-                  <h3 style={{ fontSize: '1.08rem', fontWeight: 700 }}>
-                    {mod.name[session.language]}
-                  </h3>
-                  {mod.tagline && (
-                    <p className="text-xs text-muted mt-0.5">{mod.tagline}</p>
-                  )}
-                </div>
-
-                <p className="text-xs text-muted leading-relaxed">
-                  {mod.description[session.language]}
-                </p>
-
-                {instInfo && (
-                  <div className="text-xs mono text-muted" style={{ fontSize: '0.68rem' }}>
-                    Instância Alocada ({company.tradeName}): <strong>{instInfo.instanceId}</strong>
-                  </div>
-                )}
-
-                {mod.features && mod.features.length > 0 && (
-                  <div className="flex flex-wrap gap-1 pt-1">
-                    {mod.features.map((feat) => (
-                      <span key={feat} className="badge badge-neutral" style={{ fontSize: '0.67rem' }}>
-                        {feat}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                <div className="text-xs text-muted mt-1">
-                  <strong>Limites:</strong> {mod.usageLimits}
-                </div>
-              </div>
-
-              <div className="card-footer" onClick={(e) => e.stopPropagation()}>
-                <div>
-                  <span className="font-bold tabular" style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>
-                    {formatCurrency(mod.priceMonthly, mod.currency, session.language)}/mês
+              });
+              return `${instInfo.instanceId} (:${instInfo.port})`;
+            },
+            render: (mod) => {
+              if (mod.isExample) {
+                return <span className="text-xs text-muted">Módulo de Exemplo</span>;
+              }
+              const demoSlug = mod.ecosystemSlug || mod.code;
+              const instInfo = buildModuleInstanceLaunchUrl({
+                moduleSlug: demoSlug,
+                companyId: company.id,
+                companyName: company.tradeName,
+              });
+              return (
+                <div className="flex flex-col gap-1">
+                  <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                  <span className="text-xs text-muted mono">
+                    Porta :{instInfo.port}{instInfo.serverSpec.adminPath}
                   </span>
                 </div>
+              );
+            },
+          },
+          {
+            key: 'priceMonthly',
+            header: 'Valor Mensal',
+            sortable: true,
+            isNumeric: true,
+            csvValue: (mod) => mod.priceMonthly,
+            render: (mod) => (
+              <span className="font-semibold tabular">
+                {formatCurrency(mod.priceMonthly, mod.currency, session.language)}/mês
+              </span>
+            ),
+          },
+          {
+            key: 'status',
+            header: 'Situação na Empresa',
+            render: (mod) => {
+              const sub = mySubs.find((s) => s.moduleId === mod.id);
+              const active = sub?.status === 'active';
+              return <StatusBadge status={active ? 'active' : 'pending'} />;
+            },
+          },
+          {
+            key: 'actions',
+            header: 'Acesso SSO & Contratação',
+            render: (mod) => {
+              const sub = mySubs.find((s) => s.moduleId === mod.id);
+              const active = sub?.status === 'active';
+              const demoSlug = mod.ecosystemSlug || mod.code;
+              const targetDemoRoute = !mod.isExample
+                ? `/app/empresa/${company.id}/ecossistema/${demoSlug}`
+                : mod.code === 'allin_estoque'
+                  ? `/app/empresa/${company.id}/operacao/estoque`
+                  : mod.code === 'allin_vendas'
+                    ? `/app/empresa/${company.id}/operacao/vendas`
+                    : mod.code === 'allin_crm'
+                      ? `/app/empresa/${company.id}/operacao/crm`
+                      : `/app/empresa/${company.id}`;
 
+              return (
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {!mod.isExample ? (
                     <button
@@ -1212,10 +1130,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                       Abrir Plataforma (Nova Aba)
                     </button>
                   ) : (
-                    <Link
-                      to={targetDemoRoute}
-                      className="btn btn-primary btn-sm"
-                    >
+                    <Link to={targetDemoRoute} className="btn btn-primary btn-sm">
                       <Play size={13} />
                       Abrir Plataforma
                     </Link>
@@ -1236,11 +1151,11 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
                     </button>
                   )}
                 </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              );
+            },
+          },
+        ]}
+      />
     </div>
   );
 };

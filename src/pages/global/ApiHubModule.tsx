@@ -424,40 +424,64 @@ export const ApiHubCatalogPage: React.FC<{ activeTab: ApiHubTab }> = ({ activeTa
       )}
 
       {activeTab === 'ambientes' && (
-        <div className="grid-2">
-          {apiEnvironments.map((env) => (
-            <div key={env.id} className="card">
-              <div className="card-header">
+        <UrlDataTable<ApiEnvironmentEntity>
+          tableId="api-environments-table"
+          caption="Ambientes e variáveis de interpolação do Allin API Hub"
+          items={apiEnvironments}
+          defaultSortField="name"
+          csvFilename="api-hub-ambientes.csv"
+          searchPlaceholder="Buscar por nome do ambiente, slug, URL base ou variável..."
+          statusExtractor={(env) => (env.isDefault ? 'default' : 'custom')}
+          searchExtractor={(env) =>
+            `${env.name} ${env.slug} ${env.baseUrl} ${JSON.stringify(env.variables)}`
+          }
+          statusOptions={[
+            { value: 'default', label: 'Ambiente Padrão' },
+            { value: 'custom', label: 'Ambiente Customizado' },
+          ]}
+          isArchivedExtractor={(env) => env.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'name',
+              header: 'Ambiente / Slug',
+              sortable: true,
+              render: (env) => (
                 <div>
-                  <h2 className="card-title">{env.name}</h2>
-                  <code className="text-xs text-muted">{env.baseUrl}</code>
+                  <div className="font-semibold">{env.name}</div>
+                  <code className="text-xs text-muted">{env.slug}</code>
                 </div>
-                {env.isDefault && <span className="badge badge-teal">Padrão</span>}
-              </div>
-              <div className="card-body">
-                <div className="text-xs font-semibold uppercase text-muted mb-2">
-                  Variáveis de Interpolação ({"{{VAR}}"})
-                </div>
-                <div className="flex flex-col gap-1">
+              ),
+            },
+            {
+              key: 'baseUrl',
+              header: 'URL Base',
+              render: (env) => <code className="text-xs mono">{env.baseUrl}</code>,
+            },
+            {
+              key: 'variables',
+              header: 'Variáveis de Interpolação ({{VAR}})',
+              render: (env) => (
+                <div className="flex flex-wrap gap-1">
                   {Object.entries(env.variables).map(([k, v]) => (
-                    <div
-                      key={k}
-                      className="flex justify-between items-center text-xs mono"
-                      style={{
-                        padding: '0.35rem 0.5rem',
-                        background: 'var(--bg-subtle)',
-                        borderRadius: 'var(--radius-sm)',
-                      }}
-                    >
-                      <strong>{`{{${k}}}`}</strong>
-                      <span>{v}</span>
-                    </div>
+                    <span key={k} className="badge badge-neutral mono text-xs">
+                      {`{{${k}}}`} = {v}
+                    </span>
                   ))}
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Padrão',
+              render: (env) =>
+                env.isDefault ? (
+                  <span className="badge badge-teal">Padrão</span>
+                ) : (
+                  <span className="badge badge-neutral">Secundário</span>
+                ),
+            },
+          ]}
+        />
       )}
 
       {activeTab === 'tokens' && (

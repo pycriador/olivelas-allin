@@ -1574,48 +1574,88 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
         }
       />
 
-      {/* Role Selector Strip */}
-      <div className="kpi-grid">
-        {scopedRoles.map((r) => {
-          const active = selectedRole?.id === r.id;
-          const parentRole = roles.find((p) => p.id === r.parentRoleId);
-          return (
-            <div
-              key={r.id}
-              role="button"
-              tabIndex={0}
-              onClick={() => setSelectedRoleId(r.id)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  setSelectedRoleId(r.id);
-                }
-              }}
-              className="card"
-              style={{
-                padding: '1rem',
-                cursor: 'pointer',
-                border: active
-                  ? '2px solid var(--accent-primary)'
-                  : '1px solid var(--border-subtle)',
-                backgroundColor: active ? 'var(--accent-primary-soft)' : 'var(--bg-surface)',
-              }}
-            >
-              <div className="flex items-center justify-between gap-2">
-                <strong>{r.name[session.language]}</strong>
-                <span className="badge badge-info">Nível {r.hierarchyLevel}</span>
+      {/* Tabela de Papéis HBAC com Filtros e Paginação por URL */}
+      <UrlDataTable<RoleEntity>
+        tableId={`roles-table-${scope}`}
+        caption="Papéis hierárquicos HBAC configurados na plataforma"
+        items={scopedRoles}
+        defaultSortField="hierarchyLevel"
+        csvFilename={`papeis-hbac-${scope}.csv`}
+        searchPlaceholder="Buscar papel por nome, código, escopo ou descrição..."
+        statusExtractor={(r) => r.scope}
+        searchExtractor={(r) => `${r.code} ${r.name['pt-BR']} ${r.description['pt-BR']} ${r.scope}`}
+        statusOptions={[
+          { value: 'global', label: 'Escopo Global' },
+          { value: 'company', label: 'Escopo Empresa' },
+          { value: 'resource', label: 'Escopo Recurso' },
+        ]}
+        isArchivedExtractor={(r) => r.archiveMetadata.isArchived}
+        onArchiveClick={
+          hasPermission('roles', 'archive', targetCompanyId)
+            ? (r) => {
+                if (!r.isSystemRole) setArchiveRoleTarget(r);
+              }
+            : undefined
+        }
+        columns={[
+          {
+            key: 'name',
+            header: 'Papel HBAC / Código',
+            sortable: true,
+            render: (r) => (
+              <div>
+                <div className="font-semibold">{r.name[session.language]}</div>
+                <code className="text-xs text-muted mono">{r.code}</code>
               </div>
-              <p className="text-xs text-muted mt-2">{r.description[session.language]}</p>
-              <div className="flex items-center justify-between mt-2 pt-2" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                <span className="text-xs text-muted">
-                  Superior: <strong>{parentRole ? parentRole.name[session.language] : 'Raiz (N1)'}</strong>
+            ),
+          },
+          {
+            key: 'hierarchyLevel',
+            header: 'Nível Hierárquico',
+            sortable: true,
+            isNumeric: true,
+            render: (r) => <span className="badge badge-info">Nível {r.hierarchyLevel}</span>,
+          },
+          {
+            key: 'parentRoleId',
+            header: 'Papel Superior',
+            render: (r) => {
+              const parentRole = roles.find((p) => p.id === r.parentRoleId);
+              return (
+                <span className="text-xs">
+                  {parentRole ? parentRole.name[session.language] : 'Raiz (N1)'}
                 </span>
+              );
+            },
+          },
+          {
+            key: 'permissionsCount',
+            header: 'Regras / Escopo',
+            render: (r) => (
+              <div className="flex items-center gap-1.5">
+                <StatusBadge status={r.scope} />
                 <span className="badge">{r.permissions.length} regras</span>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            ),
+          },
+          {
+            key: 'actions',
+            header: 'Matriz de Permissões',
+            render: (r) => {
+              const active = selectedRole?.id === r.id;
+              return (
+                <button
+                  type="button"
+                  onClick={() => setSelectedRoleId(r.id)}
+                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-secondary'}`}
+                >
+                  {active ? 'Matriz Selecionada' : 'Editar Matriz'}
+                </button>
+              );
+            },
+          },
+        ]}
+      />
 
       {/* Interactive Permission Matrix Editor for Selected Role */}
       {selectedRole && (

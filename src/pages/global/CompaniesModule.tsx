@@ -3,14 +3,28 @@ import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import {
   Building2,
   Edit3,
+  ExternalLink,
   Plus,
   Save,
   UserCheck,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { CompanyEntity, CompanyStatus, CurrencyCode, LanguageCode } from '../../types/domain';
+import {
+  CatalogModuleEntity,
+  ChargeEntity,
+  CompanyEntity,
+  CompanyStatus,
+  ContractEntity,
+  CurrencyCode,
+  LanguageCode,
+  UserEntity,
+} from '../../types/domain';
 import { generateId, repositories } from '../../repositories/repositories';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
+import {
+  buildModuleInstanceLaunchUrl,
+  openModuleInstanceInNewTab,
+} from '../../services/olivelasEcosystemService';
 import {
   AccessDeniedView,
   ArchiveRecordDialog,
@@ -899,211 +913,310 @@ export const CompanyDetailHubPage: React.FC<{
       )}
 
       {tab === 'usuarios' && (
-        <div className="card">
-          <div className="card-header">
-            <h2 style={{ fontSize: '1rem' }}>Usuários Associados a {company.tradeName}</h2>
-            <Link to="/app/global/usuarios/novo" className="btn btn-primary btn-sm">
-              <Plus size={14} />
-              Novo Usuário
-            </Link>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>E-mail</th>
-                  <th>Papéis HBAC</th>
-                  <th>Estado</th>
-                  <th className="num">Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {companyUsers.map((u) => (
-                  <tr key={u.id}>
-                    <td className="font-semibold">{u.name}</td>
-                    <td className="mono text-xs">{u.email}</td>
-                    <td>
-                      {getUserActiveRoles(u, roles).map((r) => (
-                        <span key={r.id} className="badge badge-info" style={{ marginRight: 4 }}>
-                          {r.name[session.language]}
-                        </span>
-                      ))}
-                    </td>
-                    <td>
-                      <StatusBadge status={u.status} />
-                    </td>
-                    <td className="num">
-                      <Link to={`/app/global/usuarios/${u.id}`} className="btn btn-secondary btn-sm">
-                        Inspecionar HBAC
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <UrlDataTable<UserEntity>
+          tableId={`company-hub-users-${company.id}`}
+          caption={`Usuários associados a ${company.tradeName}`}
+          items={companyUsers}
+          defaultSortField="name"
+          csvFilename={`usuarios-${company.id}.csv`}
+          searchPlaceholder="Buscar por nome, e-mail ou telefone..."
+          statusExtractor={(u) => u.status}
+          searchExtractor={(u) => `${u.name} ${u.email} ${u.phone}`}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending', label: t('status.pending') },
+            { value: 'suspended', label: t('status.suspended') },
+          ]}
+          columns={[
+            {
+              key: 'name',
+              header: 'Nome',
+              sortable: true,
+              render: (u) => <span className="font-semibold">{u.name}</span>,
+            },
+            {
+              key: 'email',
+              header: 'E-mail',
+              sortable: true,
+              render: (u) => <span className="mono text-xs">{u.email}</span>,
+            },
+            {
+              key: 'roles',
+              header: 'Papéis HBAC',
+              render: (u) => (
+                <div className="flex items-center gap-1 flex-wrap">
+                  {getUserActiveRoles(u, roles).map((r) => (
+                    <span key={r.id} className="badge badge-info">
+                      {r.name[session.language]}
+                    </span>
+                  ))}
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Estado',
+              render: (u) => <StatusBadge status={u.status} />,
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              render: (u) => (
+                <Link to={`/app/global/usuarios/${u.id}`} className="btn btn-secondary btn-sm">
+                  Inspecionar HBAC
+                </Link>
+              ),
+            },
+          ]}
+        />
       )}
 
       {tab === 'modulos' && (
-        <div className="card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '1rem' }}>
-                Módulos Comerciais Contratados por {company.tradeName}
-              </h2>
-              <p className="text-xs text-muted">
-                Ative ou suspenda módulos individualmente para este tenant. A navegação do ambiente da
-                empresa reflete imediatamente o estado ativo.
-              </p>
-            </div>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Módulo Comercial</th>
-                  <th>Estado na Empresa</th>
-                  <th className="num">Valor Mensal</th>
-                  <th className="num">Ação</th>
-                </tr>
-              </thead>
-              <tbody>
-                {modules.map((mod) => {
-                  const sub = companySubs.find((s) => s.moduleId === mod.id);
-                  const isActive = sub?.status === 'active';
-                  return (
-                    <tr key={mod.id}>
-                      <td>
-                        <code className="text-xs">{mod.code}</code>
-                      </td>
-                      <td>
-                        <strong>{mod.name[session.language]}</strong>
-                        <div className="text-xs text-muted">{mod.description[session.language]}</div>
-                      </td>
-                      <td>
-                        <StatusBadge status={sub?.status || 'not_contracted'} />
-                      </td>
-                      <td className="num tabular">
-                        {formatCurrency(mod.priceMonthly, mod.currency, session.language)}
-                      </td>
-                      <td className="num">
-                        <button
-                          type="button"
-                          disabled={mod.isCore && isActive}
-                          className={`btn btn-sm ${isActive ? 'btn-secondary' : 'btn-primary'}`}
-                          onClick={() =>
-                            handleToggleModuleForCompany(mod.id, mod.code, mod.priceMonthly)
-                          }
-                        >
-                          {mod.isCore && isActive
-                            ? 'Base Obrigatória'
-                            : isActive
-                              ? 'Suspender Módulo'
-                              : 'Ativar Módulo'}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <UrlDataTable<CatalogModuleEntity>
+          tableId={`company-hub-modules-${company.id}`}
+          caption={`Módulos comerciais contratados por ${company.tradeName}`}
+          items={modules}
+          defaultSortField="code"
+          csvFilename={`modulos-contratados-${company.id}.csv`}
+          searchPlaceholder="Buscar módulo comercial, código ou schema PostgreSQL..."
+          statusExtractor={(mod) => {
+            const sub = companySubs.find((s) => s.moduleId === mod.id);
+            return sub?.status || 'not_contracted';
+          }}
+          searchExtractor={(mod) =>
+            `${mod.code} ${mod.name['pt-BR']} ${mod.description['pt-BR']} ${mod.dbSchema || ''}`
+          }
+          statusOptions={[
+            { value: 'active', label: 'Ativo / Contratado' },
+            { value: 'not_contracted', label: 'Não Contratado' },
+            { value: 'cancelled', label: 'Suspenso / Cancelado' },
+          ]}
+          columns={[
+            {
+              key: 'code',
+              header: 'Código & Instância',
+              sortable: true,
+              render: (mod) => {
+                const demoSlug = mod.ecosystemSlug || mod.code;
+                const instInfo = !mod.isExample
+                  ? buildModuleInstanceLaunchUrl({
+                      moduleSlug: demoSlug,
+                      companyId: company.id,
+                      companyName: company.tradeName,
+                    })
+                  : null;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <code className="text-xs">{mod.code}</code>
+                    {instInfo && (
+                      <span className="badge badge-teal mono">{instInfo.instanceId}</span>
+                    )}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'name',
+              header: 'Módulo Comercial',
+              render: (mod) => (
+                <div>
+                  <strong>{mod.name[session.language]}</strong>
+                  <div className="text-xs text-muted">{mod.description[session.language]}</div>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Estado na Empresa',
+              render: (mod) => {
+                const sub = companySubs.find((s) => s.moduleId === mod.id);
+                return <StatusBadge status={sub?.status || 'not_contracted'} />;
+              },
+            },
+            {
+              key: 'priceMonthly',
+              header: 'Valor Mensal',
+              sortable: true,
+              isNumeric: true,
+              render: (mod) => (
+                <span className="tabular font-semibold">
+                  {formatCurrency(mod.priceMonthly, mod.currency, session.language)}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Acesso SSO & Ação',
+              render: (mod) => {
+                const sub = companySubs.find((s) => s.moduleId === mod.id);
+                const isActive = sub?.status === 'active';
+                const demoSlug = mod.ecosystemSlug || mod.code;
+                return (
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {!mod.isExample && (
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-sm"
+                        onClick={() =>
+                          openModuleInstanceInNewTab({
+                            moduleSlug: demoSlug,
+                            companyId: company.id,
+                            companyName: company.tradeName,
+                          })
+                        }
+                      >
+                        <ExternalLink size={12} />
+                        Abrir Instância
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={mod.isCore && isActive}
+                      className={`btn btn-sm ${isActive ? 'btn-secondary' : 'btn-primary'}`}
+                      onClick={() =>
+                        handleToggleModuleForCompany(mod.id, mod.code, mod.priceMonthly)
+                      }
+                    >
+                      {mod.isCore && isActive
+                        ? 'Base Obrigatória'
+                        : isActive
+                          ? 'Suspender Módulo'
+                          : 'Ativar Módulo'}
+                    </button>
+                  </div>
+                );
+              },
+            },
+          ]}
+        />
       )}
 
       {tab === 'contratos' && (
-        <div className="card">
-          <div className="card-header">
-            <h2 style={{ fontSize: '1rem' }}>Contratos de {company.tradeName}</h2>
-            <Link to="/app/global/contratos/novo" className="btn btn-primary btn-sm">
-              Novo Contrato
-            </Link>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Plano</th>
-                  <th>Vigência</th>
-                  <th>Versão</th>
-                  <th>Estado</th>
-                  <th className="num">Valor Final</th>
-                  <th className="num">Ficha</th>
-                </tr>
-              </thead>
-              <tbody>
-                {companyContracts.map((ct) => (
-                  <tr key={ct.id}>
-                    <td className="mono font-semibold">{ct.code}</td>
-                    <td>{ct.planName}</td>
-                    <td className="text-xs tabular">
-                      {ct.startDate} → {ct.endDate}
-                    </td>
-                    <td className="tabular">v{ct.version}</td>
-                    <td>
-                      <StatusBadge status={ct.status} />
-                    </td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(ct.finalValue, ct.currency, session.language)}
-                    </td>
-                    <td className="num">
-                      <Link to={`/app/global/contratos/${ct.id}`} className="btn btn-secondary btn-sm">
-                        Ver Contrato
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <UrlDataTable<ContractEntity>
+          tableId={`company-hub-contracts-${company.id}`}
+          caption={`Contratos de ${company.tradeName}`}
+          items={companyContracts}
+          defaultSortField="code"
+          csvFilename={`contratos-${company.id}.csv`}
+          searchPlaceholder="Buscar por código do contrato ou plano..."
+          statusExtractor={(ct) => ct.status}
+          searchExtractor={(ct) => `${ct.code} ${ct.planName} ${ct.status}`}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending_signature', label: 'Aguardando Assinatura' },
+            { value: 'draft', label: 'Rascunho' },
+          ]}
+          columns={[
+            {
+              key: 'code',
+              header: 'Código',
+              sortable: true,
+              render: (ct) => <span className="mono font-semibold">{ct.code}</span>,
+            },
+            {
+              key: 'planName',
+              header: 'Plano',
+              render: (ct) => <span>{ct.planName}</span>,
+            },
+            {
+              key: 'dates',
+              header: 'Vigência',
+              render: (ct) => (
+                <span className="text-xs tabular">
+                  {ct.startDate} → {ct.endDate}
+                </span>
+              ),
+            },
+            {
+              key: 'version',
+              header: 'Versão',
+              render: (ct) => <span className="tabular">v{ct.version}</span>,
+            },
+            {
+              key: 'status',
+              header: 'Estado',
+              render: (ct) => <StatusBadge status={ct.status} />,
+            },
+            {
+              key: 'finalValue',
+              header: 'Valor Final',
+              sortable: true,
+              isNumeric: true,
+              render: (ct) => (
+                <span className="font-semibold tabular">
+                  {formatCurrency(ct.finalValue, ct.currency, session.language)}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ficha',
+              render: (ct) => (
+                <Link to={`/app/global/contratos/${ct.id}`} className="btn btn-secondary btn-sm">
+                  Ver Contrato
+                </Link>
+              ),
+            },
+          ]}
+        />
       )}
 
       {tab === 'financeiro' && (
-        <div className="card">
-          <div className="card-header">
-            <h2 style={{ fontSize: '1rem' }}>Cobranças e Faturamento de {company.tradeName}</h2>
-            <Link to="/app/global/financeiro/cobrancas" className="btn btn-secondary btn-sm">
-              Abrir Console Financeiro
-            </Link>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Fatura</th>
-                  <th>Descrição</th>
-                  <th>Vencimento</th>
-                  <th>Meio</th>
-                  <th>Estado</th>
-                  <th className="num">Valor</th>
-                </tr>
-              </thead>
-              <tbody>
-                {companyCharges.map((ch) => (
-                  <tr key={ch.id}>
-                    <td className="mono font-semibold">{ch.code}</td>
-                    <td>{ch.description}</td>
-                    <td className="tabular">{ch.dueDate}</td>
-                    <td>
-                      <span className="badge">{ch.paymentMethodType.toUpperCase()}</span>
-                    </td>
-                    <td>
-                      <StatusBadge status={ch.status} />
-                    </td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(ch.amount, ch.currency, session.language)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <UrlDataTable<ChargeEntity>
+          tableId={`company-hub-charges-${company.id}`}
+          caption={`Cobranças e faturamento de ${company.tradeName}`}
+          items={companyCharges}
+          defaultSortField="dueDate"
+          csvFilename={`financeiro-${company.id}.csv`}
+          searchPlaceholder="Buscar por código da fatura, descrição ou meio de pagamento..."
+          statusExtractor={(ch) => ch.status}
+          searchExtractor={(ch) => `${ch.code} ${ch.description} ${ch.paymentMethodType}`}
+          statusOptions={[
+            { value: 'paid', label: t('status.paid') },
+            { value: 'pending', label: t('status.pending') },
+            { value: 'overdue', label: t('status.overdue') },
+          ]}
+          columns={[
+            {
+              key: 'code',
+              header: 'Fatura',
+              sortable: true,
+              render: (ch) => <span className="mono font-semibold">{ch.code}</span>,
+            },
+            {
+              key: 'description',
+              header: 'Descrição',
+              render: (ch) => <span>{ch.description}</span>,
+            },
+            {
+              key: 'dueDate',
+              header: 'Vencimento',
+              sortable: true,
+              render: (ch) => <span className="tabular">{ch.dueDate}</span>,
+            },
+            {
+              key: 'paymentMethodType',
+              header: 'Meio',
+              render: (ch) => <span className="badge">{ch.paymentMethodType.toUpperCase()}</span>,
+            },
+            {
+              key: 'status',
+              header: 'Estado',
+              render: (ch) => <StatusBadge status={ch.status} />,
+            },
+            {
+              key: 'amount',
+              header: 'Valor',
+              sortable: true,
+              isNumeric: true,
+              render: (ch) => (
+                <span className="font-semibold tabular">
+                  {formatCurrency(ch.amount, ch.currency, session.language)}
+                </span>
+              ),
+            },
+          ]}
+        />
       )}
     </div>
   );

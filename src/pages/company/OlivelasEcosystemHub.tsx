@@ -69,7 +69,8 @@ import {
   OlivelasPlatformSettings,
   saveModulePlatformSettings,
 } from '../../services/olivelasPlatformMenusCatalog';
-import { PermissionAction } from '../../types/domain';
+import { CatalogModuleEntity, PermissionAction } from '../../types/domain';
+import { UrlDataTable } from '../../components/shared/SharedComponents';
 import { OlivelasInteractiveModuleShowcase } from './OlivelasInteractiveModuleShowcase';
 
 const ALL_ACTIONS: { action: PermissionAction; label: string; desc: string }[] = [
@@ -1051,49 +1052,59 @@ export const OlivelasEcosystemHub: React.FC = () => {
                     </button>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
-                    {selectedModule.tables.map((tbl) => {
-                      const meta = getTableCatalogMetadata(selectedModule, tbl);
-                      return (
-                        <div
-                          key={tbl}
-                          className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 flex flex-col justify-between gap-3 bg-slate-50/40 dark:bg-slate-800/30"
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <strong className="text-sm">{meta.menuLabel}</strong>
-                              <span className="badge badge-info font-mono text-[10px]">
-                                {selectedModule.dbSchema}.{tbl}
-                              </span>
-                            </div>
-                            <p className="text-xs text-muted">{meta.description}</p>
-                          </div>
-
-                          <div className="flex items-center gap-2 pt-2 border-t border-slate-200 dark:border-slate-700">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                handleSelectSchemaTable(tbl);
-                                setModuleViewTab('database');
-                              }}
-                              className="btn btn-primary btn-sm flex-1 justify-center"
-                            >
-                              Abrir {meta.menuLabel}
-                            </button>
-                            {canCreate && (
-                              <button
-                                type="button"
-                                onClick={() => openCreateModal(tbl)}
-                                className="btn btn-secondary btn-sm"
-                                title={`Cadastrar novo ${meta.singularLabel}`}
-                              >
-                                <Plus size={13} />
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
+                  <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+                    <table className="data-table w-full text-xs">
+                      <thead>
+                        <tr>
+                          <th>Menu / Cadastro</th>
+                          <th>Tabela PostgreSQL</th>
+                          <th>Descrição Operacional</th>
+                          <th className="num">Ações</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedModule.tables.map((tbl) => {
+                          const meta = getTableCatalogMetadata(selectedModule, tbl);
+                          return (
+                            <tr key={tbl}>
+                              <td>
+                                <strong className="text-sm">{meta.menuLabel}</strong>
+                              </td>
+                              <td>
+                                <span className="badge badge-info font-mono text-[10px]">
+                                  {selectedModule.dbSchema}.{tbl}
+                                </span>
+                              </td>
+                              <td className="text-muted">{meta.description}</td>
+                              <td className="num">
+                                <div className="inline-flex items-center gap-1.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      handleSelectSchemaTable(tbl);
+                                      setModuleViewTab('database');
+                                    }}
+                                    className="btn btn-primary btn-sm"
+                                  >
+                                    Abrir {meta.menuLabel}
+                                  </button>
+                                  {canCreate && (
+                                    <button
+                                      type="button"
+                                      onClick={() => openCreateModal(tbl)}
+                                      className="btn btn-secondary btn-sm"
+                                      title={`Cadastrar novo ${meta.singularLabel}`}
+                                    >
+                                      <Plus size={13} />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -1283,7 +1294,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
             )}
 
             {/* =============================================================== */}
-            {/* MENU 4: CADASTROS & ITENS (TABELA CRUD COMPLETA POR MENU)       */}
+            {/* MENU 4: CADASTROS & ITENS (TABELA CRUD COMPLETA COM PAGINAÇÃO)  */}
             {/* =============================================================== */}
             {(moduleViewTab === 'database' || moduleViewTab === 'interactive' || moduleViewTab === 'dashboard') && (
               <div className="space-y-4">
@@ -1294,39 +1305,16 @@ export const OlivelasEcosystemHub: React.FC = () => {
                       <h3 className="text-sm font-bold">
                         {activeTableMeta.menuLabel} — <code>{selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}</code>
                       </h3>
-                      <span className="badge badge-teal">{filteredRecords.length} itens</span>
+                      <span className="badge badge-teal">{activeTableRecords.length} itens</span>
                     </div>
                     <p className="text-xs text-muted mt-0.5">{activeTableMeta.description}</p>
                   </div>
 
                   <div className="flex flex-wrap items-center gap-2">
-                    <div className="relative min-w-[220px]">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
-                      <input
-                        type="text"
-                        value={recordSearch}
-                        onChange={(e) => setRecordSearch(e.target.value)}
-                        placeholder={`Buscar em ${activeTableMeta.menuLabel}...`}
-                        className="input pl-9 w-full text-xs"
-                      />
-                    </div>
-                    <label className="flex items-center gap-1.5 text-xs cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={showArchived}
-                        onChange={(e) => setShowArchived(e.target.checked)}
-                      />
-                      Arquivados
-                    </label>
                     {canExport && (
-                      <>
-                        <button type="button" onClick={handleExportCsv} className="btn btn-secondary btn-sm">
-                          <Download size={13} /> CSV
-                        </button>
-                        <button type="button" onClick={handleExportJson} className="btn btn-secondary btn-sm">
-                          <Code2 size={13} /> JSON
-                        </button>
-                      </>
+                      <button type="button" onClick={handleExportJson} className="btn btn-secondary btn-sm">
+                        <Code2 size={13} /> JSON
+                      </button>
                     )}
                     {canCreate && (
                       <button
@@ -1340,113 +1328,113 @@ export const OlivelasEcosystemHub: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="card overflow-hidden">
-                  <div className="overflow-x-auto">
-                    <table className="data-table w-full">
-                      <thead>
-                        <tr>
-                          <th>ID</th>
-                          {activeTableMeta.fields.map((field) => (
-                            <th key={field.key}>{field.label}</th>
-                          ))}
-                          <th>Status / Governança</th>
-                          <th className="text-right">Ações</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {filteredRecords.length === 0 ? (
-                          <tr>
-                            <td
-                              colSpan={activeTableMeta.fields.length + 3}
-                              className="text-center py-8 opacity-70"
-                            >
-                              Nenhum item encontrado em{' '}
-                              <code>
-                                {selectedModule.dbSchema}.{selectedTable || selectedModule.primaryTable}
-                              </code>
-                              .
-                            </td>
-                          </tr>
+                <UrlDataTable<{ id: string } & Record<string, unknown>>
+                  tableId={`schema-table-${selectedModule.slug}-${selectedTable || selectedModule.primaryTable}`}
+                  caption={`Registros de ${activeTableMeta.menuLabel} (${selectedModule.dbSchema}.${selectedTable || selectedModule.primaryTable})`}
+                  items={activeTableRecords.map((r, idx) => ({
+                    ...r,
+                    id: String(r.id || `row-${idx}`),
+                  }))}
+                  defaultSortField="id"
+                  csvFilename={`${selectedModule.dbSchema}_${selectedTable || selectedModule.primaryTable}.csv`}
+                  searchPlaceholder={`Buscar em ${activeTableMeta.menuLabel}...`}
+                  statusExtractor={(rec) =>
+                    String(rec.status || rec.kds_status || rec.risk_level || 'active')
+                  }
+                  searchExtractor={(rec) => JSON.stringify(rec)}
+                  statusOptions={[
+                    { value: 'active', label: 'Ativo' },
+                    { value: 'pending', label: 'Pendente' },
+                    { value: 'in_progress', label: 'Em Execução' },
+                    { value: 'completed', label: 'Concluído' },
+                  ]}
+                  isArchivedExtractor={(rec) =>
+                    Boolean(
+                      (rec.archive_metadata as { isArchived?: boolean } | undefined)?.isArchived,
+                    )
+                  }
+                  onArchiveClick={
+                    canArchive ? (rec) => setArchiveTargetId(String(rec.id)) : undefined
+                  }
+                  onRestoreClick={
+                    canArchive ? (rec) => handleRestoreRecord(String(rec.id)) : undefined
+                  }
+                  columns={[
+                    {
+                      key: 'id',
+                      header: 'ID',
+                      sortable: true,
+                      csvValue: (rec) => String(rec.id || ''),
+                      render: (rec) => <span className="font-mono text-xs">{String(rec.id || '')}</span>,
+                    },
+                    ...activeTableMeta.fields.map((field) => ({
+                      key: field.key,
+                      header: field.label,
+                      sortable: true,
+                      isNumeric: field.type === 'currency' || field.type === 'number',
+                      csvValue: (rec: { id: string } & Record<string, unknown>) =>
+                        String(rec[field.key] ?? ''),
+                      render: (rec: { id: string } & Record<string, unknown>) => {
+                        const val = rec[field.key];
+                        if (field.type === 'currency') {
+                          return (
+                            <span className="font-semibold tabular">
+                              {formatCurrency(Number(val || 0), 'BRL', language)}
+                            </span>
+                          );
+                        }
+                        return <span>{String(val ?? '—')}</span>;
+                      },
+                    })),
+                    {
+                      key: 'gov_status',
+                      header: 'Status / Governança',
+                      render: (rec) => {
+                        const archiveMeta = rec.archive_metadata as
+                          | { isArchived?: boolean; archiveReason?: string }
+                          | undefined;
+                        const isArchived = Boolean(archiveMeta?.isArchived);
+                        return isArchived ? (
+                          <span className="badge badge-warning" title={archiveMeta?.archiveReason}>
+                            Arquivado
+                          </span>
                         ) : (
-                          filteredRecords.map((rec) => {
-                            const idStr = String(rec.id || '');
-                            const archiveMeta = rec.archive_metadata as
-                              | { isArchived?: boolean; archiveReason?: string }
-                              | undefined;
-                            const isArchived = Boolean(archiveMeta?.isArchived);
-
-                            return (
-                              <tr key={idStr} className={isArchived ? 'opacity-60' : ''}>
-                                <td className="font-mono text-xs">{idStr}</td>
-                                {activeTableMeta.fields.map((field) => {
-                                  const val = rec[field.key];
-                                  if (field.type === 'currency') {
-                                    return (
-                                      <td key={field.key} className="font-semibold">
-                                        {formatCurrency(Number(val || 0), 'BRL', language)}
-                                      </td>
-                                    );
-                                  }
-                                  return <td key={field.key}>{String(val ?? '—')}</td>;
-                                })}
-                                <td>
-                                  {isArchived ? (
-                                    <span className="badge badge-warning" title={archiveMeta?.archiveReason}>
-                                      Arquivado
-                                    </span>
-                                  ) : (
-                                    <span className="badge badge-success">Ativo no Supabase</span>
-                                  )}
-                                </td>
-                                <td className="text-right">
-                                  <div className="inline-flex items-center gap-1.5">
-                                    {canEdit && (
-                                      <button
-                                        type="button"
-                                        onClick={() => openEditModal(rec)}
-                                        className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                      >
-                                        <Edit3 className="w-3.5 h-3.5" /> Editar
-                                      </button>
-                                    )}
-                                    {canArchive &&
-                                      (isArchived ? (
-                                        <button
-                                          type="button"
-                                          onClick={() => handleRestoreRecord(idStr)}
-                                          className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                        >
-                                          <RotateCcw className="w-3.5 h-3.5" /> Restaurar
-                                        </button>
-                                      ) : (
-                                        <button
-                                          type="button"
-                                          onClick={() => setArchiveTargetId(idStr)}
-                                          className="btn btn-secondary btn-sm inline-flex items-center gap-1"
-                                        >
-                                          <Archive className="w-3.5 h-3.5" /> Arquivar
-                                        </button>
-                                      ))}
-                                    {canAdminister && (
-                                      <button
-                                        type="button"
-                                        onClick={() => handleDeleteRecord(idStr)}
-                                        className="btn btn-ghost btn-sm text-rose-600 inline-flex items-center gap-1"
-                                        title="Excluir registro"
-                                      >
-                                        <Trash2 className="w-3.5 h-3.5" />
-                                      </button>
-                                    )}
-                                  </div>
-                                </td>
-                              </tr>
-                            );
-                          })
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
+                          <span className="badge badge-success">Ativo no Supabase</span>
+                        );
+                      },
+                    },
+                    {
+                      key: 'row_actions',
+                      header: 'Edição & Exclusão',
+                      render: (rec) => {
+                        const idStr = String(rec.id || '');
+                        return (
+                          <div className="inline-flex items-center gap-1.5">
+                            {canEdit && (
+                              <button
+                                type="button"
+                                onClick={() => openEditModal(rec)}
+                                className="btn btn-secondary btn-sm inline-flex items-center gap-1"
+                              >
+                                <Edit3 className="w-3.5 h-3.5" /> Editar
+                              </button>
+                            )}
+                            {canAdminister && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteRecord(idStr)}
+                                className="btn btn-ghost btn-sm text-rose-600 inline-flex items-center gap-1"
+                                title="Excluir registro"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        );
+                      },
+                    },
+                  ]}
+                />
               </div>
             )}
 
@@ -2506,153 +2494,169 @@ export const OlivelasEcosystemHub: React.FC = () => {
       </div>
 
       {hubTab === 'commercial' ? (
-        <>
-          {/* Filtros por Categoria e Busca */}
-          <div className="card p-4 flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setCategoryFilter(cat)}
-                  className={`btn btn-sm ${categoryFilter === cat ? 'btn-primary' : 'btn-secondary'}`}
-                >
-                  {cat === 'all' ? 'Todas as 16 Plataformas' : cat}
-                </button>
-              ))}
-            </div>
-
-            <div className="relative min-w-[260px] flex-1 max-w-md">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 opacity-50" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar plataforma Olivelas, schema PostgreSQL ou tabela..."
-                className="input pl-9 w-full"
-              />
-            </div>
-          </div>
-
-          {/* Grid Elegante dos 16 Módulos Comerciais Olivelas */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {filteredCatalog.map((mod) => {
-              const targetUrl = buildModuleRoute(mod.slug);
-              const srvSpec = getModuleInstanceServerSpec(mod.slug);
-              const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
-              return (
-                <div
-                  key={mod.id}
-                  onClick={() =>
-                    openModuleInstanceInNewTab({
-                      moduleSlug: mod.slug,
-                      companyId: resolvedCompanyId,
-                      companyName: currentCompany?.tradeName || 'Olivelas Holding',
-                      userId: currentUser?.id,
-                      userEmail: currentUser?.email,
-                      userName: currentUser?.name,
-                      userRole: 'admin',
-                    })
-                  }
-                  className="card card-interactive p-6 flex flex-col justify-between gap-4"
-                >
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="badge badge-teal">{mod.category}</span>
-                      <span className="badge badge-info font-mono">:{srvSpec.port} • {mod.dbSchema}</span>
-                    </div>
-
-                    <div>
-                      <h2 className="text-lg font-bold">{mod.brandName}</h2>
-                      <p className="text-xs text-muted mt-0.5">{mod.tagline}</p>
-                    </div>
-
-                    <p className="text-xs opacity-80 leading-relaxed">{mod.description}</p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      <span className="badge badge-success text-[10px]">SSO All In Ativo</span>
-                      <span className="badge badge-info text-[10px] font-mono">{instId}</span>
-                      <span className="badge badge-neutral text-[10px]">Frontend Real :{srvSpec.port}</span>
-                    </div>
-
-                    <div className="space-y-1.5 pt-1">
-                      <div className="text-xs font-semibold text-muted">
-                        Tabelas no schema <code>{mod.dbSchema}</code> ({mod.tables.length}):
-                      </div>
-                      <div className="flex flex-wrap gap-1.5">
-                        {mod.tables.map((t) => (
-                          <span key={t} className="badge badge-neutral font-mono">
-                            {t}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+        <UrlDataTable<OlivelasEcosystemModuleSpec>
+          tableId={`ecosystem-commercial-table-${resolvedCompanyId}`}
+          caption="Catálogo em formato de tabela das 16 plataformas comerciais Olivelas All In"
+          items={OLIVELAS_ECOSYSTEM_MODULES}
+          defaultSortField="brandName"
+          csvFilename="plataformas-comerciais-olivelas.csv"
+          searchPlaceholder="Buscar plataforma Olivelas, schema PostgreSQL, instância, porta ou tabela..."
+          statusExtractor={(mod) => mod.category}
+          searchExtractor={(mod) => {
+            const srvSpec = getModuleInstanceServerSpec(mod.slug);
+            return `${mod.brandName} ${mod.slug} ${mod.dbSchema} ${mod.folder} ${mod.category} ${mod.description} :${srvSpec.port} ${mod.tables.join(' ')}`;
+          }}
+          statusOptions={categories
+            .filter((c) => c !== 'all')
+            .map((c) => ({ value: c, label: c }))}
+          columns={[
+            {
+              key: 'brandName',
+              header: 'Plataforma Comercial Olivelas',
+              sortable: true,
+              csvValue: (mod) => `${mod.brandName} (${mod.slug})`,
+              render: (mod) => (
+                <div>
+                  <div className="font-bold text-sm">{mod.brandName}</div>
+                  <div className="text-xs text-muted">{mod.tagline}</div>
+                  <code className="text-[11px] text-muted mono">projetos/{mod.folder}</code>
+                </div>
+              ),
+            },
+            {
+              key: 'category',
+              header: 'Categoria & Schema PostgreSQL',
+              sortable: true,
+              csvValue: (mod) => `${mod.category} (${mod.dbSchema})`,
+              render: (mod) => (
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="badge badge-teal">{mod.category}</span>
+                    <span className="badge badge-info font-mono">{mod.dbSchema}</span>
                   </div>
-
-                  <div
-                    className="pt-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <div className="text-xs">
-                      <span className="text-muted block">Assinatura Comercial</span>
-                      <strong className="text-base">
-                        {formatCurrency(mod.priceMonthly, 'BRL', language)}/mês
-                      </strong>
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      <Link
-                        to={targetUrl}
-                        className="btn btn-secondary btn-sm"
-                        title="Painel de Governança, RAG & API do Módulo"
-                      >
-                        Governança
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() =>
-                          openModuleInstanceInNewTab({
-                            moduleSlug: mod.slug,
-                            companyId: resolvedCompanyId,
-                            companyName: currentCompany?.tradeName || 'Olivelas Holding',
-                            userId: currentUser?.id,
-                            userEmail: currentUser?.email,
-                            userName: currentUser?.name,
-                            userRole: 'admin',
-                          })
-                        }
-                        className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
-                      >
-                        <span>Abrir Plataforma</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
+                  <div className="text-xs text-muted">
+                    {mod.tables.length} tabelas: <code>{mod.tables.slice(0, 4).join(', ')}</code>
+                    {mod.tables.length > 4 ? ` +${mod.tables.length - 4}` : ''}
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </>
+              ),
+            },
+            {
+              key: 'instance',
+              header: 'Instância Alocada & Porta SSO',
+              csvValue: (mod) => {
+                const srvSpec = getModuleInstanceServerSpec(mod.slug);
+                const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
+                return `${instId} (:${srvSpec.port}${srvSpec.adminPath})`;
+              },
+              render: (mod) => {
+                const srvSpec = getModuleInstanceServerSpec(mod.slug);
+                const instId = `inst_${resolvedCompanyId.replace(/[^a-zA-Z0-9_-]/g, '_')}_${mod.slug}`;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <span className="badge badge-success font-mono">{instId}</span>
+                    <span className="text-xs text-muted font-mono">
+                      Porta :{srvSpec.port}{srvSpec.adminPath}
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'priceMonthly',
+              header: 'Assinatura Mensal',
+              sortable: true,
+              isNumeric: true,
+              csvValue: (mod) => mod.priceMonthly,
+              render: (mod) => (
+                <strong className="tabular">
+                  {formatCurrency(mod.priceMonthly, 'BRL', language)}/mês
+                </strong>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Acesso SSO & Governança',
+              render: (mod) => {
+                const targetUrl = buildModuleRoute(mod.slug);
+                return (
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        openModuleInstanceInNewTab({
+                          moduleSlug: mod.slug,
+                          companyId: resolvedCompanyId,
+                          companyName: currentCompany?.tradeName || 'Olivelas Holding',
+                          userId: currentUser?.id,
+                          userEmail: currentUser?.email,
+                          userName: currentUser?.name,
+                          userRole: 'admin',
+                        })
+                      }
+                      className="btn btn-primary btn-sm inline-flex items-center gap-1.5"
+                    >
+                      <span>Abrir Plataforma</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </button>
+                    <Link
+                      to={targetUrl}
+                      className="btn btn-secondary btn-sm"
+                      title="Painel de Governança, RAG & API do Módulo"
+                    >
+                      Governança
+                    </Link>
+                  </div>
+                );
+              },
+            },
+          ]}
+        />
       ) : (
-        /* Grid dos 10 Módulos de Exemplo Migrados */
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {exampleModules.map((ex) => (
-            <div key={ex.id} className="card p-6 flex flex-col justify-between gap-4">
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="badge badge-warning">Módulo de Exemplo</span>
-                  <code className="text-xs">{ex.code}</code>
+        <UrlDataTable<CatalogModuleEntity>
+          tableId="ecosystem-examples-table"
+          caption="Módulos de exemplo migrados da fundação"
+          items={exampleModules}
+          defaultSortField="code"
+          csvFilename="modulos-exemplo-allin.csv"
+          searchPlaceholder="Buscar módulo de exemplo por código, nome ou descrição..."
+          statusExtractor={(ex) => ex.category}
+          searchExtractor={(ex) => `${ex.code} ${ex.name[language]} ${ex.description[language]} ${ex.usageLimits}`}
+          columns={[
+            {
+              key: 'code',
+              header: 'Código Técnico',
+              sortable: true,
+              render: (ex) => <code className="text-xs font-mono">{ex.code}</code>,
+            },
+            {
+              key: 'name',
+              header: 'Módulo de Exemplo',
+              render: (ex) => (
+                <div>
+                  <div className="font-bold text-sm">{ex.name[language]}</div>
+                  <div className="text-xs text-muted">{ex.description[language]}</div>
                 </div>
-                <h3 className="text-base font-bold">{ex.name[language]}</h3>
-                <p className="text-xs text-muted">{ex.description[language]}</p>
-              </div>
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
-                <span className="text-muted">{ex.usageLimits}</span>
-                <strong>{formatCurrency(ex.priceMonthly, ex.currency, language)}/mês</strong>
-              </div>
-            </div>
-          ))}
-        </div>
+              ),
+            },
+            {
+              key: 'usageLimits',
+              header: 'Limites Operacionais',
+              render: (ex) => <span className="text-xs text-muted">{ex.usageLimits}</span>,
+            },
+            {
+              key: 'priceMonthly',
+              header: 'Valor Mensal',
+              sortable: true,
+              isNumeric: true,
+              render: (ex) => (
+                <strong className="tabular">
+                  {formatCurrency(ex.priceMonthly, ex.currency, language)}/mês
+                </strong>
+              ),
+            },
+          ]}
+        />
       )}
 
       {/* Painel de Auditoria da Tabela Única de Login (public.profiles) */}
