@@ -80,7 +80,7 @@ interface AppContextValue {
   loginWithCredentials: (
     email: string,
     password: string,
-  ) => Promise<{ ok: boolean; message?: string; redirectPath?: string }>;
+  ) => Promise<{ ok: boolean; message?: string; redirectPath?: string; firstLoginConfigured?: boolean }>;
   registerAccount: (
     input: RegisterAccountInput,
   ) => Promise<{ ok: boolean; message?: string; redirectPath?: string }>;
@@ -326,7 +326,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     async (
       email: string,
       password: string,
-    ): Promise<{ ok: boolean; message?: string; redirectPath?: string }> => {
+    ): Promise<{ ok: boolean; message?: string; redirectPath?: string; firstLoginConfigured?: boolean }> => {
       const authRes = await authenticateUserInSupabase(email, password);
       if (!authRes.ok || !authRes.user) {
         return {
@@ -401,12 +401,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         action: 'login',
         entityType: 'UserEntity',
         entityId: existingUser.id,
-        summary: `Login autenticado no Supabase (public.profiles) por ${existingUser.name} (${existingUser.email}).`,
+        summary: authRes.first_login_configured
+          ? `Primeiro login realizado: senha de Global Admin definida e gravada no Supabase para ${existingUser.name} (${existingUser.email}).`
+          : `Login autenticado no Supabase (public.profiles) por ${existingUser.name} (${existingUser.email}).`,
       });
 
       await refreshData();
       return {
         ok: true,
+        message: authRes.message,
+        firstLoginConfigured: Boolean(authRes.first_login_configured),
         redirectPath: globalStaff ? '/app/global' : `/app/empresa/${companyId}`,
       };
     },

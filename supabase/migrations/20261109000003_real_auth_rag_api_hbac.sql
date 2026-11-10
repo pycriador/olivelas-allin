@@ -24,167 +24,52 @@ ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS job_title TEXT,
   ADD COLUMN IF NOT EXISTS department TEXT;
 
--- Define senha padrão criptografada (bcrypt: 'Olivelas@2026') para todos os perfis sem hash
-UPDATE public.profiles
-SET password_hash = crypt('Olivelas@2026', gen_salt('bf')),
-    pin_hash = crypt('2026', gen_salt('bf'))
-WHERE password_hash IS NULL;
+-- Remove todos os outros usuários antigos para manter apenas o Global Admin Willian Jesus
+DELETE FROM public.company_users WHERE user_id <> 'usr-super-admin';
+DELETE FROM public.profiles WHERE id <> 'usr-super-admin';
 
--- Remove eventuais duplicidades de e-mail para permitir upsert determinístico por id
-DELETE FROM public.profiles
-WHERE email IN (
-  'helena.vasconcelos@olivelasallin.com.br',
-  'marcos.tavares@olivelasallin.com.br',
-  'camila.rocha@olivelasallin.com.br',
-  'lucas.andrade@olivelasallin.com.br',
-  'ricardo.almeida@olivelas.com.br',
-  'fernanda.lima@olivelas.com.br',
-  'bruno.santos@olivelas.com.br'
-)
-AND id NOT IN (
-  'usr-super-admin',
-  'usr-admin',
-  'usr-financeiro',
-  'usr-suporte',
-  'usr-cliente',
-  'usr-gerente',
-  'usr-funcionario'
-);
-
--- Garante que todos os 7 usuários oficiais do ecossistema estejam em public.profiles com senha real
+-- Garante que o único Global Admin (willian.o.jesus@gmail.com) esteja em public.profiles
+-- Se o registro anterior não era willian.o.jesus@gmail.com, limpa password_hash para configuração no primeiro login
 INSERT INTO public.profiles (
-  id, email, full_name, phone, is_global_admin, status, language, role_ids, company_ids, individual_permissions, granular_permissions, password_hash, pin_hash, job_title, department
+  id, email, full_name, phone, is_global_admin, status, language, role_ids, company_ids, individual_permissions, granular_permissions, password_hash, pin_hash, require_password_reset, job_title, department
 )
 VALUES
   (
     'usr-super-admin',
-    'helena.vasconcelos@olivelasallin.com.br',
-    'Helena Vasconcelos',
+    'willian.o.jesus@gmail.com',
+    'Willian Jesus',
     '+55 11 99800-1001',
     TRUE,
     'active',
     'pt-BR',
     '["role-super-admin"]'::jsonb,
-    '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail", "emp-solaris-bio"]'::jsonb,
+    '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail", "emp-solaris-tech", "comp_nebula", "comp_aurora"]'::jsonb,
     '[]'::jsonb,
     '["*"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Chief Executive Officer (Super Admin)',
+    NULL,
+    NULL,
+    TRUE,
+    'Global Admin & Founder',
     'Diretoria Global Olivelas'
-  ),
-  (
-    'usr-admin',
-    'marcos.tavares@olivelasallin.com.br',
-    'Marcos Tavares',
-    '+55 11 99800-1002',
-    TRUE,
-    'active',
-    'pt-BR',
-    '["role-admin"]'::jsonb,
-    '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail"]'::jsonb,
-    '[]'::jsonb,
-    '["companies.manage", "users.manage", "modules.manage", "contracts.manage", "api.manage", "rag.manage"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Diretor de Operações SaaS',
-    'Operações Globais'
-  ),
-  (
-    'usr-financeiro',
-    'camila.rocha@olivelasallin.com.br',
-    'Camila Rocha',
-    '+55 11 99800-1003',
-    TRUE,
-    'active',
-    'pt-BR',
-    '["role-financeiro"]'::jsonb,
-    '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail"]'::jsonb,
-    '[]'::jsonb,
-    '["finance.read", "finance.write", "finance.approve", "contracts.read", "reports.export"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Controller Financeiro Global',
-    'Finanças & Faturamento'
-  ),
-  (
-    'usr-suporte',
-    'lucas.andrade@olivelasallin.com.br',
-    'Lucas Andrade',
-    '+55 11 99800-1004',
-    TRUE,
-    'active',
-    'pt-BR',
-    '["role-suporte"]'::jsonb,
-    '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail"]'::jsonb,
-    '[]'::jsonb,
-    '["tickets.read", "tickets.write", "audit.read", "rag.read"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Engenheiro de Suporte N3',
-    'Suporte & Confiabilidade'
-  ),
-  (
-    'usr-cliente',
-    'ricardo.almeida@olivelas.com.br',
-    'Ricardo Almeida',
-    '+55 11 99123-4501',
-    FALSE,
-    'active',
-    'pt-BR',
-    '["role-cliente"]'::jsonb,
-    '["emp-olivelas-matriz", "emp-vega-retail"]'::jsonb,
-    '[]'::jsonb,
-    '["company.admin", "users.manage", "roles.manage", "modules.subscribe", "inventory.approve_writeoff", "rag.manage", "api.manage"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Diretor Geral da Empresa',
-    'Administração Matriz'
-  ),
-  (
-    'usr-gerente',
-    'fernanda.lima@olivelas.com.br',
-    'Fernanda Lima',
-    '+55 11 99123-4502',
-    FALSE,
-    'active',
-    'pt-BR',
-    '["role-gerente"]'::jsonb,
-    '["emp-olivelas-matriz"]'::jsonb,
-    '[{"id":"ovr-gerente-contracts","resource":"contracts","action":"view","effect":"allow","scope":"company","companyId":"emp-olivelas-matriz","reason":"Autorização para conferência de aditivos"}]'::jsonb,
-    '["inventory.read", "inventory.receive", "inventory.adjust", "sales.pos", "sales.apply_discount", "orders.manage", "rag.read"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Gerente Operacional',
-    'Operações de Loja'
-  ),
-  (
-    'usr-funcionario',
-    'bruno.santos@olivelas.com.br',
-    'Bruno Santos',
-    '+55 11 99123-4503',
-    FALSE,
-    'active',
-    'pt-BR',
-    '["role-funcionario"]'::jsonb,
-    '["emp-olivelas-matriz"]'::jsonb,
-    '[{"id":"ovr-func-export-deny","resource":"orders","action":"export","effect":"deny","scope":"company","companyId":"emp-olivelas-matriz","reason":"Restrição LGPD para operador de balcão"}]'::jsonb,
-    '["inventory.read", "sales.pos", "orders.read", "customers.read"]'::jsonb,
-    crypt('Olivelas@2026', gen_salt('bf')),
-    crypt('2026', gen_salt('bf')),
-    'Operador Especialista PDV',
-    'Atendimento & Frente de Caixa'
   )
 ON CONFLICT (id) DO UPDATE
-SET email = EXCLUDED.email,
+SET password_hash = CASE
+      WHEN lower(public.profiles.email) = 'willian.o.jesus@gmail.com' THEN public.profiles.password_hash
+      ELSE NULL
+    END,
+    require_password_reset = CASE
+      WHEN lower(public.profiles.email) = 'willian.o.jesus@gmail.com' THEN public.profiles.require_password_reset
+      ELSE TRUE
+    END,
+    email = EXCLUDED.email,
     full_name = EXCLUDED.full_name,
-    is_global_admin = EXCLUDED.is_global_admin,
+    is_global_admin = TRUE,
+    status = 'active',
     role_ids = EXCLUDED.role_ids,
     company_ids = EXCLUDED.company_ids,
     granular_permissions = EXCLUDED.granular_permissions,
-    job_title = COALESCE(public.profiles.job_title, EXCLUDED.job_title),
-    department = COALESCE(public.profiles.department, EXCLUDED.department),
-    password_hash = COALESCE(public.profiles.password_hash, EXCLUDED.password_hash),
+    job_title = EXCLUDED.job_title,
+    department = EXCLUDED.department,
     updated_at = now();
 
 -- -----------------------------------------------------------------------------
@@ -451,7 +336,7 @@ CREATE TABLE IF NOT EXISTS public.allin_rag_documents (
   chunk_tokens INTEGER NOT NULL DEFAULT 180,
   similarity_boost NUMERIC(5,2) NOT NULL DEFAULT 1.00,
   archive_metadata JSONB NOT NULL DEFAULT '{"isArchived": false}'::jsonb,
-  created_by TEXT DEFAULT 'helena.vasconcelos@olivelasallin.com.br',
+  created_by TEXT DEFAULT 'willian.o.jesus@gmail.com',
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

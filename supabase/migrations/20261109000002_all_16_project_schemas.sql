@@ -1094,37 +1094,28 @@ ON CONFLICT (id) DO UPDATE SET
 -- 2. Perfis de Login Unificados (public.profiles -> tabela única de login para todos os 16 projetos e All In)
 INSERT INTO public.profiles (id, email, full_name, phone, is_global_admin, status, language, role_ids, company_ids)
 VALUES
-  ('usr-super-admin', 'clara.monteiro@olivelas-allin.demo', 'Clara Monteiro', '+55 (11) 99812-0001', TRUE, 'active', 'pt-BR', '["role-super-admin"]'::jsonb, '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail", "emp-solaris-tech"]'::jsonb),
-  ('usr-admin', 'rafael.admin@olivelas-allin.demo', 'Rafael Vasconcelos', '+55 (11) 99740-0002', TRUE, 'active', 'pt-BR', '["role-admin"]'::jsonb, '["emp-olivelas-matriz", "emp-aurora-log"]'::jsonb),
-  ('usr-financeiro', 'beatriz.fin@olivelas-allin.demo', 'Beatriz Nogueira', '+55 (11) 99610-0003', FALSE, 'active', 'pt-BR', '["role-financeiro"]'::jsonb, '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail"]'::jsonb),
-  ('usr-cliente', 'helena@olivelas-atelier.com.br', 'Helena Oliveira', '+55 (11) 98821-4100', FALSE, 'active', 'pt-BR', '["role-cliente"]'::jsonb, '["emp-olivelas-matriz", "emp-vega-retail"]'::jsonb),
-  ('usr-gerente', 'lucas.prado@olivelas-atelier.com.br', 'Lucas Prado', '+55 (11) 98411-2200', FALSE, 'active', 'pt-BR', '["role-gerente"]'::jsonb, '["emp-olivelas-matriz"]'::jsonb),
-  ('usr-funcionario', 'camila.duarte@olivelas-atelier.com.br', 'Camila Duarte', '+55 (11) 98122-3300', FALSE, 'active', 'pt-BR', '["role-funcionario"]'::jsonb, '["emp-olivelas-matriz"]'::jsonb),
-  ('usr-aurora-cliente', 'marcos.toledo@auroralog.com.br', 'Marcos Toledo', '+55 (41) 99102-8800', FALSE, 'active', 'pt-BR', '["role-cliente"]'::jsonb, '["emp-aurora-log"]'::jsonb),
-  ('usr_global', 'global.admin@olivelas.com.br', 'Helena Vasconcelos (Global Admin)', '+55 11 99888-0001', TRUE, 'active', 'pt-BR', '["role-super-admin"]'::jsonb, '["emp-olivelas-matriz", "comp_nebula", "comp_aurora"]'::jsonb),
-  ('usr_tenant_admin', 'carlos.mendes@nebula.com.br', 'Carlos Eduardo Mendes (Admin Empresa)', '+55 11 99888-0002', FALSE, 'active', 'pt-BR', '["role-cliente"]'::jsonb, '["emp-olivelas-matriz", "comp_nebula"]'::jsonb),
-  ('usr_finance', 'fernanda.lima@nebula.com.br', 'Fernanda Lima (Gestora Financeira)', '+55 11 99888-0003', FALSE, 'active', 'pt-BR', '["role-financeiro"]'::jsonb, '["emp-olivelas-matriz", "comp_nebula"]'::jsonb),
-  ('usr_aurora_admin', 'roberto.almeida@aurora.com.br', 'Roberto Almeida (Diretor Aurora)', '+55 11 99888-0004', FALSE, 'active', 'pt-BR', '["role-cliente"]'::jsonb, '["emp-aurora-log", "comp_aurora"]'::jsonb)
+  ('usr-super-admin', 'willian.o.jesus@gmail.com', 'Willian Jesus', '+55 (11) 99812-0001', TRUE, 'active', 'pt-BR', '["role-super-admin"]'::jsonb, '["emp-olivelas-matriz", "emp-aurora-log", "emp-vega-retail", "emp-solaris-tech", "comp_nebula", "comp_aurora"]'::jsonb)
 ON CONFLICT (id) DO UPDATE SET
+  email = EXCLUDED.email,
   full_name = EXCLUDED.full_name,
   is_global_admin = EXCLUDED.is_global_admin,
   role_ids = EXCLUDED.role_ids,
   company_ids = EXCLUDED.company_ids,
   updated_at = now();
 
-INSERT INTO public.company_users (id, company_id, user_id, role, is_active)
+DELETE FROM public.company_users WHERE user_id <> 'usr-super-admin';
+
+INSERT INTO public.company_users (company_id, user_id, role, is_active)
 VALUES
-  ('cu_m1', 'emp-olivelas-matriz', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
-  ('cu_m2', 'emp-olivelas-matriz', 'usr-cliente', 'COMPANY_ADMIN', TRUE),
-  ('cu_m3', 'emp-olivelas-matriz', 'usr-gerente', 'MANAGER', TRUE),
-  ('cu_m4', 'emp-olivelas-matriz', 'usr-funcionario', 'EMPLOYEE', TRUE),
-  ('cu_a1', 'emp-aurora-log', 'usr-aurora-cliente', 'COMPANY_ADMIN', TRUE),
-  ('cu_1', 'comp_nebula', 'usr_global', 'GLOBAL_ADMIN', TRUE),
-  ('cu_2', 'comp_nebula', 'usr_tenant_admin', 'COMPANY_ADMIN', TRUE),
-  ('cu_3', 'comp_nebula', 'usr_finance', 'FINANCE_MANAGER', TRUE),
-  ('cu_4', 'comp_aurora', 'usr_global', 'GLOBAL_ADMIN', TRUE),
-  ('cu_5', 'comp_aurora', 'usr_aurora_admin', 'COMPANY_ADMIN', TRUE)
-ON CONFLICT (company_id, user_id) DO NOTHING;
+  ('emp-olivelas-matriz', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('emp-aurora-log', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('emp-vega-retail', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('emp-solaris-tech', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('comp_nebula', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('comp_aurora', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE)
+ON CONFLICT (company_id, user_id) DO UPDATE SET
+  role = 'GLOBAL_ADMIN',
+  is_active = TRUE;
 
 -- 3. Catálogo Oficial de Módulos (Core + 16 Projetos Padronizados Olivelas)
 INSERT INTO public.allin_modules (id, name, slug, project_folder, db_schema, category, description, monthly_price, active, features)
@@ -1196,18 +1187,18 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO agendamento_simples.patients (id, company_id, user_id, plan_id, full_name, cpf, phone, email, clinical_notes)
 VALUES
-  ('pat_1', 'comp_nebula', 'usr_tenant_admin', 'plan_odonto_1', 'Mariana Costa Ribeiro', '321.654.987-01', '+55 11 99111-2233', 'mariana.ribeiro@email.com', 'Paciente em acompanhamento semestral de profilaxia e clareamento.')
+  ('pat_1', 'comp_nebula', 'usr-super-admin', 'plan_odonto_1', 'Mariana Costa Ribeiro', '321.654.987-01', '+55 11 99111-2233', 'mariana.ribeiro@email.com', 'Paciente em acompanhamento semestral de profilaxia e clareamento.')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO agendamento_simples.appointments (id, company_id, patient_id, service_id, dentist_user_id, patient_name, service_name, scheduled_at, status, amount, notes)
 VALUES
-  ('apt_odonto_1', 'comp_nebula', 'pat_1', 'srv_odonto_1', 'usr_global', 'Mariana Costa Ribeiro', 'Profilaxia Ultrassônica & Checkup Digital', now() + INTERVAL '1 day', 'confirmed', 220.00, 'Confirmado via WhatsApp automático')
+  ('apt_odonto_1', 'comp_nebula', 'pat_1', 'srv_odonto_1', 'usr-super-admin', 'Mariana Costa Ribeiro', 'Profilaxia Ultrassônica & Checkup Digital', now() + INTERVAL '1 day', 'confirmed', 220.00, 'Confirmado via WhatsApp automático')
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. agendamentos
 INSERT INTO agendamentos.professionals (id, company_id, user_id, name, specialty, council_register, email, phone)
 VALUES
-  ('prof_1', 'comp_nebula', 'usr_global', 'Dra. Camila Albuquerque', 'Dermatologia & Laser', 'CRM-SP 194821', 'camila@olivelas.com.br', '+55 11 98811-2200')
+  ('prof_1', 'comp_nebula', 'usr-super-admin', 'Willian Jesus (Global Admin)', 'Diretoria Clínica & Gestão', 'CRM-SP 194821', 'willian.o.jesus@gmail.com', '+55 11 99812-0001')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO agendamentos.locations (id, company_id, name, room_code, address, capacity)
@@ -1233,12 +1224,12 @@ ON CONFLICT (id) DO NOTHING;
 -- 3. app_condominio
 INSERT INTO app_condominio.condominiums (id, company_id, name, cnpj, address, total_units, syndic_user_id)
 VALUES
-  ('cond_1', 'comp_nebula', 'Residencial Olivelas Grand Park', '41.223.890/0001-44', 'Rua Oscar Freire, 920 - São Paulo/SP', 96, 'usr_tenant_admin')
+  ('cond_1', 'comp_nebula', 'Residencial Olivelas Grand Park', '41.223.890/0001-44', 'Rua Oscar Freire, 920 - São Paulo/SP', 96, 'usr-super-admin')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO app_condominio.units (id, company_id, condominium_id, block, unit_number, resident_user_id, resident_name, status)
 VALUES
-  ('unit_1', 'comp_nebula', 'cond_1', 'Torre A', '1402', 'usr_tenant_admin', 'Carlos Eduardo Mendes', 'occupied')
+  ('unit_1', 'comp_nebula', 'cond_1', 'Torre A', '1402', 'usr-super-admin', 'Willian Jesus', 'occupied')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO app_condominio.resources (id, company_id, condominium_id, name, capacity, reservation_fee, rules)
@@ -1248,29 +1239,29 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO app_condominio.reservations (id, company_id, resource_id, unit_id, resident_user_id, reserved_date, status, fee_amount)
 VALUES
-  ('rsv_cond_1', 'comp_nebula', 'res_cond_1', 'unit_1', 'usr_tenant_admin', CURRENT_DATE + 5, 'approved', 280.00)
+  ('rsv_cond_1', 'comp_nebula', 'res_cond_1', 'unit_1', 'usr-super-admin', CURRENT_DATE + 5, 'approved', 280.00)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO app_condominio.occurrences (id, company_id, condominium_id, unit_id, reporter_user_id, title, category, status, description)
 VALUES
-  ('occ_cond_1', 'comp_nebula', 'cond_1', 'unit_1', 'usr_tenant_admin', 'Revisão Preventiva dos Elevadores Regenerativos', 'Manutenção Predial', 'open', 'Agendamento de inspeção técnica mensal com equipe certificada.')
+  ('occ_cond_1', 'comp_nebula', 'cond_1', 'unit_1', 'usr-super-admin', 'Revisão Preventiva dos Elevadores Regenerativos', 'Manutenção Predial', 'open', 'Agendamento de inspeção técnica mensal com equipe certificada.')
 ON CONFLICT (id) DO NOTHING;
 
 -- 4. art_hub
 INSERT INTO art_hub.collections (id, company_id, name, slug, description, curator_user_id)
 VALUES
-  ('col_art_1', 'comp_nebula', 'Coleção Neo-Modernismo Brasileiro 2026', 'neo-modernismo-2026', 'Obras catalogadas com visão computacional e curadoria Olivelas Art Hub.', 'usr_global')
+  ('col_art_1', 'comp_nebula', 'Coleção Neo-Modernismo Brasileiro 2026', 'neo-modernismo-2026', 'Obras catalogadas com visão computacional e curadoria Olivelas Art Hub.', 'usr-super-admin')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO art_hub.artworks (id, company_id, collection_id, created_by, code, title, artist_name, style, dimensions, price, ai_tags, ai_description, status)
 VALUES
-  ('art_1', 'comp_nebula', 'col_art_1', 'usr_global', 'ART-2026-001', 'Horizonte Atlântico em Ouro e Azul', 'Beatriz Monteiro', 'Abstracionismo Geométrico', '120x90cm', 7800.00, '["abstrato", "acrílica sobre tela", "alto padrão", "azul ultramar"]'::jsonb, 'Obra de composição equilibrada com contraste cromático profundo e textura espatulada.', 'published')
+  ('art_1', 'comp_nebula', 'col_art_1', 'usr-super-admin', 'ART-2026-001', 'Horizonte Atlântico em Ouro e Azul', 'Beatriz Monteiro', 'Abstracionismo Geométrico', '120x90cm', 7800.00, '["abstrato", "acrílica sobre tela", "alto padrão", "azul ultramar"]'::jsonb, 'Obra de composição equilibrada com contraste cromático profundo e textura espatulada.', 'published')
 ON CONFLICT (id) DO NOTHING;
 
 -- 5. casa_organizada
 INSERT INTO casa_organizada.household_profiles (id, company_id, owner_user_id, household_name, residents_count)
 VALUES
-  ('house_1', 'comp_nebula', 'usr_tenant_admin', 'Residência Família Mendes - Cobertura Jardins', 4)
+  ('house_1', 'comp_nebula', 'usr-super-admin', 'Residência Willian Jesus - Cobertura Jardins', 4)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO casa_organizada.global_default_tasks (id, company_id, room, title, frequency, estimated_minutes, points)
@@ -1281,18 +1272,18 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO casa_organizada.custom_tasks (id, company_id, household_id, assigned_user_id, room, title, frequency, status)
 VALUES
-  ('ctask_1', 'comp_nebula', 'house_1', 'usr_tenant_admin', 'Escritório', 'Organizar documentos fiscais e backup do NAS doméstico', 'monthly', 'pending')
+  ('ctask_1', 'comp_nebula', 'house_1', 'usr-super-admin', 'Escritório', 'Organizar documentos fiscais e backup do NAS doméstico', 'monthly', 'pending')
 ON CONFLICT (id) DO NOTHING;
 
 -- 6. contratos
 INSERT INTO contratos.workspaces (id, company_id, owner_user_id, name, slug)
 VALUES
-  ('ws_cnt_1', 'comp_nebula', 'usr_global', 'Jurídico Corporativo Olivelas', 'juridico-olivelas')
+  ('ws_cnt_1', 'comp_nebula', 'usr-super-admin', 'Jurídico Corporativo Olivelas', 'juridico-olivelas')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO contratos.projects (id, company_id, workspace_id, created_by, name, category, version, status)
 VALUES
-  ('prj_cnt_1', 'comp_nebula', 'ws_cnt_1', 'usr_global', 'Contrato Master SaaS Enterprise + DPA LGPD', 'Tecnologia & SaaS B2B', '3.2.0', 'published')
+  ('prj_cnt_1', 'comp_nebula', 'ws_cnt_1', 'usr-super-admin', 'Contrato Master SaaS Enterprise + DPA LGPD', 'Tecnologia & SaaS B2B', '3.2.0', 'published')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO contratos.clauses (id, company_id, project_id, code, title, category, body_markdown, mandatory)
@@ -1302,18 +1293,18 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO contratos.generated_documents (id, company_id, project_id, generated_by, title, counterparty_name, contract_value, risk_score, status)
 VALUES
-  ('gdoc_1', 'comp_nebula', 'prj_cnt_1', 'usr_finance', 'Contrato Corporativo #2026-884 - Grupo Vanguarda S.A.', 'Grupo Vanguarda Participações S.A.', 84000.00, 8.5, 'signed')
+  ('gdoc_1', 'comp_nebula', 'prj_cnt_1', 'usr-super-admin', 'Contrato Corporativo #2026-884 - Grupo Vanguarda S.A.', 'Grupo Vanguarda Participações S.A.', 84000.00, 8.5, 'signed')
 ON CONFLICT (id) DO NOTHING;
 
 -- 7. especificacoes
 INSERT INTO especificacoes.workspaces (id, company_id, owner_id, name, slug, description)
 VALUES
-  ('ws_spec_1', 'comp_nebula', 'usr_global', 'Arquitetura & Engenharia Olivelas All In', 'engenharia-allin', 'Workspace oficial de especificações técnicas SDD, RFCs e ADRs.')
+  ('ws_spec_1', 'comp_nebula', 'usr-super-admin', 'Arquitetura & Engenharia Olivelas All In', 'engenharia-allin', 'Workspace oficial de especificações técnicas SDD, RFCs e ADRs.')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO especificacoes.projects (id, company_id, workspace_id, owner_id, name, slug, description, status)
 VALUES
-  ('prj_spec_1', 'comp_nebula', 'ws_spec_1', 'usr_global', 'Unificação Multi-Schema Supabase 16 Plataformas', 'unificacao-supabase', 'Padronização arquitetural dos 16 sistemas no ecossistema Olivelas All In.', 'active')
+  ('prj_spec_1', 'comp_nebula', 'ws_spec_1', 'usr-super-admin', 'Unificação Multi-Schema Supabase 16 Plataformas', 'unificacao-supabase', 'Padronização arquitetural dos 16 sistemas no ecossistema Olivelas All In.', 'active')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO especificacoes.sprints (id, company_id, project_id, title, status, sort_order)
@@ -1323,7 +1314,7 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO especificacoes.specifications (id, company_id, project_id, sprint_id, created_by, code, title, description, type, status, version, tags, favorite)
 VALUES
-  ('spec_1', 'comp_nebula', 'prj_spec_1', 'spr_spec_1', 'usr_global', 'ADR-001', 'Arquitetura Multi-Schema com Login Único em public.profiles', 'Define o padrão oficial onde cada módulo opera em seu próprio schema PostgreSQL compartilhando public.profiles.', 'architecture', 'approved', 2, '["supabase", "multi-schema", "iam", "hbac"]'::jsonb, TRUE)
+  ('spec_1', 'comp_nebula', 'prj_spec_1', 'spr_spec_1', 'usr-super-admin', 'ADR-001', 'Arquitetura Multi-Schema com Login Único em public.profiles', 'Define o padrão oficial onde cada módulo opera em seu próprio schema PostgreSQL compartilhando public.profiles.', 'architecture', 'approved', 2, '["supabase", "multi-schema", "iam", "hbac"]'::jsonb, TRUE)
 ON CONFLICT (id) DO NOTHING;
 
 -- 8. gestao_estoque
@@ -1335,9 +1326,8 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO gestao_estoque.store_users (store_id, user_id, role, is_active)
 VALUES
-  ('store_matriz', 'usr_global', 'GLOBAL_ADMIN', TRUE),
-  ('store_matriz', 'usr_tenant_admin', 'STORE_ADMIN', TRUE),
-  ('store_filial_p1', 'usr_tenant_admin', 'STORE_ADMIN', TRUE)
+  ('store_matriz', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE),
+  ('store_filial_p1', 'usr-super-admin', 'GLOBAL_ADMIN', TRUE)
 ON CONFLICT (store_id, user_id) DO NOTHING;
 
 INSERT INTO gestao_estoque.categories (id, store_id, company_id, name, slug)
@@ -1353,7 +1343,7 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO gestao_estoque.orders (id, store_id, company_id, user_id, order_number, customer_name, channel, status, payment_method, total_amount)
 VALUES
-  ('ord_est_1', 'store_matriz', 'comp_nebula', 'usr_tenant_admin', 'PDV-2026-0001', 'Atelier Santa Clara', 'IN_STORE', 'DELIVERED', 'PIX', 1299.00)
+  ('ord_est_1', 'store_matriz', 'comp_nebula', 'usr-super-admin', 'PDV-2026-0001', 'Atelier Santa Clara', 'IN_STORE', 'DELIVERED', 'PIX', 1299.00)
 ON CONFLICT (id) DO NOTHING;
 
 -- 9. ordem_de_servico
@@ -1364,7 +1354,7 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO ordem_de_servico.technicians (id, company_id, user_id, name, specialty, commission_percent)
 VALUES
-  ('tech_os_1', 'comp_nebula', 'usr_tenant_admin', 'Lucas Ferreira (Especialista Apple & SMD)', 'Reparo Avançado de Placa Lógica', 18.00)
+  ('tech_os_1', 'comp_nebula', 'usr-super-admin', 'Willian Jesus (Global Admin)', 'Reparo Avançado de Placa Lógica', 18.00)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO ordem_de_servico.service_orders (id, company_id, os_number, customer_id, technician_id, customer_name, device_label, reported_defect, diagnostic_report, status, priority, parts_total, labor_total, total_amount, warranty_days)
@@ -1375,12 +1365,12 @@ ON CONFLICT (id) DO NOTHING;
 -- 10. personal_treiner
 INSERT INTO personal_treiner.trainers (id, company_id, user_id, full_name, cref, specialty, email, phone)
 VALUES
-  ('trn_1', 'comp_nebula', 'usr_global', 'Prof. Rafael Oliveira (Head Coach)', 'CREF 142980-G/SP', 'Biomecânica Aplicada & Alta Performance', 'rafael.coach@olivelas.com.br', '+55 11 95544-3322')
+  ('trn_1', 'comp_nebula', 'usr-super-admin', 'Willian Jesus (Global Admin)', 'CREF 142980-G/SP', 'Biomecânica Aplicada & Alta Performance', 'willian.o.jesus@gmail.com', '+55 11 99812-0001')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO personal_treiner.students (id, company_id, trainer_id, user_id, full_name, email, phone, goal, plan_name, monthly_fee, weight_kg, body_fat_percent, streak_days)
 VALUES
-  ('std_1', 'comp_nebula', 'trn_1', 'usr_tenant_admin', 'Carlos Eduardo Mendes', 'carlos.mendes@nebula.com.br', '+55 11 99888-0002', 'Recomposição Corporal & Força', 'Black VIP Presencial + App Olivelas', 690.00, 82.4, 13.8, 24)
+  ('std_1', 'comp_nebula', 'trn_1', 'usr-super-admin', 'Willian Jesus', 'willian.o.jesus@gmail.com', '+55 11 99812-0001', 'Recomposição Corporal & Força', 'Black VIP Presencial + App Olivelas', 690.00, 82.4, 13.8, 24)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO personal_treiner.workout_plans (id, company_id, student_id, trainer_id, title, split_type, weeks_duration, sessions_completed, status)
@@ -1406,18 +1396,18 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO restaurante.orders (id, company_id, restaurant_id, table_number, waiter_user_id, order_code, items_summary, kds_status, total_amount)
 VALUES
-  ('rord_1', 'comp_nebula', 'rest_1', 14, 'usr_tenant_admin', 'MESA-14-089', '2x Risoto de Polvo, 1x Burrata ao Pesto, 2x Taça Pinot Noir', 'preparing', 462.00)
+  ('rord_1', 'comp_nebula', 'rest_1', 14, 'usr-super-admin', 'MESA-14-089', '2x Risoto de Polvo, 1x Burrata ao Pesto, 2x Taça Pinot Noir', 'preparing', 462.00)
 ON CONFLICT (id) DO NOTHING;
 
 -- 12. rifas
 INSERT INTO rifas.campaigns (id, company_id, created_by, title, slug, prize_description, ticket_price, total_numbers, sold_numbers, draw_date, status)
 VALUES
-  ('rif_camp_1', 'comp_nebula', 'usr_global', 'Sorteio Beneficente Olivelas - Porsche Macan Elétrico + Kit Casa', 'porsche-macan-olivelas-2026', 'Porsche Macan EV 0km Blindado + R$ 50.000 no PIX', 29.90, 100000, 68420, CURRENT_DATE + 20, 'active')
+  ('rif_camp_1', 'comp_nebula', 'usr-super-admin', 'Sorteio Beneficente Olivelas - Porsche Macan Elétrico + Kit Casa', 'porsche-macan-olivelas-2026', 'Porsche Macan EV 0km Blindado + R$ 50.000 no PIX', 29.90, 100000, 68420, CURRENT_DATE + 20, 'active')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO rifas.orders (id, company_id, campaign_id, buyer_user_id, buyer_name, buyer_phone, tickets_count, numbers_selected, total_amount, payment_status, pix_txid)
 VALUES
-  ('rif_ord_1', 'comp_nebula', 'rif_camp_1', 'usr_finance', 'Fernanda Lima', '+55 11 99888-0003', 10, '[10492, 18201, 24910, 33812, 40192, 51209, 64812, 77321, 88412, 91044]'::jsonb, 299.00, 'paid', 'E1823612020261109PIX001')
+  ('rif_ord_1', 'comp_nebula', 'rif_camp_1', 'usr-super-admin', 'Willian Jesus', '+55 11 99812-0001', 10, '[10492, 18201, 24910, 33812, 40192, 51209, 64812, 77321, 88412, 91044]'::jsonb, 299.00, 'paid', 'E1823612020261109PIX001')
 ON CONFLICT (id) DO NOTHING;
 
 -- 13. sistema_delivery
@@ -1428,7 +1418,7 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO sistema_delivery.couriers (id, company_id, name, phone, vehicle_type, plate, status, deliveries_today)
 VALUES
-  ('dlv_cour_1', 'comp_nebula', 'Diego Nascimento (Entregador Líder)', '+55 11 94433-2211', 'Moto Honda PCX 160', 'BRA-2E19', 'on_route', 16)
+  ('dlv_cour_1', 'comp_nebula', 'Willian Jesus (Global Admin)', '+55 11 99812-0001', 'Moto Honda PCX 160', 'BRA-2E19', 'on_route', 16)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO sistema_delivery.delivery_orders (id, company_id, store_id, courier_id, external_code, channel, customer_name, delivery_address, status, delivery_fee, total_amount)
@@ -1455,7 +1445,7 @@ ON CONFLICT (id) DO NOTHING;
 -- 15. suite_rifa
 INSERT INTO suite_rifa.organizations (id, company_id, owner_user_id, name, slug, plan_tier, active_campaigns_limit, monthly_volume, status)
 VALUES
-  ('srf_org_1', 'comp_nebula', 'usr_global', 'Olivelas Sorteios & Filantropia Nacional', 'olivelas-sorteios-nacional', 'Enterprise Unlimited', 100, 485000.00, 'active')
+  ('srf_org_1', 'comp_nebula', 'usr-super-admin', 'Olivelas Sorteios & Filantropia Nacional', 'olivelas-sorteios-nacional', 'Enterprise Unlimited', 100, 485000.00, 'active')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO suite_rifa.campaigns (id, company_id, organization_id, title, quota_price, total_quotas, sold_quotas, revenue_amount, status)
@@ -1466,7 +1456,7 @@ ON CONFLICT (id) DO NOTHING;
 -- 16. vitrine_digital
 INSERT INTO vitrine_digital.art_submissions (id, company_id, submitted_by, sku_code, title, category, ai_quality_score, seo_headline, conversion_tags, status)
 VALUES
-  ('vit_sub_1', 'comp_nebula', 'usr_global', 'VIT-2026-001', 'Kit Home Fragrance Olivelas Gold Edition', 'Home & Decor Premium', 98.7, 'Kit Difusor e Vela Olivelas Gold Edition | Perfumaria de Luxo para Ambientes', '["alta conversão", "iluminação estúdio", "seo otimizado", "luxo"]'::jsonb, 'approved')
+  ('vit_sub_1', 'comp_nebula', 'usr-super-admin', 'VIT-2026-001', 'Kit Home Fragrance Olivelas Gold Edition', 'Home & Decor Premium', 98.7, 'Kit Difusor e Vela Olivelas Gold Edition | Perfumaria de Luxo para Ambientes', '["alta conversão", "iluminação estúdio", "seo otimizado", "luxo"]'::jsonb, 'approved')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO vitrine_digital.image_analysis (id, company_id, submission_id, model_used, lighting_score, composition_score, recommendations, tokens_used)

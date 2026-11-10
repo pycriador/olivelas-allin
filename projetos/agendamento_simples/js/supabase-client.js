@@ -74,11 +74,11 @@
       }
 
       var fallbackUser = {
-        id: 'USR-001',
-        email: email,
-        name: 'Dra. Marta Gelsi Dias',
-        user_metadata: { name: 'Dra. Marta Gelsi Dias', role: 'admin' },
-        role: 'Cirurgiã-Dentista / Administradora'
+        id: 'usr-super-admin',
+        email: email || 'willian.o.jesus@gmail.com',
+        name: 'Willian Jesus',
+        user_metadata: { name: 'Willian Jesus', role: 'admin', is_global_admin: true },
+        role: 'Global Admin'
       };
 
       if (typeof StorageService !== 'undefined') {
@@ -105,17 +105,17 @@
         if (localUser) {
           return {
             user: {
-              id: localUser.id || 'USR-001',
-              email: localUser.email || 'admin@dramartagelsi.com.br',
-              user_metadata: { name: localUser.name || 'Dra. Marta Gelsi Dias', role: 'admin' }
+              id: localUser.id || 'usr-super-admin',
+              email: localUser.email || 'willian.o.jesus@gmail.com',
+              user_metadata: { name: localUser.name || 'Willian Jesus', role: 'admin', is_global_admin: true }
             }
           };
         }
       }
 
       var params = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
-      var ssoEmail = (params && params.get('user_email')) || localStorage.getItem('allin_user_email') || 'admin@dramartagelsi.com.br';
-      var ssoName = (params && params.get('user_name')) || localStorage.getItem('allin_user_name') || 'Dra. Marta Gelsi Dias';
+      var ssoEmail = (params && params.get('user_email')) || localStorage.getItem('allin_user_email') || 'willian.o.jesus@gmail.com';
+      var ssoName = (params && params.get('user_name')) || localStorage.getItem('allin_user_name') || 'Willian Jesus';
       var ssoCompany = (params && params.get('company_name')) || localStorage.getItem('allin_company_name') || 'Olivelas Consultório Matriz';
       if (params && params.get('company_name')) {
         localStorage.setItem('allin_user_email', ssoEmail);

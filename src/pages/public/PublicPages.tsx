@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   AlertCircle,
@@ -32,6 +32,7 @@ import { StatusBadge } from '../../components/shared/SharedComponents';
 import { recordAuditEvent } from '../../repositories/repositories';
 import {
   changeUserPasswordInSupabase,
+  checkFirstLoginStatusInSupabase,
   validatePasswordStrength,
 } from '../../services/supabaseAuthService';
 import { supabaseUrl } from '../../lib/supabase/client';
@@ -484,12 +485,30 @@ export const LoginPage: React.FC = () => {
   );
 
   // Estado do Login Real no Supabase
-  const [email, setEmail] = useState<string>('helena.vasconcelos@olivelasallin.com.br');
-  const [password, setPassword] = useState<string>('Olivelas@2026');
+  const [email, setEmail] = useState<string>('willian.o.jesus@gmail.com');
+  const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [selectedQuickUserId, setSelectedQuickUserId] = useState<string>('usr-super-admin');
+  const [needsFirstLoginPassword, setNeedsFirstLoginPassword] = useState<boolean>(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed.includes('@')) {
+      setNeedsFirstLoginPassword(false);
+      return;
+    }
+    void checkFirstLoginStatusInSupabase(trimmed).then((res) => {
+      if (!cancelled) {
+        setNeedsFirstLoginPassword(Boolean(res.needs_password_setup));
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [email]);
 
   // Estado do Cadastro Real no Supabase
   const [regFullName, setRegFullName] = useState<string>('');
@@ -505,7 +524,6 @@ export const LoginPage: React.FC = () => {
     const u = users.find((item) => item.id === userId);
     if (u) {
       setEmail(u.email);
-      setPassword('Olivelas@2026');
       setAuthError(null);
     }
   };
@@ -520,10 +538,15 @@ export const LoginPage: React.FC = () => {
         setAuthError(res.message || 'Falha na autenticação com o Supabase.');
         return;
       }
+      setNeedsFirstLoginPassword(false);
       notify({
         type: 'success',
-        title: 'Autenticação Supabase Confirmada',
-        description: `Sessão iniciada com sucesso para ${email} (public.profiles).`,
+        title: res.firstLoginConfigured
+          ? 'Senha de Global Admin Configurada no Supabase!'
+          : 'Autenticação Supabase Confirmada',
+        description:
+          res.message ||
+          `Sessão iniciada com sucesso para ${email} (public.profiles + auth.users).`,
       });
       navigate(res.redirectPath || '/app/global');
     } finally {
@@ -648,9 +671,27 @@ export const LoginPage: React.FC = () => {
                     </div>
                   </div>
 
+                  {needsFirstLoginPassword && (
+                    <div
+                      className="p-3 rounded-xl border border-teal-500/40 bg-teal-500/10 text-xs flex items-start gap-2 mb-3"
+                      style={{ color: 'var(--accent-primary)' }}
+                    >
+                      <KeyRound size={16} className="shrink-0 mt-0.5" />
+                      <div>
+                        <strong>Primeiro Acesso Detectado no Supabase Real:</strong> digite abaixo a senha que deseja definir para{' '}
+                        <code>{email}</code> (mínimo 6 caracteres). Ao entrar, ela será criptografada com{' '}
+                        <code>bcrypt</code> e salva em <code>public.profiles</code> e <code>auth.users</code>.
+                      </div>
+                    </div>
+                  )}
+
                   <div className="field mb-3">
                     <div className="flex items-center justify-between">
-                      <label htmlFor="login-password-input">Senha de Acesso</label>
+                      <label htmlFor="login-password-input">
+                        {needsFirstLoginPassword
+                          ? 'Definir Senha de Global Admin (Primeiro Login)'
+                          : 'Senha de Acesso'}
+                      </label>
                       <Link to="/recuperar-senha" className="text-xs font-semibold">
                         Alterar / Redefinir Senha no Supabase
                       </Link>
@@ -663,7 +704,11 @@ export const LoginPage: React.FC = () => {
                         className="input w-full"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••••••"
+                        placeholder={
+                          needsFirstLoginPassword
+                            ? 'Digite sua nova senha (mín. 6 caracteres)...'
+                            : '••••••••••••'
+                        }
                       />
                       <button
                         type="button"
@@ -675,7 +720,9 @@ export const LoginPage: React.FC = () => {
                       </button>
                     </div>
                     <span className="hint mt-1">
-                      Senha padrão das contas pré-configuradas no banco: <code>Olivelas@2026</code>
+                      {needsFirstLoginPassword
+                        ? 'Sua senha será configurada no primeiro login e refletirá imediatamente no Supabase real.'
+                        : 'Autenticação validada diretamente contra o hash bcrypt salvo no Supabase.'}
                     </span>
                   </div>
 
@@ -701,21 +748,25 @@ export const LoginPage: React.FC = () => {
                     style={{ justifyContent: 'center' }}
                   >
                     <UserCheck size={16} />
-                    {isSubmitting ? 'Autenticando no Supabase...' : 'Entrar na Plataforma Olivelas All In'}
+                    {isSubmitting
+                      ? 'Autenticando no Supabase...'
+                      : needsFirstLoginPassword
+                        ? 'Configurar Senha no Supabase & Entrar como Global Admin'
+                        : 'Entrar na Plataforma Olivelas All In'}
                   </button>
                 </div>
               </form>
 
-              {/* Coluna 2: Contas Reais no Supabase (Preenchimento Rápido para Auditoria de Perfis HBAC) */}
+              {/* Coluna 2: Conta Global Admin no Supabase */}
               <div className="flex flex-col gap-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-semibold">
-                    2. Contas Reais em <code>public.profiles</code> (Clique para preencher)
+                    2. Global Admin Cadastrado em <code>public.profiles</code> & <code>auth.users</code>
                   </label>
-                  <span className="badge badge-info">6 Níveis HBAC</span>
+                  <span className="badge badge-info">Global Admin Único</span>
                 </div>
                 <p className="text-xs text-muted">
-                  Clique em qualquer conta real abaixo para preencher o e-mail e a senha (<code>Olivelas@2026</code>) e testar as permissões granulares HBAC de cada cargo:
+                  Apenas o Global Admin oficial está registrado no ecossistema e em todas as 16 ferramentas. A senha é configurada no primeiro login e refletida diretamente no Supabase real:
                 </p>
 
                 <div className="flex flex-col gap-2">
@@ -759,7 +810,11 @@ export const LoginPage: React.FC = () => {
                         </div>
                         <div className="flex items-center justify-between text-xs text-muted mono">
                           <span>{u.email}</span>
-                          <span>Senha: Olivelas@2026</span>
+                          <span>
+                            {needsFirstLoginPassword
+                              ? 'Senha: Definir no 1º Login'
+                              : 'Autenticação Supabase Ativa'}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1 flex-wrap mt-1">
                           {uRoles.some((r) => r.scope === 'global') && (
@@ -891,7 +946,7 @@ export const LoginPage: React.FC = () => {
 
 export const RecoverPasswordPage: React.FC = () => {
   const { getActor, notify } = useApp();
-  const [email, setEmail] = useState('helena.vasconcelos@olivelasallin.com.br');
+  const [email, setEmail] = useState('willian.o.jesus@gmail.com');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

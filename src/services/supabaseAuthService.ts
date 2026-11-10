@@ -5,6 +5,8 @@ export interface SupabaseAuthResult {
   ok: boolean;
   code?: string;
   message?: string;
+  first_login_configured?: boolean;
+  needs_password_setup?: boolean;
   user?: {
     id: string;
     email: string;
@@ -21,6 +23,39 @@ export interface SupabaseAuthResult {
     department?: string;
     last_login_at?: string;
   };
+}
+
+export interface FirstLoginCheckResult {
+  ok: boolean;
+  exists: boolean;
+  id?: string;
+  email?: string;
+  full_name?: string;
+  is_global_admin?: boolean;
+  needs_password_setup: boolean;
+}
+
+/**
+ * Consulta no Supabase real se o e-mail informado está em modo de Primeiro Acesso (sem senha definida ainda)
+ */
+export async function checkFirstLoginStatusInSupabase(
+  email: string,
+): Promise<FirstLoginCheckResult> {
+  const cleanEmail = email.trim().toLowerCase();
+  if (!cleanEmail || !isSupabaseConfigured) {
+    return { ok: true, exists: false, needs_password_setup: false };
+  }
+  try {
+    const { data, error } = await supabase.rpc('check_olivelas_first_login', {
+      p_email: cleanEmail,
+    });
+    if (!error && data) {
+      return data as FirstLoginCheckResult;
+    }
+  } catch {
+    // fallback silencioso
+  }
+  return { ok: true, exists: false, needs_password_setup: false };
 }
 
 export interface RegisterAccountInput {
@@ -130,12 +165,12 @@ export async function authenticateUserInSupabase(
     user: {
       id: 'usr-super-admin',
       email: cleanEmail,
-      full_name: cleanEmail.split('@')[0],
+      full_name: cleanEmail === 'willian.o.jesus@gmail.com' ? 'Willian Jesus' : cleanEmail.split('@')[0],
       is_global_admin: true,
       status: 'active',
       language: 'pt-BR',
       role_ids: ['role-super-admin'],
-      company_ids: ['emp-olivelas-matriz'],
+      company_ids: ['emp-olivelas-matriz', 'emp-aurora-log', 'emp-vega-retail', 'emp-solaris-tech'],
       individual_permissions: [],
       granular_permissions: ['*'],
     },

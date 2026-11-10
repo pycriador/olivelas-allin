@@ -28,8 +28,8 @@ class AuthGuard {
 
       // Usuário autenticado com sucesso
       const user = session.user;
-      const userName = user.user_metadata?.name || user.email?.split('@')[0] || "Dra. Marta Gelsi";
-      const userEmail = user.email || "admin@dramartagelsi.com.br";
+      const userName = user.user_metadata?.name || user.email?.split('@')[0] || "Willian Jesus";
+      const userEmail = user.email || "willian.o.jesus@gmail.com";
 
       // Atualiza informações na interface após renderização do topbar/sidebar
       setTimeout(() => {

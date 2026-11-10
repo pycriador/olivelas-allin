@@ -20,7 +20,7 @@ import {
 } from '../seed/initialData';
 
 export const DB_NAME = 'olivelas_allin_mock_v1';
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 
 export type StoreName =
   | 'roles'
@@ -147,6 +147,7 @@ export async function clearStore(storeName: StoreName): Promise<void> {
 }
 
 async function populateAllSeedData(): Promise<void> {
+  await clearStore('users');
   await putManyInStore('roles', structuredClone(INITIAL_ROLES));
   await putManyInStore('companies', structuredClone(INITIAL_COMPANIES));
   await putManyInStore('users', structuredClone(INITIAL_USERS));

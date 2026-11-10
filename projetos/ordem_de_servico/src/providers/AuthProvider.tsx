@@ -30,8 +30,8 @@ export const AuthContext = createContext<AuthContextValue | null>(null);
 
 const DEMO_USER: AppUser = {
   id: "00000000-0000-0000-0000-000000000001",
-  name: "Administrador ServiceForge",
-  email: "admin@serviceforge.com.br",
+  name: "Willian Jesus",
+  email: "willian.o.jesus@gmail.com",
   role: "global_admin",
 };
 

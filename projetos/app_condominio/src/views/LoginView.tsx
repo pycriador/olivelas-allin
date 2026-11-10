@@ -8,7 +8,7 @@ import { Badge } from '../components/ui/Badge';
 
 export const LoginView: React.FC = () => {
   const { loginAs, setCurrentView } = useApp();
-  const [email, setEmail] = useState('willian.silva@exemplo.com');
+  const [email, setEmail] = useState('willian.o.jesus@gmail.com');
   const [password, setPassword] = useState('••••••••••••');
   const [isLoading, setIsLoading] = useState(false);
 

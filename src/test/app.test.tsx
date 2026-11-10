@@ -45,7 +45,7 @@ import { getProjectSchemaClient, getUnifiedProfilesTable, isSupabaseConfigured }
 
 const testActor = {
   userId: 'usr-super-admin',
-  userName: 'Helena Vasconcelos',
+  userName: 'Willian Jesus',
   userRole: 'Super Admin',
 };
 
@@ -54,7 +54,7 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     await resetToInitialSeed();
   });
 
-  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 7 users, 26 modules (16 commercial + 10 examples) and persists CRUD + logical archiving without physical deletion', async () => {
+  it('1. Seeding & IndexedDB Repositories: populates 6 roles, 4 companies, 1 Global Admin user (willian.o.jesus@gmail.com), 26 modules (16 commercial + 10 examples) and persists CRUD + logical archiving without physical deletion', async () => {
     await ensureSeeded();
 
     const roles = await repositories.roles.listAll();
@@ -64,7 +64,9 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
 
     expect(roles.length).toBeGreaterThanOrEqual(6);
     expect(companies.length).toBe(4);
-    expect(users.length).toBe(7);
+    expect(users.length).toBe(1);
+    expect(users[0].email).toBe('willian.o.jesus@gmail.com');
+    expect(users[0].roleIds).toContain('role-super-admin');
     expect(modules.length).toBe(26);
     expect(modules.filter((m) => !m.isExample).length).toBe(16);
     expect(modules.filter((m) => m.isExample).length).toBe(10);
@@ -129,9 +131,43 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
 
   it('2. HBAC Engine: evaluates direct roles, hierarchy, individual overrides, and prevents privilege escalation', () => {
     const superAdmin = INITIAL_USERS.find((u) => u.id === 'usr-super-admin')!;
-    const financeiro = INITIAL_USERS.find((u) => u.id === 'usr-financeiro')!;
-    const cliente = INITIAL_USERS.find((u) => u.id === 'usr-cliente')!;
-    const gerente = INITIAL_USERS.find((u) => u.id === 'usr-gerente')!;
+    const financeiro = {
+      ...superAdmin,
+      id: 'usr-financeiro',
+      roleIds: ['role-financeiro'],
+      companyIds: ['emp-olivelas-matriz', 'emp-aurora-log', 'emp-vega-retail'],
+      individualPermissions: [],
+      granularPermissions: [],
+    };
+    const cliente = {
+      ...superAdmin,
+      id: 'usr-cliente',
+      roleIds: ['role-cliente'],
+      companyIds: ['emp-olivelas-matriz', 'emp-vega-retail'],
+      individualPermissions: [],
+      granularPermissions: [],
+    };
+    const gerente = {
+      ...superAdmin,
+      id: 'usr-gerente',
+      roleIds: ['role-gerente'],
+      companyIds: ['emp-olivelas-matriz'],
+      granularPermissions: [],
+      individualPermissions: [
+        {
+          id: 'ovr-gerente-1',
+          resource: 'contracts' as const,
+          action: 'view' as const,
+          scope: 'company' as const,
+          companyId: 'emp-olivelas-matriz',
+          effect: 'allow' as const,
+          grantedByUserId: 'usr-super-admin',
+          grantedByUserName: 'Willian Jesus',
+          reason: 'Autorização individual para conferência de vigência contratual.',
+          createdAt: '2026-06-10T10:00:00.000Z',
+        },
+      ],
+    };
 
     // Super Admin has global administer access
     const saEval = evaluateEffectivePermission(superAdmin, INITIAL_ROLES, 'api_hub', 'administer');
@@ -188,9 +224,25 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
   });
 
   it('3. Multi-Company Isolation & Contracted Modules: blocks cross-tenant access and checks active module subscriptions', async () => {
-    const clienteOlivelas = INITIAL_USERS.find((u) => u.id === 'usr-cliente')!;
-    const gerenteOlivelas = INITIAL_USERS.find((u) => u.id === 'usr-gerente')!;
-    const adminOperacional = INITIAL_USERS.find((u) => u.id === 'usr-admin')!;
+    const baseUser = INITIAL_USERS[0]!;
+    const clienteOlivelas = {
+      ...baseUser,
+      id: 'usr-cliente',
+      roleIds: ['role-cliente'],
+      companyIds: ['emp-olivelas-matriz', 'emp-vega-retail'],
+    };
+    const gerenteOlivelas = {
+      ...baseUser,
+      id: 'usr-gerente',
+      roleIds: ['role-gerente'],
+      companyIds: ['emp-olivelas-matriz'],
+    };
+    const adminOperacional = {
+      ...baseUser,
+      id: 'usr-admin',
+      roleIds: ['role-admin'],
+      companyIds: ['emp-olivelas-matriz', 'emp-aurora-log'],
+    };
 
     // Cliente of Olivelas Matriz & Vega Retail can access both, but CANNOT access Aurora Log (emp-aurora-log)
     expect(canAccessCompany(clienteOlivelas, 'emp-olivelas-matriz', INITIAL_ROLES)).toBe(true);
@@ -566,7 +618,10 @@ describe('Olivelas Allin — Fundação Mock V1 Architecture & Governance Suite'
     expect(validatePasswordStrength('Olivelas@2026').valid).toBe(true);
 
     const funcionarioWithGranular = {
-      ...INITIAL_USERS.find((u) => u.id === 'usr-funcionario')!,
+      ...INITIAL_USERS[0]!,
+      id: 'usr-funcionario',
+      roleIds: ['role-funcionario'],
+      companyIds: ['emp-olivelas-matriz'],
       granularPermissions: ['allin_personal_trainer:create', 'allin_personal_trainer:edit'],
     };
     const granularCheck = evaluateEffectivePermission(
