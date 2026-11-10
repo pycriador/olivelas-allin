@@ -182,7 +182,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         }
 
         const routeInfo = getRouteConfig(view);
-        document.title = `${routeInfo.title} | ${activeCondominium?.name || 'CondoFlow'}`;
+        document.title = 'Olivelas - Gestão de Condomínios';
       }
     },
     [activeCondominium]
@@ -194,7 +194,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       const viewFromUrl = getViewFromPath(window.location.pathname);
       setCurrentViewRaw(viewFromUrl);
       const routeInfo = getRouteConfig(viewFromUrl);
-      document.title = `${routeInfo.title} | ${activeCondominium?.name || 'CondoFlow'}`;
+      document.title = 'Olivelas - Gestão de Condomínios';
     };
 
     window.addEventListener('popstate', handlePopState);
@@ -205,7 +205,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const routeInfo = getRouteConfig(currentView);
-      document.title = `${routeInfo.title} | ${activeCondominium?.name || 'CondoFlow'}`;
+      document.title = 'Olivelas - Gestão de Condomínios';
     }
   }, [currentView, activeCondominium]);
 

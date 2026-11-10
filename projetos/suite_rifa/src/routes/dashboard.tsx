@@ -13,9 +13,9 @@ import { LIMIT_LABEL, USAGE_FOR_LIMIT, formatLimitValue } from "@/services/types
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — RaffleHub" },
+      { title: "Olivelas - Suíte Multi-Organização de Rifas" },
       { name: "description", content: "Visão geral de uso, plano e equipe da sua organização." },
-      { property: "og:title", content: "Dashboard — RaffleHub" },
+      { property: "og:title", content: "Olivelas - Suíte Multi-Organização de Rifas" },
       { property: "og:description", content: "Visão geral de uso, plano e equipe da sua organização." },
     ],
   }),

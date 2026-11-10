@@ -390,10 +390,10 @@ export function AppLayout() {
             </div>
             <div>
               <h1 className="font-bold text-sm tracking-tight text-sidebar-foreground">
-                Olivelas Gestão
+                Olivelas - Gestão de Estoque & PDV
               </h1>
               <span className="text-[10px] text-muted-foreground block font-mono">
-                ESTOQUE & VENDAS
+                SUPER ADMINISTRADOR • ALL IN
               </span>
             </div>
           </Link>

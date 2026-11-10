@@ -4,7 +4,7 @@ import {
 } from "./connection-key-crypto.server";
 import { callAsAppUser } from "@/integrations/lovable/appUserConnector";
 
-export const GATEWAY_BASE_URL = "https://connector-gateway.lovable.dev";
+export const GATEWAY_BASE_URL = "https://api.olivelas.com.br/connectors";
 export const GOOGLE_CALENDAR_CONNECTOR_ID = "google_calendar";
 
 export const GOOGLE_CALENDAR_SCOPES = [

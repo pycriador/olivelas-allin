@@ -57,17 +57,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         }
 
-        const savedUser = getItem<User | null>(STORAGE_KEYS.CURRENT_USER, null);
-        if (!savedUser) {
-          const defaultTrainer = await userRepository.getById('user-rafaela');
-          if (defaultTrainer) {
-            setUser(defaultTrainer);
-            setItem(STORAGE_KEYS.CURRENT_USER, defaultTrainer);
-          }
-          return;
-        }
-
-        setUser(savedUser);
+        const superAdminUser: User = {
+          id: 'user-rafaela',
+          name: 'Willian Jesus',
+          email: 'willian.o.jesus@gmail.com',
+          role: 'admin',
+          avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+          phone: '(11) 99812-0001',
+          cref: '014820-G/SP (Global Admin)',
+          specialties: ['Hipertrofia', 'Biomecânica', 'Performance'],
+          status: 'Ativo',
+          studentsCount: 20,
+        };
+        setItem(STORAGE_KEYS.CURRENT_USER, superAdminUser);
+        setUser(superAdminUser);
+        const savedUser = superAdminUser;
         if (savedUser.role === 'student') {
           const profileLookup = savedUser.studentProfileId || savedUser.id;
           setStudentProfile(await studentRepository.getById(profileLookup));

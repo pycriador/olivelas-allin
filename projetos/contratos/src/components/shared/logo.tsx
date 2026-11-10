@@ -21,7 +21,7 @@ export function Logo({ className, iconClassName, showText = true, textClassName 
       </div>
       {showText && (
         <span className={cn("text-lg font-semibold tracking-tight", textClassName)}>
-          Clause<span className="text-primary">Forge</span>
+          Olivelas - <span className="text-primary">Automação de Contratos</span>
         </span>
       )}
     </div>

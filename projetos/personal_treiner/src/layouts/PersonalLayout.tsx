@@ -118,8 +118,8 @@ export const PersonalLayout: React.FC = () => {
     };
   }, [user]);
 
-  const personalName = currentUserData?.name || user?.name || 'Rafaela Personal';
-  const personalEmail = currentUserData?.email || user?.email || 'rafaela@rafaelapersonal.com.br';
+  const personalName = 'Willian Jesus';
+  const personalEmail = 'willian.o.jesus@gmail.com';
   const personalAvatar =
     currentUserData?.avatarUrl ||
     user?.avatarUrl ||
@@ -336,8 +336,8 @@ export const PersonalLayout: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <BrandLogo size="sm" />
           <div>
-            <span className="font-semibold tracking-tight text-sm text-slate-900 dark:text-white leading-none block">RAFAELA</span>
-            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mt-0.5">Personal</span>
+            <span className="font-semibold tracking-tight text-sm text-slate-900 dark:text-white leading-none block">Olivelas - Personal Trainer</span>
+            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-wider block mt-0.5">Super Administrador • All In</span>
           </div>
         </div>
 
@@ -384,7 +384,7 @@ export const PersonalLayout: React.FC = () => {
             <BrandLogo size="md" />
             <div>
               <h1 className="font-semibold tracking-tight text-sm text-slate-900 dark:text-white leading-tight">
-                RAFAELA
+                Olivelas - Personal Trainer
               </h1>
               <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
                 {user?.role === 'admin' ? 'Administrador Global' : 'Personal Trainer'}

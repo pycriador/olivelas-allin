@@ -84,7 +84,7 @@ export function AdminSidebar() {
           </span>
           {!collapsed && (
             <div className="flex flex-col">
-              <span className="text-sm font-semibold tracking-tight">RaffleHub</span>
+              <span className="text-sm font-semibold tracking-tight">Olivelas - Rifas & Sorteios Digitais</span>
               <span className="text-[10px] leading-tight text-muted-foreground">Admin Panel</span>
             </div>
           )}

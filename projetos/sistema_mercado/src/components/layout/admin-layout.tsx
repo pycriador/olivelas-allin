@@ -58,7 +58,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             M
           </div>
           <div>
-            <h1 className="text-base font-bold tracking-tight text-foreground">MarketFlow</h1>
+            <h1 className="text-base font-bold tracking-tight text-foreground">Olivelas - Supermercado & Cestas</h1>
             <p className="text-[10px] text-muted-foreground uppercase font-semibold tracking-wide">
               Gestão Inteligente
             </p>
@@ -80,7 +80,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-black text-lg">
                   M
                 </div>
-                <h1 className="text-base font-bold text-foreground">MarketFlow</h1>
+                <h1 className="text-base font-bold text-foreground">Olivelas - Supermercado & Cestas</h1>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}

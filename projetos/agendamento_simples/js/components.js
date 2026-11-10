@@ -95,7 +95,7 @@ class UIComponents {
         <div class="sidebar-header">
           <img src="${basePath ? basePath + 'assets/images/logo.png' : '../assets/images/logo.png'}" alt="Logo Dra. Marta" style="width: 36px; height: 36px; object-fit: contain; flex-shrink: 0;">
           <div class="sidebar-brand-text">
-            <span class="sidebar-brand-title">Dra. Marta Gelsi</span>
+            <span class="sidebar-brand-title">Olivelas - Consultório & Odonto</span>
             <span class="sidebar-brand-subtitle">Dentista • CRO 71482</span>
           </div>
           <button type="button" class="sidebar-close-btn" id="btn-close-sidebar" aria-label="Fechar menu lateral">
@@ -211,7 +211,7 @@ class UIComponents {
     if (!topbarEl) return;
 
     const session = StorageService.getSession();
-    const userName = session ? (session.name || "Dra. Marta Gelsi") : "Dra. Marta Gelsi";
+    const userName = session ? (session.name || "Olivelas - Consultório & Odonto") : "Olivelas - Consultório & Odonto";
     const userRole = session ? (session.role || "Dentista • CRO 71482") : "Dentista • CRO 71482";
 
     topbarEl.innerHTML = `
@@ -296,7 +296,7 @@ class UIComponents {
     btn.target = "_blank";
     btn.rel = "noopener noreferrer";
     btn.className = "floating-whatsapp";
-    btn.setAttribute("aria-label", "Falar com Dra. Marta Gelsi Dias pelo WhatsApp");
+    btn.setAttribute("aria-label", "Falar com Olivelas - Consultório & Odonto Dias pelo WhatsApp");
     btn.innerHTML = `
       <svg viewBox="0 0 24 24">
         <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.784 2.796.784 3.182 0 5.768-2.587 5.768-5.766.001-3.181-2.585-5.77-5.768-5.77zm3.397 8.256c-.145.407-.841.776-1.169.824-.316.046-.713.064-2.222-.562-1.808-.75-2.956-2.614-3.045-2.733-.089-.12-0.722-.962-.722-1.834 0-.872.457-1.302.62-1.48.163-.178.356-.223.475-.223.119 0 .237.001.341.006.11.005.258-.042.404.308.148.356.505 1.233.549 1.322.044.089.074.193.015.312-.059.119-.089.193-.178.297-.089.104-.187.233-.267.312-.089.089-.182.186-.078.364.104.178.461.761.99 1.233.682.608 1.258.796 1.436.885.178.089.282.074.386-.044.104-.119.445-.519.564-.697.119-.178.237-.148.396-.089.159.059 1.009.475 1.182.562.173.087.288.132.332.206.044.074.044.43-.101.837z"/>

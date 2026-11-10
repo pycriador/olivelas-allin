@@ -83,7 +83,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "ServiceForge — Plataforma de Assistência Técnica" },
+      { title: "Olivelas - Ordens de Serviço & Assistência" },
       { name: "description", content: "SaaS modular para gestão de assistências técnicas." },
       { name: "author", content: "ServiceForge" },
       { property: "og:title", content: "ServiceForge — Plataforma de Assistência Técnica" },
@@ -100,7 +100,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/x-icon" },
     ],
   }),
   shellComponent: RootShell,

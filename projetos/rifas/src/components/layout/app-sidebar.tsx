@@ -68,7 +68,7 @@ export function AppSidebar() {
           <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
             <Ticket aria-hidden="true" className="size-4" />
           </span>
-          {!collapsed && <span className="text-sm font-semibold tracking-tight">RaffleHub</span>}
+          {!collapsed && <span className="text-sm font-semibold tracking-tight">Olivelas - Rifas & Sorteios Digitais</span>}
         </Link>
       </SidebarHeader>
 

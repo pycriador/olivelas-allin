@@ -47,7 +47,7 @@ export function AdminSidebar() {
           </div>
           {!collapsed && (
             <div>
-              <p className="font-display text-base leading-none">Olivelas</p>
+              <p className="font-display text-base leading-none">Olivelas - Art Hub & Catálogo IA</p>
               <p className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">Mug Gallery</p>
             </div>
           )}

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <defs>
+    <linearGradient id="olivelasBg" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#4338ca" />
+    </linearGradient>
+  </defs>
+  <rect width="32" height="32" rx="8" fill="url(#olivelasBg)" />
+  <rect x="1" y="1" width="30" height="30" rx="7" stroke="#818cf8" stroke-opacity="0.45" stroke-width="1.2" />
+  <path d="M16 6L25 11L16 16L7 11L16 6Z" stroke="#818cf8" stroke-width="2.2" fill="rgba(129,140,248,0.2)"/><path d="M7 16L16 21L25 16M7 21L16 26L25 21" stroke="#f8fafc" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

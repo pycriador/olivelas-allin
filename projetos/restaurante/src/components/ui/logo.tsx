@@ -24,11 +24,11 @@ export function Logo({ className, showSubtitle = false, to = '/' }: LogoProps) {
       </div>
       <div className="flex flex-col">
         <span className="font-semibold text-base tracking-tight text-foreground leading-tight">
-          Olivelas <span className="text-primary font-medium">Restaurant</span>
+          Olivelas - <span className="text-primary font-medium">Gestão de Restaurantes & KDS</span>
         </span>
         {showSubtitle && (
           <span className="text-[11px] font-medium text-muted-foreground tracking-wide">
-            Gestão inteligente para restaurantes
+            Super Administrador • All In
           </span>
         )}
       </div>

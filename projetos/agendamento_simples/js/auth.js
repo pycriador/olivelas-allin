@@ -37,7 +37,7 @@ class AuthGuard {
         if (topbarName) topbarName.innerText = userName;
 
         const topbarRole = document.querySelector(".topbar-user-role");
-        if (topbarRole) topbarRole.innerText = user.user_metadata?.role === 'admin' ? "Administradora" : "Usuário Autenticado";
+        if (topbarRole) topbarRole.innerText = user.user_metadata?.role === 'admin' ? "Super Administrador" : "Usuário Autenticado";
 
         // Vincula evento de logout no botão do topbar/sidebar se existir
         document.querySelectorAll("[data-action='logout'], #btn-logout, .btn-logout").forEach(btn => {

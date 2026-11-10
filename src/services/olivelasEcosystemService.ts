@@ -1985,11 +1985,18 @@ export function buildModuleInstanceLaunchUrl(params: {
 } {
   const serverSpec = getModuleInstanceServerSpec(params.moduleSlug);
   const cid = params.companyId || 'emp-olivelas-matriz';
-  const cname = params.companyName || 'Olivelas Nebula Holdings';
-  const uid = params.userId || 'usr-admin-global';
-  const uemail = params.userEmail || 'willian.o.jesus@gmail.com';
-  const uname = params.userName || 'Willian Jesus';
-  const urole = params.userRole || 'GLOBAL_ADMIN';
+  const cname = params.companyName || 'Olivelas Atelier & Varejo';
+  const rawEmail = (params.userEmail || '').trim().toLowerCase();
+  const isLegacyDemoUser =
+    !rawEmail ||
+    rawEmail.endsWith('@olivelas-allin.demo') ||
+    rawEmail.includes('clara.monteiro') ||
+    rawEmail.includes('helena.vasconcelos') ||
+    rawEmail.includes('rafaela');
+  const uid = isLegacyDemoUser ? 'usr-super-admin' : params.userId || 'usr-super-admin';
+  const uemail = isLegacyDemoUser ? 'willian.o.jesus@gmail.com' : params.userEmail || 'willian.o.jesus@gmail.com';
+  const uname = isLegacyDemoUser ? 'Willian Jesus' : params.userName || 'Willian Jesus';
+  const urole = 'GLOBAL_ADMIN';
   const instanceId = `inst_${cid.replace(/[^a-zA-Z0-9_-]/g, '_')}_${serverSpec.slug}`;
 
   const host =

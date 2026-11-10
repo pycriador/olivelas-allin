@@ -446,7 +446,7 @@ function Index() {
     });
   }
 
-  // Configuração de Provedor de IA (Lovable AI nativo ou Google Gemini)
+  // Configuração de Provedor de IA (Olivelas AI Vision nativo ou Google Gemini)
   const [aiProvider, setAiProvider] = useState<"lovable" | "gemini">(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("preferred_ai_provider");
@@ -467,7 +467,7 @@ function Index() {
     } catch {
       /* ignore */
     }
-    toast.info(`Provedor de IA alterado para: ${provider === "lovable" ? "Lovable AI (Nativo)" : "Google Gemini"}`);
+    toast.info(`Provedor de IA alterado para: ${provider === "lovable" ? "Olivelas AI Vision (Nativo)" : "Google Gemini"}`);
   }
 
   // Modelo efetivo que será enviado para a análise
@@ -1224,7 +1224,7 @@ function Index() {
               </div>
             </div>
 
-            {/* Alternador de Motor (Google Gemini vs Lovable AI) */}
+            {/* Alternador de Motor (Google Gemini vs Olivelas AI Vision) */}
             <div className="flex items-center gap-2 shrink-0">
               <span className="text-xs text-[#A8A199] font-medium">Motor:</span>
               <div className="flex items-center rounded-xl border border-white/[0.08] bg-[#121110] p-0.5 text-xs font-mono">
@@ -1250,7 +1250,7 @@ function Index() {
                   }`}
                 >
                   <Cpu className="size-3.5" />
-                  <span>Lovable AI</span>
+                  <span>Olivelas AI Vision</span>
                 </button>
               </div>
             </div>

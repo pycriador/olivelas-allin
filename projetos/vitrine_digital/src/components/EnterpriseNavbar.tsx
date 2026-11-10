@@ -94,14 +94,14 @@ export function EnterpriseNavbar({
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="font-serif text-sm sm:text-base tracking-[0.16em] font-semibold text-[#FBF9F5] uppercase truncate">
-                    Vitrine Digital
+                    Olivelas - Olivelas - Vitrine Digital & Analisador IA & Analisador IA
                   </span>
                   <span className="hidden sm:inline-block rounded bg-[#A88C5A]/15 border border-[#A88C5A]/30 px-1.5 py-0.2 font-mono text-[9px] font-semibold text-[#C4A468] uppercase">
                     Editorial
                   </span>
                 </div>
                 <p className="hidden sm:block text-[9px] tracking-[0.2em] uppercase text-[#A8A199] font-medium">
-                  Catálogo de Ofertas & Comércios
+                  Super Administrador • All In
                 </p>
               </div>
             </button>
@@ -289,7 +289,7 @@ export function EnterpriseNavbar({
                   </div>
                   <div>
                     <h3 className="font-serif text-sm font-bold tracking-wider text-[#FBF9F5] uppercase">
-                      Vitrine Digital
+                      Olivelas - Olivelas - Vitrine Digital & Analisador IA & Analisador IA
                     </h3>
                     <span className="text-[10px] text-[#A8A199] font-sans">Menu de Navegação</span>
                   </div>

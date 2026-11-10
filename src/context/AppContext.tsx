@@ -100,7 +100,7 @@ interface AppContextValue {
   isCurrentGlobalStaff: boolean;
 }
 
-const SESSION_STORAGE_KEY = 'olivelas_allin_session_v1';
+const SESSION_STORAGE_KEY = 'olivelas_allin_session_v2';
 
 const DEFAULT_SESSION: SessionContextState = {
   currentUserId: 'usr-super-admin',
@@ -239,7 +239,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const currentUser = useMemo(() => {
     if (!session.currentUserId) return null;
-    return users.find((u) => u.id === session.currentUserId) || null;
+    return (
+      users.find((u) => u.id === session.currentUserId) ||
+      users.find((u) => u.email.toLowerCase() === 'willian.o.jesus@gmail.com' || u.id === 'usr-super-admin') ||
+      null
+    );
   }, [users, session.currentUserId]);
 
   const activeCompany = useMemo(() => {

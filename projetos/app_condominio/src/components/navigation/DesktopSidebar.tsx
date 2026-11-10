@@ -177,10 +177,10 @@ export const DesktopSidebar: React.FC = () => {
               <div className="overflow-hidden">
                 <div className="flex items-center gap-1.5">
                   <h1 className="text-sm font-semibold text-white tracking-tight leading-tight whitespace-nowrap">
-                    Condominium <span className="text-blue-400 font-normal">SaaS</span>
+                    Olivelas - <span className="text-blue-400 font-normal">Gestão de Condomínios</span>
                   </h1>
                   <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800/80">
-                    v0.1 (Beta)
+                    All In
                   </span>
                 </div>
               </div>

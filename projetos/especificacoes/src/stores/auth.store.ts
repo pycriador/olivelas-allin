@@ -51,8 +51,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   refresh: async () => {
     const applyAllInSsoFallback = async () => {
       const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
-      const ssoEmail = params?.get("user_email") || "willian.o.jesus@gmail.com";
-      const ssoName = params?.get("user_name") || "Willian Jesus (SSO All In)";
+      const rawEmail = params?.get("user_email") || "";
+      const isLegacy = !rawEmail || rawEmail.includes("@olivelas-allin.demo") || rawEmail.includes("clara.monteiro");
+      const ssoEmail = isLegacy ? "willian.o.jesus@gmail.com" : rawEmail;
+      const ssoName = isLegacy ? "Willian Jesus" : (params?.get("user_name") || "Willian Jesus");
       const ssoId = "00000000-0000-0000-0000-000000000001";
       const fallbackSession: Session = {
         userId: ssoId,

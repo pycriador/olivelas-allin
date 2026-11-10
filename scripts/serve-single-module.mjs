@@ -49,6 +49,27 @@ if (fs.existsSync(envPath)) {
   }
 }
 
+function isLegacyDemoIdentity(email, name) {
+  const e = String(email || '').trim().toLowerCase();
+  const n = String(name || '').trim().toLowerCase();
+  if (!e) return true;
+  if (
+    e.endsWith('@olivelas-allin.demo') ||
+    e.includes('clara.monteiro') ||
+    e.includes('helena.vasconcelos') ||
+    e.includes('rafaela') ||
+    e.includes('marta') ||
+    e.includes('demo@') ||
+    e.includes('admin@') ||
+    n.includes('clara monteiro') ||
+    n.includes('helena vasconcelos') ||
+    n.includes('rafaela')
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function buildSsoInjectionScript(modInfo) {
   return `<script id="olivelas-allin-sso-bootstrap">
 (function() {
@@ -56,15 +77,45 @@ function buildSsoInjectionScript(modInfo) {
     var params = new URLSearchParams(window.location.search);
     var savedRaw = localStorage.getItem('allin_sso_context');
     var saved = savedRaw ? JSON.parse(savedRaw) : {};
+    var rawEmail = params.get('user_email') || saved.userEmail || '';
+    var rawName = params.get('user_name') || saved.userName || '';
+    var isLegacy = !rawEmail ||
+      rawEmail.toLowerCase().indexOf('@olivelas-allin.demo') !== -1 ||
+      rawEmail.toLowerCase().indexOf('clara.monteiro') !== -1 ||
+      rawEmail.toLowerCase().indexOf('helena.vasconcelos') !== -1 ||
+      rawEmail.toLowerCase().indexOf('rafaela') !== -1 ||
+      rawName.toLowerCase().indexOf('clara monteiro') !== -1 ||
+      rawName.toLowerCase().indexOf('rafaela') !== -1;
+
+    var companyId = params.get('company_id') || saved.companyId || 'emp-olivelas-matriz';
+    var companyName = params.get('company_name') || saved.companyName || 'Olivelas Atelier & Varejo';
+    var userId = isLegacy ? 'usr-super-admin' : (params.get('user_id') || saved.userId || 'usr-super-admin');
+    var userEmail = isLegacy ? 'willian.o.jesus@gmail.com' : rawEmail;
+    var userName = isLegacy ? 'Willian Jesus' : rawName;
+    var userRole = 'GLOBAL_ADMIN';
+    var instanceId = params.get('instance_id') || saved.instanceId || ('inst_' + companyId + '_${modInfo.moduleSlug}');
+
+    if (params.has('user_email') || params.has('user_name') || params.has('allin_sso')) {
+      var updated = false;
+      if (params.get('user_email') !== userEmail) { params.set('user_email', userEmail); updated = true; }
+      if (params.get('user_name') !== userName) { params.set('user_name', userName); updated = true; }
+      if (params.get('user_id') !== userId) { params.set('user_id', userId); updated = true; }
+      if (params.get('user_role') !== userRole) { params.set('user_role', userRole); updated = true; }
+      if (updated && window.history && window.history.replaceState) {
+        var newUrl = window.location.pathname + '?' + params.toString() + (window.location.hash || '');
+        window.history.replaceState(null, '', newUrl);
+      }
+    }
+
     var ctx = {
-      allinSso: params.get('allin_sso') || saved.allinSso || '1',
-      instanceId: params.get('instance_id') || saved.instanceId || ('inst_' + (params.get('company_id') || saved.companyId || 'comp_nebula') + '_${modInfo.moduleSlug}'),
-      companyId: params.get('company_id') || saved.companyId || 'comp_nebula',
-      companyName: params.get('company_name') || saved.companyName || 'Olivelas Nebula Holdings',
-      userId: params.get('user_id') || saved.userId || 'usr-admin-global',
-      userEmail: params.get('user_email') || saved.userEmail || 'willian.o.jesus@gmail.com',
-      userName: params.get('user_name') || saved.userName || 'Willian Jesus',
-      userRole: params.get('user_role') || saved.userRole || 'GLOBAL_ADMIN',
+      allinSso: '1',
+      instanceId: instanceId,
+      companyId: companyId,
+      companyName: companyName,
+      userId: userId,
+      userEmail: userEmail,
+      userName: userName,
+      userRole: userRole,
       moduleSlug: '${modInfo.moduleSlug}',
       brandName: '${modInfo.brandName}'
     };
@@ -85,7 +136,7 @@ function buildSsoInjectionScript(modInfo) {
       user: { id: 'user-willian-global', email: ctx.userEmail },
       profile: {
         id: 'user-willian-global',
-        full_name: ctx.userName + ' (' + ctx.companyName + ')',
+        full_name: ctx.userName + ' (Super Administrador)',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
@@ -112,23 +163,78 @@ function buildSsoInjectionScript(modInfo) {
       id: 'USR-001',
       email: ctx.userEmail,
       name: ctx.userName,
-      role: 'Administrador (' + ctx.companyName + ')'
+      role: 'Super Administrador (' + ctx.companyName + ')'
     }));
+    var personalAdminUser = {
+      id: 'user-rafaela',
+      name: ctx.userName,
+      email: ctx.userEmail,
+      role: 'admin',
+      isPersonal: true,
+      avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+      phone: '(11) 99812-0001',
+      cref: '014820-G/SP (Global Admin)',
+      specialties: ['Hipertrofia', 'Biomecânica', 'Performance'],
+      status: 'Ativo',
+      studentsCount: 20
+    };
+    localStorage.setItem('rafaela_app_current_user_v1', JSON.stringify(personalAdminUser));
+    localStorage.setItem('olivelas_personal_current_user_v5', JSON.stringify(personalAdminUser));
+    localStorage.setItem('olivelas_personal_users_v5', JSON.stringify([personalAdminUser]));
+    localStorage.setItem('rafaela_app_users_v3', JSON.stringify([personalAdminUser]));
+
+    try {
+      var routineRaw = localStorage.getItem('rotina-inteligente-state');
+      if (routineRaw) {
+        var routineParsed = JSON.parse(routineRaw);
+        if (routineParsed && routineParsed.settings) {
+          routineParsed.settings.userName = ctx.userName;
+          localStorage.setItem('rotina-inteligente-state', JSON.stringify(routineParsed));
+        }
+      }
+    } catch (err) {}
 
     window.__ALLIN_INSTANCE_CONTEXT__ = ctx;
+    document.title = '${modInfo.brandName}';
+
+    function enforceBrandAndFavicon() {
+      if (document.title !== '${modInfo.brandName}') {
+        document.title = '${modInfo.brandName}';
+      }
+      var links = document.querySelectorAll("link[rel*='icon']");
+      var hasSvgFavicon = false;
+      for (var i = 0; i < links.length; i++) {
+        var href = links[i].getAttribute('href') || '';
+        if (href.indexOf('/favicon.svg') !== -1) {
+          hasSvgFavicon = true;
+        } else {
+          links[i].setAttribute('href', '/favicon.svg');
+          links[i].setAttribute('type', 'image/svg+xml');
+          hasSvgFavicon = true;
+        }
+      }
+      if (!hasSvgFavicon && document.head) {
+        var link = document.createElement('link');
+        link.rel = 'icon';
+        link.type = 'image/svg+xml';
+        link.href = '/favicon.svg';
+        document.head.appendChild(link);
+      }
+    }
 
     function mountInstanceBadge() {
+      enforceBrandAndFavicon();
       if (document.getElementById('olivelas-allin-instance-pill')) return;
       var bar = document.createElement('div');
       bar.id = 'olivelas-allin-instance-pill';
-      bar.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:2147483640;display:flex;align-items:center;gap:10px;padding:7px 13px;border-radius:9999px;background:rgba(9,13,22,0.92);border:1px solid rgba(16,185,129,0.45);color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;font-size:11px;box-shadow:0 10px 25px rgba(0,0,0,0.45);backdrop-filter:blur(10px);';
+      bar.style.cssText = 'position:fixed;bottom:14px;right:14px;z-index:2147483640;display:flex;align-items:center;gap:10px;padding:7px 13px;border-radius:9999px;background:rgba(9,13,22,0.94);border:1px solid rgba(16,185,129,0.5);color:#f8fafc;font-family:system-ui,-apple-system,sans-serif;font-size:11px;box-shadow:0 10px 25px rgba(0,0,0,0.45);backdrop-filter:blur(10px);';
       bar.innerHTML =
         '<span style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 8px #10b981;display:inline-block;flex-shrink:0;"></span>' +
-        '<span style="font-weight:700;color:#6ee7b7;">Instância: ' + ctx.companyName + '</span>' +
+        '<span style="font-weight:700;color:#fde68a;">' + ctx.brandName + '</span>' +
         '<span style="opacity:0.4;">|</span>' +
-        '<span style="color:#cbd5e1;">SSO All In: <strong>' + ctx.userName + '</strong></span>' +
+        '<span style="font-weight:600;color:#6ee7b7;">' + ctx.companyName + '</span>' +
         '<span style="opacity:0.4;">|</span>' +
-        '<code style="font-size:10px;color:#94a3b8;background:rgba(255,255,255,0.07);padding:2px 6px;border-radius:6px;">' + ctx.instanceId + '</code>' +
+        '<span style="color:#cbd5e1;">Super Admin: <strong>' + ctx.userName + ' (' + ctx.userEmail + ')</strong></span>' +
         '<button id="olivelas-allin-pill-close" title="Ocultar indicador de instância" style="margin-left:4px;background:none;border:none;color:#94a3b8;cursor:pointer;font-size:13px;line-height:1;padding:0 2px;">×</button>';
       document.body.appendChild(bar);
       var closeBtn = document.getElementById('olivelas-allin-pill-close');
@@ -142,6 +248,7 @@ function buildSsoInjectionScript(modInfo) {
     } else {
       mountInstanceBadge();
     }
+    setInterval(enforceBrandAndFavicon, 1200);
   } catch (e) {
     console.warn('[AllIn SSO Bootstrap]', e);
   }
@@ -151,21 +258,44 @@ function buildSsoInjectionScript(modInfo) {
 
 function injectHtml(html, modInfo) {
   const script = buildSsoInjectionScript(modInfo);
-  if (html.includes('</head>')) {
-    return html.replace('</head>', `${script}</head>`);
+  const faviconTag = `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />`;
+  let updated = html;
+  if (/<title>[\s\S]*?<\/title>/i.test(updated)) {
+    updated = updated.replace(/<title>[\s\S]*?<\/title>/i, `<title>${modInfo.brandName}</title>`);
   }
-  if (html.includes('</body>')) {
-    return html.replace('</body>', `${script}</body>`);
+  if (/<head[^>]*>/i.test(updated)) {
+    return updated.replace(/<head[^>]*>/i, (match) => `${match}\n${faviconTag}\n${script}`);
   }
-  return script + html;
+  if (updated.includes('</head>')) {
+    return updated.replace('</head>', `${faviconTag}\n${script}</head>`);
+  }
+  if (updated.includes('</body>')) {
+    return updated.replace('</body>', `${script}</body>`);
+  }
+  return script + updated;
 }
 
 async function startServer() {
   let nitroWorker = null;
   if (mod.type === 'nitro') {
-    const workerPath = path.join(projectDir, '.output', 'server', 'index.mjs');
+    const ssrPath = path.join(projectDir, '.output', 'server', '_ssr', 'ssr.mjs');
+    const workerPath = fs.existsSync(ssrPath)
+      ? ssrPath
+      : path.join(projectDir, '.output', 'server', 'index.mjs');
     const imported = await import(pathToFileURL(workerPath).href);
-    nitroWorker = imported.default;
+    const candidate =
+      imported.default ||
+      imported.r?.default ||
+      imported.r ||
+      Object.values(imported).find(
+        (v) => v && (typeof v.fetch === 'function' || typeof v.default?.fetch === 'function')
+      );
+    nitroWorker =
+      candidate && typeof candidate.fetch === 'function'
+        ? candidate
+        : candidate?.default && typeof candidate.default.fetch === 'function'
+        ? candidate.default
+        : globalThis.__nitro_vite_envs__?.ssr || imported.default;
   }
 
   const staticRoot =
@@ -180,6 +310,21 @@ async function startServer() {
       const host = req.headers.host || `localhost:${mod.port}`;
       const fullUrl = new URL(req.url || '/', `http://${host}`);
       let pathname = decodeURIComponent(fullUrl.pathname);
+
+      if (
+        fullUrl.searchParams.has('user_email') ||
+        fullUrl.searchParams.has('user_name') ||
+        fullUrl.searchParams.has('allin_sso')
+      ) {
+        const qEmail = fullUrl.searchParams.get('user_email');
+        const qName = fullUrl.searchParams.get('user_name');
+        if (isLegacyDemoIdentity(qEmail, qName)) {
+          fullUrl.searchParams.set('user_id', 'usr-super-admin');
+          fullUrl.searchParams.set('user_email', 'willian.o.jesus@gmail.com');
+          fullUrl.searchParams.set('user_name', 'Willian Jesus');
+          fullUrl.searchParams.set('user_role', 'GLOBAL_ADMIN');
+        }
+      }
 
       // Redirect root '/' to adminPath if adminPath is different from '/' and request is exactement '/'
       if (pathname === '/' && mod.adminPath && mod.adminPath !== '/' && !mod.adminPath.startsWith('/?')) {

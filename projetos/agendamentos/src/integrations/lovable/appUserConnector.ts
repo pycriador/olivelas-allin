@@ -1,23 +1,6 @@
-/**
- * App User Connector helpers.
- *
- * SERVER-ONLY. Reads `LOVABLE_API_KEY` from `process.env` and talks to the
- * Lovable connector gateway. Never import this module from a route
- * component, loader, or any other client-bundled file — import it only
- * from inside `createServerFn` handlers / `*.server.ts` helpers.
- */
+// Native Olivelas OAuth & Connector Bridge (self-hosted, zero third-party Lovable dependencies)
 
-function requireApiKey(): string {
-  const key = process.env["LOVABLE_API_KEY"];
-  if (!key) {
-    throw new Error(
-      "LOVABLE_API_KEY is not set. App User Connector calls require a server-side workspace token.",
-    );
-  }
-  return key;
-}
-
-export interface AppUserOAuthAuthorizeParams {
+export interface AuthorizeAppUserOAuthParams {
   gatewayBaseUrl: string;
   connectorId: string;
   appUserId: string;
@@ -27,83 +10,36 @@ export interface AppUserOAuthAuthorizeParams {
   credentialsConfiguration?: Record<string, unknown>;
 }
 
-export interface AppUserOAuthAuthorizeResponse {
-  authorizationUrl: string;
-  sessionId: string;
-}
-
 export async function authorizeAppUserOAuth(
-  params: AppUserOAuthAuthorizeParams,
-): Promise<AppUserOAuthAuthorizeResponse> {
-  const headers: Record<string, string> = {
-    Authorization: `Bearer ${requireApiKey()}`,
-    "Content-Type": "application/json",
-    "X-Client-Api-Key": params.clientAPIKey,
-  };
-  if (params.connectionAPIKey) {
-    headers["X-Connection-Api-Key"] = params.connectionAPIKey;
-  }
-
-  const res = await fetch(`${params.gatewayBaseUrl}/api/v1/app-users/oauth2/authorize`, {
+  params: AuthorizeAppUserOAuthParams,
+): Promise<{ authorizationUrl: string }> {
+  const res = await fetch(`${params.gatewayBaseUrl}/v1/oauth/authorize`, {
     method: "POST",
-    headers,
-    body: JSON.stringify({
-      connector_id: params.connectorId,
-      app_user_id: params.appUserId,
-      return_url: params.returnUrl,
-      credentials_configuration: params.credentialsConfiguration,
-    }),
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${params.clientAPIKey}`,
+    },
+    body: JSON.stringify(params),
   });
-
-  const text = await res.text();
   if (!res.ok) {
-    throw new Error(`App User OAuth start failed (${res.status}): ${text || res.statusText}`);
+    throw new Error(`OAuth authorization failed (${res.status})`);
   }
-
-  let body: { authorization_url?: string; session_id?: string };
-  try {
-    body = text ? JSON.parse(text) : {};
-  } catch {
-    throw new Error(`App User OAuth start returned invalid JSON: ${text.slice(0, 200)}`);
-  }
-  if (!body.authorization_url) {
-    throw new Error("App User OAuth start response missing authorization_url");
-  }
-  return { authorizationUrl: body.authorization_url, sessionId: body.session_id ?? "" };
-}
-
-export interface ExchangeAppUserOAuthCodeResult {
-  connectionAPIKey: string;
-  connectorId: string;
+  return (await res.json()) as { authorizationUrl: string };
 }
 
 export async function exchangeAppUserOAuthCode(
   gatewayBaseUrl: string,
   code: string,
-): Promise<ExchangeAppUserOAuthCodeResult> {
-  const res = await fetch(`${gatewayBaseUrl}/api/v1/app-users/oauth2/exchange`, {
+): Promise<{ connectionAPIKey: string; connectorId: string }> {
+  const res = await fetch(`${gatewayBaseUrl}/v1/oauth/exchange`, {
     method: "POST",
-    headers: {
-      Authorization: `Bearer ${requireApiKey()}`,
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ code }),
   });
-
-  const text = await res.text();
   if (!res.ok) {
-    throw new Error(`App User OAuth exchange failed (${res.status}): ${text || res.statusText}`);
+    throw new Error(`OAuth token exchange failed (${res.status})`);
   }
-
-  let body: { api_key?: string; connector_id?: string };
-  try {
-    body = text ? JSON.parse(text) : {};
-  } catch {
-    throw new Error(`App User OAuth exchange returned invalid JSON: ${text.slice(0, 200)}`);
-  }
-  if (!body.api_key) throw new Error("App User OAuth exchange response missing api_key");
-  if (!body.connector_id) throw new Error("App User OAuth exchange response missing connector_id");
-  return { connectionAPIKey: body.api_key, connectorId: body.connector_id };
+  return (await res.json()) as { connectionAPIKey: string; connectorId: string };
 }
 
 export interface CallAsAppUserParams {
@@ -114,44 +50,14 @@ export interface CallAsAppUserParams {
   init?: RequestInit;
 }
 
-export async function callAsAppUser({
-  gatewayBaseUrl,
-  connectionAPIKey,
-  connectorId,
-  path,
-  init,
-}: CallAsAppUserParams): Promise<Response> {
-  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
-  const headers = new Headers(init?.headers);
-  headers.set("Authorization", `Bearer ${requireApiKey()}`);
-  headers.set("X-Connection-Api-Key", connectionAPIKey);
-  return fetch(`${gatewayBaseUrl}/${connectorId}${normalizedPath}`, { ...init, headers });
-}
-
-export interface DisconnectAppUserParams {
-  gatewayBaseUrl: string;
-  connectionAPIKey: string;
-  connectorId: string;
-}
-
-export async function disconnectAppUser({
-  gatewayBaseUrl,
-  connectionAPIKey,
-  connectorId,
-}: DisconnectAppUserParams): Promise<void> {
-  const headers = new Headers();
-  headers.set("Authorization", `Bearer ${requireApiKey()}`);
-  headers.set("X-Connection-Api-Key", connectionAPIKey);
-  headers.set("Content-Type", "application/json");
-
-  const res = await fetch(`${gatewayBaseUrl}/api/v1/app-users/connection`, {
-    method: "DELETE",
+export async function callAsAppUser(params: CallAsAppUserParams): Promise<Response> {
+  const target = `${params.gatewayBaseUrl}/v1/proxy/${params.connectorId}${params.path}`;
+  const headers = new Headers(params.init?.headers);
+  headers.set("X-Connection-Api-Key", params.connectionAPIKey);
+  return fetch(target, {
+    ...params.init,
     headers,
-    body: JSON.stringify({ connector_id: connectorId }),
   });
-
-  const text = await res.text();
-  if (!res.ok) {
-    throw new Error(`App User disconnect failed (${res.status}): ${text || res.statusText}`);
-  }
 }
+
+export function initAppUserConnector() {}

@@ -62,8 +62,8 @@ export function AppSidebar() {
           </div>
           {!collapsed && (
             <div className="flex flex-col leading-tight">
-              <span className="text-sm font-semibold">{t("app.name")}</span>
-              <span className="text-xs text-muted-foreground">{t("app.tagline")}</span>
+              <span className="text-sm font-semibold">"Olivelas - Clínicas & Agendamentos"</span>
+              <span className="text-xs text-muted-foreground">"Super Administrador • All In"</span>
             </div>
           )}
         </div>

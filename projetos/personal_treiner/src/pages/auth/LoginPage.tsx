@@ -139,7 +139,7 @@ export const LoginPage: React.FC = () => {
             <BrandLogo size="lg" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
-            RAFAELA TRAINING
+            Olivelas - Personal Trainer TRAINING
           </h1>
           <p className="text-xs sm:text-sm font-normal text-slate-500 dark:text-dark-muted">
             Plataforma de Treinos Personalizados • Prescrição & Execução

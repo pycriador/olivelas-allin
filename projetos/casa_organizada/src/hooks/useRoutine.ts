@@ -30,7 +30,7 @@ const defaultSettings: UserSettings = {
   petMode: false,
   petType: 'dog',
   babyMode: false,
-  userName: '',
+  userName: 'Willian Jesus',
 };
 
 function generateDailyTasks(settings: UserSettings, date: string): Task[] {

@@ -54,7 +54,7 @@ export function AppSidebar() {
         </div>
         {!collapsed && (
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold">SpecForge</div>
+            <div className="truncate text-sm font-semibold">Olivelas - Engenharia de Especificações</div>
             <div className="truncate text-[11px] text-sidebar-foreground/60">
               Spec-Driven Engineering
             </div>

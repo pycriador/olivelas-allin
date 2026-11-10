@@ -1,5 +1,5 @@
 export const APP_VERSION = "1.0.0-RC1";
-export const APP_NAME = "ServiceForge";
+export const APP_NAME = "Olivelas - Ordens de Serviço & Assistência";
 
 export interface ModuleDefinition {
   id: string;

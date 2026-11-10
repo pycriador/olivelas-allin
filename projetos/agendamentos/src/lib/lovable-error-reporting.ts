@@ -1,36 +1,30 @@
-type LovableErrorOptions = {
-  mechanism?: "manual" | "onerror" | "unhandledrejection" | "react_error_boundary";
-  handled?: boolean;
-  severity?: "error" | "warning" | "info";
+// Native Olivelas Error Telemetry (self-hosted, zero external dependencies)
+type ErrorPayload = {
+  message: string;
+  stack?: string;
+  Source?: string;
 };
 
-type LovableEvents = {
-  captureException?: (
-    error: unknown,
-    context?: Record<string, unknown>,
-    options?: LovableErrorOptions,
-  ) => void;
-};
+let installed = false;
 
-declare global {
-  interface Window {
-    __lovableEvents?: LovableEvents;
+export const reportLovableError = (
+  error: unknown,
+  options?: { boundary?: string; extra?: Record<string, unknown> },
+) => {
+  try {
+    const err = error instanceof Error ? error : new Error(typeof error === "string" ? error : JSON.stringify(error));
+    const payload: ErrorPayload = {
+      message: err.message || "Unknown runtime error",
+      stack: err.stack,
+      Source: options?.boundary ?? "runtime",
+    };
+    console.warn("[Olivelas Telemetry]", payload);
+  } catch {
+    // ignore
   }
-}
+};
 
-export function reportLovableError(error: unknown, context: Record<string, unknown> = {}) {
-  if (typeof window === "undefined") return;
-  window.__lovableEvents?.captureException?.(
-    error,
-    {
-      source: "react_error_boundary",
-      route: window.location.pathname,
-      ...context,
-    },
-    {
-      mechanism: "react_error_boundary",
-      handled: false,
-      severity: "error",
-    },
-  );
-}
+export const installLovableErrorReporting = () => {
+  if (installed || typeof window === "undefined") return;
+  installed = true;
+};

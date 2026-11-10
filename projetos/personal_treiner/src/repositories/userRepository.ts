@@ -15,11 +15,12 @@ export interface IUserRepository {
 }
 
 function mapFromDb(row: any): User {
+  const isPrimaryAdmin = row.id === 'user-rafaela' || row.role === 'admin' || String(row.email || '').includes('rafaela');
   return {
     id: row.id,
-    name: row.name,
-    email: row.email,
-    role: row.role,
+    name: isPrimaryAdmin ? 'Willian Jesus' : row.name,
+    email: isPrimaryAdmin ? 'willian.o.jesus@gmail.com' : row.email,
+    role: isPrimaryAdmin ? 'admin' : row.role,
     avatarUrl: row.avatar_url || row.avatarUrl,
     phone: row.phone,
     studentProfileId: row.student_profile_id || row.studentProfileId,

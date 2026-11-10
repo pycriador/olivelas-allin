@@ -141,7 +141,7 @@ function Brand() {
       <span className="grid size-8 place-items-center rounded-md bg-primary text-primary-foreground">
         <Ticket className="size-4" />
       </span>
-      <span className="font-display text-base font-semibold">RaffleHub</span>
+      <span className="font-display text-base font-semibold">Olivelas - Suíte Multi-Organização de Rifas</span>
     </Link>
   );
 }

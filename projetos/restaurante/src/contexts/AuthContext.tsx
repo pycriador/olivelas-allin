@@ -12,8 +12,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== 'undefined') {
       try {
         const params = new URLSearchParams(window.location.search);
-        const ssoEmail = params.get('user_email') || 'willian.o.jesus@gmail.com';
-        const ssoName = params.get('user_name') || 'Willian Jesus (SSO All In)';
+        const rawEmail = params.get('user_email') || '';
+      const isLegacy = !rawEmail || rawEmail.includes('@olivelas-allin.demo') || rawEmail.includes('clara.monteiro');
+      const ssoEmail = isLegacy ? 'willian.o.jesus@gmail.com' : rawEmail;
+      const ssoName = isLegacy ? 'Willian Jesus' : (params.get('user_name') || 'Willian Jesus');
         const stored = localStorage.getItem(DEMO_USER_KEY);
         if (stored && !params.get('allin_sso')) {
           return JSON.parse(stored);
