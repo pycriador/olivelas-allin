@@ -2208,6 +2208,7 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
   const { empresaId } = useParams<{ empresaId: string }>();
   const {
     currentUser,
+    users,
     roles,
     companies,
     session,
@@ -2223,12 +2224,14 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
   const baseRoute = scope === 'global' ? '/app/global/papeis' : `/app/empresa/${empresaId}/papeis`;
 
-  const scopedRoles = roles.filter(
-    (r) =>
-      !r.archiveMetadata.isArchived &&
-      (scope === 'global' || r.scope !== 'global') &&
-      (!r.companyId || !targetCompanyId || r.companyId === targetCompanyId),
-  );
+  const scopedRoles = roles
+    .filter(
+      (r) =>
+        !r.archiveMetadata.isArchived &&
+        (scope === 'global' || r.scope !== 'global') &&
+        (!r.companyId || !targetCompanyId || r.companyId === targetCompanyId),
+    )
+    .sort((a, b) => a.hierarchyLevel - b.hierarchyLevel);
 
   const [selectedRoleId, setSelectedRoleId] = useState<string>(
     scopedRoles[0]?.id || 'role-cliente',
@@ -2390,11 +2393,11 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
         tableId={`roles-table-${scope}`}
         caption="Papéis hierárquicos HBAC configurados na plataforma"
         items={scopedRoles}
-        defaultSortField="hierarchyLevel"
+        defaultSortField=""
         csvFilename={`papeis-hbac-${scope}.csv`}
         searchPlaceholder="Buscar papel por nome, código, escopo ou descrição..."
         statusExtractor={(r) => r.scope}
-        searchExtractor={(r) => `${r.code} ${r.name['pt-BR']} ${r.description['pt-BR']} ${r.scope}`}
+        searchExtractor={(r) => `${r.id} ${r.code} ${r.name['pt-BR']} ${r.description['pt-BR']} ${r.scope}`}
         statusOptions={[
           { value: 'global', label: 'Escopo Global' },
           { value: 'company', label: 'Escopo Empresa' },
@@ -2403,56 +2406,123 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
         isArchivedExtractor={(r) => r.archiveMetadata.isArchived}
         columns={[
           {
-            key: 'name',
-            header: 'Papel HBAC / Código',
-            width: '30%',
-            sortable: true,
+            key: 'code',
+            header: 'Papel (Código & ID)',
+            width: '16%',
+            csvValue: (r) => `${r.code} (${r.id})`,
             render: (r) => (
-              <div>
-                <Link to={`${baseRoute}/${r.id}/editar`} className="font-semibold">
+              <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <code className="badge badge-neutral mono">{r.code}</code>
+                  <span className={`badge ${r.isSystemRole ? 'badge-teal' : 'badge-info'}`}>
+                    {r.isSystemRole ? 'Sistema' : 'Custom'}
+                  </span>
+                </div>
+                <span className="text-xs text-muted mono">{r.id}</span>
+              </div>
+            ),
+          },
+          {
+            key: 'name',
+            header: 'Nome do Papel & Responsabilidades',
+            width: '29%',
+            csvValue: (r) => r.name[session.language],
+            render: (r) => (
+              <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                <Link
+                  to={`${baseRoute}/${r.id}/editar`}
+                  className="font-semibold text-sm"
+                  style={{ color: 'var(--accent-primary)' }}
+                >
                   {r.name[session.language]}
                 </Link>
-                <div>
-                  <code className="text-xs text-muted mono">{r.code}</code>
-                </div>
+                <span className="text-xs text-muted" style={{ lineHeight: 1.35 }}>
+                  {r.description[session.language]}
+                </span>
               </div>
             ),
           },
           {
             key: 'hierarchyLevel',
-            header: 'Nível Hierárquico',
-            width: '15%',
-            sortable: true,
-            render: (r) => <span className="badge badge-info">Nível {r.hierarchyLevel}</span>,
-          },
-          {
-            key: 'parentRoleId',
-            header: 'Papel Superior',
-            width: '22%',
+            header: 'Nível & Papel Superior',
+            width: '18%',
+            csvValue: (r) => `Nível ${r.hierarchyLevel}`,
             render: (r) => {
               const parentRole = roles.find((p) => p.id === r.parentRoleId);
               return (
-                <span className="text-xs">
-                  {parentRole ? parentRole.name[session.language] : 'Raiz (N1)'}
-                </span>
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                  <div>
+                    <span className="badge badge-info">Nível {r.hierarchyLevel}</span>
+                  </div>
+                  <span className="text-xs text-muted">
+                    {parentRole ? (
+                      <>
+                        Superior: <strong>{parentRole.name[session.language]}</strong>
+                      </>
+                    ) : (
+                      <strong>Raiz da Hierarquia (N1)</strong>
+                    )}
+                  </span>
+                </div>
               );
             },
           },
           {
             key: 'permissionsCount',
-            header: 'Regras / Escopo',
-            width: '24%',
+            header: 'Escopo & Regras Ativas',
+            width: '15%',
+            csvValue: (r) => `${r.scope} (${r.permissions.length} regras)`,
             render: (r) => (
-              <div className="flex items-center gap-1.5">
-                <StatusBadge status={r.scope} />
-                <span className="badge">{r.permissions.length} regras</span>
+              <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <StatusBadge status={r.scope} />
+                  <span className="badge badge-teal">{r.permissions.length} regras</span>
+                </div>
+                <span className="text-xs text-muted">
+                  {r.scope === 'global' ? 'Console Global & Tenants' : 'Isolado por Empresa'}
+                </span>
               </div>
             ),
           },
           {
+            key: 'assignedUsers',
+            header: 'Usuários com este Papel',
+            width: '14%',
+            csvValue: (r) =>
+              users
+                .filter((u) => !u.archiveMetadata.isArchived && u.roleIds.includes(r.id))
+                .map((u) => u.name)
+                .join('; ') || 'Nenhum',
+            render: (r) => {
+              const assigned = users.filter(
+                (u) => !u.archiveMetadata.isArchived && u.roleIds.includes(r.id),
+              );
+              return (
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                  {assigned.length === 0 ? (
+                    <span className="text-xs text-muted">Disponível para atribuição</span>
+                  ) : (
+                    <div className="flex items-center gap-1 flex-wrap">
+                      {assigned.map((u) => (
+                        <Link
+                          key={u.id}
+                          to={`/app/global/usuarios/${u.id}/editar`}
+                          className="badge badge-info"
+                          style={{ textDecoration: 'none' }}
+                        >
+                          {u.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            },
+          },
+          {
             key: 'actions',
             header: 'Ações',
-            width: '9%',
+            width: '8%',
             isNumeric: true,
             render: (r) => {
               const active = selectedRole?.id === r.id;
