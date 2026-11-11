@@ -193,6 +193,7 @@ export const App: React.FC = () => {
 
         {/* Módulos Contratados e Solicitação sob Demanda */}
         <Route path="modulos" element={<CompanyModulesSubscriptionPage />} />
+        <Route path="modulos-ativos" element={<CompanyDashboardPage standaloneTableOnly />} />
 
         {/* Contratos da Empresa */}
         <Route path="contratos" element={<ContractsListPage scope="company" activeTab="contratos" />} />

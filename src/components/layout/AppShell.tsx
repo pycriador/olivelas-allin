@@ -285,7 +285,7 @@ type SidebarAccordionGroup = 'commercialModules' | 'commercial' | 'operations' |
 
 function resolveActiveSidebarGroup(pathname: string): SidebarAccordionGroup | null {
   if (/\/ecossistema\/[^/]+/.test(pathname)) return 'commercialModules';
-  if (/\/(modulos|empresas|contratos|financeiro|meios-pagamento)(\/|$)/.test(pathname)) return 'commercial';
+  if (/\/(modulos|modulos-ativos|empresas|contratos|financeiro|meios-pagamento)(\/|$)/.test(pathname)) return 'commercial';
   if (/\/(operacao|ecossistema)(\/|$)/.test(pathname)) return 'operations';
   if (/\/(usuarios|papeis|api-hub|tickets|auditoria|relatorios)(\/|$)/.test(pathname)) return 'governance';
   return null;
@@ -414,6 +414,7 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
   const cid = empresaId || session.activeCompanyId || 'emp-olivelas-matriz';
   const companyNavItems: SidebarNavItem[] = [
     { to: `/app/empresa/${cid}`, label: t('nav.dashboard'), icon: <LayoutDashboard size={15} />, resource: 'dashboard', end: true, group: 'top' },
+    { to: `/app/empresa/${cid}/modulos-ativos`, label: 'Módulos Ativos', icon: <Sparkles size={15} />, resource: 'modules', group: 'commercial' },
     { to: `/app/empresa/${cid}/modulos`, label: t('nav.modules'), icon: <Package size={15} />, resource: 'modules', group: 'commercial' },
     { to: `/app/empresa/${cid}/contratos`, label: t('nav.contracts'), icon: <FileSignature size={15} />, resource: 'contracts', requiredModuleCode: 'allin_contratos', group: 'commercial' },
     { to: `/app/empresa/${cid}/financeiro`, label: t('nav.finance'), icon: <CreditCard size={15} />, resource: 'finance', requiredModuleCode: 'allin_financeiro', group: 'commercial' },

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
   BarChart3,
   Building2,
   CreditCard,
   Download,
+  ExternalLink,
   FileSignature,
   LifeBuoy,
   Package,
@@ -29,11 +30,16 @@ import {
   CatalogModuleEntity,
   ChargeEntity,
   CompanyEntity,
+  CompanyModuleSubscription,
   ContractEntity,
   TicketEntity,
 } from '../../types/domain';
 import { getUserActiveRoles } from '../../services/hbacService';
 import { exportRowsToCsv } from '../../services/operationalUtils';
+import {
+  buildModuleInstanceLaunchUrl,
+  openModuleInstanceInNewTab,
+} from '../../services/olivelasEcosystemService';
 import {
   computeCompanyLicenseSummary,
   getPlatformBillingRules,
@@ -328,8 +334,30 @@ export const GlobalDashboardPage: React.FC = () => {
   );
 };
 
-export const CompanyDashboardPage: React.FC = () => {
+interface CompanyActiveModuleTableRow {
+  id: string;
+  sub: CompanyModuleSubscription;
+  mod: CatalogModuleEntity;
+  moduleName: string;
+  code: string;
+  category: CatalogModuleEntity['category'];
+  isExample: boolean;
+  dbSchema: string;
+  targetRoute: string;
+  dedicatedExternalUrl: string;
+  port?: number;
+  agreedPrice: number;
+  currency: CatalogModuleEntity['currency'];
+  billingCycle: string;
+  renewalDate: string;
+  status: CompanyModuleSubscription['status'];
+}
+
+export const CompanyDashboardPage: React.FC<{ standaloneTableOnly?: boolean }> = ({
+  standaloneTableOnly = false,
+}) => {
   const { empresaId } = useParams<{ empresaId: string }>();
+  const [searchParams] = useSearchParams();
   const {
     companies,
     modules,
@@ -338,6 +366,7 @@ export const CompanyDashboardPage: React.FC = () => {
     charges,
     tickets,
     auditEvents,
+    currentUser,
     session,
     hasPermission,
     t,
@@ -360,8 +389,271 @@ export const CompanyDashboardPage: React.FC = () => {
   );
   const myAudit = auditEvents.filter((ae) => ae.companyId === company.id);
 
+  const activeModuleRows: CompanyActiveModuleTableRow[] = mySubs
+    .map((sub): CompanyActiveModuleTableRow | null => {
+      const mod = modules.find((m) => m.id === sub.moduleId);
+      if (!mod) return null;
+      let targetRoute = `/app/empresa/${company.id}/modulos`;
+      let dedicatedExternalUrl = `${window.location.origin}/app/empresa/${company.id}/modulos`;
+      let port: number | undefined;
+
+      if (!mod.isExample) {
+        const slug = mod.ecosystemSlug || mod.code;
+        targetRoute = `/app/empresa/${company.id}/ecossistema/${slug}`;
+        const launchInfo = buildModuleInstanceLaunchUrl({
+          moduleSlug: slug,
+          companyId: company.id,
+          companyName: company.tradeName,
+        });
+        port = launchInfo.port;
+        dedicatedExternalUrl = `http://localhost:${launchInfo.port}${launchInfo.serverSpec.adminPath}`;
+      } else {
+        if (mod.code === 'allin_estoque') targetRoute = `/app/empresa/${company.id}/operacao/estoque`;
+        if (mod.code === 'allin_vendas') targetRoute = `/app/empresa/${company.id}/operacao/vendas`;
+        if (mod.code === 'allin_crm') targetRoute = `/app/empresa/${company.id}/operacao/crm`;
+        if (mod.code === 'allin_financeiro') targetRoute = `/app/empresa/${company.id}/financeiro`;
+        if (mod.code === 'allin_equipe') targetRoute = `/app/empresa/${company.id}/papeis`;
+        if (mod.code === 'allin_contratos') targetRoute = `/app/empresa/${company.id}/contratos`;
+        if (mod.code === 'allin_suporte') targetRoute = `/app/empresa/${company.id}/tickets`;
+        if (mod.code === 'allin_analytics') targetRoute = `/app/empresa/${company.id}/relatorios`;
+        dedicatedExternalUrl = `${window.location.origin}${targetRoute}`;
+      }
+
+      return {
+        id: sub.id,
+        sub,
+        mod,
+        moduleName: mod.name[session.language],
+        code: mod.code,
+        category: mod.category,
+        isExample: Boolean(mod.isExample),
+        dbSchema: mod.dbSchema || mod.code,
+        targetRoute,
+        dedicatedExternalUrl,
+        port,
+        agreedPrice: sub.agreedPrice,
+        currency: sub.currency,
+        billingCycle: sub.billingCycle,
+        renewalDate: sub.renewalDate,
+        status: sub.status,
+      };
+    })
+    .filter((r): r is CompanyActiveModuleTableRow => r !== null);
+
+  const typeFilter = searchParams.get('type') || 'all';
+  const filteredActiveModuleRows = activeModuleRows.filter((row) => {
+    if (typeFilter === 'commercial') return !row.isExample;
+    if (typeFilter === 'examples') return row.isExample;
+    return true;
+  });
+
+  const commercialActiveCount = activeModuleRows.filter((r) => !r.isExample).length;
+  const exampleActiveCount = activeModuleRows.filter((r) => r.isExample).length;
+
+  const handleOpenModuleUrl = (row: CompanyActiveModuleTableRow) => {
+    if (!row.isExample) {
+      const slug = row.mod.ecosystemSlug || row.mod.code;
+      openModuleInstanceInNewTab({
+        moduleSlug: slug,
+        companyId: company.id,
+        companyName: company.tradeName,
+        userId: currentUser?.id || 'usr-admin-global',
+        userEmail: currentUser?.email || 'willian.o.jesus@gmail.com',
+        userName: currentUser?.name || 'Willian Jesus',
+        userRole: 'COMPANY_ADMIN',
+      });
+    } else {
+      window.open(row.dedicatedExternalUrl, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  const renderActiveModulesTable = () => (
+    <UrlDataTable<CompanyActiveModuleTableRow>
+      tableId={`company-active-modules-${company.id}`}
+      caption={`Módulos ativos para ${company.tradeName}`}
+      items={filteredActiveModuleRows}
+      defaultSortField="moduleName"
+      csvFilename={`modulos-ativos-${company.id}.csv`}
+      searchPlaceholder="Buscar módulo ativo por nome, código, categoria, schema ou URL própria..."
+      statusExtractor={(r) => r.status}
+      searchExtractor={(r) =>
+        `${r.moduleName} ${r.code} ${r.category} ${r.dbSchema} ${r.targetRoute} ${r.dedicatedExternalUrl} ${r.mod.description[session.language]}`
+      }
+      statusOptions={[
+        { value: 'active', label: t('status.active') },
+        { value: 'trial', label: 'Trial' },
+        { value: 'suspended', label: t('status.suspended') },
+      ]}
+      extraFiltersRender={(params, updateParam) => (
+        <div className="flex items-center gap-2 flex-wrap">
+          <select
+            className="select"
+            style={{ width: 'auto', minWidth: '185px', padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
+            value={params.get('type') || 'all'}
+            onChange={(e) => updateParam('type', e.target.value)}
+            aria-label="Filtrar tipo de módulo ativo"
+          >
+            <option value="all">Todos os Módulos Ativos ({activeModuleRows.length})</option>
+            <option value="commercial">Plataformas Comerciais ({commercialActiveCount})</option>
+            <option value="examples">Módulos Base ({exampleActiveCount})</option>
+          </select>
+          {!standaloneTableOnly && (
+            <Link
+              to={`/app/empresa/${company.id}/modulos-ativos`}
+              className="btn btn-secondary btn-sm"
+              title="Abrir tabela de módulos ativos em página exclusiva"
+            >
+              <ExternalLink size={13} />
+              URL Própria da Tabela
+            </Link>
+          )}
+          <Link to={`/app/empresa/${company.id}/modulos`} className="btn btn-primary btn-sm">
+            <Package size={13} />
+            Catálogo e Contratação
+          </Link>
+        </div>
+      )}
+      columns={[
+        {
+          key: 'moduleName',
+          header: 'Módulo Ativo',
+          width: '26%',
+          sortable: true,
+          csvValue: (r) => `${r.moduleName} (${r.code})`,
+          render: (r) => (
+            <div style={{ minWidth: 0 }}>
+              <Link
+                to={r.targetRoute}
+                className="font-semibold truncate block"
+                style={{ color: 'var(--accent-primary)' }}
+                title={r.mod.description[session.language]}
+              >
+                {r.moduleName}
+              </Link>
+              <div className="text-xs text-muted mono truncate">
+                {r.code} • v{r.mod.version}
+              </div>
+            </div>
+          ),
+        },
+        {
+          key: 'category',
+          header: 'Tipo & Categoria',
+          width: '18%',
+          sortable: true,
+          csvValue: (r) => `${r.category} (${r.isExample ? 'Base' : r.dbSchema})`,
+          render: (r) => (
+            <div className="flex items-center gap-1 flex-wrap">
+              <span className="badge badge-info">{r.category}</span>
+              <span className={`badge ${r.isExample ? 'badge-warning' : 'badge-teal'} mono`}>
+                {r.isExample ? 'Base' : r.dbSchema}
+              </span>
+            </div>
+          ),
+        },
+        {
+          key: 'dedicatedExternalUrl',
+          header: 'URL Própria do Módulo',
+          width: '26%',
+          sortable: true,
+          csvValue: (r) => r.dedicatedExternalUrl,
+          render: (r) => (
+            <div className="flex flex-col gap-0.5" style={{ minWidth: 0 }}>
+              <a
+                href={r.dedicatedExternalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleOpenModuleUrl(r);
+                }}
+                className="mono text-xs font-semibold truncate flex items-center gap-1"
+                style={{ color: 'var(--accent-primary)' }}
+                title={`Abrir URL própria: ${r.dedicatedExternalUrl}`}
+              >
+                <span className="truncate">{r.dedicatedExternalUrl.replace(/^https?:\/\//, '')}</span>
+                <ExternalLink size={11} style={{ flexShrink: 0 }} />
+              </a>
+              <Link
+                to={r.targetRoute}
+                className="mono text-muted truncate"
+                style={{ fontSize: '0.68rem' }}
+                title={`Rota dedicada no All In: ${r.targetRoute}`}
+              >
+                {r.targetRoute}
+              </Link>
+            </div>
+          ),
+        },
+        {
+          key: 'agreedPrice',
+          header: 'Mensalidade & Renovação',
+          width: '14%',
+          sortable: true,
+          isNumeric: true,
+          csvValue: (r) => r.agreedPrice,
+          render: (r) => (
+            <div className="tabular">
+              <div className="font-semibold">
+                {formatCurrency(r.agreedPrice, r.currency, session.language)}/mês
+              </div>
+              <div className="text-xs text-muted">Renova: {r.renewalDate}</div>
+            </div>
+          ),
+        },
+        {
+          key: 'status',
+          header: 'Estado',
+          width: '8%',
+          render: (r) => <StatusBadge status={r.status} />,
+        },
+        {
+          key: 'actions',
+          header: 'Ações',
+          width: '8%',
+          isNumeric: true,
+          render: (r) => (
+            <div className="flex items-center justify-end gap-1">
+              <Link to={r.targetRoute} className="btn btn-primary btn-sm" title="Abrir no painel All In">
+                Abrir <ArrowRight size={12} />
+              </Link>
+            </div>
+          ),
+        },
+      ]}
+    />
+  );
+
+  if (standaloneTableOnly) {
+    return (
+      <div className="flex flex-col gap-2.5">
+        <PageHeader
+          breadcrumbs={[
+            { label: company.tradeName, to: `/app/empresa/${company.id}` },
+            { label: 'Módulos Ativos' },
+          ]}
+          title={`Módulos Ativos — ${company.tradeName}`}
+          subtitle={`${activeModuleRows.length} módulos contratados e ativos (${commercialActiveCount} plataformas comerciais Olivelas e ${exampleActiveCount} módulos base) com filtro de busca e URL própria.`}
+          scopeBadge={company.tradeName}
+          actions={
+            <div className="flex items-center gap-2">
+              <Link to={`/app/empresa/${company.id}`} className="btn btn-secondary btn-sm">
+                Voltar ao Painel
+              </Link>
+              <Link to={`/app/empresa/${company.id}/modulos`} className="btn btn-primary btn-sm">
+                <Package size={14} />
+                Catálogo e Contratação
+              </Link>
+            </div>
+          }
+        />
+        {renderActiveModulesTable()}
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="ecosystem-hub-page flex flex-col gap-4">
       <PageHeader
         breadcrumbs={[
           { label: company.tradeName },
@@ -372,6 +664,10 @@ export const CompanyDashboardPage: React.FC = () => {
         scopeBadge={`Tenant Isolado: ${company.id}`}
         actions={
           <>
+            <Link to={`/app/empresa/${company.id}/modulos-ativos`} className="btn btn-secondary btn-sm">
+              <ExternalLink size={14} />
+              Tabela de Módulos Ativos ({mySubs.length})
+            </Link>
             {hasPermission('modules', 'view', company.id) && (
               <Link to={`/app/empresa/${company.id}/modulos`} className="btn btn-primary btn-sm">
                 <Package size={14} />
@@ -400,7 +696,11 @@ export const CompanyDashboardPage: React.FC = () => {
         <div className="kpi-card">
           <span className="kpi-label">Módulos Contratados Ativos</span>
           <span className="kpi-value">{mySubs.length}</span>
-          <span className="kpi-meta">de {modules.length} disponíveis no catálogo</span>
+          <span className="kpi-meta">
+            <Link to={`/app/empresa/${company.id}/modulos-ativos`}>
+              Ver tabela exclusiva ({mySubs.length} de {modules.length})
+            </Link>
+          </span>
         </div>
 
         <div className="kpi-card">
@@ -430,77 +730,8 @@ export const CompanyDashboardPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Active Modules Grid */}
-      <div className="card">
-        <div className="card-header">
-          <div>
-            <h2 style={{ fontSize: '1rem' }}>Módulos Ativos para {company.tradeName}</h2>
-            <p className="text-xs text-muted">
-              A navegação lateral e as rotas deste ambiente refletem exatamente os módulos contratados e
-              suas permissões HBAC.
-            </p>
-          </div>
-          <Link to={`/app/empresa/${company.id}/modulos`} className="btn btn-secondary btn-sm">
-            Catálogo e Contratação
-          </Link>
-        </div>
-        <div className="card-body">
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-              gap: '0.85rem',
-            }}
-          >
-            {mySubs.map((sub) => {
-              const mod = modules.find((m) => m.id === sub.moduleId);
-              if (!mod) return null;
-              let targetRoute = `/app/empresa/${company.id}/modulos`;
-              if (!mod.isExample) {
-                targetRoute = `/app/empresa/${company.id}/ecossistema/${mod.ecosystemSlug || mod.code}`;
-              } else {
-                if (mod.code === 'allin_estoque') targetRoute = `/app/empresa/${company.id}/operacao/estoque`;
-                if (mod.code === 'allin_vendas') targetRoute = `/app/empresa/${company.id}/operacao/vendas`;
-                if (mod.code === 'allin_crm') targetRoute = `/app/empresa/${company.id}/operacao/crm`;
-                if (mod.code === 'allin_financeiro') targetRoute = `/app/empresa/${company.id}/financeiro`;
-                if (mod.code === 'allin_equipe') targetRoute = `/app/empresa/${company.id}/papeis`;
-                if (mod.code === 'allin_contratos') targetRoute = `/app/empresa/${company.id}/contratos`;
-                if (mod.code === 'allin_suporte') targetRoute = `/app/empresa/${company.id}/tickets`;
-                if (mod.code === 'allin_analytics') targetRoute = `/app/empresa/${company.id}/relatorios`;
-              }
-
-              return (
-                <div
-                  key={sub.id}
-                  className="card card-interactive"
-                  style={{ padding: '1.1rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', gap: '0.75rem' }}
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <span className={`badge ${mod.isExample ? 'badge-warning' : 'badge-info'}`}>
-                        {mod.isExample ? 'Exemplo Base' : mod.dbSchema ? `schema: ${mod.dbSchema}` : 'Olivelas Comercial'}
-                      </span>
-                      <StatusBadge status={sub.status} />
-                    </div>
-                    <strong className="block mt-2" style={{ fontSize: '0.98rem' }}>
-                      {mod.name[session.language]}
-                    </strong>
-                    <p className="text-xs text-muted mt-1">{mod.description[session.language]}</p>
-                  </div>
-                  <div className="flex items-center justify-between pt-2.5" style={{ borderTop: '1px solid var(--border-subtle)' }}>
-                    <span className="text-xs text-muted tabular">
-                      {formatCurrency(sub.agreedPrice, sub.currency, session.language)}/mês
-                    </span>
-                    <Link to={targetRoute} className="btn btn-primary btn-sm">
-                      Abrir Interface <ArrowRight size={12} />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+      {/* Active Modules Table with URL-persisted Search & Filters */}
+      {renderActiveModulesTable()}
 
       {/* Recent Company Audit Events */}
       <div className="card">
