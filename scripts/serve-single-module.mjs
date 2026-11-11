@@ -273,8 +273,25 @@ function buildSsoInjectionScript(modInfo) {
 
     function applyCleanAppUrlInAddressBar() {
       if (!nativeReplaceState) return;
-      if (window.location.pathname !== cleanAppUrl || window.location.search !== '') {
-        nativeReplaceState(window.history.state, '', cleanAppUrl);
+      if (modType === 'vanilla') {
+        if (window.location.pathname !== cleanAppUrl || window.location.search !== '') {
+          nativeReplaceState(window.history.state, '', cleanAppUrl);
+        }
+        return;
+      }
+      if (window.location.search) {
+        var cleanSearch = new URLSearchParams(window.location.search);
+        var hadSsoParam = false;
+        ['allin_sso','instance_id','company_id','company_name','user_id','user_email','user_name','user_role','layer'].forEach(function(k) {
+          if (cleanSearch.has(k)) {
+            cleanSearch.delete(k);
+            hadSsoParam = true;
+          }
+        });
+        if (hadSsoParam) {
+          var qs = cleanSearch.toString();
+          nativeReplaceState(window.history.state, '', window.location.pathname + (qs ? '?' + qs : '') + (window.location.hash || ''));
+        }
       }
     }
 

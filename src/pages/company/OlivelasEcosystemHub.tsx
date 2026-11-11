@@ -639,7 +639,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
     return (
       <div
-        className="space-y-4"
+        className="ecosystem-hub-page space-y-4"
         style={
           isFullscreenPlatform
             ? {
@@ -2451,7 +2451,7 @@ export const OlivelasEcosystemHub: React.FC = () => {
 
   return (
     <div
-      className="space-y-6"
+      className="ecosystem-hub-page space-y-6"
       style={isDemoRoute ? { maxWidth: 1360, margin: '1.5rem auto', padding: '0 1.5rem' } : undefined}
     >
       {/* Banner Principal de Arquitetura Unificada (Padrão Visual gestao_estoque) */}
