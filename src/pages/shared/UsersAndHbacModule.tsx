@@ -32,6 +32,7 @@ import {
 import {
   computeCompanyLicenseSummary,
   getPlatformBillingRules,
+  sortCompaniesHierarchically,
 } from '../../services/enterpriseFinanceAndContractsService';
 import {
   IndividualPermissionOverride,
@@ -596,6 +597,7 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
   const [name, setName] = useState(existing?.name || '');
   const [email, setEmail] = useState(existing?.email || '');
   const [phone, setPhone] = useState(existing?.phone || '+55 (11) 98800-0000');
+  const [jobTitle, setJobTitle] = useState(existing?.jobTitle || 'Especialista Operacional');
   const [status, setStatus] = useState<UserEntity['status']>(existing?.status || 'active');
   const [language, setLanguage] = useState<LanguageCode>(existing?.language || 'pt-BR');
   const [selectedRoleIds, setSelectedRoleIds] = useState<string[]>(
@@ -614,6 +616,7 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
       setName(existing.name);
       setEmail(existing.email);
       setPhone(existing.phone);
+      setJobTitle(existing.jobTitle || 'Especialista Operacional');
       setStatus(existing.status);
       setLanguage(existing.language);
       setSelectedRoleIds(existing.roleIds);
@@ -637,12 +640,18 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
       (!r.companyId || !targetCompanyId || r.companyId === targetCompanyId),
   );
 
-  const availableCompanies = isCurrentGlobalStaff
-    ? companies
-    : companies.filter((c) => currentUser.companyIds.includes(c.id));
+  const orderedAvailableCompanies = sortCompaniesHierarchically(
+    isCurrentGlobalStaff
+      ? companies
+      : companies.filter((c) => currentUser.companyIds.includes(c.id)),
+  );
 
-  const memberCompanies = availableCompanies.filter((c) => selectedCompanyIds.includes(c.id));
-  const unlinkedCompanies = availableCompanies.filter((c) => !selectedCompanyIds.includes(c.id));
+  const memberCompanies = orderedAvailableCompanies.filter((c) =>
+    selectedCompanyIds.includes(c.id),
+  );
+  const unlinkedCompanies = orderedAvailableCompanies.filter(
+    (c) => !selectedCompanyIds.includes(c.id),
+  );
 
   const toggleRole = (rid: string) => {
     setSelectedRoleIds((prev) =>
@@ -693,6 +702,7 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
+        jobTitle: jobTitle.trim() || undefined,
         status,
         language,
         roleIds: selectedRoleIds,
@@ -719,6 +729,7 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
+        jobTitle: jobTitle.trim() || existing.jobTitle,
         status,
         language,
         roleIds: selectedRoleIds,
@@ -732,6 +743,7 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
           name: name.trim(),
           email: email.trim(),
           phone: phone.trim(),
+          jobTitle: jobTitle.trim() || curr.jobTitle,
           status,
           language,
           roleIds: selectedRoleIds,
@@ -751,11 +763,29 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
     <div className="flex flex-col gap-4">
       <PageHeader
         breadcrumbs={[
+          {
+            label: scope === 'global' ? t('scope.global') : t('scope.company'),
+            to: scope === 'global' ? '/app/global' : `/app/empresa/${empresaId}`,
+          },
           { label: t('nav.users'), to: baseRoute },
           { label: mode === 'create' ? 'Novo Usuário' : `Editar ${existing?.name}` },
         ]}
         title={mode === 'create' ? 'Cadastrar Novo Usuário' : `Editar Usuário — ${existing?.name}`}
         subtitle="Validação anti-elevação de privilégios HBAC ativa durante atribuição de papéis e empresas."
+        scopeBadge={existing ? `ID: ${existing.id}` : 'Novo Registro'}
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            {existing && (
+              <Link to={`${baseRoute}/${existing.id}`} className="btn btn-secondary btn-sm">
+                <ShieldCheck size={14} />
+                Matriz HBAC &amp; Segurança
+              </Link>
+            )}
+            <Link to={baseRoute} className="btn btn-secondary btn-sm">
+              {t('common.back')}
+            </Link>
+          </div>
+        }
       />
 
       <UnsavedChangesBanner isDirty={isDirty} onDiscard={() => navigate(baseRoute)} />
@@ -775,10 +805,13 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
         </div>
       )}
 
-      <form onSubmit={handleSave} onChange={() => setIsDirty(true)}>
-        <div className="form-section">
-          <div className="form-section-title">1. Dados de Identidade & Preferências</div>
-          <div className="form-grid mt-2">
+      <form onSubmit={handleSave} onChange={() => setIsDirty(true)} className="flex flex-col gap-4">
+        <div className="form-section" style={{ marginBottom: 0 }}>
+          <div className="form-section-title">1. Dados de Identidade &amp; Preferências</div>
+          <div className="form-section-desc">
+            Informações cadastrais, contato corporativo, cargo e preferências de localização do usuário.
+          </div>
+          <div className="grid-3">
             <div className="field">
               <label htmlFor="usr-name">Nome Completo *</label>
               <input
@@ -815,6 +848,17 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
             </div>
 
             <div className="field">
+              <label htmlFor="usr-job">Cargo / Função Corporativa</label>
+              <input
+                id="usr-job"
+                className="input"
+                value={jobTitle}
+                onChange={(e) => setJobTitle(e.target.value)}
+                placeholder="Ex.: Diretor Global, Gestor de Loja..."
+              />
+            </div>
+
+            <div className="field">
               <label htmlFor="usr-status">Estado do Usuário</label>
               <select
                 id="usr-status"
@@ -844,12 +888,18 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
           </div>
         </div>
 
-        <div className="form-section">
-          <div className="form-section-title">2. Atribuição de Papéis Hierárquicos (HBAC)</div>
-          <div className="form-section-desc">
-            Um usuário não pode conceder papéis de autoridade superior à sua própria na hierarquia.
+        <div className="form-section" style={{ marginBottom: 0 }}>
+          <div className="flex items-center justify-between gap-2 flex-wrap mb-3">
+            <div>
+              <div className="form-section-title">2. Atribuição de Papéis Hierárquicos (HBAC)</div>
+              <div className="form-section-desc" style={{ marginBottom: 0 }}>
+                Um usuário não pode conceder papéis de autoridade superior à sua própria na hierarquia.
+              </div>
+            </div>
+            <span className="badge badge-info">{selectedRoleIds.length} papel(éis) ativo(s)</span>
           </div>
-          <div className="form-grid">
+
+          <div className="grid-3" style={{ alignItems: 'stretch' }}>
             {availableRoles.map((r) => {
               const checked = selectedRoleIds.includes(r.id);
               return (
@@ -860,39 +910,58 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
                       ? '1px solid var(--accent-primary)'
                       : '1px solid var(--border-subtle)',
                     backgroundColor: checked ? 'var(--accent-primary-soft)' : 'var(--bg-surface)',
-                    padding: '0.75rem',
+                    padding: '0.85rem 1rem',
                     borderRadius: 'var(--radius-sm)',
                     cursor: 'pointer',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '0.25rem',
+                    justifyContent: 'space-between',
+                    gap: '0.5rem',
+                    height: '100%',
+                    transition: 'border-color 0.15s ease, background-color 0.15s ease',
                   }}
                 >
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-sm">
+                  <div className="flex items-center justify-between gap-2">
+                    <span
+                      className="font-semibold text-sm"
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}
+                    >
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={() => toggleRole(r.id)}
-                        style={{ marginRight: 6 }}
+                        style={{
+                          width: 16,
+                          height: 16,
+                          margin: 0,
+                          accentColor: 'var(--accent-primary)',
+                          cursor: 'pointer',
+                          flexShrink: 0,
+                        }}
                       />
-                      {r.name[session.language]}
+                      <span>{r.name[session.language]}</span>
                     </span>
-                    <span className="badge">Nível {r.hierarchyLevel}</span>
+                    <span className={`badge ${checked ? 'badge-info' : 'badge-neutral'} shrink-0`}>
+                      Nível {r.hierarchyLevel}
+                    </span>
                   </div>
-                  <span className="text-xs text-muted">{r.description[session.language]}</span>
+                  <span className="text-xs text-muted" style={{ lineHeight: 1.4 }}>
+                    {r.description[session.language]}
+                  </span>
                 </label>
               );
             })}
           </div>
         </div>
 
-        <div className="form-section">
+        <div className="form-section" style={{ marginBottom: 0 }}>
           <div className="flex items-center justify-between gap-3 flex-wrap mb-3">
             <div>
-              <div className="form-section-title">3. Empresas Associadas (Escopo Multiempresa)</div>
-              <div className="form-section-desc">
-                Lista de empresas das quais este usuário faz parte e controle de adição de novas unidades/empresas.
+              <div className="form-section-title">
+                3. Empresas Associadas (Escopo Multiempresa — Matriz &amp; Filiais)
+              </div>
+              <div className="form-section-desc" style={{ marginBottom: 0 }}>
+                Lista de empresas matrizes e filiais das quais este usuário faz parte e controle de vínculo de unidades.
               </div>
             </div>
             <button
@@ -909,139 +978,243 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
             </button>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))',
+              gap: '1.15rem',
+              alignItems: 'stretch',
+            }}
+          >
             {/* Coluna Esquerda: Lista de Empresas que o Usuário Faz Parte */}
-            <div className="lg:col-span-7 space-y-2.5">
-              <div className="flex items-center justify-between">
+            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="card-header">
                 <span className="text-xs font-bold uppercase text-muted">
                   Empresas das quais faz parte ({memberCompanies.length})
                 </span>
                 <span className="badge badge-teal">{memberCompanies.length} vinculada(s)</span>
               </div>
 
-              {memberCompanies.length === 0 ? (
-                <div className="p-5 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-2">
-                  <Building2 size={22} className="mx-auto text-muted" />
-                  <div className="text-sm font-semibold">Nenhuma empresa vinculada</div>
-                  <p className="text-xs text-muted">
-                    Utilize o painel ao lado ou o botão <strong>Adicionar Outra Empresa</strong> para vincular empresas a este usuário.
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {memberCompanies.map((comp) => (
-                    <div
-                      key={comp.id}
-                      className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3 bg-slate-50/50 dark:bg-slate-800/30"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="stat-icon-box" style={{ width: 36, height: 36 }}>
-                          <Building2 size={16} />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <strong className="text-sm">{comp.tradeName}</strong>
-                            <StatusBadge status={comp.operationalStatus} />
-                          </div>
-                          <div className="text-xs text-muted">
-                            {comp.legalName} • Doc: <span className="mono">{comp.taxId || comp.id}</span> • ID:{' '}
-                            <code className="mono">{comp.id}</code>
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveCompanyFromUser(comp.id)}
-                        className="btn btn-ghost btn-sm text-rose-600 shrink-0"
-                        title="Remover usuário desta empresa"
+              <div className="card-body flex flex-col gap-2.5" style={{ flex: 1 }}>
+                {memberCompanies.length === 0 ? (
+                  <div
+                    style={{
+                      padding: '1.5rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px dashed var(--border-strong)',
+                      textAlign: 'center',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      flex: 1,
+                    }}
+                  >
+                    <Building2 size={22} className="text-muted" />
+                    <div className="text-sm font-semibold">Nenhuma empresa vinculada</div>
+                    <p className="text-xs text-muted">
+                      Utilize o painel ao lado ou o botão <strong>Adicionar Outra Empresa</strong> para vincular empresas a este usuário.
+                    </p>
+                  </div>
+                ) : (
+                  memberCompanies.map((comp) => {
+                    const parentMatriz = comp.isBranch
+                      ? companies.find((m) => m.id === comp.parentCompanyId)
+                      : undefined;
+                    return (
+                      <div
+                        key={comp.id}
+                        style={{
+                          padding: '0.75rem 0.9rem',
+                          borderRadius: 'var(--radius-sm)',
+                          border: '1px solid var(--border-subtle)',
+                          backgroundColor: 'var(--bg-subtle)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '0.75rem',
+                          marginLeft: comp.isBranch ? '0.85rem' : 0,
+                          borderLeft: comp.isBranch
+                            ? '3px solid var(--accent-primary)'
+                            : '1px solid var(--border-subtle)',
+                        }}
                       >
-                        <Trash2 size={14} /> Remover
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+                        <div className="flex items-center gap-3" style={{ minWidth: 0, flex: 1 }}>
+                          <div
+                            className={`icon-box ${comp.isBranch ? '' : 'icon-box-teal'}`}
+                            style={{ width: 36, height: 36 }}
+                          >
+                            <Building2 size={16} />
+                          </div>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span
+                                className={`badge ${comp.isBranch ? 'badge-info' : 'badge-teal'}`}
+                              >
+                                {comp.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                              </span>
+                              <strong className="text-sm truncate">{comp.tradeName}</strong>
+                              <StatusBadge status={comp.operationalStatus} />
+                            </div>
+                            <div className="text-xs text-muted truncate mt-0.5">
+                              {comp.isBranch && parentMatriz ? (
+                                <>
+                                  Matriz Pai: <strong>{parentMatriz.tradeName}</strong> •{' '}
+                                </>
+                              ) : (
+                                <>{comp.legalName} • </>
+                              )}
+                              Doc: <span className="mono">{comp.taxId || comp.id}</span> • ID:{' '}
+                              <code className="mono">{comp.id}</code>
+                            </div>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveCompanyFromUser(comp.id)}
+                          className="btn btn-danger btn-sm shrink-0"
+                          title="Remover usuário desta empresa"
+                        >
+                          <Trash2 size={14} /> Remover
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
 
-            {/* Coluna Direita (Do Lado): Adicionar Outras Empresas */}
-            <div className="lg:col-span-5 p-4 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3 bg-slate-50/30 dark:bg-slate-800/20">
-              <div className="flex items-center justify-between">
-                <strong className="text-sm flex items-center gap-2">
-                  <Plus size={15} className="text-teal-600" /> Adicionar Outras Empresas
+            {/* Coluna Direita: Adicionar Outras Empresas */}
+            <div className="card" style={{ display: 'flex', flexDirection: 'column' }}>
+              <div className="card-header">
+                <strong className="text-xs font-bold uppercase text-muted flex items-center gap-1.5">
+                  <Plus size={14} /> Adicionar Outras Empresas
                 </strong>
                 <span className="badge badge-info">{unlinkedCompanies.length} disponível(is)</span>
               </div>
 
-              {unlinkedCompanies.length === 0 ? (
-                <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs space-y-1">
-                  <div className="font-bold text-emerald-600 flex items-center gap-1.5">
-                    <CheckCircle2 size={15} /> Usuário já faz parte de todas as empresas cadastradas!
-                  </div>
-                  <p className="text-muted">
-                    Caso deseje criar uma nova empresa na plataforma para vinculá-la, acesse{' '}
-                    <Link to="/app/global/empresas/nova" className="underline font-semibold">
-                      Cadastrar Nova Empresa
-                    </Link>
-                    .
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="flex items-center gap-2">
-                    <select
-                      aria-label="Selecionar empresa para adicionar"
-                      className="select flex-1 text-xs"
-                      value={companyToAddId || unlinkedCompanies[0]?.id || ''}
-                      onChange={(e) => setCompanyToAddId(e.target.value)}
+              <div className="card-body flex flex-col gap-3" style={{ flex: 1 }}>
+                {unlinkedCompanies.length === 0 ? (
+                  <div
+                    style={{
+                      padding: '1.25rem',
+                      borderRadius: 'var(--radius-sm)',
+                      border: '1px solid var(--status-success-border)',
+                      backgroundColor: 'var(--status-success-bg)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      justifyContent: 'center',
+                      gap: '0.6rem',
+                      flex: 1,
+                    }}
+                  >
+                    <div
+                      className="font-bold text-sm flex items-center gap-2"
+                      style={{ color: 'var(--status-success)' }}
                     >
-                      {unlinkedCompanies.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.tradeName} ({c.taxId || c.id})
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        handleAddCompanyToUser(companyToAddId || unlinkedCompanies[0]?.id || '')
-                      }
-                      className="btn btn-primary btn-sm shrink-0"
-                    >
-                      <Plus size={14} /> Adicionar
-                    </button>
+                      <CheckCircle2 size={16} /> Usuário já faz parte de todas as empresas cadastradas!
+                    </div>
+                    <p className="text-xs text-muted" style={{ lineHeight: 1.5 }}>
+                      Todas as {memberCompanies.length} unidades (Matrizes e Filiais) ativas da plataforma já estão vinculadas a{' '}
+                      <strong>{name || existing?.name}</strong>. Para desvincular alguma unidade, clique no botão{' '}
+                      <strong>Remover</strong> na coluna ao lado, ou cadastre uma nova empresa/filial abaixo.
+                    </p>
+                    <div className="flex items-center gap-2 flex-wrap mt-1">
+                      <Link to="/app/global/empresas/nova" className="btn btn-secondary btn-sm">
+                        <Plus size={14} /> Cadastrar Nova Empresa / Filial
+                      </Link>
+                      <Link to="/app/global/empresas" className="btn btn-secondary btn-sm">
+                        <Building2 size={14} /> Ver Diretório de Empresas
+                      </Link>
+                    </div>
                   </div>
-
-                  <div className="space-y-1.5 pt-2 border-t border-slate-200 dark:border-slate-700">
-                    <span className="text-[11px] font-semibold uppercase text-muted block">
-                      Ou adicione com 1 clique:
-                    </span>
-                    {unlinkedCompanies.map((c) => (
-                      <div
-                        key={c.id}
-                        className="p-2.5 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-2 text-xs bg-white dark:bg-slate-900"
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <select
+                        aria-label="Selecionar empresa para adicionar"
+                        className="select flex-1 text-xs"
+                        value={companyToAddId || unlinkedCompanies[0]?.id || ''}
+                        onChange={(e) => setCompanyToAddId(e.target.value)}
                       >
-                        <div>
-                          <div className="font-semibold">{c.tradeName}</div>
-                          <div className="text-[11px] text-muted mono">{c.id}</div>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => handleAddCompanyToUser(c.id)}
-                          className="btn btn-secondary btn-sm"
+                        {unlinkedCompanies.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {c.isBranch ? '[FILIAL] ' : '[MATRIZ] '}
+                            {c.tradeName} ({c.taxId || c.id})
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          handleAddCompanyToUser(companyToAddId || unlinkedCompanies[0]?.id || '')
+                        }
+                        className="btn btn-primary btn-sm shrink-0"
+                      >
+                        <Plus size={14} /> Adicionar
+                      </button>
+                    </div>
+
+                    <div
+                      className="flex flex-col gap-2 pt-2"
+                      style={{ borderTop: '1px solid var(--border-subtle)' }}
+                    >
+                      <span className="text-xs font-semibold uppercase text-muted block">
+                        Ou vincule com 1 clique:
+                      </span>
+                      {unlinkedCompanies.map((c) => (
+                        <div
+                          key={c.id}
+                          style={{
+                            padding: '0.65rem 0.85rem',
+                            borderRadius: 'var(--radius-sm)',
+                            border: '1px solid var(--border-subtle)',
+                            backgroundColor: 'var(--bg-subtle)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '0.75rem',
+                          }}
                         >
-                          <Plus size={13} /> Vincular
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
+                          <div style={{ minWidth: 0 }}>
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className={`badge ${c.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                                {c.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                              </span>
+                              <span className="font-semibold text-xs truncate">{c.tradeName}</span>
+                            </div>
+                            <div className="text-xs text-muted mono mt-0.5">{c.id}</div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleAddCompanyToUser(c.id)}
+                            className="btn btn-secondary btn-sm shrink-0"
+                          >
+                            <Plus size={13} /> Vincular
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div
+          className="card"
+          style={{
+            padding: '0.85rem 1.25rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '1rem',
+            flexWrap: 'wrap',
+          }}
+        >
           <Link to={baseRoute} className="btn btn-secondary">
             {t('common.cancel')}
           </Link>
@@ -1068,31 +1241,53 @@ export const UserFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create
           </div>
         }
       >
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           <p className="text-xs text-muted">
             Selecione as empresas que deseja vincular a <strong>{name || existing?.name || 'este usuário'}</strong>:
           </p>
           {unlinkedCompanies.length === 0 ? (
-            <div className="p-4 rounded-xl border border-emerald-500/30 bg-emerald-500/10 text-xs">
+            <div
+              style={{
+                padding: '1rem',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--status-success-border)',
+                backgroundColor: 'var(--status-success-bg)',
+                fontSize: '0.78rem',
+              }}
+            >
               Todas as empresas disponíveis já estão associadas a este usuário.
             </div>
           ) : (
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               {unlinkedCompanies.map((c) => (
                 <div
                   key={c.id}
-                  className="p-3 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-between gap-3"
+                  style={{
+                    padding: '0.75rem 0.9rem',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-subtle)',
+                    backgroundColor: 'var(--bg-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                  }}
                 >
                   <div>
-                    <div className="font-semibold text-sm">{c.tradeName}</div>
-                    <div className="text-xs text-muted">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`badge ${c.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                        {c.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                      </span>
+                      <span className="font-semibold text-sm">{c.tradeName}</span>
+                    </div>
+                    <div className="text-xs text-muted mt-0.5">
                       {c.legalName} • Doc: <span className="mono">{c.taxId || c.id}</span>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => handleAddCompanyToUser(c.id)}
-                    className="btn btn-primary btn-sm"
+                    className="btn btn-primary btn-sm shrink-0"
                   >
                     <Plus size={14} /> Adicionar
                   </button>
