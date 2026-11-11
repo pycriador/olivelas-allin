@@ -20,7 +20,7 @@ import {
 } from '../seed/initialData';
 
 export const DB_NAME = 'olivelas_allin_mock_v1';
-export const DB_VERSION = 6;
+export const DB_VERSION = 7;
 
 export type StoreName =
   | 'roles'
@@ -175,11 +175,24 @@ async function populateAllSeedData(): Promise<void> {
 
 export async function ensureSeeded(): Promise<void> {
   const meta = await getByIdFromStore<{ id: string; seededAt: string; schemaVersion?: number }>('meta', 'seed_status');
-  const companies = await getAllFromStore('companies');
+  const companies = await getAllFromStore<{ id: string; isBranch?: boolean; parentCompanyId?: string }>('companies');
   const modules = await getAllFromStore('modules');
   if (!meta || companies.length === 0 || meta.schemaVersion !== DB_VERSION || modules.length < INITIAL_MODULES.length) {
     await populateAllSeedData();
     return;
+  }
+  const defaultMatrizId =
+    companies.find((c) => !c.isBranch)?.id || 'emp-olivelas-matriz';
+  for (const comp of companies) {
+    if (
+      comp.isBranch &&
+      (!comp.parentCompanyId || !companies.some((m) => m.id === comp.parentCompanyId && !m.isBranch))
+    ) {
+      await putInStore('companies', {
+        ...comp,
+        parentCompanyId: defaultMatrizId,
+      });
+    }
   }
   const opItems = await getAllFromStore('operational_items');
   if (opItems.length === 0) {

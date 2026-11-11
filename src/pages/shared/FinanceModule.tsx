@@ -1245,7 +1245,7 @@ export const PaymentMethodsPage: React.FC<{
           tableId="company-payments-table"
           caption="Controle de pagamentos, assinaturas e licenças de funcionários por empresa (Matriz e Filiais)"
           items={orderedCompanies}
-          defaultSortField="tradeName"
+          defaultSortField=""
           csvFilename="pagamentos-por-empresa.csv"
           searchPlaceholder="Buscar por empresa, filial, titular, e-mail ou plano..."
           statusExtractor={(comp) => {
@@ -1615,7 +1615,7 @@ export const PaymentMethodsPage: React.FC<{
           tableId="company-quotas-table"
           caption="Cota de funcionários gratuitos (10 grátis por padrão) e exceções por unidade (Matriz e Filiais)"
           items={orderedCompanies}
-          defaultSortField="tradeName"
+          defaultSortField=""
           csvFilename="cotas-funcionarios-empresas.csv"
           searchPlaceholder="Buscar por unidade, código de filial ou matriz..."
           statusExtractor={(comp) => comp.operationalStatus}

@@ -331,15 +331,16 @@ export const CompaniesListPage: React.FC = () => {
         tableId="global-companies-table"
         caption="Empresas Matrizes e Filiais cadastradas na plataforma Olivelas Allin"
         items={orderedCompanies}
-        defaultSortField="createdAt"
+        defaultSortField=""
         csvFilename="empresas-matriz-filiais-olivelas-allin.csv"
         searchPlaceholder="Buscar por Matriz, Filial, código (FIL-SUL-01), titular, CNPJ ou cidade..."
         statusExtractor={(c) => c.operationalStatus}
-        searchExtractor={(c) =>
-          `${c.id} ${c.legalName} ${c.tradeName} ${c.taxId || ''} ${c.branchCode || ''} ${
+        searchExtractor={(c) => {
+          const s = summariesByCompanyId.get(c.id);
+          return `${c.id} ${c.legalName} ${c.tradeName} ${c.taxId || ''} ${c.branchCode || ''} ${
             c.managerName || ''
-          } ${c.address.city}`
-        }
+          } ${s?.parentCompanyName || ''} ${c.address.city}`;
+        }}
         statusOptions={[
           { value: 'active', label: t('status.active') },
           { value: 'pending', label: t('status.pending') },
@@ -351,7 +352,6 @@ export const CompaniesListPage: React.FC = () => {
           {
             key: 'tradeName',
             header: 'Unidade (Matriz / Filial)',
-            sortable: true,
             width: '25%',
             csvValue: (c) => `${c.isBranch ? '[FILIAL] ' : '[MATRIZ] '}${c.tradeName} (${c.id})`,
             render: (c) => {
@@ -378,10 +378,19 @@ export const CompaniesListPage: React.FC = () => {
                     </Link>
                   </div>
                   <div className="text-xs text-muted truncate">
-                    <code>{c.branchCode || c.id}</code> • {c.legalName}
-                    {!c.isBranch && summary && summary.childBranchesCount > 0
-                      ? ` • ${summary.childBranchesCount} filial(is)`
-                      : ''}
+                    <code>{c.branchCode || c.id}</code> •{' '}
+                    {c.isBranch && summary?.parentCompanyName ? (
+                      <>
+                        Filial de <strong>{summary.parentCompanyName}</strong>
+                      </>
+                    ) : (
+                      <>
+                        {c.legalName}
+                        {summary && summary.childBranchesCount > 0
+                          ? ` • ${summary.childBranchesCount} filial(is)`
+                          : ''}
+                      </>
+                    )}
                   </div>
                 </div>
               );
@@ -405,7 +414,18 @@ export const CompaniesListPage: React.FC = () => {
                   </div>
                   {c.isBranch && s?.parentCompanyName ? (
                     <div className="text-xs text-muted truncate">
-                      Vinculada a: <strong>{s.parentCompanyName}</strong>
+                      Matriz Pai:{' '}
+                      {s.parentCompanyId ? (
+                        <Link
+                          to={`/app/global/empresas/${s.parentCompanyId}/editar`}
+                          className="font-semibold"
+                          style={{ color: 'var(--brand-primary)' }}
+                        >
+                          {s.parentCompanyName}
+                        </Link>
+                      ) : (
+                        <strong>{s.parentCompanyName}</strong>
+                      )}
                     </div>
                   ) : (
                     <div className="text-xs text-muted truncate">
@@ -474,7 +494,6 @@ export const CompaniesListPage: React.FC = () => {
           {
             key: 'operationalStatus',
             header: 'Estado',
-            sortable: true,
             width: '10%',
             render: (c) => {
               const s = summariesByCompanyId.get(c.id);
@@ -1179,7 +1198,9 @@ export const CompanyFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode })
   const [tradeName, setTradeName] = useState(existing?.tradeName || '');
   const [taxId, setTaxId] = useState(existing?.taxId || '');
   const [isBranch, setIsBranch] = useState<boolean>(Boolean(existing?.isBranch));
-  const [parentCompanyId, setParentCompanyId] = useState<string>(existing?.parentCompanyId || '');
+  const [parentCompanyId, setParentCompanyId] = useState<string>(
+    existing?.parentCompanyId || 'emp-olivelas-matriz',
+  );
   const [branchCode, setBranchCode] = useState<string>(
     existing?.branchCode || (existing?.isBranch ? 'FIL-01' : 'MAT-01'),
   );
@@ -1250,6 +1271,9 @@ export const CompanyFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode })
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const actor = getActor(existing?.id);
+    const resolvedParentCompanyId = isBranch
+      ? parentCompanyId || availableMatrizes[0]?.id || 'emp-olivelas-matriz'
+      : undefined;
     if (mode === 'create') {
       const newId = generateId('emp');
       const newCompany: CompanyEntity = {
@@ -1258,7 +1282,7 @@ export const CompanyFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode })
         tradeName: tradeName.trim(),
         taxId: taxId.trim() || undefined,
         isBranch,
-        parentCompanyId: isBranch && parentCompanyId ? parentCompanyId : undefined,
+        parentCompanyId: resolvedParentCompanyId,
         branchCode: branchCode.trim() || (isBranch ? 'FIL-01' : 'MAT-01'),
         managerName: contactName.trim() || 'Responsável Principal',
         freeEmployeesLimit: Math.max(0, Number(freeEmployeesLimit) || 10),
@@ -1344,7 +1368,7 @@ export const CompanyFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode })
           tradeName: tradeName.trim(),
           taxId: taxId.trim() || undefined,
           isBranch,
-          parentCompanyId: isBranch && parentCompanyId ? parentCompanyId : undefined,
+          parentCompanyId: resolvedParentCompanyId,
           branchCode: branchCode.trim() || (isBranch ? 'FIL-01' : 'MAT-01'),
           managerName: contactName.trim(),
           freeEmployeesLimit: Math.max(0, Number(freeEmployeesLimit) || 10),

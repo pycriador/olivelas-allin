@@ -130,6 +130,23 @@ export interface CompanyLicenseAndBillingSummary {
   nextBillingDueDate: string;
 }
 
+export function resolveParentMatrizForBranch(
+  company: CompanyEntity,
+  allCompanies: CompanyEntity[],
+): CompanyEntity | undefined {
+  if (!company.isBranch) return undefined;
+  if (company.parentCompanyId) {
+    const explicitParent = allCompanies.find(
+      (c) => c.id === company.parentCompanyId && !c.isBranch && c.id !== company.id,
+    );
+    if (explicitParent) return explicitParent;
+  }
+  return (
+    allCompanies.find((c) => c.id === 'emp-olivelas-matriz' && !c.isBranch && c.id !== company.id) ||
+    allCompanies.find((c) => !c.isBranch && c.id !== company.id)
+  );
+}
+
 export function computeCompanyLicenseSummary(
   company: CompanyEntity,
   allCompanies: CompanyEntity[] = [],
@@ -184,12 +201,13 @@ export function computeCompanyLicenseSummary(
   const primaryContact = company.contacts?.[0];
   const adminEmployee = employees.find((e) => e.role === 'STORE_ADMIN');
 
-  const parentCompany = company.parentCompanyId
-    ? allCompanies.find((c) => c.id === company.parentCompanyId)
-    : undefined;
+  const parentCompany = resolveParentMatrizForBranch(company, allCompanies);
 
   const childBranchesCount = allCompanies.filter(
-    (c) => c.isBranch && c.parentCompanyId === company.id && !c.archiveMetadata.isArchived,
+    (c) =>
+      c.isBranch &&
+      !c.archiveMetadata.isArchived &&
+      resolveParentMatrizForBranch(c, allCompanies)?.id === company.id,
   ).length;
 
   let paymentStatus: 'ACTIVE' | 'PENDING' | 'PAST_DUE' | 'TRIAL' | 'SUSPENDED' =
@@ -205,7 +223,7 @@ export function computeCompanyLicenseSummary(
     companyName: company.legalName,
     tradeName: company.tradeName,
     isBranch: Boolean(company.isBranch),
-    parentCompanyId: company.parentCompanyId,
+    parentCompanyId: parentCompany?.id || company.parentCompanyId,
     parentCompanyName: parentCompany?.tradeName || parentCompany?.legalName,
     branchCode: company.branchCode || (company.isBranch ? 'FIL-01' : 'MATRIZ'),
     childBranchesCount,
@@ -237,8 +255,7 @@ export function computeCompanyLicenseSummary(
  * Organizes companies hierarchically so each Matriz is followed immediately by its Filiais (`isBranch && parentCompanyId === matriz.id`).
  */
 export function sortCompaniesHierarchically(companies: CompanyEntity[]): CompanyEntity[] {
-  const byId = new Map(companies.map((c) => [c.id, c]));
-  const matrizes = companies.filter((c) => !c.isBranch || !c.parentCompanyId || !byId.has(c.parentCompanyId));
+  const matrizes = companies.filter((c) => !c.isBranch);
   const result: CompanyEntity[] = [];
   const visited = new Set<string>();
 
@@ -248,11 +265,17 @@ export function sortCompaniesHierarchically(companies: CompanyEntity[]): Company
     result.push(matriz);
 
     const children = companies.filter(
-      (c) => c.isBranch && c.parentCompanyId === matriz.id && !visited.has(c.id),
+      (c) =>
+        c.isBranch &&
+        !visited.has(c.id) &&
+        resolveParentMatrizForBranch(c, companies)?.id === matriz.id,
     );
     for (const child of children) {
       visited.add(child.id);
-      result.push(child);
+      result.push({
+        ...child,
+        parentCompanyId: matriz.id,
+      });
     }
   }
 
