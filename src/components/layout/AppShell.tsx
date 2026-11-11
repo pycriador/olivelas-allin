@@ -937,14 +937,6 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
             >
               <Menu size={15} />
             </button>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className={`badge ${mode === 'global' ? 'badge-info' : 'badge-teal'}`}>
-                {mode === 'global' ? t('scope.global') : `${t('scope.company')}: ${currentCompany?.tradeName}`}
-              </span>
-              <span className="badge badge-success">
-                <Sparkles size={11} /> 16 Módulos Olivelas Ativos
-              </span>
-            </div>
           </div>
 
           <div className="flex items-center gap-2 flex-wrap">
