@@ -20,7 +20,7 @@ import {
 } from '../seed/initialData';
 
 export const DB_NAME = 'olivelas_allin_mock_v1';
-export const DB_VERSION = 5;
+export const DB_VERSION = 6;
 
 export type StoreName =
   | 'roles'

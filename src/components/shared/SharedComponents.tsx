@@ -61,7 +61,10 @@ export const PageHeader: React.FC<{
   actions?: React.ReactNode;
 }> = ({ breadcrumbs, title, subtitle, scopeBadge, actions }) => {
   return (
-    <header className="flex flex-col gap-2 pb-2" style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+    <header
+      className="flex flex-col gap-1 pb-1.5"
+      style={{ borderBottom: '1px solid var(--border-subtle)', minWidth: 0 }}
+    >
       <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-muted flex-wrap">
         {breadcrumbs.map((bc, idx) => (
           <React.Fragment key={idx}>
@@ -78,15 +81,19 @@ export const PageHeader: React.FC<{
           </React.Fragment>
         ))}
       </nav>
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex flex-col gap-1">
+      <div className="flex items-center justify-between gap-3 flex-wrap" style={{ minWidth: 0 }}>
+        <div className="flex flex-col gap-0.5" style={{ minWidth: 0, flex: 1 }}>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 style={{ fontSize: '1.35rem' }}>{title}</h1>
+            <h1 style={{ fontSize: '1.15rem', lineHeight: 1.2 }}>{title}</h1>
             {scopeBadge && <span className="badge badge-teal">{scopeBadge}</span>}
           </div>
-          {subtitle && <p className="text-sm text-muted">{subtitle}</p>}
+          {subtitle && (
+            <p className="text-xs text-muted truncate" title={subtitle}>
+              {subtitle}
+            </p>
+          )}
         </div>
-        {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
+        {actions && <div className="flex items-center gap-1.5 flex-wrap shrink-0">{actions}</div>}
       </div>
     </header>
   );
@@ -100,12 +107,15 @@ export const ModalDialog: React.FC<{
   onClose: () => void;
   title: string;
   subtitle?: string;
+  description?: string;
   size?: 'md' | 'lg';
+  maxWidth?: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
-}> = ({ open, onClose, title, subtitle, size = 'md', children, footer }) => {
+}> = ({ open, onClose, title, subtitle, description, size = 'md', maxWidth, children, footer }) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
   const titleId = useId();
+  const resolvedSubtitle = subtitle || description;
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -165,13 +175,14 @@ export const ModalDialog: React.FC<{
       closedby="any"
       aria-labelledby={titleId}
       className={`app-dialog ${size === 'lg' ? 'app-dialog-lg' : ''}`}
+      style={maxWidth ? { maxWidth, width: '95vw' } : undefined}
     >
       <div className="card-header" style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'var(--bg-surface)' }}>
         <div className="flex flex-col gap-0.5">
           <h2 id={titleId} style={{ fontSize: '1.05rem' }}>
             {title}
           </h2>
-          {subtitle && <span className="text-xs text-muted">{subtitle}</span>}
+          {resolvedSubtitle && <span className="text-xs text-muted">{resolvedSubtitle}</span>}
         </div>
         <button
           type="button"
@@ -190,12 +201,13 @@ export const ModalDialog: React.FC<{
 };
 
 export interface ActionDropdownItem {
-  key: string;
+  key?: string;
+  id?: string;
   label: string;
   icon?: React.ReactNode;
   onClick?: () => void;
   to?: string;
-  variant?: 'default' | 'danger';
+  variant?: 'default' | 'primary' | 'danger';
   dividerBefore?: boolean;
 }
 
@@ -290,8 +302,8 @@ export const ActionDropdownMenu: React.FC<{
             left: coords.left,
           }}
         >
-          {items.map((item) => (
-            <React.Fragment key={item.key}>
+          {items.map((item, idx) => (
+            <React.Fragment key={item.key || item.id || idx}>
               {item.dividerBefore && <div className="action-dropdown-divider" role="separator" />}
               {item.to ? (
                 <Link
@@ -417,6 +429,7 @@ export interface TableColumn<T> {
   header: string;
   sortable?: boolean;
   isNumeric?: boolean;
+  width?: string;
   render: (item: T) => React.ReactNode;
   csvValue?: (item: T) => string | number | boolean;
 }
@@ -465,7 +478,7 @@ export function UrlDataTable<T extends { id: string }>({
   const sort = searchParams.get('sort') || defaultSortField;
   const order = (searchParams.get('order') as 'asc' | 'desc') || 'desc';
   const page = Number(searchParams.get('page')) || 1;
-  const pageSize = Number(searchParams.get('pageSize')) || 10;
+  const pageSize = Number(searchParams.get('pageSize')) || 7;
 
   const updateParam = (key: string, value: string) => {
     const next = new URLSearchParams(searchParams);
@@ -532,15 +545,15 @@ export function UrlDataTable<T extends { id: string }>({
   }
 
   return (
-    <div className="card">
+    <div className="card url-data-table-card">
       <div className="card-header">
-        <div className="flex items-center gap-2 flex-wrap" style={{ flex: 1 }}>
-          <div style={{ position: 'relative', minWidth: '240px', flex: '1 1 260px', maxWidth: '380px' }}>
+        <div className="flex items-center gap-2 flex-wrap" style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ position: 'relative', minWidth: '180px', flex: '1 1 220px', maxWidth: '340px' }}>
             <Search
-              size={15}
+              size={14}
               style={{
                 position: 'absolute',
-                left: '0.65rem',
+                left: '0.6rem',
                 top: '50%',
                 transform: 'translateY(-50%)',
                 color: 'var(--text-secondary)',
@@ -549,7 +562,7 @@ export function UrlDataTable<T extends { id: string }>({
             <input
               type="search"
               className="input"
-              style={{ paddingLeft: '2rem' }}
+              style={{ padding: '0.35rem 0.65rem 0.35rem 1.85rem', fontSize: '0.78rem' }}
               value={search}
               onChange={(e) => updateParam('search', e.target.value)}
               placeholder={searchPlaceholder || t('common.search')}
@@ -560,7 +573,7 @@ export function UrlDataTable<T extends { id: string }>({
           {statusOptions && statusOptions.length > 0 && (
             <select
               className="select"
-              style={{ width: 'auto', minWidth: '150px' }}
+              style={{ width: 'auto', minWidth: '130px', padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
               value={status}
               onChange={(e) => updateParam('status', e.target.value)}
               aria-label={t('common.status')}
@@ -576,7 +589,7 @@ export function UrlDataTable<T extends { id: string }>({
 
           <select
             className="select"
-            style={{ width: 'auto', minWidth: '165px' }}
+            style={{ width: 'auto', minWidth: '140px', padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
             value={includeArchived}
             onChange={(e) => updateParam('includeArchived', e.target.value)}
             aria-label="Filtro de arquivamento"
@@ -595,7 +608,7 @@ export function UrlDataTable<T extends { id: string }>({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <button type="button" className="btn btn-secondary btn-sm" onClick={handleExportCsv}>
             <Download size={14} />
             {t('common.exportCsv')}
@@ -625,6 +638,7 @@ export function UrlDataTable<T extends { id: string }>({
                   key={col.key}
                   scope="col"
                   className={col.isNumeric ? 'num' : undefined}
+                  style={col.width ? { width: col.width } : undefined}
                 >
                   {col.sortable ? (
                     <button
@@ -652,18 +666,25 @@ export function UrlDataTable<T extends { id: string }>({
                   )}
                 </th>
               ))}
-              {(onArchiveClick || onRestoreClick) && (
-                <th scope="col" className="num">
-                  {t('common.actions')}
-                </th>
-              )}
+              {!columns.some((c) => ['actions', 'quickActions', 'nav', 'details', 'inspect'].includes(c.key)) &&
+                (onArchiveClick || onRestoreClick) && (
+                  <th scope="col" className="num">
+                    {t('common.actions')}
+                  </th>
+                )}
             </tr>
           </thead>
           <tbody>
             {paginated.items.length === 0 ? (
               <tr>
                 <td
-                  colSpan={columns.length + (onArchiveClick || onRestoreClick ? 1 : 0)}
+                  colSpan={
+                    columns.length +
+                    (!columns.some((c) => ['actions', 'quickActions', 'nav', 'details', 'inspect'].includes(c.key)) &&
+                    (onArchiveClick || onRestoreClick)
+                      ? 1
+                      : 0)
+                  }
                   style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-secondary)' }}
                 >
                   {t('common.noResults')}
@@ -672,6 +693,9 @@ export function UrlDataTable<T extends { id: string }>({
             ) : (
               paginated.items.map((item) => {
                 const isArchived = isArchivedExtractor ? isArchivedExtractor(item) : false;
+                const hasCustomActions = columns.some((c) =>
+                  ['actions', 'quickActions', 'nav', 'details', 'inspect'].includes(c.key),
+                );
                 return (
                   <tr key={item.id}>
                     {columns.map((col) => (
@@ -679,31 +703,35 @@ export function UrlDataTable<T extends { id: string }>({
                         {col.render(item)}
                       </td>
                     ))}
-                    {(onArchiveClick || onRestoreClick) && (
+                    {!hasCustomActions && (onArchiveClick || onRestoreClick) && (
                       <td className="num">
                         <div className="flex items-center gap-1" style={{ justifyContent: 'flex-end' }}>
-                          {isArchived && onRestoreClick ? (
-                            <button
-                              type="button"
-                              className="btn btn-secondary btn-sm"
-                              onClick={() => onRestoreClick(item)}
-                            >
-                              <RotateCcw size={13} />
-                              {t('common.restore')}
-                            </button>
-                          ) : (
-                            !isArchived &&
-                            onArchiveClick && (
-                              <button
-                                type="button"
-                                className="btn btn-ghost btn-sm"
-                                onClick={() => onArchiveClick(item)}
-                              >
-                                <Archive size={13} />
-                                {t('common.archive')}
-                              </button>
-                            )
-                          )}
+                          <ActionDropdownMenu
+                            label="Ações"
+                            items={[
+                              ...(isArchived && onRestoreClick
+                                ? [
+                                    {
+                                      id: 'restore',
+                                      label: t('common.restore'),
+                                      icon: <RotateCcw size={14} />,
+                                      onClick: () => onRestoreClick(item),
+                                    },
+                                  ]
+                                : []),
+                              ...(!isArchived && onArchiveClick
+                                ? [
+                                    {
+                                      id: 'archive',
+                                      label: t('common.archive'),
+                                      icon: <Archive size={14} />,
+                                      variant: 'danger' as const,
+                                      onClick: () => onArchiveClick(item),
+                                    },
+                                  ]
+                                : []),
+                            ]}
+                          />
                         </div>
                       </td>
                     )}
@@ -733,6 +761,8 @@ export function UrlDataTable<T extends { id: string }>({
             onChange={(e) => updateParam('pageSize', e.target.value)}
           >
             <option value={5}>5</option>
+            <option value={7}>7</option>
+            <option value={8}>8</option>
             <option value={10}>10</option>
             <option value={25}>25</option>
             <option value={50}>50</option>

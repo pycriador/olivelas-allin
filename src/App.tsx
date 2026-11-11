@@ -20,6 +20,7 @@ import {
   CompanyFormPage,
 } from './pages/global/CompaniesModule';
 import {
+  RoleFormPage,
   RolesAndHbacPage,
   UserDetailAndMatrixPage,
   UserFormPage,
@@ -35,19 +36,24 @@ import {
   ModuleFormPage,
 } from './pages/shared/ModulesAndContractsModule';
 import {
+  ChargeFormPage,
   FinanceHubPage,
   PaymentMethodDetailPage,
   PaymentMethodFormPage,
   PaymentMethodsPage,
 } from './pages/shared/FinanceModule';
 import {
+  ApiCollectionFormPage,
+  ApiEnvironmentFormPage,
   ApiHubCatalogPage,
   ApiServiceFormPage,
   ApiServiceInspectorAndRunnerPage,
+  ApiTokenFormPage,
 } from './pages/global/ApiHubModule';
 import {
   AuditEventDetailPage,
   AuditListPage,
+  CompanyOperationItemFormPage,
   CompanyOperationModulePage,
   TicketDetailPage,
   TicketFormPage,
@@ -91,6 +97,8 @@ export const App: React.FC = () => {
         <Route path="usuarios/:usuarioId" element={<UserDetailAndMatrixPage scope="global" />} />
         <Route path="usuarios/:usuarioId/editar" element={<UserFormPage scope="global" mode="edit" />} />
         <Route path="papeis" element={<RolesAndHbacPage scope="global" />} />
+        <Route path="papeis/novo" element={<RoleFormPage scope="global" mode="create" />} />
+        <Route path="papeis/:papelId/editar" element={<RoleFormPage scope="global" mode="edit" />} />
 
         {/* 9. Catálogo Comercial de Módulos */}
         <Route path="modulos" element={<GlobalModulesCatalogPage />} />
@@ -99,22 +107,31 @@ export const App: React.FC = () => {
         <Route path="modulos/:moduloId/editar" element={<ModuleFormPage mode="edit" />} />
 
         {/* 10. Contratos e Assinaturas */}
-        <Route path="contratos" element={<ContractsListPage scope="global" />} />
-        <Route path="contratos/novo" element={<ContractFormPage mode="create" />} />
+        <Route path="contratos" element={<ContractsListPage scope="global" activeTab="contratos" />} />
+        <Route path="contratos/propostas" element={<ContractsListPage scope="global" activeTab="propostas" />} />
+        <Route path="contratos/assinaturas" element={<ContractsListPage scope="global" activeTab="assinaturas" />} />
+        <Route path="contratos/editor" element={<ContractsListPage scope="global" activeTab="editor" />} />
+        <Route path="contratos/novo" element={<ContractFormPage mode="create" scope="global" />} />
         <Route path="contratos/:contratoId" element={<ContractDetailAndSignaturePage scope="global" />} />
-        <Route path="contratos/:contratoId/editar" element={<ContractFormPage mode="edit" />} />
+        <Route path="contratos/:contratoId/editar" element={<ContractFormPage mode="edit" scope="global" />} />
         <Route path="contratos/:contratoId/assinatura" element={<ContractDetailAndSignaturePage scope="global" />} />
 
         {/* 11. Financeiro, Cobranças, Parcelas e Pagamentos */}
         <Route path="financeiro" element={<FinanceHubPage scope="global" activeTab="overview" />} />
         <Route path="financeiro/cobrancas" element={<FinanceHubPage scope="global" activeTab="cobrancas" />} />
+        <Route path="financeiro/cobrancas/nova" element={<ChargeFormPage scope="global" mode="create" />} />
+        <Route path="financeiro/cobrancas/:cobrancaId/editar" element={<ChargeFormPage scope="global" mode="edit" />} />
         <Route path="financeiro/pagamentos" element={<FinanceHubPage scope="global" activeTab="pagamentos" />} />
         <Route path="financeiro/parcelas" element={<FinanceHubPage scope="global" activeTab="parcelas" />} />
         <Route path="financeiro/conciliacao" element={<FinanceHubPage scope="global" activeTab="conciliacao" />} />
         <Route path="financeiro/relatorios" element={<FinanceHubPage scope="global" activeTab="relatorios" />} />
 
         {/* 12. Meios de Pagamento */}
-        <Route path="meios-pagamento" element={<PaymentMethodsPage />} />
+        <Route path="meios-pagamento" element={<PaymentMethodsPage activeTab="empresas" />} />
+        <Route path="meios-pagamento/empresas" element={<PaymentMethodsPage activeTab="empresas" />} />
+        <Route path="meios-pagamento/canais" element={<PaymentMethodsPage activeTab="canais" />} />
+        <Route path="meios-pagamento/cotas" element={<PaymentMethodsPage activeTab="cotas" />} />
+        <Route path="meios-pagamento/regras" element={<PaymentMethodsPage activeTab="regras" />} />
         <Route path="meios-pagamento/novo" element={<PaymentMethodFormPage mode="create" />} />
         <Route path="meios-pagamento/:metodoId" element={<PaymentMethodDetailPage />} />
         <Route path="meios-pagamento/:metodoId/editar" element={<PaymentMethodFormPage mode="edit" />} />
@@ -127,8 +144,14 @@ export const App: React.FC = () => {
         <Route path="api-hub/servicos/:servicoId/editar" element={<ApiServiceFormPage mode="edit" />} />
         <Route path="api-hub/servicos/:servicoId/testar" element={<ApiServiceInspectorAndRunnerPage />} />
         <Route path="api-hub/colecoes" element={<ApiHubCatalogPage activeTab="colecoes" />} />
+        <Route path="api-hub/colecoes/novo" element={<ApiCollectionFormPage mode="create" />} />
+        <Route path="api-hub/colecoes/:colecaoId/editar" element={<ApiCollectionFormPage mode="edit" />} />
         <Route path="api-hub/ambientes" element={<ApiHubCatalogPage activeTab="ambientes" />} />
+        <Route path="api-hub/ambientes/novo" element={<ApiEnvironmentFormPage mode="create" />} />
+        <Route path="api-hub/ambientes/:ambienteId/editar" element={<ApiEnvironmentFormPage mode="edit" />} />
         <Route path="api-hub/tokens" element={<ApiHubCatalogPage activeTab="tokens" />} />
+        <Route path="api-hub/tokens/novo" element={<ApiTokenFormPage mode="create" />} />
+        <Route path="api-hub/tokens/:tokenId/editar" element={<ApiTokenFormPage mode="edit" />} />
         <Route path="api-hub/historico" element={<ApiHubCatalogPage activeTab="historico" />} />
 
         {/* 14. Tickets e Suporte */}
@@ -159,25 +182,36 @@ export const App: React.FC = () => {
         <Route path="usuarios/:usuarioId" element={<UserDetailAndMatrixPage scope="company" />} />
         <Route path="usuarios/:usuarioId/editar" element={<UserFormPage scope="company" mode="edit" />} />
         <Route path="papeis" element={<RolesAndHbacPage scope="company" />} />
+        <Route path="papeis/novo" element={<RoleFormPage scope="company" mode="create" />} />
+        <Route path="papeis/:papelId/editar" element={<RoleFormPage scope="company" mode="edit" />} />
 
         {/* Módulos Contratados e Solicitação sob Demanda */}
         <Route path="modulos" element={<CompanyModulesSubscriptionPage />} />
 
         {/* Contratos da Empresa */}
-        <Route path="contratos" element={<ContractsListPage scope="company" />} />
+        <Route path="contratos" element={<ContractsListPage scope="company" activeTab="contratos" />} />
+        <Route path="contratos/assinaturas" element={<ContractsListPage scope="company" activeTab="assinaturas" />} />
+        <Route path="contratos/editor" element={<ContractsListPage scope="company" activeTab="editor" />} />
+        <Route path="contratos/novo" element={<ContractFormPage mode="create" scope="company" />} />
         <Route path="contratos/:contratoId" element={<ContractDetailAndSignaturePage scope="company" />} />
+        <Route path="contratos/:contratoId/editar" element={<ContractFormPage mode="edit" scope="company" />} />
         <Route path="contratos/:contratoId/assinatura" element={<ContractDetailAndSignaturePage scope="company" />} />
 
         {/* Financeiro da Empresa */}
         <Route path="financeiro" element={<FinanceHubPage scope="company" activeTab="overview" />} />
         <Route path="financeiro/cobrancas" element={<FinanceHubPage scope="company" activeTab="cobrancas" />} />
+        <Route path="financeiro/cobrancas/nova" element={<ChargeFormPage scope="company" mode="create" />} />
+        <Route path="financeiro/cobrancas/:cobrancaId/editar" element={<ChargeFormPage scope="company" mode="edit" />} />
         <Route path="financeiro/pagamentos" element={<FinanceHubPage scope="company" activeTab="pagamentos" />} />
         <Route path="financeiro/parcelas" element={<FinanceHubPage scope="company" activeTab="parcelas" />} />
 
         {/* Operação dos Módulos Contratados (Estoque, Vendas, CRM) e 16 Plataformas Olivelas */}
         <Route path="operacao/estoque" element={<CompanyOperationModulePage moduleType="inventory" />} />
+        <Route path="operacao/estoque/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="inventory" />} />
         <Route path="operacao/vendas" element={<CompanyOperationModulePage moduleType="orders" />} />
+        <Route path="operacao/vendas/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="orders" />} />
         <Route path="operacao/crm" element={<CompanyOperationModulePage moduleType="crm" />} />
+        <Route path="operacao/crm/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="crm" />} />
         <Route path="ecossistema" element={<OlivelasEcosystemHub />} />
         <Route path="ecossistema/:moduleSlug" element={<OlivelasEcosystemHub />} />
 

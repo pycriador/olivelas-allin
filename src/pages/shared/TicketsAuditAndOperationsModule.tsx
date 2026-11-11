@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  Calendar,
   Copy,
   Database,
   Download,
   Edit3,
+  Eye,
+  FileSpreadsheet,
+  Filter,
   MessageSquare,
   Package,
   Plus,
   RefreshCw,
+  RotateCcw,
   Save,
   Send,
   ShieldCheck,
   ShoppingCart,
+  Trash2,
   Users,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
@@ -27,9 +33,11 @@ import {
 import { generateId, repositories } from '../../repositories/repositories';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
 import { getUserActiveRoles } from '../../services/hbacService';
+import { exportRowsToCsv } from '../../services/operationalUtils';
 import { isSupabaseConfigured, supabase } from '../../lib/supabase/client';
 import {
   AccessDeniedView,
+  ActionDropdownMenu,
   ArchiveRecordDialog,
   ModalDialog,
   PageHeader,
@@ -51,8 +59,10 @@ export const TicketsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ sco
     notify,
     t,
   } = useApp();
+  const navigate = useNavigate();
 
   const [archiveTarget, setArchiveTarget] = useState<TicketEntity | null>(null);
+  const [inspectTicket, setInspectTicket] = useState<TicketEntity | null>(null);
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
   const baseRoute =
@@ -81,7 +91,7 @@ export const TicketsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ sco
     : tickets;
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -91,7 +101,7 @@ export const TicketsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ sco
           { label: t('nav.tickets') },
         ]}
         title="Central de Atendimento & Tickets Operacionais"
-        subtitle="Gestão de chamados por empresa, controle de prioridade, SLA, notas internas da plataforma e histórico auditado."
+        subtitle={`Gestão de chamados por empresa, controle de prioridade, SLA e notas internas auditadas • ${scopedTickets.length} chamados registrados`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           hasPermission('tickets', 'create', targetCompanyId) && (
@@ -123,41 +133,45 @@ export const TicketsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ sco
           { value: 'archived', label: t('status.archived') },
         ]}
         isArchivedExtractor={(tk) => tk.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission('tickets', 'archive', targetCompanyId)
-            ? (tk) => setArchiveTarget(tk)
-            : undefined
-        }
-        onRestoreClick={
-          hasPermission('tickets', 'archive', targetCompanyId)
-            ? async (tk) => {
-                await repositories.tickets.restore(tk.id, getActor(tk.companyId));
-                await refreshData();
-                notify({ type: 'success', title: `Ticket ${tk.code} restaurado.` });
-              }
-            : undefined
-        }
         columns={[
           {
             key: 'code',
-            header: 'Protocolo / Assunto',
+            header: 'Protocolo & Assunto',
+            width: '28%',
             sortable: true,
             render: (tk) => (
               <div>
-                <Link to={`${baseRoute}/${tk.id}`} className="mono font-semibold">
-                  {tk.code}
-                </Link>
-                <div className="text-sm font-medium">{tk.subject}</div>
-                <div className="text-xs text-muted">{tk.companyName}</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Link to={`${baseRoute}/${tk.id}`} className="mono font-semibold">
+                    {tk.code}
+                  </Link>
+                  <span className="text-xs text-muted">
+                    • {formatDateTime(tk.createdAt, session.language)}
+                  </span>
+                </div>
+                <div className="text-xs font-medium mt-0.5">{tk.subject}</div>
               </div>
             ),
           },
           {
-            key: 'priority',
-            header: 'Prioridade / Categoria',
+            key: 'companyName',
+            header: 'Empresa & Solicitante',
+            width: '20%',
             sortable: true,
             render: (tk) => (
-              <div className="flex flex-col gap-1">
+              <div>
+                <div className="font-semibold text-xs">{tk.companyName}</div>
+                <div className="text-xs text-muted">Solicitante: {tk.openedByUserName}</div>
+              </div>
+            ),
+          },
+          {
+            key: 'category',
+            header: 'Categoria & Prioridade',
+            width: '15%',
+            sortable: true,
+            render: (tk) => (
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <span
                   className={`badge ${
                     tk.priority === 'urgent' || tk.priority === 'high'
@@ -169,52 +183,143 @@ export const TicketsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ sco
                 >
                   {tk.priority}
                 </span>
-                <span className="text-xs text-muted uppercase">{tk.category}</span>
-              </div>
-            ),
-          },
-          {
-            key: 'status',
-            header: 'Estado / SLA',
-            sortable: true,
-            render: (tk) => (
-              <div className="flex flex-col gap-1">
-                <StatusBadge status={tk.status} />
-                <span className="text-xs text-muted">
-                  SLA: {formatDateTime(tk.slaDueAt, session.language)}
-                </span>
+                <span className="badge badge-neutral uppercase text-xs">{tk.category}</span>
               </div>
             ),
           },
           {
             key: 'assignedToUserName',
-            header: 'Solicitante / Atendente',
+            header: 'Atendente & Prazo SLA',
+            width: '17%',
             render: (tk) => (
-              <div className="text-xs">
-                <div>De: {tk.openedByUserName}</div>
-                <div className="text-muted">Para: {tk.assignedToUserName || 'Fila Geral'}</div>
+              <div>
+                <div className="text-xs font-medium">{tk.assignedToUserName || 'Fila Geral'}</div>
+                <div className="text-xs text-muted mono">
+                  SLA: {formatDateTime(tk.slaDueAt, session.language)}
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: 'status',
+            header: 'Estado & Interações',
+            width: '11%',
+            sortable: true,
+            render: (tk) => (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <StatusBadge status={tk.status} />
+                <span className="badge badge-info text-xs">{tk.comments.length} msg</span>
               </div>
             ),
           },
           {
             key: 'actions',
             header: 'Ações',
+            width: '9%',
+            isNumeric: true,
             render: (tk) => (
-              <div className="flex items-center gap-1">
-                <Link to={`${baseRoute}/${tk.id}`} className="btn btn-secondary btn-sm">
-                  Atender ({tk.comments.length})
-                </Link>
-                {hasPermission('tickets', 'edit', targetCompanyId) && (
-                  <Link to={`${baseRoute}/${tk.id}/editar`} className="btn btn-ghost btn-sm">
-                    <Edit3 size={13} />
-                    Editar
-                  </Link>
-                )}
-              </div>
+              <ActionDropdownMenu
+                label="Ações"
+                items={[
+                  ...(hasPermission('tickets', 'edit', targetCompanyId)
+                    ? [
+                        {
+                          id: 'edit-ticket',
+                          label: 'Editar Chamado (ID Único)',
+                          icon: <Edit3 size={14} />,
+                          variant: 'primary' as const,
+                          onClick: () => navigate(`${baseRoute}/${tk.id}/editar`),
+                        },
+                      ]
+                    : []),
+                  {
+                    id: 'open-ticket',
+                    label: `Atender Chamado (${tk.comments.length})`,
+                    icon: <MessageSquare size={14} />,
+                    onClick: () => navigate(`${baseRoute}/${tk.id}`),
+                  },
+                  {
+                    id: 'quick-inspect',
+                    label: 'Ver Resumo Rápido',
+                    icon: <Eye size={14} />,
+                    onClick: () => setInspectTicket(tk),
+                  },
+                  ...(hasPermission('tickets', 'archive', targetCompanyId)
+                    ? [
+                        tk.archiveMetadata.isArchived
+                          ? {
+                              id: 'restore',
+                              label: t('common.restore'),
+                              icon: <RotateCcw size={14} />,
+                              onClick: async () => {
+                                await repositories.tickets.restore(tk.id, getActor(tk.companyId));
+                                await refreshData();
+                                notify({ type: 'success', title: `Ticket ${tk.code} restaurado.` });
+                              },
+                            }
+                          : {
+                              id: 'archive',
+                              label: t('common.archive'),
+                              icon: <Trash2 size={14} />,
+                              variant: 'danger' as const,
+                              onClick: () => setArchiveTarget(tk),
+                            },
+                      ]
+                    : []),
+                ]}
+              />
             ),
           },
         ]}
       />
+
+      {/* Modal: Inspeção Rápida de Ticket (com X) */}
+      <ModalDialog
+        open={Boolean(inspectTicket)}
+        onClose={() => setInspectTicket(null)}
+        title={inspectTicket ? `${inspectTicket.code} — ${inspectTicket.subject}` : 'Ticket'}
+        description={inspectTicket ? `Empresa: ${inspectTicket.companyName} • Aberto por ${inspectTicket.openedByUserName}` : ''}
+        maxWidth="680px"
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setInspectTicket(null)}>
+              Fechar
+            </button>
+            {inspectTicket && (
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => {
+                  const id = inspectTicket.id;
+                  setInspectTicket(null);
+                  navigate(`${baseRoute}/${id}`);
+                }}
+              >
+                <MessageSquare size={14} /> Abrir Atendimento Completo
+              </button>
+            )}
+          </>
+        }
+      >
+        {inspectTicket && (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <StatusBadge status={inspectTicket.status} />
+              <span className="badge badge-warning uppercase">{inspectTicket.priority}</span>
+              <span className="badge badge-neutral uppercase">{inspectTicket.category}</span>
+              <span className="text-xs text-muted">
+                SLA: {formatDateTime(inspectTicket.slaDueAt, session.language)}
+              </span>
+            </div>
+            <div className="card card-body bg-subtle text-sm">
+              {inspectTicket.description}
+            </div>
+            <div className="text-xs text-muted">
+              <strong>Histórico de Interações:</strong> {inspectTicket.comments.length} mensagem(ns) registrada(s).
+            </div>
+          </div>
+        )}
+      </ModalDialog>
 
       <ArchiveRecordDialog
         open={Boolean(archiveTarget)}
@@ -700,8 +805,17 @@ export const TicketDetailPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
 export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
   const { auditEvents, companies, session, hasPermission, notify, t } = useApp();
+  const navigate = useNavigate();
+
   const [remoteEvents, setRemoteEvents] = useState<AuditEventEntity[]>([]);
   const [syncingSupabase, setSyncingSupabase] = useState(false);
+
+  // Advanced Audit Filters (inspired by gestao_estoque AuditLogsPage)
+  const [filterCompanyId, setFilterCompanyId] = useState<string>('ALL');
+  const [filterModule, setFilterModule] = useState<string>('ALL');
+  const [dateFrom, setDateFrom] = useState<string>('');
+  const [dateTo, setDateTo] = useState<string>('');
+  const [inspectEvent, setInspectEvent] = useState<AuditEventEntity | null>(null);
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
@@ -770,9 +884,39 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
     return Array.from(map.values()).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
   }, [auditEvents, remoteEvents]);
 
-  const scopedEvents = targetCompanyId
-    ? mergedEvents.filter((ev) => ev.companyId === targetCompanyId)
-    : mergedEvents;
+  const distinctModules = React.useMemo(() => {
+    const s = new Set<string>();
+    mergedEvents.forEach((e) => {
+      if (e.module) s.add(e.module);
+    });
+    return Array.from(s).sort();
+  }, [mergedEvents]);
+
+  const scopedEvents = React.useMemo(() => {
+    return mergedEvents.filter((ev) => {
+      if (targetCompanyId && ev.companyId !== targetCompanyId) return false;
+      if (!targetCompanyId && filterCompanyId !== 'ALL') {
+        if (filterCompanyId === 'GLOBAL_ONLY' && ev.companyId) return false;
+        if (filterCompanyId !== 'GLOBAL_ONLY' && ev.companyId !== filterCompanyId) return false;
+      }
+      if (filterModule !== 'ALL' && ev.module !== filterModule) return false;
+      if (dateFrom) {
+        const d = ev.timestamp.slice(0, 10);
+        if (d < dateFrom) return false;
+      }
+      if (dateTo) {
+        const d = ev.timestamp.slice(0, 10);
+        if (d > dateTo) return false;
+      }
+      return true;
+    });
+  }, [mergedEvents, targetCompanyId, filterCompanyId, filterModule, dateFrom, dateTo]);
+
+  const criticalEventsCount = scopedEvents.filter((ev) =>
+    ['grant_permission', 'revoke_permission', 'sign_contract', 'reconcile_payment', 'archive', 'revoke_token'].includes(
+      ev.action,
+    ),
+  ).length;
 
   const handleExportForensicJson = () => {
     const blob = new Blob([JSON.stringify(scopedEvents, null, 2)], {
@@ -791,8 +935,49 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
     });
   };
 
+  const handleExportAuditCsv = () => {
+    exportRowsToCsv(
+      `auditoria-forense-${scope}-${new Date().toISOString().slice(0, 10)}.csv`,
+      [
+        'ID Evento',
+        'Data/Hora',
+        'Correlation ID',
+        'Ator',
+        'Papel',
+        'Ação',
+        'Módulo',
+        'Empresa / Unidade',
+        'Resumo',
+      ],
+      scopedEvents.map((ev) => [
+        ev.id,
+        ev.timestamp,
+        ev.correlationId,
+        ev.actorName,
+        ev.actorRole,
+        ev.action,
+        ev.module,
+        ev.companyName || 'Global Plataforma',
+        ev.summary,
+      ]),
+    );
+    notify({
+      type: 'success',
+      title: 'Planilha CSV de Auditoria Exportada',
+      description: `${scopedEvents.length} evento(s) exportado(s).`,
+    });
+  };
+
+  const getActionBadgeClass = (action: string) => {
+    if (action === 'create' || action === 'restore' || action === 'sign_contract') return 'badge-success';
+    if (action === 'archive' || action === 'revoke_permission' || action === 'revoke_token') return 'badge-danger';
+    if (action === 'grant_permission' || action === 'reconcile_payment') return 'badge-teal';
+    if (action === 'execute_api') return 'badge-info';
+    return 'badge-warning';
+  };
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -801,8 +986,8 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           },
           { label: t('nav.audit') },
         ]}
-        title="Trilha de Auditoria Forense & Governança Operacional"
-        subtitle="Registro cronológico imutável sincronizado com public.allin_audit_events no Supabase PostgreSQL."
+        title="Trilha de Auditoria Forense, Logs de Mutação & Diff JSON (Before / After)"
+        subtitle={`${scopedEvents.length} eventos registrados • ${criticalEventsCount} mutações críticas • ${distinctModules.length} módulos monitorados`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           <div className="flex items-center gap-2 flex-wrap">
@@ -813,7 +998,15 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
               disabled={syncingSupabase}
             >
               <RefreshCw size={14} />
-              {syncingSupabase ? 'Sincronizando...' : 'Sincronizar Supabase (allin_audit_events)'}
+              {syncingSupabase ? 'Sincronizando...' : 'Sincronizar Supabase'}
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={handleExportAuditCsv}
+            >
+              <FileSpreadsheet size={14} />
+              Exportar CSV ({scopedEvents.length})
             </button>
             <button
               type="button"
@@ -848,50 +1041,102 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           { value: 'reconcile_payment', label: 'Conciliação Financeira' },
           { value: 'execute_api', label: 'Execução API Hub' },
         ]}
+        extraFiltersRender={() => (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <Filter size={13} className="text-muted" />
+            {scope === 'global' && (
+              <select
+                aria-label="Filtrar Empresa ou Filial"
+                className="form-select"
+                style={{ width: 'auto', minWidth: '155px' }}
+                value={filterCompanyId}
+                onChange={(e) => setFilterCompanyId(e.target.value)}
+              >
+                <option value="ALL">Todas as Empresas</option>
+                <option value="GLOBAL_ONLY">Apenas Console Global</option>
+                {companies.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.tradeName}
+                  </option>
+                ))}
+              </select>
+            )}
+            <select
+              aria-label="Filtrar Módulo"
+              className="form-select"
+              style={{ width: 'auto', minWidth: '140px' }}
+              value={filterModule}
+              onChange={(e) => setFilterModule(e.target.value)}
+            >
+              <option value="ALL">Todos os Módulos ({distinctModules.length})</option>
+              {distinctModules.map((m) => (
+                <option key={m} value={m}>
+                  {m.toUpperCase()}
+                </option>
+              ))}
+            </select>
+            {(filterCompanyId !== 'ALL' || filterModule !== 'ALL' || dateFrom || dateTo) && (
+              <button
+                type="button"
+                className="btn btn-ghost btn-sm text-xs"
+                onClick={() => {
+                  setFilterCompanyId('ALL');
+                  setFilterModule('ALL');
+                  setDateFrom('');
+                  setDateTo('');
+                }}
+              >
+                Limpar
+              </button>
+            )}
+          </div>
+        )}
         columns={[
           {
             key: 'timestamp',
-            header: 'Data/Hora / Correlation ID',
+            header: 'Data/Hora / Ator & Papel',
+            width: '25%',
             sortable: true,
             render: (ev) => (
               <div>
-                <Link to={`${baseRoute}/${ev.id}`} className="mono text-xs font-semibold">
-                  {formatDateTime(ev.timestamp, session.language)}
-                </Link>
-                <div className="mono text-xs text-muted">{ev.correlationId}</div>
-              </div>
-            ),
-          },
-          {
-            key: 'actorName',
-            header: 'Ator / Papel',
-            sortable: true,
-            render: (ev) => (
-              <div>
-                <div className="font-medium text-sm">{ev.actorName}</div>
-                <div className="text-xs text-muted">{ev.actorRole}</div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Link to={`${baseRoute}/${ev.id}`} className="mono text-xs font-semibold">
+                    {formatDateTime(ev.timestamp, session.language)}
+                  </Link>
+                  <code className="text-xs text-muted">{ev.correlationId}</code>
+                </div>
+                <div className="text-xs font-medium mt-0.5">
+                  {ev.actorName} <span className="text-xs text-muted">({ev.actorRole})</span>
+                </div>
               </div>
             ),
           },
           {
             key: 'action',
-            header: 'Ação / Módulo',
+            header: 'Ação / Módulo & Escopo',
+            width: '22%',
             sortable: true,
             render: (ev) => (
-              <div className="flex flex-col gap-1">
-                <span className="badge badge-teal mono">{ev.action}</span>
-                <span className="text-xs text-muted uppercase">{ev.module}</span>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className={`badge ${getActionBadgeClass(ev.action)} mono`}>{ev.action}</span>
+                  <span className="badge badge-neutral text-xs uppercase">{ev.module}</span>
+                </div>
+                <span className="text-xs text-muted">
+                  {ev.companyName || 'Escopo Global da Plataforma'}
+                </span>
               </div>
             ),
           },
           {
             key: 'summary',
-            header: 'Resumo da Operação / Empresa',
+            header: 'Resumo da Operação',
+            width: '43%',
             render: (ev) => (
               <div>
-                <div className="text-sm">{ev.summary}</div>
-                <div className="text-xs text-muted">
-                  {ev.companyName || 'Escopo Global da Plataforma'}
+                <div className="text-xs font-medium">{ev.summary}</div>
+                <div className="text-xs text-muted mono">
+                  Entidade: {ev.entityType} ({ev.entityId}) • Canal: {ev.origin}
                 </div>
               </div>
             ),
@@ -899,14 +1144,133 @@ export const AuditListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           {
             key: 'details',
             header: 'Inspeção',
+            width: '10%',
+            isNumeric: true,
             render: (ev) => (
-              <Link to={`${baseRoute}/${ev.id}`} className="btn btn-secondary btn-sm">
-                Ver Diff JSON
-              </Link>
+              <ActionDropdownMenu
+                label="Inspecionar"
+                items={[
+                  {
+                    id: 'diff-modal',
+                    label: 'Ver Diff Before/After (Modal)',
+                    icon: <Eye size={14} />,
+                    onClick: () => setInspectEvent(ev),
+                  },
+                  {
+                    id: 'full-page',
+                    label: 'Abrir Página Forense',
+                    icon: <ShieldCheck size={14} />,
+                    onClick: () => navigate(`${baseRoute}/${ev.id}`),
+                  },
+                  {
+                    id: 'copy-json',
+                    label: 'Copiar Payload JSON',
+                    icon: <Copy size={14} />,
+                    onClick: () => {
+                      navigator.clipboard?.writeText(JSON.stringify(ev, null, 2));
+                      notify({ type: 'info', title: `JSON do evento ${ev.id} copiado!` });
+                    },
+                  },
+                ]}
+              />
             ),
           },
         ]}
       />
+
+      {/* Modal: Inspeção de Payload & Diff Lado a Lado (Before vs After JSON) com botão X */}
+      <ModalDialog
+        open={Boolean(inspectEvent)}
+        onClose={() => setInspectEvent(null)}
+        title={inspectEvent ? `Inspeção Forense — ${inspectEvent.action.toUpperCase()} (${inspectEvent.correlationId})` : 'Auditoria'}
+        description={inspectEvent?.summary}
+        maxWidth="920px"
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setInspectEvent(null)}>
+              Fechar
+            </button>
+            {inspectEvent && (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(JSON.stringify(inspectEvent, null, 2));
+                    notify({ type: 'info', title: 'Payload forense copiado!' });
+                  }}
+                >
+                  <Copy size={14} /> Copiar JSON Completo
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    const id = inspectEvent.id;
+                    setInspectEvent(null);
+                    navigate(`${baseRoute}/${id}`);
+                  }}
+                >
+                  Abrir Ficha Completa
+                </button>
+              </>
+            )}
+          </>
+        }
+      >
+        {inspectEvent && (
+          <div className="flex flex-col gap-4">
+            <div className="grid-3 text-xs">
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Executado por</span>
+                <strong className="text-sm">{inspectEvent.actorName}</strong>
+                <span className="text-muted">{inspectEvent.actorRole}</span>
+              </div>
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Empresa / Entidade</span>
+                <strong className="text-sm">{inspectEvent.companyName || 'Console Global'}</strong>
+                <code className="mono text-muted">
+                  {inspectEvent.entityType} ({inspectEvent.entityId})
+                </code>
+              </div>
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Data/Hora &amp; Origem</span>
+                <strong className="mono text-sm">
+                  {formatDateTime(inspectEvent.timestamp, session.language)}
+                </strong>
+                <span className="text-muted">Canal: {inspectEvent.origin.toUpperCase()}</span>
+              </div>
+            </div>
+
+            <div className="grid-2">
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title text-xs uppercase">Estado Anterior (Before / previousValue)</h3>
+                </div>
+                <div className="card-body">
+                  <pre className="code-block text-xs">
+                    {inspectEvent.previousValue
+                      ? JSON.stringify(inspectEvent.previousValue, null, 2)
+                      : '// Sem estado anterior (registro novo ou evento de sessão)'}
+                  </pre>
+                </div>
+              </div>
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title text-xs uppercase">Novo Estado Aplicado (After / newValue)</h3>
+                </div>
+                <div className="card-body">
+                  <pre className="code-block text-xs">
+                    {inspectEvent.newValue
+                      ? JSON.stringify(inspectEvent.newValue, null, 2)
+                      : '// Sem payload de mutação adicional'}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </ModalDialog>
     </div>
   );
 };
@@ -1025,6 +1389,7 @@ export const CompanyOperationModulePage: React.FC<{
   moduleType: 'inventory' | 'orders' | 'crm';
 }> = ({ moduleType }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
+  const navigate = useNavigate();
   const {
     companies,
     operationalItems,
@@ -1038,6 +1403,7 @@ export const CompanyOperationModulePage: React.FC<{
   } = useApp();
 
   const company = companies.find((c) => c.id === empresaId);
+  const [newModalOpen, setNewModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState('');
   const [newQty, setNewQty] = useState(10);
@@ -1131,6 +1497,7 @@ export const CompanyOperationModulePage: React.FC<{
     await refreshData();
     setNewTitle('');
     setNewCategory('');
+    setNewModalOpen(false);
     notify({ type: 'success', title: `Registro ${record.code} sincronizado no Supabase e auditado.` });
   };
 
@@ -1181,86 +1548,24 @@ export const CompanyOperationModulePage: React.FC<{
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           { label: company.tradeName, to: `/app/empresa/${empresaId}` },
           { label: moduleMeta.title.split('—')[0].trim() },
         ]}
         title={moduleMeta.title}
-        subtitle={moduleMeta.subtitle}
+        subtitle={`${moduleMeta.subtitle} • ${currentItems.length} registros ativos`}
         scopeBadge={company.tradeName}
+        actions={
+          hasPermission(moduleType, 'create', empresaId) && (
+            <button type="button" className="btn btn-primary btn-sm" onClick={() => setNewModalOpen(true)}>
+              <Plus size={14} />
+              Novo Registro ({moduleMeta.moduleCode})
+            </button>
+          )
+        }
       />
-
-      {hasPermission(moduleType, 'create', empresaId) && (
-        <form onSubmit={handleAddRecord} className="card">
-          <div className="card-header">
-            <h2 className="card-title flex items-center gap-2">
-              <Database size={15} /> Novo Registro Operacional Auditado (Sincronizado no Supabase)
-            </h2>
-            <span className="badge badge-teal">{moduleMeta.moduleCode}</span>
-          </div>
-          <div className="card-body form-grid">
-            <div className="form-group">
-              <label className="form-label" htmlFor="op-title">
-                Descrição / Item / Cliente *
-              </label>
-              <input
-                id="op-title"
-                className="form-input"
-                required
-                value={newTitle}
-                onChange={(e) => setNewTitle(e.target.value)}
-                placeholder="Informe a identificação do registro..."
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="op-cat">
-                Categoria / Etapa
-              </label>
-              <input
-                id="op-cat"
-                className="form-input"
-                value={newCategory}
-                onChange={(e) => setNewCategory(e.target.value)}
-                placeholder="Ex.: Linha Premium / Atacado"
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="op-qty">
-                Quantidade / Volume
-              </label>
-              <input
-                id="op-qty"
-                type="number"
-                className="form-input"
-                value={newQty}
-                onChange={(e) => setNewQty(Number(e.target.value))}
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="op-amt">
-                Valor Unitário ou Total ({company.currency})
-              </label>
-              <div className="flex gap-2 flex-wrap">
-                <input
-                  id="op-amt"
-                  type="number"
-                  step="0.01"
-                  className="form-input"
-                  style={{ flex: 1, minWidth: 120 }}
-                  value={newAmount}
-                  onChange={(e) => setNewAmount(Number(e.target.value))}
-                />
-                <button type="submit" className="btn btn-primary">
-                  <Plus size={14} />
-                  Registrar
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      )}
 
       <UrlDataTable<OperationalItemEntity>
         tableId={`op-table-${moduleType}-${empresaId}`}
@@ -1277,33 +1582,40 @@ export const CompanyOperationModulePage: React.FC<{
           { value: 'archived', label: t('status.archived') },
         ]}
         isArchivedExtractor={(r) => r.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission(moduleType, 'archive', empresaId) ? (r) => setArchiveTarget(r) : undefined
-        }
-        onRestoreClick={hasPermission(moduleType, 'archive', empresaId) ? handleRestore : undefined}
         columns={[
           {
             key: 'code',
             header: 'Código / Descrição',
+            width: '38%',
             sortable: true,
             csvValue: (r) => `${r.code} - ${r.title}`,
-            render: (r) => (
-              <div>
-                <span className="mono font-semibold">{r.code}</span>
-                <div className="font-medium text-sm">{r.title}</div>
-              </div>
-            ),
+            render: (r) => {
+              const slug = moduleType === 'inventory' ? 'estoque' : moduleType === 'orders' ? 'vendas' : 'crm';
+              return (
+                <div>
+                  <Link
+                    to={`/app/empresa/${empresaId}/operacao/${slug}/${r.id}/editar`}
+                    className="mono font-semibold"
+                    style={{ color: 'var(--brand-primary)' }}
+                  >
+                    {r.code}
+                  </Link>
+                  <div className="font-medium text-xs">{r.title}</div>
+                </div>
+              );
+            },
           },
           {
             key: 'category',
             header: 'Categoria',
+            width: '20%',
             render: (r) => <span className="badge badge-neutral">{r.category}</span>,
           },
           {
             key: 'quantity',
             header: 'Qtd & Valor',
+            width: '20%',
             sortable: true,
-            isNumeric: true,
             render: (r) => (
               <div className="tabular">
                 <div className="font-semibold">
@@ -1316,34 +1628,131 @@ export const CompanyOperationModulePage: React.FC<{
           {
             key: 'status',
             header: 'Estado',
+            width: '12%',
             render: (r) => <StatusBadge status={r.status} />,
           },
           {
             key: 'actions',
-            header: 'Operação',
-            render: (r) =>
-              hasPermission(moduleType, 'edit', empresaId) && !r.archiveMetadata.isArchived ? (
-                <div className="flex items-center gap-1 flex-wrap">
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => handleOpenEdit(r)}
-                  >
-                    <Edit3 size={13} />
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-secondary btn-sm"
-                    onClick={() => handleToggleStatus(r)}
-                  >
-                    Alternar Status
-                  </button>
-                </div>
-              ) : null,
+            header: 'Ações',
+            width: '10%',
+            isNumeric: true,
+            render: (r) => {
+              const slug = moduleType === 'inventory' ? 'estoque' : moduleType === 'orders' ? 'vendas' : 'crm';
+              return (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    ...(hasPermission(moduleType, 'edit', empresaId)
+                      ? [
+                          {
+                            id: 'edit-page',
+                            label: 'Editar Registro (ID Único)',
+                            icon: <Edit3 size={14} />,
+                            variant: 'primary' as const,
+                            onClick: () => navigate(`/app/empresa/${empresaId}/operacao/${slug}/${r.id}/editar`),
+                          },
+                          {
+                            id: 'toggle-status',
+                            label: 'Alternar Status',
+                            icon: <RotateCcw size={14} />,
+                            onClick: () => handleToggleStatus(r),
+                          },
+                        ]
+                      : []),
+                    ...(hasPermission(moduleType, 'archive', empresaId)
+                      ? [
+                          r.archiveMetadata.isArchived
+                            ? {
+                                id: 'restore',
+                                label: t('common.restore'),
+                                icon: <RotateCcw size={14} />,
+                                onClick: () => handleRestore(r),
+                              }
+                            : {
+                                id: 'archive',
+                                label: t('common.archive'),
+                                icon: <Trash2 size={14} />,
+                                variant: 'danger' as const,
+                                onClick: () => setArchiveTarget(r),
+                              },
+                        ]
+                      : []),
+                  ]}
+                />
+              );
+            },
           },
         ]}
       />
+
+      <ModalDialog
+        open={newModalOpen}
+        onClose={() => setNewModalOpen(false)}
+        title={`Novo Registro Operacional — ${moduleMeta.moduleCode}`}
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setNewModalOpen(false)}>
+              {t('common.cancel')}
+            </button>
+            <button type="submit" form="new-op-form" className="btn btn-primary">
+              <Database size={14} /> Registrar no Supabase
+            </button>
+          </>
+        }
+      >
+        <form id="new-op-form" onSubmit={handleAddRecord} className="form-grid">
+          <div className="form-group">
+            <label className="form-label" htmlFor="op-title">
+              Descrição / Item / Cliente *
+            </label>
+            <input
+              id="op-title"
+              className="form-input"
+              required
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Informe a identificação do registro..."
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="op-cat">
+              Categoria / Etapa
+            </label>
+            <input
+              id="op-cat"
+              className="form-input"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Ex.: Linha Premium / Atacado"
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="op-qty">
+              Quantidade / Volume
+            </label>
+            <input
+              id="op-qty"
+              type="number"
+              className="form-input"
+              value={newQty}
+              onChange={(e) => setNewQty(Number(e.target.value))}
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="op-amt">
+              Valor Unitário ou Total ({company.currency})
+            </label>
+            <input
+              id="op-amt"
+              type="number"
+              step="0.01"
+              className="form-input"
+              value={newAmount}
+              onChange={(e) => setNewAmount(Number(e.target.value))}
+            />
+          </div>
+        </form>
+      </ModalDialog>
 
       <ModalDialog
         open={Boolean(editingItem)}
@@ -1429,3 +1838,139 @@ export const CompanyOperationModulePage: React.FC<{
     </div>
   );
 };
+
+export const CompanyOperationItemFormPage: React.FC<{
+  moduleType: 'inventory' | 'orders' | 'crm';
+}> = ({ moduleType }) => {
+  const { empresaId, itemId } = useParams<{ empresaId: string; itemId: string }>();
+  const navigate = useNavigate();
+  const { companies, operationalItems, getActor, refreshData, notify, t } = useApp();
+
+  const company = companies.find((c) => c.id === empresaId);
+  const existing = operationalItems.find((it) => it.id === itemId && it.companyId === empresaId);
+  const slug = moduleType === 'inventory' ? 'estoque' : moduleType === 'orders' ? 'vendas' : 'crm';
+  const baseRoute = `/app/empresa/${empresaId}/operacao/${slug}`;
+
+  const [title, setTitle] = useState(existing?.title || '');
+  const [category, setCategory] = useState(existing?.category || 'Geral');
+  const [quantity, setQuantity] = useState(existing?.quantity ?? 1);
+  const [amount, setAmount] = useState(existing?.amount ?? 0);
+  const [status, setStatus] = useState<'active' | 'pending' | 'archived'>(existing?.status || 'active');
+
+  if (!company || !existing) {
+    return (
+      <AccessDeniedView
+        title="Registro Operacional Não Localizado"
+        reason={`O registro "${itemId}" não foi encontrado na empresa.`}
+        backTo={baseRoute}
+      />
+    );
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await repositories.operationalItems.update(
+      existing.id,
+      (curr) => ({
+        ...curr,
+        title: title.trim(),
+        category: category.trim() || 'Geral',
+        quantity: Number(quantity),
+        amount: Number(amount),
+        status,
+        updatedAt: new Date().toISOString(),
+      }),
+      getActor(empresaId),
+      `Edição dedicada do registro operacional ${existing.code}: ${title.trim()}`,
+    );
+    await refreshData();
+    notify({ type: 'success', title: `Registro ${existing.code} atualizado com sucesso.` });
+    navigate(baseRoute);
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        breadcrumbs={[
+          { label: company.tradeName, to: `/app/empresa/${empresaId}` },
+          { label: slug.toUpperCase(), to: baseRoute },
+          { label: `Editar ${existing.code}` },
+        ]}
+        title={`Editar Registro Operacional — ${existing.code} (ID: ${existing.id})`}
+        subtitle="Página dedicada de edição com identificador único e trilha de auditoria."
+        actions={
+          <Link to={baseRoute} className="btn btn-secondary btn-sm">
+            {t('common.back')}
+          </Link>
+        }
+      />
+
+      <form onSubmit={handleSubmit} className="card">
+        <div className="card-body grid-2">
+          <div className="field">
+            <label htmlFor="op-edit-title">Descrição / Item / Cliente *</label>
+            <input
+              id="op-edit-title"
+              className="input"
+              required
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="op-edit-cat">Categoria / Etapa *</label>
+            <input
+              id="op-edit-cat"
+              className="input"
+              required
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="op-edit-qty">Quantidade / Volume</label>
+            <input
+              id="op-edit-qty"
+              type="number"
+              className="input tabular"
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="op-edit-amt">Valor Financeiro ({company.currency})</label>
+            <input
+              id="op-edit-amt"
+              type="number"
+              step="0.01"
+              className="input tabular"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="op-edit-status">Status Operacional</label>
+            <select
+              id="op-edit-status"
+              className="select"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as 'active' | 'pending' | 'archived')}
+            >
+              <option value="active">Ativo</option>
+              <option value="pending">Pendente</option>
+            </select>
+          </div>
+        </div>
+        <div className="card-footer">
+          <Link to={baseRoute} className="btn btn-secondary">
+            {t('common.cancel')}
+          </Link>
+          <button type="submit" className="btn btn-primary">
+            <Save size={14} /> {t('common.save')}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+

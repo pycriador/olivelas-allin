@@ -132,6 +132,26 @@ export interface CompanyContact {
   phone: string;
 }
 
+export type OperationalEmployeeRole =
+  | 'STORE_ADMIN'
+  | 'STOCK_APPROVER'
+  | 'INVENTORY'
+  | 'SELLER'
+  | 'FINANCE'
+  | 'VIEWER';
+
+export interface CompanyAllocatedEmployee {
+  id: string;
+  name: string;
+  email: string;
+  role: OperationalEmployeeRole;
+  jobTitle?: string;
+  department?: string;
+  active: boolean;
+  writeoffApprovalLimit?: number;
+  allocatedAt: string;
+}
+
 export interface CompanyEntity {
   id: string;
   legalName: string;
@@ -157,6 +177,15 @@ export interface CompanyEntity {
   parentCompanyId?: string;
   isBranch?: boolean;
   branchCode?: string;
+  managerName?: string;
+  whatsapp?: string;
+  slug?: string;
+  freeEmployeesLimit?: number;
+  extraEmployeePrice?: number;
+  preferredPaymentMethod?: PaymentMethodType;
+  paymentStatus?: 'ACTIVE' | 'PENDING' | 'PAST_DUE' | 'TRIAL' | 'SUSPENDED';
+  nextBillingDueDate?: string;
+  allocatedEmployees?: CompanyAllocatedEmployee[];
   createdAt: string;
   updatedAt: string;
   archiveMetadata: ArchiveMetadata;
@@ -301,6 +330,19 @@ export interface ContractEntity {
   status: ContractStatus;
   commercialResponsible: string;
   clausesText: string;
+  providerName?: string;
+  providerDocument?: string;
+  providerEmail?: string;
+  providerRepresentative?: string;
+  customerDocument?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  customerAddress?: string;
+  paymentTerms?: string;
+  freeEmployeesQuota?: number;
+  extraEmployeePrice?: number;
+  googleDriveWebLink?: string;
+  googleDriveSyncedAt?: string;
   version: number;
   versionHistory: ContractVersionSnapshot[];
   signatures: ContractSignatureRecord[];
@@ -309,6 +351,37 @@ export interface ContractEntity {
   updatedAt: string;
   archiveMetadata: ArchiveMetadata;
   changeHistory: ChangeHistoryEntry[];
+}
+
+export interface PlatformBillingRules {
+  defaultFreeEmployeesPerStore: number;
+  defaultExtraEmployeePrice: number;
+  gracePeriodDays: number;
+  autoBlockOverdue: boolean;
+  pixKey: string;
+  billingSupportWhatsapp: string;
+  notes: string;
+  updatedAt: string;
+}
+
+export interface CommercialPlanProposal {
+  id: string;
+  companyName: string;
+  companyTradeName?: string;
+  customerName: string;
+  customerDocument: string;
+  customerEmail: string;
+  customerPhone: string;
+  selectedPlanName: string;
+  selectedModuleIds: string[];
+  billingCycle: 'monthly' | 'yearly';
+  estimatedMonthlyValue: number;
+  estimatedEmployeesCount: number;
+  preferredPaymentMethod: PaymentMethodType;
+  status: 'NEW' | 'CONTACTED' | 'CONTRACT_GENERATED' | 'SIGNED' | 'ARCHIVED';
+  notes?: string;
+  contractId?: string;
+  createdAt: string;
 }
 
 export type PaymentStatus =

@@ -1,25 +1,33 @@
-import React, { useState } from 'react';
-import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import React, { useMemo, useState } from 'react';
+import { Link, NavLink, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Archive,
   CheckCircle2,
+  Cloud,
   Database,
+  Download,
   Edit3,
   ExternalLink,
   Eye,
+  FileCode,
   FileSignature,
+  FileText,
   Layers,
+  MessageCircle,
   Package,
   Play,
   Plus,
+  Printer,
   RotateCcw,
   Save,
   Sparkles,
+  Trash2,
   X,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
   CatalogModuleEntity,
+  CommercialPlanProposal,
   ContractEntity,
   ContractStatus,
   CurrencyCode,
@@ -44,6 +52,19 @@ import {
   UnsavedChangesBanner,
   UrlDataTable,
 } from '../../components/shared/SharedComponents';
+import {
+  CONTRACT_TEMPLATE_VARIABLES,
+  DEFAULT_CONTRACT_TERMS_TEMPLATE,
+  deleteCommercialProposal,
+  exportContractAsDOCX,
+  exportContractAsHTML,
+  exportContractAsPDF,
+  getGoogleDriveConfig,
+  interpolateContractTerms,
+  listCommercialProposals,
+  saveGoogleDriveConfig,
+  updateCommercialProposalStatus,
+} from '../../services/enterpriseFinanceAndContractsService';
 
 export const ModuleDetailsModal: React.FC<{
   module: CatalogModuleEntity | null;
@@ -378,14 +399,14 @@ export const GlobalModulesCatalogPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           { label: t('scope.global'), to: '/app/global' },
           { label: t('nav.modules') },
         ]}
         title="Catálogo Comercial de Módulos Olivelas All In"
-        subtitle={`Lista unificada com todos os ${modules.length} módulos (${commercialCount} plataformas comerciais Olivelas com schemas PostgreSQL dedicados e ${exampleCount} módulos base). Clique em um módulo para abrir seus detalhes em modal ou use o menu de ações.`}
+        subtitle={`Lista unificada com todos os ${modules.length} módulos (${commercialCount} plataformas comerciais Olivelas com schemas PostgreSQL dedicados e ${exampleCount} módulos base).`}
         scopeBadge={t('scope.global')}
         actions={
           <div className="flex items-center gap-2 flex-wrap">
@@ -427,7 +448,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
         extraFiltersRender={(params, updateParam) => (
           <select
             className="select"
-            style={{ width: 'auto', minWidth: '215px' }}
+            style={{ width: 'auto', minWidth: '185px', padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
             value={params.get('type') || 'all'}
             onChange={(e) => updateParam('type', e.target.value)}
             aria-label="Filtrar tipo de módulo"
@@ -443,10 +464,11 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             key: 'code',
             header: 'Aplicação',
             sortable: true,
+            width: '26%',
             csvValue: (m) =>
               `${m.name[session.language]} (${m.code})${m.isStaticPage ? ' [Página Estática]' : ''}`,
             render: (m) => (
-              <div style={{ maxWidth: '280px' }}>
+              <div style={{ minWidth: 0 }}>
                 <button
                   type="button"
                   onClick={() => setDetailModalModule(m)}
@@ -481,6 +503,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           {
             key: 'category',
             header: 'Categoria',
+            width: '18%',
             render: (m) => (
               <div className="flex items-center gap-1 flex-wrap">
                 <span className="badge badge-info">{m.category}</span>
@@ -499,6 +522,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
           {
             key: 'instance',
             header: 'Porta & Rota SSO',
+            width: '18%',
             csvValue: (m) => {
               if (m.isExample) return 'Módulo Base';
               const demoSlug = m.ecosystemSlug || m.code;
@@ -522,10 +546,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
               return (
                 <div className="flex items-center gap-1.5 flex-wrap" title={launchInfo.instanceId}>
                   <span className="badge badge-teal mono">:{launchInfo.port}</span>
-                  <span
-                    className="text-xs text-muted mono truncate"
-                    style={{ maxWidth: '130px' }}
-                  >
+                  <span className="text-xs text-muted mono truncate" style={{ maxWidth: '115px' }}>
                     {launchInfo.serverSpec.adminPath}
                   </span>
                 </div>
@@ -537,6 +558,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             header: 'Mensalidade',
             sortable: true,
             isNumeric: true,
+            width: '15%',
             csvValue: (m) => m.priceMonthly,
             render: (m) => (
               <div>
@@ -553,6 +575,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             key: 'commercialStatus',
             header: 'Status & Empresas',
             sortable: true,
+            width: '15%',
             csvValue: (m) => {
               const count = companyModules.filter(
                 (cm) => cm.moduleId === m.id && cm.status === 'active',
@@ -577,6 +600,7 @@ export const GlobalModulesCatalogPage: React.FC = () => {
             key: 'actions',
             header: 'Ações',
             isNumeric: true,
+            width: '8%',
             render: (m) => {
               const demoSlug = m.ecosystemSlug || m.code;
               const isArchived = m.archiveMetadata.isArchived;
@@ -1290,14 +1314,14 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           { label: company.tradeName, to: `/app/empresa/${company.id}` },
           { label: 'Módulos Comerciais Olivelas & Loja Modular' },
         ]}
         title={`Módulos Comerciais Olivelas — ${company.tradeName}`}
-        subtitle={`Lista unificada com ${nonArchivedModules.length} aplicações (${commercialCount} plataformas comerciais Olivelas e ${exampleCount} módulos base). Clique no módulo para ver os detalhes em modal ou use o menu de ações.`}
+        subtitle={`Lista unificada com ${nonArchivedModules.length} aplicações (${commercialCount} plataformas comerciais Olivelas e ${exampleCount} módulos base).`}
         scopeBadge={company.tradeName}
         actions={
           <Link to={`/app/empresa/${company.id}/ecossistema`} className="btn btn-primary btn-sm">
@@ -1331,7 +1355,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
         extraFiltersRender={(params, updateParam) => (
           <select
             className="select"
-            style={{ width: 'auto', minWidth: '215px' }}
+            style={{ width: 'auto', minWidth: '185px', padding: '0.35rem 0.65rem', fontSize: '0.78rem' }}
             value={params.get('type') || 'all'}
             onChange={(e) => updateParam('type', e.target.value)}
             aria-label="Filtrar tipo de módulo"
@@ -1347,10 +1371,11 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
             key: 'code',
             header: 'Aplicação',
             sortable: true,
+            width: '26%',
             csvValue: (mod) =>
               `${mod.name[session.language]} (${mod.code})${mod.isStaticPage ? ' [Página Estática]' : ''}`,
             render: (mod) => (
-              <div style={{ maxWidth: '280px' }}>
+              <div style={{ minWidth: 0 }}>
                 <button
                   type="button"
                   onClick={() => setDetailModalModule(mod)}
@@ -1385,6 +1410,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           {
             key: 'category',
             header: 'Categoria',
+            width: '18%',
             render: (mod) => (
               <div className="flex items-center gap-1 flex-wrap">
                 <span className="badge badge-info">{mod.category}</span>
@@ -1403,6 +1429,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           {
             key: 'instance',
             header: 'Porta & Rota SSO',
+            width: '18%',
             csvValue: (mod) => {
               if (mod.isExample) return 'Módulo Base';
               const demoSlug = mod.ecosystemSlug || mod.code;
@@ -1426,10 +1453,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
               return (
                 <div className="flex items-center gap-1.5 flex-wrap" title={instInfo.instanceId}>
                   <span className="badge badge-teal mono">:{instInfo.port}</span>
-                  <span
-                    className="text-xs text-muted mono truncate"
-                    style={{ maxWidth: '130px' }}
-                  >
+                  <span className="text-xs text-muted mono truncate" style={{ maxWidth: '115px' }}>
                     {instInfo.serverSpec.adminPath}
                   </span>
                 </div>
@@ -1441,6 +1465,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
             header: 'Mensalidade',
             sortable: true,
             isNumeric: true,
+            width: '15%',
             csvValue: (mod) => mod.priceMonthly,
             render: (mod) => (
               <span className="font-semibold tabular">
@@ -1451,6 +1476,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
           {
             key: 'status',
             header: 'Situação na Empresa',
+            width: '15%',
             render: (mod) => {
               const sub = mySubs.find((s) => s.moduleId === mod.id);
               const active = sub?.status === 'active';
@@ -1461,6 +1487,7 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
             key: 'actions',
             header: 'Ações',
             isNumeric: true,
+            width: '8%',
             render: (mod) => {
               const sub = mySubs.find((s) => s.moduleId === mod.id);
               const active = sub?.status === 'active';
@@ -1533,16 +1560,98 @@ export const CompanyModulesSubscriptionPage: React.FC = () => {
   );
 };
 
-export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
+export const ContractsListPage: React.FC<{
+  scope: 'global' | 'company';
+  activeTab?: 'contratos' | 'propostas' | 'assinaturas' | 'editor';
+}> = ({ scope, activeTab = 'contratos' }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
-  const { contracts, companies, session, hasPermission, getActor, refreshData, notify, t } =
-    useApp();
+  const navigate = useNavigate();
+  const {
+    contracts,
+    companies,
+    modules,
+    currentUser,
+    session,
+    hasPermission,
+    getActor,
+    refreshData,
+    notify,
+    t,
+  } = useApp();
+
   const [archiveTarget, setArchiveTarget] = useState<ContractEntity | null>(null);
+  const [previewModalContract, setPreviewModalContract] = useState<ContractEntity | null>(null);
+  const [signModalContract, setSignModalContract] = useState<ContractEntity | null>(null);
+  const [signerName, setSignerName] = useState(currentUser?.name || 'Willian Jesus');
+  const [signerEmail, setSignerEmail] = useState(
+    currentUser?.email || 'willian.o.jesus@gmail.com',
+  );
+  const [signerDoc, setSignerDoc] = useState('***.842.190-**');
+  const [acceptedTerms, setAcceptedTerms] = useState(true);
+
+  // Commercial Proposals state
+  const [proposals, setProposals] = useState<CommercialPlanProposal[]>(() =>
+    listCommercialProposals(),
+  );
+
+  // Google Drive modal state
+  const [gdriveModalOpen, setGdriveModalOpen] = useState(false);
+  const [gdriveConfig, setGdriveConfig] = useState(() => getGoogleDriveConfig());
+
+  // Live Contract Manager / Editor state
+  const [editingContractId, setEditingContractId] = useState<string | null>(null);
+  const [mgrCode, setMgrCode] = useState(`CTR-2026-000${contracts.length + 1}`);
+  const [mgrProviderName, setMgrProviderName] = useState(
+    'Olivelas Tecnologia & Sistemas Allin Ltda.',
+  );
+  const [mgrProviderDoc, setMgrProviderDoc] = useState('48.192.001/0001-90');
+  const [mgrProviderEmail, setMgrProviderEmail] = useState('contratos@olivelas.com.br');
+  const [mgrProviderRep, setMgrProviderRep] = useState('Willian Jesus');
+  const [mgrCompanyId, setMgrCompanyId] = useState(
+    empresaId || companies[0]?.id || 'emp-olivelas-matriz',
+  );
+  const [mgrCustomerName, setMgrCustomerName] = useState(
+    companies[0]?.legalName || 'Olivelas Atelier & Manufatura Ltda.',
+  );
+  const [mgrCustomerDoc, setMgrCustomerDoc] = useState(
+    companies[0]?.taxId || '18.492.310/0001-54',
+  );
+  const [mgrCustomerEmail, setMgrCustomerEmail] = useState(
+    companies[0]?.contacts[0]?.email || 'contato@olivelas-atelier.com.br',
+  );
+  const [mgrCustomerPhone, setMgrCustomerPhone] = useState(
+    companies[0]?.contacts[0]?.phone || '+55 (11) 3482-9100',
+  );
+  const [mgrPlanName, setMgrPlanName] = useState('Allin Enterprise Multi-Loja & PDV');
+  const [mgrModuleIds, setMgrModuleIds] = useState<string[]>([
+    'mod_gestao_estoque',
+    'mod-core',
+    'mod-financeiro',
+    'mod-contratos',
+  ]);
+  const [mgrCycle, setMgrCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [mgrDiscount, setMgrDiscount] = useState<number>(0);
+  const [mgrFreeEmployeesQuota, setMgrFreeEmployeesQuota] = useState<number>(10);
+  const [mgrPaymentTerms, setMgrPaymentTerms] = useState(
+    'PIX Corporativo / Boleto Registrado (Vencimento dia 15)',
+  );
+  const [mgrStartDate, setMgrStartDate] = useState('2026-11-10');
+  const [mgrEndDate, setMgrEndDate] = useState('2027-11-10');
+  const [mgrStatus, setMgrStatus] = useState<ContractStatus>('active');
+  const [mgrClauses, setMgrClauses] = useState(DEFAULT_CONTRACT_TERMS_TEMPLATE);
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
   const baseRoute =
     scope === 'global' ? '/app/global/contratos' : `/app/empresa/${empresaId}/contratos`;
+
+  const scopedContracts = useMemo(
+    () =>
+      targetCompanyId
+        ? contracts.filter((c) => c.companyId === targetCompanyId)
+        : contracts,
+    [contracts, targetCompanyId],
+  );
 
   if (!hasPermission('contracts', 'view', targetCompanyId)) {
     return (
@@ -1553,9 +1662,243 @@ export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ s
     );
   }
 
-  const scopedContracts = targetCompanyId
-    ? contracts.filter((c) => c.companyId === targetCompanyId)
-    : contracts;
+  const mgrGrossTotal = modules
+    .filter((m) => mgrModuleIds.includes(m.id))
+    .reduce((acc, m) => acc + (mgrCycle === 'yearly' ? m.priceYearly : m.priceMonthly), 0);
+  const mgrFinalValue = Math.max(0, mgrGrossTotal - Number(mgrDiscount || 0));
+
+  const livePreviewContract: ContractEntity = {
+    id: editingContractId || 'ctr-preview',
+    code: mgrCode,
+    companyId: mgrCompanyId,
+    companyName: mgrCustomerName,
+    planName: mgrPlanName,
+    moduleIds: mgrModuleIds,
+    startDate: mgrStartDate,
+    endDate: mgrEndDate,
+    billingCycle: mgrCycle,
+    totalValue: mgrGrossTotal,
+    discountValue: Number(mgrDiscount || 0),
+    finalValue: mgrFinalValue,
+    currency: 'BRL',
+    status: mgrStatus,
+    commercialResponsible: mgrProviderRep,
+    clausesText: mgrClauses,
+    providerName: mgrProviderName,
+    providerDocument: mgrProviderDoc,
+    providerEmail: mgrProviderEmail,
+    providerRepresentative: mgrProviderRep,
+    customerDocument: mgrCustomerDoc,
+    customerEmail: mgrCustomerEmail,
+    customerPhone: mgrCustomerPhone,
+    paymentTerms: mgrPaymentTerms,
+    freeEmployeesQuota: mgrFreeEmployeesQuota,
+    version: 1,
+    versionHistory: [],
+    signatures: editingContractId
+      ? contracts.find((c) => c.id === editingContractId)?.signatures || []
+      : [],
+    attachments: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    archiveMetadata: { isArchived: false },
+    changeHistory: [],
+  };
+
+  const loadContractIntoManager = (ct: ContractEntity) => {
+    const comp = companies.find((c) => c.id === ct.companyId);
+    setEditingContractId(ct.id);
+    setMgrCode(ct.code);
+    setMgrCompanyId(ct.companyId);
+    setMgrCustomerName(ct.companyName);
+    setMgrCustomerDoc(ct.customerDocument || comp?.taxId || '18.492.310/0001-54');
+    setMgrCustomerEmail(
+      ct.customerEmail || comp?.contacts[0]?.email || 'financeiro@empresa.com.br',
+    );
+    setMgrCustomerPhone(ct.customerPhone || comp?.contacts[0]?.phone || '+55 (11) 99999-0000');
+    setMgrPlanName(ct.planName);
+    setMgrModuleIds(ct.moduleIds);
+    setMgrCycle(ct.billingCycle);
+    setMgrDiscount(ct.discountValue);
+    setMgrFreeEmployeesQuota(ct.freeEmployeesQuota ?? comp?.freeEmployeesLimit ?? 10);
+    setMgrPaymentTerms(
+      ct.paymentTerms || 'PIX Corporativo / Boleto Registrado (Vencimento dia 15)',
+    );
+    setMgrStartDate(ct.startDate);
+    setMgrEndDate(ct.endDate);
+    setMgrStatus(ct.status);
+    setMgrClauses(ct.clausesText || DEFAULT_CONTRACT_TERMS_TEMPLATE);
+    navigate(`${baseRoute}/editor`);
+  };
+
+  const handleGenerateContractFromProposal = (prop: CommercialPlanProposal) => {
+    setEditingContractId(null);
+    setMgrCode(`CTR-2026-${Math.floor(1000 + Math.random() * 9000)}`);
+    setMgrCustomerName(prop.companyName);
+    setMgrCustomerDoc(prop.customerDocument);
+    setMgrCustomerEmail(prop.customerEmail);
+    setMgrCustomerPhone(prop.customerPhone);
+    setMgrPlanName(prop.selectedPlanName);
+    setMgrModuleIds(
+      prop.selectedModuleIds.length > 0 ? prop.selectedModuleIds : ['mod_gestao_estoque', 'mod-core'],
+    );
+    setMgrCycle(prop.billingCycle);
+    setMgrDiscount(0);
+    setMgrFreeEmployeesQuota(10);
+    setMgrPaymentTerms(
+      `Pagamento via ${prop.preferredPaymentMethod.toUpperCase()} (${
+        prop.estimatedEmployeesCount
+      } funcionários previstos; 10 grátis na franquia)`,
+    );
+    setMgrClauses(DEFAULT_CONTRACT_TERMS_TEMPLATE);
+    const updated = updateCommercialProposalStatus(prop.id, 'CONTRACT_GENERATED');
+    setProposals(updated);
+    navigate(`${baseRoute}/editor`);
+    notify({
+      type: 'success',
+      title: `Proposta de ${prop.companyName} carregada no Gerenciador de Contratos!`,
+      description: 'Revise a minuta A4 ao vivo e clique em Salvar Contrato.',
+    });
+  };
+
+  const handleSaveContractFromManager = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const actor = getActor(mgrCompanyId);
+    const now = new Date().toISOString();
+
+    if (editingContractId) {
+      const existing = contracts.find((c) => c.id === editingContractId);
+      if (existing) {
+        const nextVer = existing.version + 1;
+        await repositories.contracts.update(
+          existing.id,
+          (curr) => ({
+            ...curr,
+            code: mgrCode.trim(),
+            companyId: mgrCompanyId,
+            companyName: mgrCustomerName.trim(),
+            planName: mgrPlanName.trim(),
+            moduleIds: mgrModuleIds,
+            startDate: mgrStartDate,
+            endDate: mgrEndDate,
+            billingCycle: mgrCycle,
+            totalValue: mgrGrossTotal,
+            discountValue: Number(mgrDiscount || 0),
+            finalValue: mgrFinalValue,
+            status: mgrStatus,
+            commercialResponsible: mgrProviderRep.trim(),
+            clausesText: mgrClauses,
+            providerName: mgrProviderName.trim(),
+            providerDocument: mgrProviderDoc.trim(),
+            providerEmail: mgrProviderEmail.trim(),
+            providerRepresentative: mgrProviderRep.trim(),
+            customerDocument: mgrCustomerDoc.trim(),
+            customerEmail: mgrCustomerEmail.trim(),
+            customerPhone: mgrCustomerPhone.trim(),
+            paymentTerms: mgrPaymentTerms.trim(),
+            freeEmployeesQuota: mgrFreeEmployeesQuota,
+            googleDriveWebLink: gdriveConfig.enabled ? gdriveConfig.webhookOrScriptUrl : undefined,
+            googleDriveSyncedAt: gdriveConfig.enabled ? now : undefined,
+            version: nextVer,
+            versionHistory: [
+              ...curr.versionHistory,
+              {
+                version: nextVer,
+                createdAt: now,
+                createdBy: actor.userName,
+                summary: `Atualização no Gerenciador de Contratos A4 (v${nextVer}).`,
+                totalValue: mgrFinalValue,
+                moduleIds: mgrModuleIds,
+              },
+            ],
+          }),
+          actor,
+          `Contrato ${mgrCode} atualizado no Gerenciador de Contratos (v${nextVer}).`,
+        );
+        await refreshData();
+        notify({
+          type: 'success',
+          title: `Contrato ${mgrCode} (v${nextVer}) salvo e sincronizado!`,
+        });
+        navigate(baseRoute);
+        return;
+      }
+    }
+
+    const newId = generateId('ctr');
+    const newRecord: ContractEntity = {
+      ...livePreviewContract,
+      id: newId,
+      version: 1,
+      googleDriveWebLink: gdriveConfig.enabled ? gdriveConfig.webhookOrScriptUrl : undefined,
+      googleDriveSyncedAt: gdriveConfig.enabled ? now : undefined,
+      versionHistory: [
+        {
+          version: 1,
+          createdAt: now,
+          createdBy: actor.userName,
+          summary: 'Emissão pelo Gerenciador de Contratos A4.',
+          totalValue: mgrFinalValue,
+          moduleIds: mgrModuleIds,
+        },
+      ],
+    };
+
+    await repositories.contracts.create(
+      newRecord,
+      actor,
+      `Emissão do contrato ${newRecord.code} para ${newRecord.companyName}.`,
+    );
+    await refreshData();
+    setEditingContractId(newId);
+    notify({
+      type: 'success',
+      title: `Novo contrato ${newRecord.code} salvo com sucesso!`,
+      description: gdriveConfig.enabled
+        ? `Sincronizado com pasta Google Drive "${gdriveConfig.folderName}".`
+        : undefined,
+    });
+    navigate(baseRoute);
+  };
+
+  const handleQuickElectronicSign = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!signModalContract || !acceptedTerms) return;
+    const hash = `SHA256-OLIVELAS-${Math.random().toString(16).substring(2, 14)}${Date.now().toString(16)}`;
+    const now = new Date().toISOString();
+    const actor = getActor(signModalContract.companyId);
+
+    await repositories.contracts.update(
+      signModalContract.id,
+      (curr) => ({
+        ...curr,
+        status: 'active',
+        signatures: [
+          ...curr.signatures,
+          {
+            id: generateId('sig'),
+            signerName: signerName.trim(),
+            signerEmail: signerEmail.trim(),
+            signerDocument: signerDoc.trim(),
+            signedAt: now,
+            ipAddressSimulated: '177.92.40.18 (Assinatura Digital Auditada)',
+            acceptanceHash: hash,
+            isSimulated: true,
+          },
+        ],
+      }),
+      actor,
+      `Assinatura eletrônica SHA-256 registrada no contrato ${signModalContract.code} por ${signerName.trim()}.`,
+      'sign_contract',
+    );
+    await refreshData();
+    setSignModalContract(null);
+    notify({
+      type: 'success',
+      title: `Contrato ${signModalContract.code} assinado eletronicamente!`,
+      description: `Carimbo SHA-256: ${hash.slice(0, 22)}...`,
+    });
+  };
 
   const handleRestore = async (ct: ContractEntity) => {
     await repositories.contracts.restore(ct.id, getActor(ct.companyId));
@@ -1563,8 +1906,34 @@ export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ s
     notify({ type: 'success', title: `Contrato ${ct.code} restaurado.` });
   };
 
+  const activeContractsCount = scopedContracts.filter(
+    (c) => !c.archiveMetadata.isArchived && c.status === 'active',
+  ).length;
+  const pendingSigCount = scopedContracts.filter(
+    (c) => !c.archiveMetadata.isArchived && c.status === 'pending_signature',
+  ).length;
+  const totalSignedValue = scopedContracts
+    .filter((c) => !c.archiveMetadata.isArchived && c.status === 'active')
+    .reduce((acc, c) => acc + c.finalValue, 0);
+
+  const allSignatures = useMemo(
+    () =>
+      scopedContracts.flatMap((c) =>
+        c.signatures.map((sig) => ({
+          ...sig,
+          contractId: c.id,
+          contractCode: c.code,
+          companyName: c.companyName,
+          planName: c.planName,
+          contractStatus: c.status,
+          isArchived: c.archiveMetadata.isArchived,
+        })),
+      ),
+    [scopedContracts],
+  );
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -1573,127 +1942,1117 @@ export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ s
           },
           { label: t('nav.contracts') },
         ]}
-        title="Gestão de Contratos, Versionamento & Assinaturas"
-        subtitle="Histórico imutável de versões contratuais, módulos vinculados, descontos e assinaturas eletrônicas auditadas."
+        title="Gestão de Contratos, Propostas Comerciais, Editor A4 & Assinatura Digital SHA-256"
+        subtitle={`${activeContractsCount} vigentes • ${pendingSigCount} aguardando assinatura • ${proposals.length} propostas • Volume contratado: ${formatCurrency(totalSignedValue, 'BRL', session.language)}`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
-          scope === 'global' &&
-          hasPermission('contracts', 'create') && (
-            <Link to="/app/global/contratos/novo" className="btn btn-primary btn-sm">
-              <Plus size={14} />
-              Emitir Novo Contrato
-            </Link>
-          )
+          <div className="flex items-center gap-2 flex-wrap">
+            {scope === 'global' && (
+              <button
+                type="button"
+                className="btn btn-secondary btn-sm"
+                onClick={() => setGdriveModalOpen(true)}
+              >
+                <Cloud size={14} />
+                Google Drive ({gdriveConfig.enabled ? 'Ativo' : 'Off'})
+              </button>
+            )}
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => {
+                setEditingContractId(null);
+                setMgrCode(`CTR-2026-000${contracts.length + 1}`);
+                navigate(`${baseRoute}/editor`);
+              }}
+            >
+              <FileCode size={14} />
+              Estúdio &amp; Editor A4
+            </button>
+            {scope === 'global' && hasPermission('contracts', 'create') && (
+              <Link to="/app/global/contratos/novo" className="btn btn-primary btn-sm">
+                <Plus size={14} />
+                Emitir Novo Contrato
+              </Link>
+            )}
+          </div>
         }
       />
 
-      <UrlDataTable<ContractEntity>
-        tableId={`contracts-table-${scope}`}
-        caption="Contratos comerciais e assinaturas registradas"
-        items={scopedContracts}
-        defaultSortField="createdAt"
-        csvFilename={`contratos-${scope}.csv`}
-        searchPlaceholder="Buscar por código do contrato, empresa ou plano..."
-        statusExtractor={(c) => c.status}
-        searchExtractor={(c) => `${c.code} ${c.companyName} ${c.planName} ${c.commercialResponsible}`}
-        statusOptions={[
-          { value: 'active', label: t('status.active') },
-          { value: 'pending_signature', label: t('status.pending_signature') },
-          { value: 'draft', label: t('status.draft') },
-          { value: 'suspended', label: t('status.suspended') },
-          { value: 'archived', label: t('status.archived') },
-        ]}
-        isArchivedExtractor={(c) => c.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission('contracts', 'archive', targetCompanyId)
-            ? (item) => setArchiveTarget(item)
-            : undefined
-        }
-        onRestoreClick={
-          hasPermission('contracts', 'archive', targetCompanyId) ? handleRestore : undefined
-        }
-        columns={[
-          {
-            key: 'code',
-            header: 'Contrato / Versão',
-            sortable: true,
-            csvValue: (c) => `${c.code} (v${c.version})`,
-            render: (c) => (
-              <div>
-                <Link to={`${baseRoute}/${c.id}`} className="font-semibold mono">
-                  {c.code}
-                </Link>
-                <div className="text-xs text-muted">
-                  Versão v{c.version} • {c.signatures.length} assinatura(s)
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'companyName',
-            header: 'Empresa / Plano',
-            sortable: true,
-            render: (c) => (
-              <div>
-                <div className="font-semibold">{c.companyName}</div>
-                <div className="text-xs text-muted">
-                  {c.planName} ({c.moduleIds.length} módulos)
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'startDate',
-            header: 'Vigência & Ciclo',
-            render: (c) => (
-              <div className="text-xs tabular">
+      {/* Navigation Tabs — identical pattern to /app/global/api-hub/ambientes */}
+      <nav className="subnav-tabs" aria-label="Navegação de contratos">
+        <NavLink
+          to={baseRoute}
+          end
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'contratos' ? 'active' : ''}`
+          }
+        >
+          Contratos &amp; Assinaturas ({scopedContracts.length})
+        </NavLink>
+        {scope === 'global' && (
+          <NavLink
+            to={`${baseRoute}/propostas`}
+            className={({ isActive }) =>
+              `subnav-tab ${isActive || activeTab === 'propostas' ? 'active' : ''}`
+            }
+          >
+            Propostas &amp; Solicitações ({proposals.length})
+          </NavLink>
+        )}
+        <NavLink
+          to={`${baseRoute}/assinaturas`}
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'assinaturas' ? 'active' : ''}`
+          }
+        >
+          Certificados SHA-256 ({allSignatures.length})
+        </NavLink>
+        <NavLink
+          to={`${baseRoute}/editor`}
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'editor' ? 'active' : ''}`
+          }
+        >
+          Estúdio &amp; Minuta A4 ({scopedContracts.length})
+        </NavLink>
+      </nav>
+
+      {/* TAB 1: CONTRACTS LIST TABLE */}
+      {activeTab === 'contratos' && (
+        <UrlDataTable<ContractEntity>
+          tableId={`contracts-table-${scope}`}
+          caption="Contratos comerciais, minutas A4 e assinaturas eletrônicas registradas"
+          items={scopedContracts}
+          defaultSortField="createdAt"
+          csvFilename={`contratos-${scope}.csv`}
+          searchPlaceholder="Buscar por código do contrato, empresa, plano ou responsável..."
+          statusExtractor={(c) => c.status}
+          searchExtractor={(c) =>
+            `${c.code} ${c.companyName} ${c.planName} ${c.commercialResponsible}`
+          }
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending_signature', label: t('status.pending_signature') },
+            { value: 'draft', label: t('status.draft') },
+            { value: 'suspended', label: t('status.suspended') },
+            { value: 'archived', label: t('status.archived') },
+          ]}
+          isArchivedExtractor={(c) => c.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'code',
+              header: 'Contrato & Versão',
+              sortable: true,
+              width: '20%',
+              csvValue: (c) => `${c.code} (v${c.version})`,
+              render: (c) => (
                 <div>
-                  {c.startDate} → {c.endDate}
-                </div>
-                <span className="text-muted">Ciclo: {c.billingCycle}</span>
-              </div>
-            ),
-          },
-          {
-            key: 'status',
-            header: 'Estado',
-            sortable: true,
-            render: (c) => <StatusBadge status={c.status} />,
-          },
-          {
-            key: 'finalValue',
-            header: 'Valor Final',
-            sortable: true,
-            isNumeric: true,
-            csvValue: (c) => c.finalValue,
-            render: (c) => (
-              <span className="font-semibold tabular">
-                {formatCurrency(c.finalValue, c.currency, session.language)}
-              </span>
-            ),
-          },
-          {
-            key: 'actions',
-            header: 'Ações',
-            render: (c) => (
-              <div className="flex items-center gap-1">
-                <Link to={`${baseRoute}/${c.id}`} className="btn btn-secondary btn-sm">
-                  <FileSignature size={13} />
-                  Inspecionar / Assinar
-                </Link>
-                {scope === 'global' && hasPermission('contracts', 'edit') && (
                   <Link
-                    to={`/app/global/contratos/${c.id}/editar`}
-                    className="btn btn-ghost btn-sm"
+                    to={`${baseRoute}/${c.id}/editar`}
+                    className="font-semibold mono text-left"
+                    style={{ color: 'var(--brand-primary)' }}
                   >
-                    <Edit3 size={13} />
+                    {c.code}
                   </Link>
-                )}
+                  <div className="text-xs text-muted">
+                    Versão v{c.version} • {c.signatures.length} assinatura(s)
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'companyName',
+              header: 'Empresa Contratante & Plano',
+              sortable: true,
+              width: '28%',
+              render: (c) => (
+                <div>
+                  <div className="font-semibold">{c.companyName}</div>
+                  <div className="text-xs text-muted">
+                    {c.planName} ({c.moduleIds.length} módulos • {c.freeEmployeesQuota ?? 10}{' '}
+                    funcionários grátis)
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'startDate',
+              header: 'Vigência & Ciclo',
+              width: '20%',
+              render: (c) => (
+                <div className="text-xs tabular">
+                  <div>
+                    {c.startDate} → {c.endDate}
+                  </div>
+                  <span className="text-muted">
+                    Ciclo: {c.billingCycle === 'yearly' ? 'Anual' : 'Mensal'}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Estado & Assinatura',
+              sortable: true,
+              width: '14%',
+              render: (c) => (
+                <div className="flex flex-col gap-1">
+                  <StatusBadge status={c.status} />
+                  {c.signatures.length > 0 ? (
+                    <span className="badge badge-teal">SHA-256 Assinado</span>
+                  ) : (
+                    <span className="badge badge-warning">Pendente Aceite</span>
+                  )}
+                </div>
+              ),
+            },
+            {
+              key: 'finalValue',
+              header: 'Valor Líquido',
+              sortable: true,
+              isNumeric: true,
+              width: '11%',
+              csvValue: (c) => c.finalValue,
+              render: (c) => (
+                <span className="font-semibold tabular">
+                  {formatCurrency(c.finalValue, c.currency, session.language)}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              isNumeric: true,
+              width: '8%',
+              render: (c) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'edit-page',
+                      label: 'Editar Contrato & Minuta A4 (ID Único)',
+                      icon: <Edit3 size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`${baseRoute}/${c.id}/editar`),
+                    },
+                    {
+                      id: 'full-page',
+                      label: 'Ficha & Assinatura Digital (SHA-256)',
+                      icon: <FileSignature size={14} />,
+                      onClick: () => navigate(`${baseRoute}/${c.id}`),
+                    },
+                    {
+                      id: 'open-manager',
+                      label: 'Abrir no Estúdio A4 Ao Vivo',
+                      icon: <FileCode size={14} />,
+                      onClick: () => loadContractIntoManager(c),
+                    },
+                    {
+                      id: 'export-pdf',
+                      label: 'Imprimir / Salvar em PDF (Folha A4)',
+                      icon: <Printer size={14} />,
+                      onClick: () => exportContractAsPDF(c, modules),
+                    },
+                    {
+                      id: 'export-docx',
+                      label: 'Baixar em Word (.DOCX)',
+                      icon: <Download size={14} />,
+                      onClick: () => exportContractAsDOCX(c, modules),
+                    },
+                    {
+                      id: 'export-html',
+                      label: 'Baixar em HTML',
+                      icon: <FileText size={14} />,
+                      onClick: () => exportContractAsHTML(c, modules),
+                    },
+                    ...(hasPermission('contracts', 'archive', targetCompanyId)
+                      ? [
+                          c.archiveMetadata.isArchived
+                            ? {
+                                id: 'restore',
+                                label: 'Restaurar Contrato',
+                                icon: <RotateCcw size={14} />,
+                                onClick: () => handleRestore(c),
+                              }
+                            : {
+                                id: 'archive',
+                                label: 'Arquivar Contrato',
+                                icon: <Archive size={14} />,
+                                variant: 'danger' as const,
+                                onClick: () => setArchiveTarget(c),
+                              },
+                        ]
+                      : []),
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 2: COMMERCIAL PLAN PROPOSALS / REQUESTS */}
+      {activeTab === 'propostas' && (
+        <UrlDataTable<CommercialPlanProposal>
+          tableId="commercial-proposals-table"
+          caption="Solicitações de planos e propostas comerciais registradas para conversão em contrato"
+          items={proposals}
+          defaultSortField="createdAt"
+          csvFilename="propostas-comerciais-allin.csv"
+          searchPlaceholder="Buscar por empresa, responsável, CNPJ/CPF, e-mail ou plano..."
+          statusExtractor={(p) => p.status}
+          searchExtractor={(p) =>
+            `${p.companyName} ${p.customerName} ${p.customerDocument} ${p.customerEmail} ${p.selectedPlanName}`
+          }
+          statusOptions={[
+            { value: 'NEW', label: 'Nova Solicitação' },
+            { value: 'CONTACTED', label: 'Em Negociação' },
+            { value: 'CONTRACT_GENERATED', label: 'Minuta Gerada' },
+            { value: 'SIGNED', label: 'Contrato Assinado' },
+            { value: 'ARCHIVED', label: 'Arquivada' },
+          ]}
+          isArchivedExtractor={(p) => p.status === 'ARCHIVED'}
+          columns={[
+            {
+              key: 'companyName',
+              header: 'Empresa / Solicitante',
+              sortable: true,
+              width: '28%',
+              render: (prop) => (
+                <div>
+                  <div className="font-semibold text-sm">{prop.companyName}</div>
+                  <div className="text-xs text-muted">
+                    Resp.: {prop.customerName} ({prop.customerDocument})
+                  </div>
+                  <div className="mono text-xs text-muted">{prop.customerEmail}</div>
+                </div>
+              ),
+            },
+            {
+              key: 'selectedPlanName',
+              header: 'Plano & Módulos Desejados',
+              sortable: true,
+              width: '26%',
+              render: (prop) => (
+                <div>
+                  <div className="font-semibold text-xs">{prop.selectedPlanName}</div>
+                  <div className="text-xs text-muted">
+                    {prop.selectedModuleIds.length} módulos • Ciclo{' '}
+                    {prop.billingCycle === 'yearly' ? 'Anual' : 'Mensal'}
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'estimatedMonthlyValue',
+              header: 'Equipe Prevista & Valor',
+              sortable: true,
+              width: '20%',
+              render: (prop) => (
+                <div>
+                  <div className="font-semibold tabular text-xs">
+                    {formatCurrency(prop.estimatedMonthlyValue, 'BRL', session.language)}/mês
+                  </div>
+                  <div className="text-xs text-muted">
+                    {prop.estimatedEmployeesCount} funcionários (
+                    {Math.max(0, prop.estimatedEmployeesCount - 10)} extra)
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Status Comercial',
+              width: '18%',
+              render: (prop) => (
+                <select
+                  className="select"
+                  value={prop.status}
+                  onChange={(e) => {
+                    const next = updateCommercialProposalStatus(
+                      prop.id,
+                      e.target.value as CommercialPlanProposal['status'],
+                    );
+                    setProposals(next);
+                  }}
+                >
+                  <option value="NEW">Nova Solicitação</option>
+                  <option value="CONTACTED">Em Negociação</option>
+                  <option value="CONTRACT_GENERATED">Minuta Gerada</option>
+                  <option value="SIGNED">Contrato Assinado</option>
+                  <option value="ARCHIVED">Arquivada</option>
+                </select>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              render: (prop) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'generate-contract',
+                      label: 'Gerar Minuta A4 & Contrato',
+                      icon: <FileCode size={14} />,
+                      variant: 'primary',
+                      onClick: () => handleGenerateContractFromProposal(prop),
+                    },
+                    {
+                      id: 'whatsapp',
+                      label: 'Contatar via WhatsApp',
+                      icon: <MessageCircle size={14} />,
+                      onClick: () =>
+                        window.open(
+                          `https://wa.me/${prop.customerPhone.replace(/\D/g, '')}`,
+                          '_blank',
+                          'noopener,noreferrer',
+                        ),
+                    },
+                    {
+                      id: 'delete-proposal',
+                      label: 'Remover Solicitação',
+                      icon: <Trash2 size={14} />,
+                      variant: 'danger',
+                      onClick: () => setProposals(deleteCommercialProposal(prop.id)),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 3: DIGITAL SIGNATURES & SHA-256 CERTIFICATES */}
+      {activeTab === 'assinaturas' && (
+        <UrlDataTable<(typeof allSignatures)[number]>
+          tableId={`contract-signatures-table-${scope}`}
+          caption="Certificados digitais e carimbos criptográficos SHA-256 de aceite contratual"
+          items={allSignatures}
+          defaultSortField="signedAt"
+          csvFilename={`assinaturas-sha256-${scope}.csv`}
+          searchPlaceholder="Buscar por signatário, e-mail, documento, código do contrato ou hash SHA-256..."
+          statusExtractor={(s) => s.contractStatus}
+          searchExtractor={(s) =>
+            `${s.signerName} ${s.signerEmail} ${s.signerDocument} ${s.contractCode} ${s.companyName} ${s.acceptanceHash}`
+          }
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending_signature', label: t('status.pending_signature') },
+            { value: 'suspended', label: t('status.suspended') },
+          ]}
+          isArchivedExtractor={(s) => s.isArchived}
+          columns={[
+            {
+              key: 'contractCode',
+              header: 'Contrato & Empresa',
+              sortable: true,
+              width: '24%',
+              render: (s) => (
+                <div>
+                  <Link
+                    to={`${baseRoute}/${s.contractId}`}
+                    className="font-semibold mono text-left"
+                    style={{ color: 'var(--brand-primary)' }}
+                  >
+                    {s.contractCode}
+                  </Link>
+                  <div className="text-xs text-muted">{s.companyName}</div>
+                </div>
+              ),
+            },
+            {
+              key: 'signerName',
+              header: 'Signatário & Documento',
+              sortable: true,
+              width: '24%',
+              render: (s) => (
+                <div>
+                  <div className="font-semibold text-sm">{s.signerName}</div>
+                  <div className="mono text-xs text-muted">
+                    {s.signerEmail} • {s.signerDocument}
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'acceptanceHash',
+              header: 'Hash Criptográfico SHA-256 & IP',
+              width: '30%',
+              render: (s) => (
+                <div>
+                  <code className="text-xs font-semibold" style={{ color: 'var(--brand-primary)' }}>
+                    {s.acceptanceHash}
+                  </code>
+                  <div className="text-xs text-muted">{s.ipAddressSimulated}</div>
+                </div>
+              ),
+            },
+            {
+              key: 'signedAt',
+              header: 'Data / Hora do Aceite',
+              sortable: true,
+              width: '14%',
+              render: (s) => (
+                <span className="mono text-xs tabular">
+                  {formatDateTime(s.signedAt, session.language)}
+                </span>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              render: (s) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'view-cert',
+                      label: 'Abrir Contrato & Certificado SHA-256',
+                      icon: <FileSignature size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`${baseRoute}/${s.contractId}`),
+                    },
+                    {
+                      id: 'edit-contract',
+                      label: 'Editar Contrato (ID Único)',
+                      icon: <Edit3 size={14} />,
+                      onClick: () => navigate(`${baseRoute}/${s.contractId}/editar`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 4: LIVE CONTRACT MANAGER & A4 EDITOR */}
+      {activeTab === 'editor' && (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
+            gap: '1.25rem',
+            alignItems: 'start',
+          }}
+        >
+          {/* Left Column: Contract Editor Form */}
+          <form onSubmit={handleSaveContractFromManager} className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">
+                  {editingContractId
+                    ? `Editando Contrato ${mgrCode}`
+                    : 'Gerenciador & Editor de Contratos'}
+                </h2>
+                <p className="card-subtitle">
+                  Preencha os dados das partes, módulos e cláusulas com preview A4 ao vivo.
+                </p>
               </div>
-            ),
-          },
-        ]}
-      />
+              <button type="submit" className="btn btn-primary btn-sm">
+                <Save size={14} /> Salvar Contrato
+              </button>
+            </div>
+            <div className="card-body flex flex-col gap-4">
+              <div className="form-grid">
+                <div className="field">
+                  <label>Número do Contrato *</label>
+                  <input
+                    className="input mono"
+                    required
+                    value={mgrCode}
+                    onChange={(e) => setMgrCode(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Vincular a Empresa Cadastrada</label>
+                  <select
+                    className="select"
+                    value={mgrCompanyId}
+                    onChange={(e) => {
+                      const cid = e.target.value;
+                      setMgrCompanyId(cid);
+                      const found = companies.find((c) => c.id === cid);
+                      if (found) {
+                        setMgrCustomerName(found.legalName);
+                        setMgrCustomerDoc(found.taxId || '18.492.310/0001-54');
+                        setMgrCustomerEmail(found.contacts[0]?.email || 'contato@empresa.com.br');
+                        setMgrCustomerPhone(found.contacts[0]?.phone || '+55 (11) 99999-0000');
+                        setMgrFreeEmployeesQuota(found.freeEmployeesLimit ?? 10);
+                      }
+                    }}
+                  >
+                    {companies.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.isBranch ? '[FILIAL] ' : '[MATRIZ] '}
+                        {c.tradeName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="field">
+                  <label>Contratada (Meu Nome / Razão Social) *</label>
+                  <input
+                    className="input"
+                    required
+                    value={mgrProviderName}
+                    onChange={(e) => setMgrProviderName(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Representante da Contratada *</label>
+                  <input
+                    className="input"
+                    required
+                    value={mgrProviderRep}
+                    onChange={(e) => setMgrProviderRep(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Contratante (Cliente / Razão Social) *</label>
+                  <input
+                    className="input"
+                    required
+                    value={mgrCustomerName}
+                    onChange={(e) => setMgrCustomerName(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>CNPJ / CPF do Cliente *</label>
+                  <input
+                    className="input mono"
+                    required
+                    value={mgrCustomerDoc}
+                    onChange={(e) => setMgrCustomerDoc(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>E-mail do Cliente *</label>
+                  <input
+                    type="email"
+                    className="input"
+                    required
+                    value={mgrCustomerEmail}
+                    onChange={(e) => setMgrCustomerEmail(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Telefone / WhatsApp do Cliente *</label>
+                  <input
+                    className="input"
+                    required
+                    value={mgrCustomerPhone}
+                    onChange={(e) => setMgrCustomerPhone(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Plano / Produto Principal *</label>
+                  <input
+                    className="input"
+                    required
+                    value={mgrPlanName}
+                    onChange={(e) => setMgrPlanName(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Ciclo de Faturamento</label>
+                  <select
+                    className="select"
+                    value={mgrCycle}
+                    onChange={(e) => setMgrCycle(e.target.value as 'monthly' | 'yearly')}
+                  >
+                    <option value="monthly">Mensal</option>
+                    <option value="yearly">Anual</option>
+                  </select>
+                </div>
+                <div className="field">
+                  <label>Franquia de Funcionários Grátis</label>
+                  <input
+                    type="number"
+                    min={0}
+                    className="input tabular"
+                    value={mgrFreeEmployeesQuota}
+                    onChange={(e) => setMgrFreeEmployeesQuota(Number(e.target.value))}
+                  />
+                </div>
+                <div className="field">
+                  <label>Desconto Comercial (R$)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    className="input tabular"
+                    value={mgrDiscount}
+                    onChange={(e) => setMgrDiscount(Number(e.target.value))}
+                  />
+                </div>
+                <div className="field">
+                  <label>Início de Vigência</label>
+                  <input
+                    type="date"
+                    className="input tabular"
+                    value={mgrStartDate}
+                    onChange={(e) => setMgrStartDate(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Fim de Vigência</label>
+                  <input
+                    type="date"
+                    className="input tabular"
+                    value={mgrEndDate}
+                    onChange={(e) => setMgrEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="field">
+                <label>Forma e Condições de Pagamento</label>
+                <input
+                  className="input"
+                  value={mgrPaymentTerms}
+                  onChange={(e) => setMgrPaymentTerms(e.target.value)}
+                />
+              </div>
+
+              {/* Dynamic Variable Chips */}
+              <div>
+                <div className="text-xs font-semibold text-muted mb-1">
+                  VARIÁVEIS DINÂMICAS DO TEMPLATE (CLIQUE PARA INSERIR NAS CLÁUSULAS):
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {CONTRACT_TEMPLATE_VARIABLES.map((v) => (
+                    <button
+                      key={v.token}
+                      type="button"
+                      className="badge badge-info mono"
+                      style={{ cursor: 'pointer', border: 'none' }}
+                      title={v.label}
+                      onClick={() => setMgrClauses((prev) => `${prev}\n${v.token}`)}
+                    >
+                      {v.token}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field">
+                <div className="flex items-center justify-between mb-1">
+                  <label>Minuta Contratual & Cláusulas</label>
+                  <button
+                    type="button"
+                    className="btn btn-ghost btn-sm"
+                    onClick={() => setMgrClauses(DEFAULT_CONTRACT_TERMS_TEMPLATE)}
+                  >
+                    Restaurar Modelo Oficial
+                  </button>
+                </div>
+                <textarea
+                  className="textarea mono text-xs"
+                  style={{ minHeight: '220px' }}
+                  value={mgrClauses}
+                  onChange={(e) => setMgrClauses(e.target.value)}
+                />
+              </div>
+            </div>
+          </form>
+
+          {/* Right Column: Live A4 Sheet Preview + Export Actions */}
+          <div className="card">
+            <div className="card-header">
+              <div>
+                <h2 className="card-title">Preview em Tempo Real — Folha A4</h2>
+                <p className="card-subtitle">
+                  Valor Líquido Calculado:{' '}
+                  <strong>{formatCurrency(mgrFinalValue, 'BRL', session.language)}</strong>
+                </p>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => exportContractAsHTML(livePreviewContract, modules)}
+                >
+                  <FileText size={13} /> HTML
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => exportContractAsDOCX(livePreviewContract, modules)}
+                >
+                  <Download size={13} /> Word (.DOC)
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => exportContractAsPDF(livePreviewContract, modules)}
+                >
+                  <Printer size={13} /> Imprimir / PDF
+                </button>
+              </div>
+            </div>
+            <div
+              className="card-body"
+              style={{
+                background: '#ffffff',
+                color: '#0f172a',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
+                margin: '1rem',
+                padding: '1.5rem',
+                maxHeight: '720px',
+                overflowY: 'auto',
+              }}
+            >
+              <div
+                style={{
+                  borderBottom: '2px solid #1e3a8a',
+                  paddingBottom: '12px',
+                  marginBottom: '14px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1rem', color: '#0f172a' }}>
+                    CONTRATO DE LICENCIAMENTO SaaS &amp; PRESTAÇÃO DE SERVIÇOS
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: '#475569' }}>
+                    Contratada: {mgrProviderName} • Representante: {mgrProviderRep}
+                  </div>
+                </div>
+                <span className="badge badge-info mono">{mgrCode}</span>
+              </div>
+
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gap: '10px',
+                  marginBottom: '14px',
+                  fontSize: '0.78rem',
+                }}
+              >
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#f8fafc',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '6px',
+                  }}
+                >
+                  <strong>CONTRATADA:</strong> {mgrProviderName}
+                  <br />
+                  <span>CNPJ: {mgrProviderDoc}</span>
+                  <br />
+                  <span>E-mail: {mgrProviderEmail}</span>
+                </div>
+                <div
+                  style={{
+                    padding: '10px',
+                    background: '#f8fafc',
+                    border: '1px solid #cbd5e1',
+                    borderRadius: '6px',
+                  }}
+                >
+                  <strong>CONTRATANTE:</strong> {mgrCustomerName}
+                  <br />
+                  <span>Doc: {mgrCustomerDoc}</span>
+                  <br />
+                  <span>
+                    Contato: {mgrCustomerEmail} • {mgrCustomerPhone}
+                  </span>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  padding: '10px',
+                  background: '#eff6ff',
+                  border: '1px solid #bfdbfe',
+                  borderRadius: '6px',
+                  marginBottom: '14px',
+                  fontSize: '0.8rem',
+                }}
+              >
+                <strong>Plano:</strong> {mgrPlanName} ({mgrCycle === 'yearly' ? 'Anual' : 'Mensal'})
+                • <strong>Franquia Equipe:</strong> {mgrFreeEmployeesQuota} funcionários grátis •{' '}
+                <strong>Valor Líquido:</strong>{' '}
+                {formatCurrency(mgrFinalValue, 'BRL', session.language)}
+              </div>
+
+              <div
+                style={{
+                  whiteSpace: 'pre-wrap',
+                  fontSize: '0.8rem',
+                  lineHeight: 1.6,
+                  color: '#1e293b',
+                }}
+              >
+                {interpolateContractTerms(mgrClauses, livePreviewContract, modules)}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL 1: A4 CONTRACT PREVIEW & SIGNATURES */}
+      <ModalDialog
+        open={Boolean(previewModalContract)}
+        onClose={() => setPreviewModalContract(null)}
+        title={
+          previewModalContract
+            ? `Minuta Contratual ${previewModalContract.code} (v${previewModalContract.version}) — ${previewModalContract.companyName}`
+            : 'Minuta do Contrato'
+        }
+        description={
+          previewModalContract
+            ? `Plano: ${previewModalContract.planName} • Valor Líquido: ${formatCurrency(
+                previewModalContract.finalValue,
+                previewModalContract.currency,
+                session.language,
+              )}`
+            : ''
+        }
+        maxWidth="880px"
+      >
+        {previewModalContract && (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <StatusBadge status={previewModalContract.status} />
+                <span className="badge badge-teal">
+                  Franquia: {previewModalContract.freeEmployeesQuota ?? 10} funcionários grátis
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => {
+                    const target = previewModalContract;
+                    setPreviewModalContract(null);
+                    loadContractIntoManager(target);
+                  }}
+                >
+                  <Edit3 size={13} /> Editar no Gerenciador A4
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => exportContractAsDOCX(previewModalContract, modules)}
+                >
+                  <Download size={13} /> Word (.DOC)
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => exportContractAsPDF(previewModalContract, modules)}
+                >
+                  <Printer size={13} /> Imprimir / Salvar PDF
+                </button>
+              </div>
+            </div>
+
+            <div
+              style={{
+                padding: '1.25rem',
+                background: '#ffffff',
+                color: '#0f172a',
+                border: '1px solid #cbd5e1',
+                borderRadius: '8px',
+                maxHeight: '420px',
+                overflowY: 'auto',
+                whiteSpace: 'pre-wrap',
+                fontSize: '0.82rem',
+                lineHeight: 1.65,
+              }}
+            >
+              {interpolateContractTerms(
+                previewModalContract.clausesText || DEFAULT_CONTRACT_TERMS_TEMPLATE,
+                previewModalContract,
+                modules,
+              )}
+            </div>
+
+            <div className="card" style={{ padding: '0.9rem' }}>
+              <div className="flex items-center justify-between mb-2">
+                <strong className="text-xs uppercase">
+                  Assinaturas Eletrônicas SHA-256 ({previewModalContract.signatures.length})
+                </strong>
+                <button
+                  type="button"
+                  className="btn btn-primary btn-sm"
+                  onClick={() => {
+                    const target = previewModalContract;
+                    setPreviewModalContract(null);
+                    setSignModalContract(target);
+                  }}
+                >
+                  <FileSignature size={13} /> Assinar Eletronicamente
+                </button>
+              </div>
+              {previewModalContract.signatures.length === 0 ? (
+                <div className="text-xs text-muted">
+                  Nenhuma assinatura registrada ainda. Clique em "Assinar Eletronicamente" para
+                  registrar o aceite com hash SHA-256.
+                </div>
+              ) : (
+                previewModalContract.signatures.map((sig) => (
+                  <div key={sig.id} className="text-xs flex flex-col gap-0.5">
+                    <strong>
+                      {sig.signerName} ({sig.signerDocument}) — {sig.signerEmail}
+                    </strong>
+                    <span className="text-muted">
+                      Assinado em {formatDateTime(sig.signedAt, session.language)} • Hash:{' '}
+                      <code>{sig.acceptanceHash}</code>
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </ModalDialog>
+
+      {/* MODAL 2: ELECTRONIC SIGNATURE SHA-256 */}
+      <ModalDialog
+        open={Boolean(signModalContract)}
+        onClose={() => setSignModalContract(null)}
+        title={`Assinatura Eletrônica SHA-256 — ${signModalContract?.code || ''}`}
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setSignModalContract(null)}
+            >
+              {t('common.cancel')}
+            </button>
+            <button
+              type="submit"
+              form="quick-sign-contract-form"
+              className="btn btn-primary"
+              disabled={!acceptedTerms}
+            >
+              <FileSignature size={14} /> Confirmar Assinatura Eletrônica
+            </button>
+          </>
+        }
+      >
+        <form
+          id="quick-sign-contract-form"
+          onSubmit={handleQuickElectronicSign}
+          className="flex flex-col gap-3"
+        >
+          <div className="field">
+            <label>Nome Completo do Signatário *</label>
+            <input
+              className="input"
+              required
+              value={signerName}
+              onChange={(e) => setSignerName(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>E-mail Corporativo *</label>
+            <input
+              type="email"
+              className="input mono"
+              required
+              value={signerEmail}
+              onChange={(e) => setSignerEmail(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>Documento (CPF / CNPJ) *</label>
+            <input
+              className="input mono"
+              required
+              value={signerDoc}
+              onChange={(e) => setSignerDoc(e.target.value)}
+            />
+          </div>
+          <label className="flex items-center gap-2 text-xs mt-1" style={{ cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => setAcceptedTerms(e.target.checked)}
+            />
+            <span>
+              Confirmo o aceite integral das cláusulas contratuais e geração do hash SHA-256.
+            </span>
+          </label>
+        </form>
+      </ModalDialog>
+
+      {/* MODAL 3: GOOGLE DRIVE SYNC CONFIGURATION */}
+      <ModalDialog
+        open={gdriveModalOpen}
+        onClose={() => setGdriveModalOpen(false)}
+        title="Integração Google Drive — Repositório de Contratos"
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setGdriveModalOpen(false)}
+            >
+              Fechar
+            </button>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                const saved = saveGoogleDriveConfig({
+                  enabled: gdriveConfig.enabled,
+                  folderId: gdriveConfig.folderId,
+                  folderName: gdriveConfig.folderName,
+                  webhookOrScriptUrl: gdriveConfig.webhookOrScriptUrl,
+                  autoSyncOnSave: gdriveConfig.autoSyncOnSave,
+                });
+                setGdriveConfig(saved);
+                setGdriveModalOpen(false);
+                notify({
+                  type: 'success',
+                  title: 'Configuração do Google Drive salva com sucesso!',
+                });
+              }}
+            >
+              <Save size={14} /> Salvar Integração
+            </button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <div className="field">
+            <label>Nome da Pasta Corporativa no Google Drive</label>
+            <input
+              className="input"
+              value={gdriveConfig.folderName}
+              onChange={(e) =>
+                setGdriveConfig({ ...gdriveConfig, folderName: e.target.value })
+              }
+            />
+          </div>
+          <div className="field">
+            <label>ID da Pasta / Link do Repositório</label>
+            <input
+              className="input mono"
+              value={gdriveConfig.webhookOrScriptUrl}
+              onChange={(e) =>
+                setGdriveConfig({ ...gdriveConfig, webhookOrScriptUrl: e.target.value })
+              }
+            />
+          </div>
+        </div>
+      </ModalDialog>
 
       <ArchiveRecordDialog
         open={Boolean(archiveTarget)}
@@ -1714,15 +3073,21 @@ export const ContractsListPage: React.FC<{ scope: 'global' | 'company' }> = ({ s
   );
 };
 
-export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }) => {
-  const { contratoId } = useParams<{ contratoId: string }>();
+export const ContractFormPage: React.FC<{ mode: 'create' | 'edit'; scope?: 'global' | 'company' }> = ({
+  mode,
+  scope = 'global',
+}) => {
+  const { contratoId, empresaId } = useParams<{ contratoId: string; empresaId?: string }>();
   const { contracts, companies, modules, session, hasPermission, getActor, refreshData, notify, t } =
     useApp();
   const navigate = useNavigate();
 
   const existing = mode === 'edit' ? contracts.find((c) => c.id === contratoId) : undefined;
+  const baseRoute = scope === 'global' ? '/app/global/contratos' : `/app/empresa/${empresaId}/contratos`;
 
-  const [companyId, setCompanyId] = useState(existing?.companyId || companies[0]?.id || 'emp-olivelas-matriz');
+  const [companyId, setCompanyId] = useState(
+    existing?.companyId || empresaId || companies[0]?.id || 'emp-olivelas-matriz',
+  );
   const [planName, setPlanName] = useState(existing?.planName || 'Allin Modular Corporativo');
   const [selectedModuleIds, setSelectedModuleIds] = useState<string[]>(
     existing?.moduleIds || ['mod-core', 'mod-financeiro'],
@@ -1733,6 +3098,7 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
   const [startDate, setStartDate] = useState(existing?.startDate || '2026-10-28');
   const [endDate, setEndDate] = useState(existing?.endDate || '2027-10-28');
   const [discountValue, setDiscountValue] = useState(existing?.discountValue || 0);
+  const [freeEmployeesQuota, setFreeEmployeesQuota] = useState(existing?.freeEmployeesQuota ?? 10);
   const [status, setStatus] = useState<ContractStatus>(
     existing?.status || 'pending_signature',
   );
@@ -1741,12 +3107,13 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
   );
   const [clausesText, setClausesText] = useState(
     existing?.clausesText ||
+      DEFAULT_CONTRACT_TERMS_TEMPLATE ||
       'CLÁUSULA 1 — OBJETO: Licenciamento modular SaaS na plataforma Olivelas Allin.\nCLÁUSULA 2 — ISOLAMENTO E AUDITORIA: Dados isolados por empresa e retenção integral sem exclusão física.',
   );
   const [versionSummary, setVersionSummary] = useState('Revisão contratual e ajuste de módulos.');
   const [isDirty, setIsDirty] = useState(false);
 
-  if (!hasPermission('contracts', mode === 'create' ? 'create' : 'edit')) {
+  if (!hasPermission('contracts', mode === 'create' ? 'create' : 'edit', empresaId)) {
     return (
       <AccessDeniedView
         reason="Sem permissão para emitir ou editar contratos."
@@ -1759,6 +3126,40 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
     .filter((m) => selectedModuleIds.includes(m.id))
     .reduce((acc, m) => acc + (billingCycle === 'monthly' ? m.priceMonthly : m.priceYearly), 0);
   const finalValue = Math.max(0, totalValue - Number(discountValue));
+  const selectedComp = companies.find((c) => c.id === companyId);
+
+  const baseDraftEntity: ContractEntity = {
+    id: existing?.id || 'ctr-preview',
+    code: existing?.code || 'CTR-2026-NOVO',
+    companyId,
+    companyName: selectedComp?.legalName || companyId,
+    planName,
+    moduleIds: selectedModuleIds,
+    startDate,
+    endDate,
+    billingCycle,
+    totalValue,
+    discountValue: Number(discountValue),
+    finalValue,
+    freeEmployeesQuota,
+    currency: selectedComp?.currency || 'BRL',
+    status,
+    commercialResponsible,
+    clausesText,
+    version: existing ? existing.version + 1 : 1,
+    versionHistory: existing?.versionHistory || [],
+    signatures: existing?.signatures || [],
+    attachments: existing?.attachments || [],
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    archiveMetadata: { isArchived: false },
+    changeHistory: [],
+  };
+
+  const previewContractEntity: ContractEntity = {
+    ...baseDraftEntity,
+    clausesText: interpolateContractTerms(clausesText, baseDraftEntity, modules),
+  };
 
   const toggleMod = (mid: string) => {
     if (mid === 'mod-core') return;
@@ -1788,10 +3189,11 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
         totalValue,
         discountValue: Number(discountValue),
         finalValue,
+        freeEmployeesQuota,
         currency: comp?.currency || 'BRL',
         status,
         commercialResponsible: commercialResponsible.trim(),
-        clausesText,
+        clausesText: previewContractEntity.clausesText,
         version: 1,
         versionHistory: [
           {
@@ -1817,7 +3219,7 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
       );
       await refreshData();
       notify({ type: 'success', title: `Contrato ${code} emitido com sucesso.` });
-      navigate(`/app/global/contratos/${newId}`);
+      navigate(`${baseRoute}/${newId}`);
     } else if (existing) {
       const nextVersion = existing.version + 1;
       await repositories.contracts.update(
@@ -1832,9 +3234,10 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
           totalValue,
           discountValue: Number(discountValue),
           finalValue,
+          freeEmployeesQuota,
           status,
           commercialResponsible: commercialResponsible.trim(),
-          clausesText,
+          clausesText: previewContractEntity.clausesText,
           version: nextVersion,
           versionHistory: [
             ...curr.versionHistory,
@@ -1853,7 +3256,7 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
       );
       await refreshData();
       notify({ type: 'success', title: `Versão v${nextVersion} gravada com sucesso.` });
-      navigate(`/app/global/contratos/${existing.id}`);
+      navigate(`${baseRoute}/${existing.id}`);
     }
   };
 
@@ -1861,207 +3264,313 @@ export const ContractFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ mode }
     <div className="flex flex-col gap-4">
       <PageHeader
         breadcrumbs={[
-          { label: t('scope.global'), to: '/app/global' },
-          { label: t('nav.contracts'), to: '/app/global/contratos' },
+          { label: scope === 'global' ? t('scope.global') : t('scope.company'), to: baseRoute },
+          { label: t('nav.contracts'), to: baseRoute },
           { label: mode === 'create' ? 'Novo Contrato' : `Editar ${existing?.code}` },
         ]}
         title={
           mode === 'create'
-            ? 'Emitir Novo Contrato Modular'
-            : `Gerar Nova Versão Contratual — ${existing?.code} (Atual: v${existing?.version})`
+            ? 'Emitir Novo Contrato Modular & Minuta A4'
+            : `Editar Contrato & Minuta A4 — ${existing?.code} (ID: ${existing?.id} • v${existing?.version})`
+        }
+        subtitle="Edição dedicada com ID único, interpolação de variáveis e visualização de folha A4 ao vivo (HTML, DOCX e PDF)."
+        actions={
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsHTML(previewContractEntity, modules)}
+            >
+              <FileText size={14} /> Baixar HTML
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsDOCX(previewContractEntity, modules)}
+            >
+              <Download size={14} /> Baixar DOCX
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsPDF(previewContractEntity, modules)}
+            >
+              <Printer size={14} /> Imprimir / PDF A4
+            </button>
+            <Link to={baseRoute} className="btn btn-secondary btn-sm">
+              {t('common.back')}
+            </Link>
+          </div>
         }
       />
 
-      <UnsavedChangesBanner isDirty={isDirty} onDiscard={() => navigate('/app/global/contratos')} />
+      <UnsavedChangesBanner isDirty={isDirty} onDiscard={() => navigate(baseRoute)} />
 
-      <form onSubmit={handleSave} onChange={() => setIsDirty(true)}>
-        <div className="form-section">
-          <div className="form-section-title">1. Partes, Vigência e Condições Comerciais</div>
-          <div className="form-grid mt-2">
-            <div className="field">
-              <label htmlFor="ctr-comp">Empresa Contratante *</label>
-              <select
-                id="ctr-comp"
-                className="select"
-                disabled={mode === 'edit'}
-                value={companyId}
-                onChange={(e) => setCompanyId(e.target.value)}
-              >
-                {companies.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.tradeName} — {c.legalName}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-plan">Nome do Plano / Pacote *</label>
-              <input
-                id="ctr-plan"
-                className="input"
-                required
-                value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-resp">Responsável Comercial *</label>
-              <input
-                id="ctr-resp"
-                className="input"
-                required
-                value={commercialResponsible}
-                onChange={(e) => setCommercialResponsible(e.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-cycle">Periodicidade</label>
-              <select
-                id="ctr-cycle"
-                className="select"
-                value={billingCycle}
-                onChange={(e) => setBillingCycle(e.target.value as 'monthly' | 'yearly')}
-              >
-                <option value="monthly">Mensal</option>
-                <option value="yearly">Anual</option>
-              </select>
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-start">Início da Vigência</label>
-              <input
-                id="ctr-start"
-                type="date"
-                className="input tabular"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-end">Fim da Vigência</label>
-              <input
-                id="ctr-end"
-                type="date"
-                className="input tabular"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-disc">Desconto Comercial (BRL)</label>
-              <input
-                id="ctr-disc"
-                type="number"
-                min={0}
-                className="input tabular"
-                value={discountValue}
-                onChange={(e) => setDiscountValue(Number(e.target.value))}
-              />
-            </div>
-            <div className="field">
-              <label htmlFor="ctr-status">Estado do Contrato</label>
-              <select
-                id="ctr-status"
-                className="select"
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ContractStatus)}
-              >
-                <option value="draft">Rascunho</option>
-                <option value="pending_signature">Aguardando Assinatura</option>
-                <option value="active">Ativo / Vigente</option>
-                <option value="suspended">Suspenso</option>
-              </select>
+      <div className="grid-2" style={{ alignItems: 'start' }}>
+        <form onSubmit={handleSave} onChange={() => setIsDirty(true)} className="flex flex-col gap-4">
+          <div className="form-section" style={{ marginBottom: 0 }}>
+            <div className="form-section-title">1. Partes, Vigência e Condições Comerciais</div>
+            <div className="form-grid mt-2">
+              <div className="field">
+                <label htmlFor="ctr-comp">Empresa Contratante *</label>
+                <select
+                  id="ctr-comp"
+                  className="select"
+                  disabled={mode === 'edit' || scope === 'company'}
+                  value={companyId}
+                  onChange={(e) => setCompanyId(e.target.value)}
+                >
+                  {companies.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.tradeName} — {c.legalName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-plan">Nome do Plano / Pacote *</label>
+                <input
+                  id="ctr-plan"
+                  className="input"
+                  required
+                  value={planName}
+                  onChange={(e) => setPlanName(e.target.value)}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-resp">Responsável Comercial *</label>
+                <input
+                  id="ctr-resp"
+                  className="input"
+                  required
+                  value={commercialResponsible}
+                  onChange={(e) => setCommercialResponsible(e.target.value)}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-cycle">Periodicidade</label>
+                <select
+                  id="ctr-cycle"
+                  className="select"
+                  value={billingCycle}
+                  onChange={(e) => setBillingCycle(e.target.value as 'monthly' | 'yearly')}
+                >
+                  <option value="monthly">Mensal</option>
+                  <option value="yearly">Anual</option>
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-start">Início da Vigência</label>
+                <input
+                  id="ctr-start"
+                  type="date"
+                  className="input tabular"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-end">Fim da Vigência</label>
+                <input
+                  id="ctr-end"
+                  type="date"
+                  className="input tabular"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-disc">Desconto Comercial (BRL)</label>
+                <input
+                  id="ctr-disc"
+                  type="number"
+                  min={0}
+                  className="input tabular"
+                  value={discountValue}
+                  onChange={(e) => setDiscountValue(Number(e.target.value))}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-quota">Cota Grátis de Funcionários</label>
+                <input
+                  id="ctr-quota"
+                  type="number"
+                  min={1}
+                  className="input tabular"
+                  value={freeEmployeesQuota}
+                  onChange={(e) => setFreeEmployeesQuota(Number(e.target.value))}
+                />
+              </div>
+              <div className="field">
+                <label htmlFor="ctr-status">Estado do Contrato</label>
+                <select
+                  id="ctr-status"
+                  className="select"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as ContractStatus)}
+                >
+                  <option value="draft">Rascunho</option>
+                  <option value="pending_signature">Aguardando Assinatura</option>
+                  <option value="active">Ativo / Vigente</option>
+                  <option value="suspended">Suspenso</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="form-section">
-          <div className="form-section-title">2. Módulos Incluídos no Contrato</div>
-          <div className="form-grid mt-2">
-            {modules.map((m) => {
-              const checked = selectedModuleIds.includes(m.id);
-              return (
-                <label
-                  key={m.id}
-                  style={{
-                    border: checked
-                      ? '1px solid var(--accent-primary)'
-                      : '1px solid var(--border-subtle)',
-                    padding: '0.65rem',
-                    borderRadius: 'var(--radius-sm)',
-                    cursor: m.isCore ? 'default' : 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
+          <div className="form-section" style={{ marginBottom: 0 }}>
+            <div className="form-section-title">2. Módulos Incluídos no Contrato</div>
+            <div className="form-grid mt-2">
+              {modules.slice(0, 12).map((m) => {
+                const checked = selectedModuleIds.includes(m.id);
+                return (
+                  <label
+                    key={m.id}
+                    style={{
+                      border: checked
+                        ? '1px solid var(--accent-primary)'
+                        : '1px solid var(--border-subtle)',
+                      padding: '0.55rem 0.65rem',
+                      borderRadius: 'var(--radius-sm)',
+                      cursor: m.isCore ? 'default' : 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span className="text-xs">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        disabled={m.isCore}
+                        onChange={() => toggleMod(m.id)}
+                        style={{ marginRight: 6 }}
+                      />
+                      <strong>{m.name[session.language]}</strong>
+                    </span>
+                    <span className="text-xs tabular">
+                      {formatCurrency(
+                        billingCycle === 'monthly' ? m.priceMonthly : m.priceYearly,
+                        m.currency,
+                        session.language,
+                      )}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="mt-4 text-sm">
+              Valor Bruto: <strong>{formatCurrency(totalValue, 'BRL', session.language)}</strong> •
+              Desconto: <strong>{formatCurrency(discountValue, 'BRL', session.language)}</strong> •
+              Valor Final Acordado:{' '}
+              <strong style={{ color: 'var(--accent-primary)' }}>
+                {formatCurrency(finalValue, 'BRL', session.language)}
+              </strong>
+            </div>
+          </div>
+
+          <div className="form-section" style={{ marginBottom: 0 }}>
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="form-section-title">3. Cláusulas Contratuais e Variáveis de Minuta A4</div>
+              <div className="flex gap-1 flex-wrap">
+                <button
+                  type="button"
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => {
+                    setClausesText(DEFAULT_CONTRACT_TERMS_TEMPLATE);
+                    setIsDirty(true);
                   }}
                 >
-                  <span>
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      disabled={m.isCore}
-                      onChange={() => toggleMod(m.id)}
-                      style={{ marginRight: 6 }}
-                    />
-                    <strong>{m.name[session.language]}</strong>
-                  </span>
-                  <span className="text-xs tabular">
-                    {formatCurrency(
-                      billingCycle === 'monthly' ? m.priceMonthly : m.priceYearly,
-                      m.currency,
-                      session.language,
-                    )}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-          <div className="mt-4 text-sm">
-            Valor Bruto: <strong>{formatCurrency(totalValue, 'BRL', session.language)}</strong> •
-            Desconto: <strong>{formatCurrency(discountValue, 'BRL', session.language)}</strong> •
-            Valor Final Acordado:{' '}
-            <strong style={{ color: 'var(--accent-primary)' }}>
-              {formatCurrency(finalValue, 'BRL', session.language)}
-            </strong>
-          </div>
-        </div>
-
-        <div className="form-section">
-          <div className="form-section-title">3. Cláusulas Contratuais e Resumo da Versão</div>
-          {mode === 'edit' && (
-            <div className="field mb-4">
-              <label htmlFor="ctr-ver-summary">Resumo do Aditivo / Nova Versão *</label>
-              <input
-                id="ctr-ver-summary"
-                className="input"
+                  Restaurar Minuta Padrão A4
+                </button>
+                {CONTRACT_TEMPLATE_VARIABLES.slice(0, 4).map((v) => (
+                  <button
+                    key={v.token}
+                    type="button"
+                    className="btn btn-ghost btn-sm mono"
+                    onClick={() => {
+                      setClausesText((prev) => `${prev}\n${v.token}`);
+                      setIsDirty(true);
+                    }}
+                  >
+                    + {v.token}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {mode === 'edit' && (
+              <div className="field mb-3 mt-2">
+                <label htmlFor="ctr-ver-summary">Resumo do Aditivo / Nova Versão *</label>
+                <input
+                  id="ctr-ver-summary"
+                  className="input"
+                  required
+                  value={versionSummary}
+                  onChange={(e) => setVersionSummary(e.target.value)}
+                />
+              </div>
+            )}
+            <div className="field mt-2">
+              <label htmlFor="ctr-clauses">Texto Integral das Cláusulas *</label>
+              <textarea
+                id="ctr-clauses"
+                className="textarea mono"
+                style={{ minHeight: 190 }}
                 required
-                value={versionSummary}
-                onChange={(e) => setVersionSummary(e.target.value)}
+                value={clausesText}
+                onChange={(e) => setClausesText(e.target.value)}
               />
             </div>
-          )}
-          <div className="field">
-            <label htmlFor="ctr-clauses">Texto Integral das Cláusulas *</label>
-            <textarea
-              id="ctr-clauses"
-              className="textarea mono"
-              style={{ minHeight: 130 }}
-              required
-              value={clausesText}
-              onChange={(e) => setClausesText(e.target.value)}
-            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <Link to={baseRoute} className="btn btn-secondary">
+              {t('common.cancel')}
+            </Link>
+            <button type="submit" className="btn btn-primary">
+              <Save size={15} />
+              {t('common.save')}
+            </button>
+          </div>
+        </form>
+
+        {/* Live A4 Sheet Preview on the Dedicated Edit Page */}
+        <div className="card" style={{ position: 'sticky', top: '4.5rem' }}>
+          <div className="card-header">
+            <div>
+              <h2 className="card-title">Preview Folha A4 em Tempo Real</h2>
+              <p className="text-xs text-muted">
+                Documento pronto para assinatura SHA-256 e exportação em PDF/DOCX/HTML.
+              </p>
+            </div>
+            <span className="badge badge-teal">A4 210×297mm</span>
+          </div>
+          <div
+            className="card-body"
+            style={{
+              maxHeight: '78vh',
+              overflowY: 'auto',
+              background: '#f8fafc',
+              color: '#0f172a',
+              fontFamily: 'Georgia, serif',
+              fontSize: '0.82rem',
+              lineHeight: 1.6,
+              padding: '1.5rem',
+            }}
+          >
+            <div style={{ borderBottom: '2px solid #0f172a', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
+              <div style={{ fontWeight: 700, fontSize: '1rem' }}>
+                INSTRUMENTO PARTICULAR DE LICENCIAMENTO SAAS — {previewContractEntity.code}
+              </div>
+              <div style={{ fontSize: '0.75rem', color: '#475569' }}>
+                Contratante: <strong>{previewContractEntity.companyName}</strong> ({selectedComp?.taxId || 'CNPJ Isento'}) • Plano:{' '}
+                <strong>{previewContractEntity.planName}</strong> • Franquia: <strong>{freeEmployeesQuota} funcionários grátis</strong>
+              </div>
+            </div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>{previewContractEntity.clausesText}</div>
           </div>
         </div>
-
-        <div className="flex items-center justify-between">
-          <Link to="/app/global/contratos" className="btn btn-secondary">
-            {t('common.cancel')}
-          </Link>
-          <button type="submit" className="btn btn-primary">
-            <Save size={15} />
-            {t('common.save')}
-          </button>
-        </div>
-      </form>
+      </div>
     </div>
   );
 };
@@ -2163,7 +3672,31 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
         subtitle={`${contract.companyName} • Plano: ${contract.planName} • Vigência: ${contract.startDate} a ${contract.endDate}`}
         scopeBadge={`v${contract.version}`}
         actions={
-          <>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsHTML(contract, modules)}
+            >
+              <FileText size={14} />
+              HTML
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsDOCX(contract, modules)}
+            >
+              <Download size={14} />
+              Word (.DOC)
+            </button>
+            <button
+              type="button"
+              className="btn btn-secondary btn-sm"
+              onClick={() => exportContractAsPDF(contract, modules)}
+            >
+              <Printer size={14} />
+              Imprimir / PDF
+            </button>
             {(hasPermission('contracts', 'approve', targetCompanyId) ||
               hasPermission('contracts', 'edit', targetCompanyId)) && (
               <button
@@ -2184,7 +3717,7 @@ export const ContractDetailAndSignaturePage: React.FC<{ scope: 'global' | 'compa
                 Nova Versão / Aditivo
               </Link>
             )}
-          </>
+          </div>
         }
       />
 

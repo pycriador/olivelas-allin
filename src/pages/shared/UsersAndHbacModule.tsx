@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
+  AlertTriangle,
   Building2,
   CheckCircle2,
+  CreditCard,
   Database,
   Edit3,
+  Eye,
   KeyRound,
+  Layers,
   Lock,
   Plus,
+  RotateCcw,
   Save,
   ShieldCheck,
+  Sparkles,
   Trash2,
+  Users,
+  Wand2,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
@@ -22,6 +30,10 @@ import {
   syncUnifiedUserProfileToSupabase,
 } from '../../services/olivelasEcosystemService';
 import {
+  computeCompanyLicenseSummary,
+  getPlatformBillingRules,
+} from '../../services/enterpriseFinanceAndContractsService';
+import {
   IndividualPermissionOverride,
   LanguageCode,
   PermissionAction,
@@ -32,7 +44,7 @@ import {
   UserEntity,
 } from '../../types/domain';
 import { generateId, recordAuditEvent, repositories } from '../../repositories/repositories';
-import { formatDateTime } from '../../i18n/translations';
+import { formatCurrency, formatDateTime } from '../../i18n/translations';
 import {
   ACTION_LABELS,
   ALL_ACTIONS,
@@ -44,6 +56,7 @@ import {
 } from '../../services/hbacService';
 import {
   AccessDeniedView,
+  ActionDropdownMenu,
   ArchiveRecordDialog,
   ModalDialog,
   PageHeader,
@@ -51,6 +64,128 @@ import {
   UnsavedChangesBanner,
   UrlDataTable,
 } from '../../components/shared/SharedComponents';
+
+export interface CommercialPermissionPackage {
+  id: string;
+  name: string;
+  badge: string;
+  description: string;
+  roleIdToEnsure: string;
+  resourcesToAllow: Array<{ resource: PermissionResource; action: PermissionAction }>;
+}
+
+export const COMMERCIAL_PERMISSION_PACKAGES: CommercialPermissionPackage[] = [
+  {
+    id: 'pkg-starter-op',
+    name: 'Pacote Starter — Operação & Atendimento',
+    badge: 'Essencial',
+    description: 'Libera Dashboard, Estoque (Visualização/Criação), Pedidos, CRM e Suporte sem acesso a dados financeiros sensíveis.',
+    roleIdToEnsure: 'role-funcionario',
+    resourcesToAllow: [
+      { resource: 'dashboard', action: 'view' },
+      { resource: 'inventory', action: 'view' },
+      { resource: 'inventory', action: 'create' },
+      { resource: 'orders', action: 'view' },
+      { resource: 'orders', action: 'create' },
+      { resource: 'crm', action: 'view' },
+      { resource: 'tickets', action: 'view' },
+    ],
+  },
+  {
+    id: 'pkg-erp-manager',
+    name: 'Pacote Gestor Multi-Loja — Financeiro, Contratos & Equipe',
+    badge: 'Mais Contratado',
+    description: 'Libera gestão de Estoque, Vendas, Financeiro, Contratos A4, Usuários/Filiais e Relatórios Curva ABC.',
+    roleIdToEnsure: 'role-gerente',
+    resourcesToAllow: [
+      { resource: 'dashboard', action: 'view' },
+      { resource: 'companies', action: 'view' },
+      { resource: 'users', action: 'view' },
+      { resource: 'users', action: 'edit' },
+      { resource: 'contracts', action: 'view' },
+      { resource: 'contracts', action: 'edit' },
+      { resource: 'finance', action: 'view' },
+      { resource: 'finance', action: 'edit' },
+      { resource: 'reports', action: 'view' },
+      { resource: 'inventory', action: 'view' },
+      { resource: 'orders', action: 'view' },
+    ],
+  },
+  {
+    id: 'pkg-enterprise-full',
+    name: 'Pacote Enterprise Full — Governança, API Hub & Auditoria Forense',
+    badge: 'Enterprise + IA',
+    description: 'Habilita todos os recursos operacionais, financeiros, contratos, API Studio De->Para e trilha de auditoria forense.',
+    roleIdToEnsure: 'role-admin',
+    resourcesToAllow: [
+      { resource: 'dashboard', action: 'view' },
+      { resource: 'companies', action: 'view' },
+      { resource: 'users', action: 'view' },
+      { resource: 'roles', action: 'view' },
+      { resource: 'modules', action: 'view' },
+      { resource: 'contracts', action: 'view' },
+      { resource: 'finance', action: 'view' },
+      { resource: 'tickets', action: 'view' },
+      { resource: 'audit', action: 'view' },
+      { resource: 'api_hub', action: 'view' },
+      { resource: 'reports', action: 'view' },
+    ],
+  },
+];
+
+export interface ScreenDependencyRule {
+  id: string;
+  screenName: string;
+  primaryResource: PermissionResource;
+  primaryAction: PermissionAction;
+  requiredResource: PermissionResource;
+  requiredAction: PermissionAction;
+  impactIfMissing: string;
+  stillWorksNote: string;
+}
+
+export const SCREEN_DEPENDENCY_RULES: ScreenDependencyRule[] = [
+  {
+    id: 'dep-contracts-finance',
+    screenName: 'Contratos & Assinaturas (/app/global/contratos)',
+    primaryResource: 'contracts',
+    primaryAction: 'view',
+    requiredResource: 'finance',
+    requiredAction: 'view',
+    impactIfMissing: 'Sem finance:view, o operador visualiza o contrato A4, mas não consegue conciliar faturas nem ver o livro-razão financeiro da empresa.',
+    stillWorksNote: 'A leitura das cláusulas contratuais e download em PDF/DOCX continuam funcionando normalmente.',
+  },
+  {
+    id: 'dep-orders-inventory',
+    screenName: 'Pedidos Comerciais & PDV (/operacao/vendas)',
+    primaryResource: 'orders',
+    primaryAction: 'create',
+    requiredResource: 'inventory',
+    requiredAction: 'view',
+    impactIfMissing: 'Sem inventory:view, a emissão de pedidos não consegue consultar o saldo disponível de SKUs nem a Curva ABC.',
+    stillWorksNote: 'A listagem histórica de pedidos faturados permanece acessível.',
+  },
+  {
+    id: 'dep-users-companies',
+    screenName: 'Gestão de Usuários & Alocação em Filiais (/app/global/usuarios)',
+    primaryResource: 'users',
+    primaryAction: 'edit',
+    requiredResource: 'companies',
+    requiredAction: 'view',
+    impactIfMissing: 'Sem companies:view, o gestor não consegue visualizar a hierarquia Matriz/Filial nem a cota de 10 funcionários grátis ao vincular unidades.',
+    stillWorksNote: 'A edição de nome, telefone e idioma do usuário continua operando.',
+  },
+  {
+    id: 'dep-roles-audit',
+    screenName: 'Governança de Papéis HBAC (/app/global/papeis)',
+    primaryResource: 'roles',
+    primaryAction: 'edit',
+    requiredResource: 'audit',
+    requiredAction: 'view',
+    impactIfMissing: 'Sem audit:view, o administrador altera permissões HBAC mas não consegue inspecionar o Diff JSON Before/After na trilha de auditoria.',
+    stillWorksNote: 'A matriz de permissões e anti-elevação de privilégios continuam ativas.',
+  },
+];
 
 export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
@@ -65,8 +200,10 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
     notify,
     t,
   } = useApp();
+  const navigate = useNavigate();
 
   const [archiveTarget, setArchiveTarget] = useState<UserEntity | null>(null);
+  const [inspectUser, setInspectUser] = useState<UserEntity | null>(null);
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
@@ -81,6 +218,7 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
     );
   }
 
+  const billingRules = getPlatformBillingRules();
   const scopedUsers = targetCompanyId
     ? users.filter((u) => u.companyIds.includes(targetCompanyId))
     : users;
@@ -92,7 +230,7 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -101,8 +239,8 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           },
           { label: t('nav.users') },
         ]}
-        title="Gestão de Usuários, Identidades & Associação HBAC"
-        subtitle="Controle completo de vínculos por empresa, papéis hierárquicos e exceções individuais auditadas."
+        title="Gestão de Usuários, Identidades, Perfil de Pagamento & Associação HBAC"
+        subtitle={`Controle completo de vínculos por Matriz/Filial, pacotes HBAC e perfil de assinatura • ${scopedUsers.length} usuários no diretório`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           hasPermission('users', 'create', targetCompanyId) && (
@@ -130,32 +268,31 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           { value: 'archived', label: t('status.archived') },
         ]}
         isArchivedExtractor={(u) => u.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission('users', 'archive', targetCompanyId)
-            ? (item) => setArchiveTarget(item)
-            : undefined
-        }
-        onRestoreClick={
-          hasPermission('users', 'archive', targetCompanyId) ? handleRestore : undefined
-        }
         columns={[
           {
             key: 'name',
-            header: 'Usuário / E-mail',
+            header: 'Usuário & E-mail',
+            width: '25%',
             sortable: true,
             csvValue: (u) => `${u.name} <${u.email}>`,
             render: (u) => (
               <div>
-                <Link to={`${baseRoute}/${u.id}`} className="font-semibold">
-                  {u.name}
-                </Link>
-                <div className="text-xs text-muted mono">{u.email}</div>
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <Link to={`${baseRoute}/${u.id}/editar`} className="font-semibold">
+                    {u.name}
+                  </Link>
+                  <code className="text-xs text-muted mono">{u.id}</code>
+                </div>
+                <div className="text-xs text-muted mono">
+                  {u.email} • {u.phone}
+                </div>
               </div>
             ),
           },
           {
             key: 'roles',
-            header: 'Papéis HBAC',
+            header: 'Papéis HBAC & Nível',
+            width: '22%',
             csvValue: (u) =>
               getUserActiveRoles(u, roles)
                 .map((r) => r.name[session.language])
@@ -177,18 +314,22 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
           },
           {
             key: 'companies',
-            header: 'Empresas Associadas',
+            header: 'Unidades (Matriz / Filiais)',
+            width: '23%',
             csvValue: (u) => u.companyIds.join('; '),
             render: (u) => (
               <div className="flex items-center gap-1 flex-wrap">
                 {u.companyIds.length === 0 ? (
-                  <span className="text-xs text-muted">Global (Plataforma)</span>
+                  <span className="badge badge-neutral">Global (Plataforma)</span>
                 ) : (
                   u.companyIds.map((cid) => {
                     const comp = companies.find((c) => c.id === cid);
                     return (
-                      <span key={cid} className="badge">
-                        {comp?.tradeName || cid}
+                      <span
+                        key={cid}
+                        className={`badge ${!comp?.isBranch ? 'badge-info' : 'badge-teal'}`}
+                      >
+                        {!comp?.isBranch ? 'Matriz:' : 'Filial:'} {comp?.tradeName || cid}
                       </span>
                     );
                   })
@@ -197,39 +338,214 @@ export const UsersListPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope
             ),
           },
           {
-            key: 'status',
-            header: 'Estado & Último Acesso',
+            key: 'lastLoginAt',
+            header: 'Último Acesso & Cadastro',
+            width: '12%',
             sortable: true,
             render: (u) => (
-              <div className="flex flex-col gap-1">
-                <div>
-                  <StatusBadge status={u.status} />
-                </div>
-                <span className="text-xs text-muted tabular">
-                  {formatDateTime(u.lastLoginAt, session.language)}
-                </span>
+              <div>
+                <div className="text-xs font-medium">{formatDateTime(u.lastLoginAt, session.language)}</div>
+                <div className="text-xs text-muted mono">Desde {formatDateTime(u.createdAt, session.language).slice(0, 10)}</div>
               </div>
             ),
           },
           {
-            key: 'nav',
-            header: 'Matriz & Edição',
+            key: 'status',
+            header: 'Estado',
+            width: '9%',
+            sortable: true,
+            render: (u) => <StatusBadge status={u.status} />,
+          },
+          {
+            key: 'actions',
+            header: 'Ações',
+            width: '9%',
+            isNumeric: true,
             render: (u) => (
-              <div className="flex items-center gap-1">
-                <Link to={`${baseRoute}/${u.id}`} className="btn btn-secondary btn-sm">
-                  <ShieldCheck size={13} />
-                  Matriz HBAC
-                </Link>
-                {hasPermission('users', 'edit', targetCompanyId) && (
-                  <Link to={`${baseRoute}/${u.id}/editar`} className="btn btn-ghost btn-sm">
-                    <Edit3 size={13} />
-                  </Link>
-                )}
-              </div>
+              <ActionDropdownMenu
+                label="Ações"
+                items={[
+                  ...(hasPermission('users', 'edit', targetCompanyId)
+                    ? [
+                        {
+                          id: 'edit-user',
+                          label: 'Editar & Vincular Empresas (ID Único)',
+                          icon: <Edit3 size={14} />,
+                          variant: 'primary' as const,
+                          onClick: () => navigate(`${baseRoute}/${u.id}/editar`),
+                        },
+                      ]
+                    : []),
+                  {
+                    id: 'hbac-matrix',
+                    label: 'Matriz HBAC & Dependências',
+                    icon: <ShieldCheck size={14} />,
+                    onClick: () => navigate(`${baseRoute}/${u.id}`),
+                  },
+                  {
+                    id: 'inspect-modal',
+                    label: 'Resumo Rápido de Vínculos',
+                    icon: <Eye size={14} />,
+                    onClick: () => setInspectUser(u),
+                  },
+                  ...(hasPermission('users', 'archive', targetCompanyId)
+                    ? [
+                        u.archiveMetadata.isArchived
+                          ? {
+                              id: 'restore',
+                              label: t('common.restore'),
+                              icon: <RotateCcw size={14} />,
+                              onClick: () => handleRestore(u),
+                            }
+                          : {
+                              id: 'archive',
+                              label: t('common.archive'),
+                              icon: <Trash2 size={14} />,
+                              variant: 'danger' as const,
+                              onClick: () => setArchiveTarget(u),
+                            },
+                      ]
+                    : []),
+                ]}
+              />
             ),
           },
         ]}
       />
+
+      {/* Modal: Ficha Completa do Usuário, Unidades Matriz/Filial & Perfil de Pagamento (com X) */}
+      <ModalDialog
+        open={Boolean(inspectUser)}
+        onClose={() => setInspectUser(null)}
+        title={inspectUser ? `Ficha de Governança & Assinatura — ${inspectUser.name}` : 'Usuário'}
+        description={inspectUser ? `${inspectUser.email} • Telefone: ${inspectUser.phone}` : ''}
+        maxWidth="840px"
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setInspectUser(null)}>
+              Fechar
+            </button>
+            {inspectUser && (
+              <>
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => {
+                    const id = inspectUser.id;
+                    setInspectUser(null);
+                    navigate(`${baseRoute}/${id}/editar`);
+                  }}
+                >
+                  <Edit3 size={14} /> Editar Cadastro &amp; Empresas
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    const id = inspectUser.id;
+                    setInspectUser(null);
+                    navigate(`${baseRoute}/${id}`);
+                  }}
+                >
+                  <ShieldCheck size={14} /> Abrir Matriz HBAC &amp; Dependências
+                </button>
+              </>
+            )}
+          </>
+        }
+      >
+        {inspectUser && (
+          <div className="flex flex-col gap-4">
+            <div className="grid-3 text-xs">
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Papéis Hierárquicos</span>
+                <div className="flex gap-1 flex-wrap mt-1">
+                  {getUserActiveRoles(inspectUser, roles).map((r) => (
+                    <span key={r.id} className="badge badge-info">
+                      {r.name[session.language]} (N{r.hierarchyLevel})
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Exceções Individuais</span>
+                <strong className="text-sm">{inspectUser.individualPermissions.length} regra(s)</strong>
+                <span className="text-muted">Auditadas com rastreamento de origem</span>
+              </div>
+              <div className="card card-body">
+                <span className="text-muted uppercase block">Último Acesso</span>
+                <strong className="mono text-sm">
+                  {formatDateTime(inspectUser.lastLoginAt, session.language)}
+                </strong>
+                <StatusBadge status={inspectUser.status} />
+              </div>
+            </div>
+
+            <div className="card">
+              <div className="card-header">
+                <h3 className="card-title text-sm flex items-center gap-2">
+                  <CreditCard size={15} /> Perfil de Pagamento &amp; Cota de Funcionários nas Unidades Vinculadas ({inspectUser.companyIds.length})
+                </h3>
+                <span className="badge badge-teal">
+                  Franquia {billingRules.defaultFreeEmployeesPerStore} Grátis / Empresa
+                </span>
+              </div>
+              <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>Unidade (Matriz / Filial)</th>
+                      <th>Funcionários Alocados</th>
+                      <th>Licenças Excedentes</th>
+                      <th className="num">Mensalidade Consolidada</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {inspectUser.companyIds.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="text-xs text-muted">
+                          Usuário de escopo Global da Plataforma (isento de cobrança por unidade).
+                        </td>
+                      </tr>
+                    ) : (
+                      inspectUser.companyIds.map((cid) => {
+                        const comp = companies.find((c) => c.id === cid);
+                        if (!comp) return null;
+                        const lic = computeCompanyLicenseSummary(comp, companies, billingRules);
+                        return (
+                          <tr key={comp.id}>
+                            <td>
+                              <span className={`badge ${!comp.isBranch ? 'badge-info' : 'badge-teal'} mr-1`}>
+                                {!comp.isBranch ? 'MATRIZ' : `FILIAL ${comp.branchCode || ''}`}
+                              </span>
+                              <strong>{comp.tradeName}</strong>
+                            </td>
+                            <td className="text-xs">
+                              {lic.activeEmployeesCount} funcionário(s) ({Math.min(lic.activeEmployeesCount, lic.freeLimit)}/{lic.freeLimit} grátis)
+                            </td>
+                            <td className="text-xs">
+                              {lic.extraEmployeesCount > 0 ? (
+                                <span className="badge badge-warning">
+                                  +{lic.extraEmployeesCount} extra(s) ({formatCurrency(lic.extraLicensesMonthlyCost, 'BRL', session.language)})
+                                </span>
+                              ) : (
+                                <span className="badge badge-success">Dentro da Cota Gratuita</span>
+                              )}
+                            </td>
+                            <td className="num font-semibold tabular">
+                              {formatCurrency(lic.totalMonthlyBilling, 'BRL', session.language)}/mês
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+      </ModalDialog>
 
       <ArchiveRecordDialog
         open={Boolean(archiveTarget)}
@@ -973,6 +1289,106 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
     });
   };
 
+  const handleApplyCommercialPackage = async (pkg: CommercialPermissionPackage) => {
+    if (!currentUser) return;
+    const actor = getActor(targetCompanyId);
+    const now = new Date().toISOString();
+    const newOverrides: IndividualPermissionOverride[] = pkg.resourcesToAllow.map((item) => ({
+      id: generateId('ovr'),
+      resource: item.resource,
+      action: item.action,
+      scope: scope === 'global' ? 'global' : 'company',
+      companyId: targetCompanyId || user.companyIds[0],
+      effect: 'allow',
+      grantedByUserId: currentUser.id,
+      grantedByUserName: currentUser.name,
+      reason: `Aplicação do pacote comercial "${pkg.name}"`,
+      createdAt: now,
+    }));
+
+    await repositories.users.update(
+      user.id,
+      (curr) => {
+        const mergedRoles = curr.roleIds.includes(pkg.roleIdToEnsure)
+          ? curr.roleIds
+          : [...curr.roleIds, pkg.roleIdToEnsure];
+        const existingNonConflict = curr.individualPermissions.filter(
+          (o) => !pkg.resourcesToAllow.some((r) => r.resource === o.resource && r.action === o.action),
+        );
+        return {
+          ...curr,
+          roleIds: mergedRoles,
+          individualPermissions: [...existingNonConflict, ...newOverrides],
+        };
+      },
+      actor,
+      `Aplicação do Pacote de Perfil Comercial "${pkg.name}" para ${user.name}.`,
+      'grant_permission',
+    );
+    await refreshData();
+    notify({
+      type: 'success',
+      title: `Pacote "${pkg.name}" aplicado com sucesso!`,
+      description: `${pkg.resourcesToAllow.length} permissões operacionais garantidas para ${user.name}.`,
+    });
+  };
+
+  const handleQuickFixDependency = async (rule: ScreenDependencyRule) => {
+    if (!currentUser) return;
+    const actor = getActor(targetCompanyId);
+    const fixOverride: IndividualPermissionOverride = {
+      id: generateId('ovr'),
+      resource: rule.requiredResource,
+      action: rule.requiredAction,
+      scope: scope === 'global' ? 'global' : 'company',
+      companyId: targetCompanyId || user.companyIds[0],
+      effect: 'allow',
+      grantedByUserId: currentUser.id,
+      grantedByUserName: currentUser.name,
+      reason: `Correção automática de dependência entre telas para ${rule.screenName}`,
+      createdAt: new Date().toISOString(),
+    };
+
+    await repositories.users.update(
+      user.id,
+      (curr) => ({
+        ...curr,
+        individualPermissions: [
+          ...curr.individualPermissions.filter(
+            (o) => !(o.resource === rule.requiredResource && o.action === rule.requiredAction),
+          ),
+          fixOverride,
+        ],
+      }),
+      actor,
+      `Quick-Fix de dependência entre telas (${rule.requiredResource}:${rule.requiredAction}) aplicado para ${user.name}.`,
+      'grant_permission',
+    );
+    await refreshData();
+    notify({
+      type: 'success',
+      title: `Dependência ${rule.requiredResource}:${rule.requiredAction} habilitada!`,
+      description: `O fluxo completo de ${rule.screenName} agora está 100% operacional.`,
+    });
+  };
+
+  const billingRules = getPlatformBillingRules();
+
+  const dependencyDiagnostics = SCREEN_DEPENDENCY_RULES.map((rule) => {
+    const hasPrimary = effectiveMatrix.some(
+      (c) => c.resource === rule.primaryResource && c.action === rule.primaryAction && c.allowed,
+    );
+    const hasRequired = effectiveMatrix.some(
+      (c) => c.resource === rule.requiredResource && c.action === rule.requiredAction && c.allowed,
+    );
+    const status: 'OK' | 'WARNING' | 'INACTIVE' = !hasPrimary
+      ? 'INACTIVE'
+      : hasRequired
+        ? 'OK'
+        : 'WARNING';
+    return { rule, hasPrimary, hasRequired, status };
+  });
+
   return (
     <div className="flex flex-col gap-4">
       <PageHeader
@@ -1105,6 +1521,203 @@ export const UserDetailAndMatrixPage: React.FC<{ scope: 'global' | 'company' }> 
               </div>
             ))
           )}
+        </div>
+      </div>
+
+      {/* Pacotes de Perfil Comercial + Diagnóstico de Dependências entre Telas */}
+      <div className="grid-2">
+        <div className="card">
+          <div className="card-header">
+            <div>
+              <h2 className="card-title flex items-center gap-2" style={{ fontSize: '0.98rem' }}>
+                <Sparkles size={15} /> Pacotes de Perfil Comercial &amp; Liberação Rápida (1-Clique)
+              </h2>
+              <p className="text-xs text-muted">
+                Aplique grupos prontos de permissões comerciais sem precisar configurar recurso por recurso.
+              </p>
+            </div>
+          </div>
+          <div className="card-body flex flex-col gap-2.5">
+            {COMMERCIAL_PERMISSION_PACKAGES.map((pkg) => (
+              <div
+                key={pkg.id}
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '0.75rem',
+                  flexWrap: 'wrap',
+                }}
+              >
+                <div style={{ flex: 1, minWidth: 210 }}>
+                  <div className="flex items-center gap-2">
+                    <strong className="text-sm">{pkg.name}</strong>
+                    <span className="badge badge-teal">{pkg.badge}</span>
+                  </div>
+                  <p className="text-xs text-muted mt-1">{pkg.description}</p>
+                </div>
+                {hasPermission('roles', 'administer', targetCompanyId) && (
+                  <button
+                    type="button"
+                    className="btn btn-primary btn-sm"
+                    onClick={() => handleApplyCommercialPackage(pkg)}
+                  >
+                    <Wand2 size={13} /> Aplicar Pacote
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <div>
+              <h2 className="card-title flex items-center gap-2" style={{ fontSize: '0.98rem' }}>
+                <AlertTriangle size={15} /> Diagnóstico Inteligente de Dependências entre Telas
+              </h2>
+              <p className="text-xs text-muted">
+                Verifica automaticamente o que continua funcionando e o que perde integração caso uma permissão correlata esteja bloqueada.
+              </p>
+            </div>
+          </div>
+          <div className="card-body flex flex-col gap-2.5">
+            {dependencyDiagnostics.map(({ rule, status }) => (
+              <div
+                key={rule.id}
+                style={{
+                  padding: '0.75rem',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: 'var(--radius-sm)',
+                  background:
+                    status === 'WARNING'
+                      ? 'color-mix(in srgb, var(--color-warning) 10%, var(--bg-surface))'
+                      : 'var(--bg-subtle)',
+                }}
+              >
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <strong className="text-xs">{rule.screenName}</strong>
+                  <span
+                    className={`badge ${
+                      status === 'OK'
+                        ? 'badge-success'
+                        : status === 'WARNING'
+                          ? 'badge-warning'
+                          : 'badge-neutral'
+                    }`}
+                  >
+                    {status === 'OK'
+                      ? 'Fluxo Integrado OK'
+                      : status === 'WARNING'
+                        ? `Falta ${rule.requiredResource}:${rule.requiredAction}`
+                        : 'Tela Inativa'}
+                  </span>
+                </div>
+                {status === 'WARNING' ? (
+                  <div className="mt-1.5 flex flex-col gap-1 text-xs">
+                    <div style={{ color: 'var(--status-danger)' }}>
+                      <strong>Impacto:</strong> {rule.impactIfMissing}
+                    </div>
+                    <div className="text-muted">
+                      <strong>Continua funcionando:</strong> {rule.stillWorksNote}
+                    </div>
+                    {hasPermission('roles', 'administer', targetCompanyId) && (
+                      <div className="mt-1">
+                        <button
+                          type="button"
+                          className="btn btn-secondary btn-sm"
+                          onClick={() => handleQuickFixDependency(rule)}
+                        >
+                          <CheckCircle2 size={12} /> Corrigir Dependência ({rule.requiredResource}:{rule.requiredAction})
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-muted mt-1">{rule.stillWorksNote}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Perfil de Pagamento, Assinatura & Cota de Funcionários das Unidades Vinculadas */}
+      <div className="card">
+        <div className="card-header">
+          <div>
+            <h2 className="card-title flex items-center gap-2" style={{ fontSize: '1.02rem' }}>
+              <CreditCard size={16} /> Perfil de Pagamento, Unidades Vinculadas (Matriz / Filiais) &amp; Cota de {billingRules.defaultFreeEmployeesPerStore} Funcionários Grátis
+            </h2>
+            <p className="text-xs text-muted">
+              Consolidação financeira das empresas e filiais associadas a {user.name}, incluindo franquia gratuita de equipe e licenças excedentes.
+            </p>
+          </div>
+          <Link to="/app/global/meios-pagamento" className="btn btn-secondary btn-sm">
+            Ir para Pagamentos por Empresa
+          </Link>
+        </div>
+        <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Empresa / Filial Associada</th>
+                <th>Alocação de Funcionários</th>
+                <th>Licenças Extras ({formatCurrency(billingRules.defaultExtraEmployeePrice, 'BRL', session.language)}/cada)</th>
+                <th className="num">Mensalidade Total da Unidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              {user.companyIds.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="text-xs text-muted">
+                    Usuário com escopo Global da Plataforma (sem cobrança por filial).
+                  </td>
+                </tr>
+              ) : (
+                user.companyIds.map((cid) => {
+                  const comp = companies.find((c) => c.id === cid);
+                  if (!comp) return null;
+                  const lic = computeCompanyLicenseSummary(comp, companies, billingRules);
+                  return (
+                    <tr key={comp.id}>
+                      <td>
+                        <div className="flex items-center gap-2">
+                          <span className={`badge ${!comp.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                            {!comp.isBranch ? 'MATRIZ' : `FILIAL ${comp.branchCode || ''}`}
+                          </span>
+                          <Link to={`/app/global/empresas/${comp.id}`} className="font-semibold">
+                            {comp.tradeName}
+                          </Link>
+                        </div>
+                        <div className="text-xs text-muted mono">{comp.taxId}</div>
+                      </td>
+                      <td>
+                        <span className="badge badge-neutral">
+                          {lic.activeEmployeesCount} funcionário(s) ({Math.min(lic.activeEmployeesCount, lic.freeLimit)}/{lic.freeLimit} grátis)
+                        </span>
+                      </td>
+                      <td>
+                        {lic.extraEmployeesCount > 0 ? (
+                          <span className="badge badge-warning">
+                            +{lic.extraEmployeesCount} extra(s) ({formatCurrency(lic.extraLicensesMonthlyCost, 'BRL', session.language)})
+                          </span>
+                        ) : (
+                          <span className="badge badge-success">Isento (Dentro dos 10 Grátis)</span>
+                        )}
+                      </td>
+                      <td className="num font-semibold tabular">
+                        {formatCurrency(lic.totalMonthlyBilling, 'BRL', session.language)}/mês
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1410,8 +2023,10 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
     t,
   } = useApp();
 
+  const navigate = useNavigate();
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
+  const baseRoute = scope === 'global' ? '/app/global/papeis' : `/app/empresa/${empresaId}/papeis`;
 
   const scopedRoles = roles.filter(
     (r) =>
@@ -1431,6 +2046,7 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
   const [newRoleParentId, setNewRoleParentId] = useState('role-gerente');
   const [newRoleLevel, setNewRoleLevel] = useState(5);
   const [archiveRoleTarget, setArchiveRoleTarget] = useState<RoleEntity | null>(null);
+  const [inspectRole, setInspectRole] = useState<RoleEntity | null>(null);
 
   if (!hasPermission('roles', 'view', targetCompanyId)) {
     return (
@@ -1552,7 +2168,7 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -1562,18 +2178,14 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
           { label: t('nav.roles') },
         ]}
         title="Governança HBAC — Hierarquia de Papéis, Escopos e Matriz de Permissões"
-        subtitle="Configure papéis, relações pai-filho, escopos (Global / Empresa / Recurso) e permissões granulares sem permitir elevação de privilégios."
+        subtitle={`Configure papéis, relações pai-filho, escopos (Global / Empresa / Recurso) e permissões granulares • ${scopedRoles.length} papéis ativos`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           hasPermission('roles', 'create', targetCompanyId) && (
-            <button
-              type="button"
-              className="btn btn-primary btn-sm"
-              onClick={() => setNewRoleModalOpen(true)}
-            >
+            <Link to={`${baseRoute}/novo`} className="btn btn-primary btn-sm">
               <Plus size={14} />
               Criar Papel Customizado
-            </button>
+            </Link>
           )
         }
       />
@@ -1594,35 +2206,34 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
           { value: 'resource', label: 'Escopo Recurso' },
         ]}
         isArchivedExtractor={(r) => r.archiveMetadata.isArchived}
-        onArchiveClick={
-          hasPermission('roles', 'archive', targetCompanyId)
-            ? (r) => {
-                if (!r.isSystemRole) setArchiveRoleTarget(r);
-              }
-            : undefined
-        }
         columns={[
           {
             key: 'name',
             header: 'Papel HBAC / Código',
+            width: '30%',
             sortable: true,
             render: (r) => (
               <div>
-                <div className="font-semibold">{r.name[session.language]}</div>
-                <code className="text-xs text-muted mono">{r.code}</code>
+                <Link to={`${baseRoute}/${r.id}/editar`} className="font-semibold">
+                  {r.name[session.language]}
+                </Link>
+                <div>
+                  <code className="text-xs text-muted mono">{r.code}</code>
+                </div>
               </div>
             ),
           },
           {
             key: 'hierarchyLevel',
             header: 'Nível Hierárquico',
+            width: '15%',
             sortable: true,
-            isNumeric: true,
             render: (r) => <span className="badge badge-info">Nível {r.hierarchyLevel}</span>,
           },
           {
             key: 'parentRoleId',
             header: 'Papel Superior',
+            width: '22%',
             render: (r) => {
               const parentRole = roles.find((p) => p.id === r.parentRoleId);
               return (
@@ -1635,6 +2246,7 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
           {
             key: 'permissionsCount',
             header: 'Regras / Escopo',
+            width: '24%',
             render: (r) => (
               <div className="flex items-center gap-1.5">
                 <StatusBadge status={r.scope} />
@@ -1644,93 +2256,128 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
           },
           {
             key: 'actions',
-            header: 'Matriz de Permissões',
+            header: 'Ações',
+            width: '9%',
+            isNumeric: true,
             render: (r) => {
               const active = selectedRole?.id === r.id;
               return (
-                <button
-                  type="button"
-                  onClick={() => setSelectedRoleId(r.id)}
-                  className={`btn btn-sm ${active ? 'btn-primary' : 'btn-secondary'}`}
-                >
-                  {active ? 'Matriz Selecionada' : 'Editar Matriz'}
-                </button>
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'edit-role-page',
+                      label: 'Editar Papel & Matriz (ID Único)',
+                      icon: <Edit3 size={14} />,
+                      variant: 'primary' as const,
+                      onClick: () => navigate(`${baseRoute}/${r.id}/editar`),
+                    },
+                    {
+                      id: 'select-matrix',
+                      label: active ? 'Inspecionar Matriz HBAC' : 'Inspecionar Permissões',
+                      icon: <ShieldCheck size={14} />,
+                      onClick: () => {
+                        setSelectedRoleId(r.id);
+                        setInspectRole(r);
+                      },
+                    },
+                    ...(!r.isSystemRole && hasPermission('roles', 'archive', targetCompanyId)
+                      ? [
+                          {
+                            id: 'archive-role',
+                            label: 'Arquivar Papel Customizado',
+                            icon: <Trash2 size={14} />,
+                            variant: 'danger' as const,
+                            onClick: () => setArchiveRoleTarget(r),
+                          },
+                        ]
+                      : []),
+                  ]}
+                />
               );
             },
           },
         ]}
       />
 
-      {/* Interactive Permission Matrix Editor for Selected Role */}
-      {selectedRole && (
-        <div className="card">
-          <div className="card-header">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 style={{ fontSize: '1.05rem' }}>
-                  Editor de Permissões do Papel: {selectedRole.name[session.language]}
-                </h2>
-                <StatusBadge status={selectedRole.scope} />
-                <StatusBadge status={selectedRole.status} />
-              </div>
-              <p className="text-xs text-muted mt-2">
-                Clique em qualquer célula para conceder ou revogar a ação para este papel. Todas as
-                alterações são validadas pelo motor HBAC e gravadas na auditoria.
-              </p>
-            </div>
-            {!selectedRole.isSystemRole && hasPermission('roles', 'archive', targetCompanyId) && (
+      {/* Modal: Inspeção Rápida do Papel HBAC (com X) */}
+      <ModalDialog
+        open={Boolean(inspectRole)}
+        onClose={() => setInspectRole(null)}
+        title={inspectRole ? `Papel HBAC — ${inspectRole.name[session.language]} (Nível ${inspectRole.hierarchyLevel})` : 'Papel'}
+        description={inspectRole ? inspectRole.description[session.language] : ''}
+        maxWidth="860px"
+        footer={
+          <>
+            <button type="button" className="btn btn-secondary" onClick={() => setInspectRole(null)}>
+              Fechar
+            </button>
+            {inspectRole && (
               <button
                 type="button"
-                className="btn btn-danger btn-sm"
-                onClick={() => setArchiveRoleTarget(selectedRole)}
+                className="btn btn-primary"
+                onClick={() => {
+                  const id = inspectRole.id;
+                  setInspectRole(null);
+                  navigate(`${baseRoute}/${id}/editar`);
+                }}
               >
-                Arquivar Papel Customizado
+                <Edit3 size={14} /> Abrir Página de Edição ({inspectRole.id})
               </button>
             )}
-          </div>
-
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Recurso / Módulo</th>
-                  {ALL_ACTIONS.map((act) => (
-                    <th key={act}>{ACTION_LABELS[act][session.language]}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {ALL_RESOURCES.map((res) => (
-                  <tr key={res}>
-                    <td>
-                      <strong>{RESOURCE_LABELS[res][session.language]}</strong>
-                      <div className="text-xs text-muted mono">{res}</div>
-                    </td>
-                    {ALL_ACTIONS.map((act) => {
-                      const granted = selectedRole.permissions.some(
-                        (p) => p.resource === res && p.action === act,
-                      );
-                      return (
-                        <td key={act}>
-                          <button
-                            type="button"
-                            disabled={!canEditRoles}
-                            onClick={() => handleToggleRolePermission(selectedRole, res, act)}
-                            className={`btn btn-sm ${granted ? 'btn-primary' : 'btn-secondary'}`}
-                            style={{ width: '100%' }}
-                          >
-                            {granted ? 'Ativo' : 'Inativo'}
-                          </button>
-                        </td>
-                      );
-                    })}
+          </>
+        }
+      >
+        {inspectRole && (
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center gap-2 flex-wrap">
+              <StatusBadge status={inspectRole.scope} />
+              <span className="badge badge-info">Nível {inspectRole.hierarchyLevel}</span>
+              <span className="badge badge-teal">{inspectRole.permissions.length} permissões diretas</span>
+            </div>
+            <div className="table-wrapper" style={{ maxHeight: '340px', overflowY: 'auto' }}>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Recurso / Módulo</th>
+                    {ALL_ACTIONS.map((act) => (
+                      <th key={act}>{ACTION_LABELS[act][session.language]}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {ALL_RESOURCES.map((res) => (
+                    <tr key={res}>
+                      <td>
+                        <strong>{RESOURCE_LABELS[res][session.language]}</strong>
+                        <div className="text-xs text-muted mono">{res}</div>
+                      </td>
+                      {ALL_ACTIONS.map((act) => {
+                        const granted = inspectRole.permissions.some(
+                          (p) => p.resource === res && p.action === act,
+                        );
+                        return (
+                          <td key={act}>
+                            <button
+                              type="button"
+                              disabled={!canEditRoles}
+                              onClick={() => handleToggleRolePermission(inspectRole, res, act)}
+                              className={`btn btn-sm ${granted ? 'btn-primary' : 'btn-secondary'}`}
+                              style={{ width: '100%' }}
+                            >
+                              {granted ? 'Ativo' : 'Inativo'}
+                            </button>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </ModalDialog>
 
       <ModalDialog
         open={newRoleModalOpen}
@@ -1824,3 +2471,230 @@ export const RolesAndHbacPage: React.FC<{ scope: 'global' | 'company' }> = ({ sc
     </div>
   );
 };
+
+export const RoleFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create' | 'edit' }> = ({
+  scope,
+  mode,
+}) => {
+  const { papelId, empresaId } = useParams<{ papelId: string; empresaId?: string }>();
+  const navigate = useNavigate();
+  const { roles, session, getActor, refreshData, notify, t } = useApp();
+
+  const existing = mode === 'edit' ? roles.find((r) => r.id === papelId) : undefined;
+  const baseRoute = scope === 'global' ? '/app/global/papeis' : `/app/empresa/${empresaId}/papeis`;
+
+  const [name, setName] = useState(existing?.name['pt-BR'] || '');
+  const [description, setDescription] = useState(existing?.description['pt-BR'] || '');
+  const [parentRoleId, setParentRoleId] = useState<string>(existing?.parentRoleId || 'role-gerente');
+  const [hierarchyLevel, setHierarchyLevel] = useState<number>(existing?.hierarchyLevel || 5);
+  const [permissions, setPermissions] = useState<PermissionGrant[]>(
+    existing?.permissions || [{ resource: 'dashboard', action: 'view', scope }],
+  );
+
+  if (mode === 'edit' && !existing) {
+    return (
+      <AccessDeniedView
+        title="Papel Não Localizado"
+        reason={`O papel "${papelId}" não foi encontrado.`}
+        backTo={baseRoute}
+      />
+    );
+  }
+
+  const togglePerm = (resource: PermissionResource, action: PermissionAction) => {
+    setPermissions((prev) => {
+      const exists = prev.some((p) => p.resource === resource && p.action === action);
+      if (exists) {
+        return prev.filter((p) => !(p.resource === resource && p.action === action));
+      }
+      return [...prev, { resource, action, scope: existing?.scope || scope }];
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const now = new Date().toISOString();
+    const actor = getActor(empresaId);
+
+    if (mode === 'create') {
+      const newId = generateId('role');
+      const created: RoleEntity = {
+        id: newId,
+        code: name.trim().toLowerCase().replace(/\s+/g, '_'),
+        name: { 'pt-BR': name.trim(), en: name.trim(), es: name.trim() },
+        description: { 'pt-BR': description.trim(), en: description.trim(), es: description.trim() },
+        scope,
+        companyId: empresaId,
+        parentRoleId: parentRoleId || null,
+        hierarchyLevel: Number(hierarchyLevel) || 5,
+        isSystemRole: false,
+        status: 'active',
+        permissions,
+        createdAt: now,
+        updatedAt: now,
+        archiveMetadata: { isArchived: false },
+        changeHistory: [],
+      };
+      await repositories.roles.create(
+        created,
+        actor,
+        `Criação de papel HBAC "${created.name['pt-BR']}".`,
+      );
+      await refreshData();
+      notify({ type: 'success', title: `Papel "${created.name['pt-BR']}" criado.` });
+      navigate(baseRoute);
+    } else if (existing) {
+      await repositories.roles.update(
+        existing.id,
+        (curr) => ({
+          ...curr,
+          name: { 'pt-BR': name.trim(), en: name.trim(), es: name.trim() },
+          description: { 'pt-BR': description.trim(), en: description.trim(), es: description.trim() },
+          parentRoleId: parentRoleId || null,
+          hierarchyLevel: Number(hierarchyLevel) || curr.hierarchyLevel,
+          permissions,
+          updatedAt: now,
+        }),
+        actor,
+        `Edição do papel HBAC "${name.trim()}" e sua matriz de permissões.`,
+      );
+      await refreshData();
+      notify({ type: 'success', title: `Papel "${name.trim()}" atualizado.` });
+      navigate(baseRoute);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        breadcrumbs={[
+          { label: scope === 'global' ? t('scope.global') : t('scope.company'), to: baseRoute },
+          { label: t('nav.roles'), to: baseRoute },
+          { label: mode === 'create' ? 'Novo Papel' : `Editar ${existing?.name[session.language]}` },
+        ]}
+        title={
+          mode === 'create'
+            ? 'Criar Novo Papel Hierárquico HBAC'
+            : `Editar Papel HBAC — ${existing?.name[session.language]} (ID: ${existing?.id})`
+        }
+        subtitle="Página dedicada de edição de papel e matriz de permissões com identificador único."
+        actions={
+          <Link to={baseRoute} className="btn btn-secondary btn-sm">
+            {t('common.back')}
+          </Link>
+        }
+      />
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <div className="card">
+          <div className="card-body grid-2">
+            <div className="field">
+              <label htmlFor="rf-name">Nome do Papel *</label>
+              <input
+                id="rf-name"
+                className="input"
+                required
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="rf-level">Nível Hierárquico (1 a 10) *</label>
+              <input
+                id="rf-level"
+                type="number"
+                min={1}
+                max={10}
+                className="input tabular"
+                value={hierarchyLevel}
+                onChange={(e) => setHierarchyLevel(Number(e.target.value))}
+              />
+            </div>
+            <div className="field">
+              <label htmlFor="rf-parent">Papel Superior na Hierarquia</label>
+              <select
+                id="rf-parent"
+                className="select"
+                value={parentRoleId}
+                onChange={(e) => setParentRoleId(e.target.value)}
+              >
+                <option value="">Raiz (N1)</option>
+                {roles
+                  .filter((r) => r.id !== existing?.id)
+                  .map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name[session.language]} (Nível {r.hierarchyLevel})
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <div className="field">
+              <label htmlFor="rf-desc">Descrição e Responsabilidades *</label>
+              <input
+                id="rf-desc"
+                className="input"
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="card">
+          <div className="card-header">
+            <h2 className="card-title">Matriz de Permissões do Papel ({permissions.length} ativas)</h2>
+          </div>
+          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Recurso / Módulo</th>
+                  {ALL_ACTIONS.map((act) => (
+                    <th key={act}>{ACTION_LABELS[act][session.language]}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {ALL_RESOURCES.map((res) => (
+                  <tr key={res}>
+                    <td>
+                      <strong>{RESOURCE_LABELS[res][session.language]}</strong>
+                      <div className="text-xs text-muted mono">{res}</div>
+                    </td>
+                    {ALL_ACTIONS.map((act) => {
+                      const granted = permissions.some(
+                        (p) => p.resource === res && p.action === act,
+                      );
+                      return (
+                        <td key={act}>
+                          <button
+                            type="button"
+                            onClick={() => togglePerm(res, act)}
+                            className={`btn btn-sm ${granted ? 'btn-primary' : 'btn-secondary'}`}
+                            style={{ width: '100%' }}
+                          >
+                            {granted ? 'Ativo' : 'Inativo'}
+                          </button>
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div className="card-footer">
+            <Link to={baseRoute} className="btn btn-secondary">
+              {t('common.cancel')}
+            </Link>
+            <button type="submit" className="btn btn-primary">
+              <Save size={14} /> {t('common.save')}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+};
+

@@ -1,40 +1,56 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import {
+  Archive,
   ArrowLeft,
+  Building2,
   CheckCircle2,
   CreditCard,
   Download,
   Edit3,
   Eye,
   FileSpreadsheet,
+  FileText,
+  GitBranch,
   Plus,
   RefreshCw,
+  RotateCcw,
   Save,
+  Settings,
   ShieldCheck,
+  Users,
   Wallet,
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import {
   ChargeEntity,
+  CompanyEntity,
   CurrencyCode,
   InstallmentEntity,
   PaymentMethodConfigEntity,
   PaymentMethodType,
   PaymentRecordEntity,
   PaymentStatus,
+  PlatformBillingRules,
 } from '../../types/domain';
 import { generateId, recordAuditEvent, repositories } from '../../repositories/repositories';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
 import { exportRowsToCsv } from '../../services/operationalUtils';
 import {
   AccessDeniedView,
+  ActionDropdownMenu,
   ArchiveRecordDialog,
   ModalDialog,
   PageHeader,
   StatusBadge,
   UrlDataTable,
 } from '../../components/shared/SharedComponents';
+import {
+  computeCompanyLicenseSummary,
+  getPlatformBillingRules,
+  savePlatformBillingRules,
+  sortCompaniesHierarchically,
+} from '../../services/enterpriseFinanceAndContractsService';
 
 export type FinanceTab = 'overview' | 'cobrancas' | 'pagamentos' | 'parcelas' | 'conciliacao' | 'relatorios';
 
@@ -43,6 +59,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
   activeTab,
 }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
+  const navigate = useNavigate();
   const {
     companies,
     contracts,
@@ -246,7 +263,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           {
@@ -257,7 +274,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
           { label: activeTab.toUpperCase() },
         ]}
         title="Gestão Financeira, Cobranças, Parcelas & Conciliação"
-        subtitle="Controle contábil auditado de recebíveis, liquidações bancárias, inadimplência e relatórios financeiros sincronizados no Supabase."
+        subtitle={`Recebido: ${formatCurrency(totalPaid, company?.currency || 'BRL', session.language)} • A vencer: ${formatCurrency(totalPending, company?.currency || 'BRL', session.language)} • Vencido: ${formatCurrency(totalOverdue, company?.currency || 'BRL', session.language)} • ${scopedPayments.length} pagamento(s) conciliado(s)`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           <div className="flex items-center gap-2">
@@ -268,61 +285,14 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
               </Link>
             )}
             {hasPermission('finance', 'create', targetCompanyId) && (
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => setNewChargeOpen(true)}
-              >
+              <Link to={`${baseRoute}/cobrancas/nova`} className="btn btn-primary btn-sm">
                 <Plus size={14} />
                 Emitir Cobrança
-              </button>
+              </Link>
             )}
           </div>
         }
       />
-
-      <div className="kpi-grid">
-        <div className="kpi-card">
-          <span className="kpi-label">Total Recebido / Liquidado</span>
-          <span className="kpi-value">
-            {formatCurrency(totalPaid, company?.currency || 'BRL', session.language)}
-          </span>
-          <span className="kpi-meta text-success">
-            {activeCharges.filter((c) => c.status === 'paid').length} cobrança(s) paga(s)
-          </span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">A Vencer / Em Processamento</span>
-          <span className="kpi-value">
-            {formatCurrency(totalPending, company?.currency || 'BRL', session.language)}
-          </span>
-          <span className="kpi-meta">
-            {activeCharges.filter((c) => c.status === 'pending').length} título(s) em aberto
-          </span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">Inadimplência (Vencidos)</span>
-          <span className="kpi-value text-danger">
-            {formatCurrency(totalOverdue, company?.currency || 'BRL', session.language)}
-          </span>
-          <span className="kpi-meta">
-            {activeCharges.filter((c) => c.status === 'overdue').length} título(s) vencido(s)
-          </span>
-        </div>
-        <div className="kpi-card">
-          <span className="kpi-label">Taxa de Conciliação Bancária</span>
-          <span className="kpi-value">
-            {activeCharges.length > 0
-              ? `${Math.round(
-                  (activeCharges.filter((c) => c.reconciled).length / activeCharges.length) * 100,
-                )}%`
-              : '100%'}
-          </span>
-          <span className="kpi-meta">
-            {scopedPayments.length} pagamento(s) registrado(s)
-          </span>
-        </div>
-      </div>
 
       <nav className="subnav-tabs" aria-label="Subnavegação financeira">
         <NavLink to={baseRoute} end className={({ isActive }) => `subnav-tab ${isActive ? 'active' : ''}`}>
@@ -383,39 +353,33 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
             { value: 'archived', label: t('status.archived') },
           ]}
           isArchivedExtractor={(c) => c.archiveMetadata.isArchived}
-          onArchiveClick={
-            hasPermission('finance', 'archive', targetCompanyId)
-              ? (item) => setArchiveChargeTarget(item)
-              : undefined
-          }
-          onRestoreClick={
-            hasPermission('finance', 'archive', targetCompanyId)
-              ? async (item) => {
-                  await repositories.charges.restore(item.id, getActor(item.companyId));
-                  await refreshData();
-                  notify({ type: 'success', title: `Cobrança ${item.code} restaurada.` });
-                }
-              : undefined
-          }
           columns={[
             {
               key: 'code',
               header: 'Fatura / Empresa',
               sortable: true,
+              width: '24%',
               csvValue: (c) => `${c.code} - ${c.companyName}`,
               render: (c) => (
                 <div>
-                  <span className="mono font-semibold">{c.code}</span>
-                  <div className="text-xs text-muted">{c.companyName}</div>
+                  <Link
+                    to={`${baseRoute}/cobrancas/${c.id}/editar`}
+                    className="mono font-semibold"
+                    style={{ color: 'var(--brand-primary)' }}
+                  >
+                    {c.code}
+                  </Link>
+                  <div className="text-xs text-muted truncate">{c.companyName}</div>
                 </div>
               ),
             },
             {
               key: 'description',
               header: 'Descrição / Contrato',
+              width: '30%',
               render: (c) => (
                 <div>
-                  <div className="text-sm font-medium">{c.description}</div>
+                  <div className="text-sm font-medium truncate">{c.description}</div>
                   <code className="text-xs text-muted">Contrato: {c.contractId}</code>
                 </div>
               ),
@@ -424,6 +388,7 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
               key: 'amount',
               header: 'Valor / Parcelas',
               sortable: true,
+              width: '18%',
               csvValue: (c) => c.amount,
               render: (c) => (
                 <div>
@@ -440,11 +405,12 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
               key: 'dueDate',
               header: 'Vencimento / Status',
               sortable: true,
+              width: '20%',
               csvValue: (c) => `${c.dueDate} (${c.status})`,
               render: (c) => (
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <span className="mono text-xs">{c.dueDate}</span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1 flex-wrap">
                     <StatusBadge status={c.status} />
                     {c.reconciled && <span className="badge badge-teal">Conciliado</span>}
                   </div>
@@ -453,30 +419,59 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
             },
             {
               key: 'actions',
-              header: 'Operação Contábil',
+              header: 'Ações',
+              isNumeric: true,
+              width: '8%',
               render: (c) => (
-                <div className="flex items-center gap-1 flex-wrap">
-                  {!c.reconciled &&
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'edit-charge',
+                      label: 'Editar & Conciliar Fatura (ID Único)',
+                      icon: <Edit3 size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`${baseRoute}/cobrancas/${c.id}/editar`),
+                    },
+                    ...(!c.reconciled &&
                     !c.archiveMetadata.isArchived &&
-                    hasPermission('finance', 'edit', targetCompanyId) && (
-                      <button
-                        type="button"
-                        className="btn btn-primary btn-sm"
-                        onClick={() => {
-                          setReconcileTarget(c);
-                          setReconcileRefCode(`SIM-LIQ-${c.code}`);
-                        }}
-                      >
-                        <CheckCircle2 size={13} />
-                        Conciliar / Liquidar
-                      </button>
-                    )}
-                  {c.reconciled && (
-                    <span className="text-xs text-muted">
-                      Por {c.reconciledBy || 'Sistema'}
-                    </span>
-                  )}
-                </div>
+                    hasPermission('finance', 'edit', targetCompanyId)
+                      ? [
+                          {
+                            id: 'reconcile',
+                            label: 'Liquidar / Conciliar Rápido',
+                            icon: <CheckCircle2 size={14} />,
+                            onClick: () => {
+                              setReconcileTarget(c);
+                              setReconcileRefCode(`SIM-LIQ-${c.code}`);
+                            },
+                          },
+                        ]
+                      : []),
+                    ...(hasPermission('finance', 'archive', targetCompanyId)
+                      ? [
+                          c.archiveMetadata.isArchived
+                            ? {
+                                id: 'restore',
+                                label: t('common.restore'),
+                                icon: <RotateCcw size={14} />,
+                                onClick: async () => {
+                                  await repositories.charges.restore(c.id, getActor(c.companyId));
+                                  await refreshData();
+                                  notify({ type: 'success', title: `Cobrança ${c.code} restaurada.` });
+                                },
+                              }
+                            : {
+                                id: 'archive',
+                                label: t('common.archive'),
+                                icon: <Archive size={14} />,
+                                variant: 'danger' as const,
+                                onClick: () => setArchiveChargeTarget(c),
+                              },
+                        ]
+                      : []),
+                  ]}
+                />
               ),
             },
           ]}
@@ -844,11 +839,44 @@ export const FinanceHubPage: React.FC<{ scope: 'global' | 'company'; activeTab: 
   );
 };
 
-export const PaymentMethodsPage: React.FC = () => {
-  const { paymentMethods, hasPermission, getActor, refreshData, notify, t } = useApp();
+export const PaymentMethodsPage: React.FC<{
+  activeTab?: 'empresas' | 'canais' | 'cotas' | 'regras';
+}> = ({ activeTab = 'empresas' }) => {
+  const {
+    paymentMethods,
+    companies,
+    companyModules,
+    contracts,
+    charges,
+    payments,
+    installments,
+    session,
+    hasPermission,
+    getActor,
+    refreshData,
+    notify,
+    t,
+  } = useApp();
+  const navigate = useNavigate();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [archiveTarget, setArchiveTarget] = useState<PaymentMethodConfigEntity | null>(null);
+  const [inspectChannelModal, setInspectChannelModal] = useState<PaymentMethodConfigEntity | null>(null);
 
+  // Company Ledger & Payment Modal state
+  const [ledgerCompanyId, setLedgerCompanyId] = useState<string | null>(null);
+  const [manualPayAmount, setManualPayAmount] = useState<string>('');
+  const [manualPayMethod, setManualPayMethod] = useState<PaymentMethodType>('pix');
+  const [manualPayRef, setManualPayRef] = useState<string>('PIX-CONFIRMED-2026');
+  const [manualPayDesc, setManualPayDesc] = useState<string>('Mensalidade Plano + Licenças de Equipe');
+
+  // Global Billing Rules state
+  const [rulesForm, setRulesForm] = useState<PlatformBillingRules>(() => getPlatformBillingRules());
+  const [editingQuotaCompany, setEditingQuotaCompany] = useState<CompanyEntity | null>(null);
+  const [companyFreeQuotaInput, setCompanyFreeQuotaInput] = useState<string>('10');
+  const [companyExtraPriceInput, setCompanyExtraPriceInput] = useState<string>('19.90');
+
+  // New Payment Method Channel form state
   const [name, setName] = useState('');
   const [type, setType] = useState<PaymentMethodType>('pix');
   const [providerName, setProviderName] = useState('Olivelas Pay Gateway');
@@ -857,14 +885,254 @@ export const PaymentMethodsPage: React.FC = () => {
   const [settlementDays, setSettlementDays] = useState(1);
   const [instructions, setInstructions] = useState('');
 
+  const orderedCompanies = useMemo(
+    () => sortCompaniesHierarchically(companies.filter((c) => !c.archiveMetadata.isArchived)),
+    [companies],
+  );
+
+  const companySummaries = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof computeCompanyLicenseSummary>>();
+    for (const c of orderedCompanies) {
+      map.set(
+        c.id,
+        computeCompanyLicenseSummary(c, companies, rulesForm, companyModules, contracts),
+      );
+    }
+    return map;
+  }, [orderedCompanies, companies, rulesForm, companyModules, contracts]);
+
   if (!hasPermission('payment_methods', 'view') && !hasPermission('finance', 'view')) {
     return (
       <AccessDeniedView
-        reason="Sem permissão para gerenciar os meios de pagamento globais da plataforma."
+        reason="Sem permissão para gerenciar os meios de pagamento e faturamento por empresa da plataforma."
         requiredPermission="payment_methods:view"
       />
     );
   }
+
+  const totalMonthlyRecurring = Array.from(companySummaries.values()).reduce(
+    (acc, s) => acc + s.totalMonthlyBilling,
+    0,
+  );
+  const totalExtraSeatRevenue = Array.from(companySummaries.values()).reduce(
+    (acc, s) => acc + s.extraLicensesMonthlyCost,
+    0,
+  );
+  const totalExtraSeatsCount = Array.from(companySummaries.values()).reduce(
+    (acc, s) => acc + s.extraEmployeesCount,
+    0,
+  );
+  const totalPaidAmount = charges
+    .filter((c) => !c.archiveMetadata.isArchived && c.status === 'paid')
+    .reduce((acc, c) => acc + c.amount, 0);
+  const totalOpenOrOverdueAmount = charges
+    .filter((c) => !c.archiveMetadata.isArchived && (c.status === 'pending' || c.status === 'overdue'))
+    .reduce((acc, c) => acc + c.amount, 0);
+
+  const selectedLedgerCompany = ledgerCompanyId
+    ? companies.find((c) => c.id === ledgerCompanyId) || null
+    : null;
+  const selectedLedgerSummary = selectedLedgerCompany
+    ? companySummaries.get(selectedLedgerCompany.id) || null
+    : null;
+
+  const openCompanyLedgerModal = (comp: CompanyEntity) => {
+    const sum = companySummaries.get(comp.id);
+    setLedgerCompanyId(comp.id);
+    setManualPayAmount(String(sum?.totalMonthlyBilling || 500));
+    setManualPayMethod(sum?.preferredPaymentMethod || 'pix');
+    setManualPayRef(`LIQ-${comp.branchCode || 'EMP'}-${Date.now().toString().slice(-5)}`);
+    setManualPayDesc(
+      `Mensalidade ${sum?.planName || 'Allin'} (${sum?.activeEmployeesCount || 1} funcionários; ${
+        sum?.extraEmployeesCount || 0
+      } extra)`,
+    );
+  };
+
+  const handleSettleChargeOneClick = async (charge: ChargeEntity) => {
+    const actor = getActor(charge.companyId);
+    const now = new Date().toISOString();
+    const refCode = `LIQ-1CLICK-${charge.code}`;
+
+    await repositories.charges.update(
+      charge.id,
+      (curr) => ({
+        ...curr,
+        status: 'paid' as PaymentStatus,
+        reconciled: true,
+        reconciledAt: now,
+        reconciledBy: actor.userName,
+      }),
+      actor,
+      `Baixa rápida de pagamento da fatura ${charge.code} (${charge.companyName}).`,
+      'reconcile_payment',
+    );
+
+    await repositories.payments.create(
+      {
+        id: generateId('pay'),
+        chargeId: charge.id,
+        chargeCode: charge.code,
+        companyId: charge.companyId,
+        companyName: charge.companyName,
+        amountPaid: charge.amount,
+        currency: charge.currency,
+        paidAt: now,
+        methodType: charge.paymentMethodType,
+        referenceCode: refCode,
+        notes: 'Baixa confirmada no Controle de Pagamentos por Empresa.',
+        reconciled: true,
+        createdAt: now,
+        updatedAt: now,
+        archiveMetadata: { isArchived: false },
+        changeHistory: [],
+      },
+      actor,
+      `Pagamento registrado para a fatura ${charge.code}.`,
+    );
+
+    const relatedInst = installments.filter((i) => i.chargeId === charge.id);
+    for (const inst of relatedInst) {
+      await repositories.installments.upsert({
+        ...inst,
+        status: 'paid',
+        paidAt: now,
+      });
+    }
+
+    await repositories.companies.update(
+      charge.companyId,
+      (curr) => ({
+        ...curr,
+        paymentStatus: 'ACTIVE',
+        operationalStatus: 'active',
+      }),
+      actor,
+      `Regularização financeira automática da unidade após baixa da fatura ${charge.code}.`,
+    );
+
+    await refreshData();
+    notify({
+      type: 'success',
+      title: `Fatura ${charge.code} baixada como PAGA!`,
+      description: `Situação financeira de ${charge.companyName} regularizada.`,
+    });
+  };
+
+  const handleRegisterCompanyPayment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedLedgerCompany || !selectedLedgerSummary) return;
+    const actor = getActor(selectedLedgerCompany.id);
+    const now = new Date().toISOString();
+    const amountNum = Math.max(1, Number(manualPayAmount) || selectedLedgerSummary.totalMonthlyBilling);
+    const code = `FAT-2026-${String(charges.length + 1010)}`;
+    const newChargeId = generateId('chg');
+
+    const newCharge: ChargeEntity = {
+      id: newChargeId,
+      code,
+      companyId: selectedLedgerCompany.id,
+      companyName: selectedLedgerCompany.legalName,
+      contractId:
+        contracts.find((ct) => ct.companyId === selectedLedgerCompany.id)?.id || 'ctr-padrao',
+      description: manualPayDesc.trim() || `Mensalidade ${selectedLedgerCompany.tradeName}`,
+      amount: amountNum,
+      currency: selectedLedgerCompany.currency,
+      dueDate: now.slice(0, 10),
+      status: 'paid',
+      paymentMethodType: manualPayMethod,
+      installmentTotal: 1,
+      reconciled: true,
+      reconciledAt: now,
+      reconciledBy: actor.userName,
+      createdAt: now,
+      updatedAt: now,
+      archiveMetadata: { isArchived: false },
+      changeHistory: [],
+    };
+
+    await repositories.charges.create(
+      newCharge,
+      actor,
+      `Emissão e liquidação imediata da fatura ${code} para ${selectedLedgerCompany.tradeName}.`,
+    );
+
+    await repositories.payments.create(
+      {
+        id: generateId('pay'),
+        chargeId: newChargeId,
+        chargeCode: code,
+        companyId: selectedLedgerCompany.id,
+        companyName: selectedLedgerCompany.legalName,
+        amountPaid: amountNum,
+        currency: selectedLedgerCompany.currency,
+        paidAt: now,
+        methodType: manualPayMethod,
+        referenceCode: manualPayRef.trim() || `REF-${Date.now()}`,
+        notes: manualPayDesc.trim(),
+        reconciled: true,
+        createdAt: now,
+        updatedAt: now,
+        archiveMetadata: { isArchived: false },
+        changeHistory: [],
+      },
+      actor,
+      `Pagamento registrado no livro-razão da empresa ${selectedLedgerCompany.tradeName}.`,
+    );
+
+    await repositories.companies.update(
+      selectedLedgerCompany.id,
+      (curr) => ({
+        ...curr,
+        paymentStatus: 'ACTIVE',
+        operationalStatus: 'active',
+        preferredPaymentMethod: manualPayMethod,
+      }),
+      actor,
+      `Atualização de status financeiro para EM DIA (${selectedLedgerCompany.tradeName}).`,
+    );
+
+    await refreshData();
+    notify({
+      type: 'success',
+      title: `Pagamento de ${formatCurrency(amountNum, 'BRL', session.language)} registrado para ${selectedLedgerCompany.tradeName}.`,
+    });
+  };
+
+  const handleSaveGlobalRules = (e: React.FormEvent) => {
+    e.preventDefault();
+    const saved = savePlatformBillingRules(rulesForm);
+    setRulesForm(saved);
+    notify({
+      type: 'success',
+      title: 'Regras Globais de Cobrança & Cota de Funcionários salvas!',
+      description: `Franquia padrão: ${saved.defaultFreeEmployeesPerStore} grátis/empresa • Excedente: R$ ${saved.defaultExtraEmployeePrice.toFixed(2)}/mês.`,
+    });
+  };
+
+  const handleSaveCompanyQuotaModal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingQuotaCompany) return;
+    const freeLim = Math.max(0, Number(companyFreeQuotaInput) || 0);
+    const extraPr = Math.max(0, Number(companyExtraPriceInput) || 0);
+
+    await repositories.companies.update(
+      editingQuotaCompany.id,
+      (curr) => ({
+        ...curr,
+        freeEmployeesLimit: freeLim,
+        extraEmployeePrice: extraPr,
+      }),
+      getActor(editingQuotaCompany.id),
+      `Exceção de licenciamento salva para ${editingQuotaCompany.tradeName}: ${freeLim} grátis, R$ ${extraPr.toFixed(2)}/extra.`,
+    );
+    await refreshData();
+    setEditingQuotaCompany(null);
+    notify({
+      type: 'success',
+      title: `Regra de cota atualizada para ${editingQuotaCompany.tradeName}.`,
+    });
+  };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -909,125 +1177,988 @@ export const PaymentMethodsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
           { label: t('scope.global'), to: '/app/global' },
           { label: t('nav.paymentMethods') },
         ]}
-        title="Meios de Pagamento & Provedores de Liquidação"
-        subtitle="Configuração corporativa de canais de recebimento com credenciais mascaradas e taxas operacionais."
+        title="Pagamentos por Empresa, Licenciamento de Equipe (10 Grátis) & Meios de Liquidação"
+        subtitle={`MRR: ${formatCurrency(totalMonthlyRecurring, 'BRL', session.language)} • Licenças extras: +${formatCurrency(totalExtraSeatRevenue, 'BRL', session.language)}/mês (${totalExtraSeatsCount} extras) • Recebido: ${formatCurrency(totalPaidAmount, 'BRL', session.language)} • PIX: ${rulesForm.pixKey}`}
         scopeBadge={t('scope.global')}
         actions={
-          hasPermission('payment_methods', 'create') && (
-            <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link to="/app/global/financeiro" className="btn btn-secondary btn-sm">
+              <Wallet size={14} />
+              Livro de Cobranças & Parcelas
+            </Link>
+            {hasPermission('payment_methods', 'create') && (
               <Link to="/app/global/meios-pagamento/novo" className="btn btn-primary btn-sm">
                 <Plus size={14} />
                 Novo Meio de Pagamento
               </Link>
-              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setModalOpen(true)}>
-                <Plus size={14} />
-                Cadastro Rápido
-              </button>
-            </div>
-          )
+            )}
+          </div>
         }
       />
 
-      <UrlDataTable<PaymentMethodConfigEntity>
-        tableId="payment-methods-table"
-        caption="Meios de pagamento configurados na plataforma Olivelas Allin"
-        items={paymentMethods}
-        defaultSortField="createdAt"
-        csvFilename="meios-pagamento-allin.csv"
-        searchPlaceholder="Buscar por nome, provedor ou tipo..."
-        statusExtractor={(pm) => pm.status}
-        searchExtractor={(pm) => `${pm.name} ${pm.providerName} ${pm.type}`}
-        statusOptions={[
-          { value: 'active', label: t('status.active') },
-          { value: 'inactive', label: 'Inativo' },
-          { value: 'archived', label: t('status.archived') },
-        ]}
-        isArchivedExtractor={(pm) => pm.archiveMetadata.isArchived}
-        onArchiveClick={(pm) => setArchiveTarget(pm)}
-        onRestoreClick={async (pm) => {
-          await repositories.paymentMethods.restore(pm.id, getActor());
-          await refreshData();
-          notify({ type: 'success', title: `Meio de pagamento ${pm.name} restaurado.` });
-        }}
-        columns={[
-          {
-            key: 'name',
-            header: 'Meio de Pagamento / Tipo',
-            sortable: true,
-            render: (pm) => (
-              <div>
-                <Link to={`/app/global/meios-pagamento/${pm.id}`} className="font-semibold">
-                  {pm.name}
-                </Link>
+      {/* Navigation Tabs — identical pattern to /app/global/api-hub/ambientes */}
+      <nav className="subnav-tabs" aria-label="Navegação de meios de pagamento">
+        <NavLink
+          to="/app/global/meios-pagamento"
+          end
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'empresas' ? 'active' : ''}`
+          }
+        >
+          Pagamentos por Empresa ({orderedCompanies.length})
+        </NavLink>
+        <NavLink
+          to="/app/global/meios-pagamento/canais"
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'canais' ? 'active' : ''}`
+          }
+        >
+          Provedores &amp; Gateways ({paymentMethods.length})
+        </NavLink>
+        <NavLink
+          to="/app/global/meios-pagamento/cotas"
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'cotas' ? 'active' : ''}`
+          }
+        >
+          Cotas de Funcionários ({orderedCompanies.length})
+        </NavLink>
+        <NavLink
+          to="/app/global/meios-pagamento/regras"
+          className={({ isActive }) =>
+            `subnav-tab ${isActive || activeTab === 'regras' ? 'active' : ''}`
+          }
+        >
+          Regras Globais &amp; PIX
+        </NavLink>
+      </nav>
+
+      {/* TAB 1: PAGAMENTOS POR EMPRESA (MATRIZ & FILIAIS) */}
+      {activeTab === 'empresas' && (
+        <UrlDataTable<CompanyEntity>
+          tableId="company-payments-table"
+          caption="Controle de pagamentos, assinaturas e licenças de funcionários por empresa (Matriz e Filiais)"
+          items={orderedCompanies}
+          defaultSortField="tradeName"
+          csvFilename="pagamentos-por-empresa.csv"
+          searchPlaceholder="Buscar por empresa, filial, titular, e-mail ou plano..."
+          statusExtractor={(comp) => {
+            const openCharge = charges.find(
+              (ch) =>
+                ch.companyId === comp.id &&
+                !ch.archiveMetadata.isArchived &&
+                (ch.status === 'pending' || ch.status === 'overdue'),
+            );
+            return openCharge ? openCharge.status : comp.operationalStatus;
+          }}
+          searchExtractor={(comp) => {
+            const sum = companySummaries.get(comp.id);
+            return `${comp.tradeName} ${comp.legalName} ${comp.branchCode || ''} ${
+              sum?.adminOwnerName || ''
+            } ${sum?.adminOwnerEmail || ''} ${sum?.planName || ''}`;
+          }}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending', label: t('status.pending') },
+            { value: 'overdue', label: t('status.overdue') },
+            { value: 'suspended', label: t('status.suspended') },
+          ]}
+          isArchivedExtractor={(comp) => comp.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'tradeName',
+              header: 'Empresa (Matriz / Filial) & Titular',
+              sortable: true,
+              width: '24%',
+              render: (comp) => {
+                const sum = companySummaries.get(comp.id);
+                return (
+                  <div
+                    style={{
+                      paddingLeft: comp.isBranch ? '0.85rem' : 0,
+                      borderLeft: comp.isBranch ? '2px solid var(--brand-primary)' : 'none',
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      {comp.isBranch ? (
+                        <span className="badge badge-info">└─ FILIAL</span>
+                      ) : (
+                        <span className="badge badge-teal">MATRIZ</span>
+                      )}
+                      <Link
+                        to={`/app/global/empresas/${comp.id}/editar`}
+                        className="font-semibold text-left"
+                        style={{ color: 'var(--brand-primary)' }}
+                      >
+                        {comp.tradeName}
+                      </Link>
+                    </div>
+                    {sum && (
+                      <>
+                        <div className="text-xs text-muted mt-0.5">
+                          Titular: <strong>{sum.adminOwnerName}</strong>
+                        </div>
+                        <div className="mono text-xs text-muted">{sum.adminOwnerEmail}</div>
+                      </>
+                    )}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'planName',
+              header: 'Plano & Módulos',
+              width: '18%',
+              render: (comp) => {
+                const sum = companySummaries.get(comp.id);
+                if (!sum) return '—';
+                return (
+                  <div>
+                    <div className="font-semibold text-xs">{sum.planName}</div>
+                    <div className="text-xs text-muted">
+                      Base: {formatCurrency(sum.basePlanMonthlyCost, 'BRL', session.language)} •{' '}
+                      {sum.activeModulesCount} mód.
+                    </div>
+                    {comp.isBranch && sum.parentCompanyName && (
+                      <div className="text-xs text-muted">Matriz: {sum.parentCompanyName}</div>
+                    )}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'employeesCount',
+              header: 'Alocação de Equipe (10 Grátis)',
+              sortable: true,
+              width: '20%',
+              render: (comp) => {
+                const sum = companySummaries.get(comp.id);
+                if (!sum) return '—';
+                return (
+                  <div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="badge badge-neutral tabular">
+                        {sum.activeEmployeesCount} / {sum.freeLimit} grátis
+                      </span>
+                      {sum.extraEmployeesCount > 0 ? (
+                        <span className="badge badge-warning">
+                          +{sum.extraEmployeesCount} extra = +
+                          {formatCurrency(sum.extraLicensesMonthlyCost, 'BRL', session.language)}
+                        </span>
+                      ) : (
+                        <span className="badge badge-success">Isento</span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted mt-1">
+                      {sum.hasCustomQuotaOverride
+                        ? 'Regra customizada na unidade'
+                        : `Padrão (${rulesForm.defaultFreeEmployeesPerStore} grátis)`}
+                    </div>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'monthlyBilling',
+              header: 'Mensalidade Total',
+              width: '15%',
+              render: (comp) => {
+                const sum = companySummaries.get(comp.id);
+                if (!sum) return '—';
+                return (
+                  <div>
+                    <div className="font-bold tabular text-sm">
+                      {formatCurrency(sum.totalMonthlyBilling, 'BRL', session.language)}/mês
+                    </div>
+                    <div className="text-xs text-muted">
+                      Plano + {sum.extraEmployeesCount} licença(s)
+                    </div>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'operationalStatus',
+              header: 'Meio, Vencimento & Status',
+              width: '15%',
+              render: (comp) => {
+                const sum = companySummaries.get(comp.id);
+                const openCompanyCharge = charges.find(
+                  (ch) =>
+                    ch.companyId === comp.id &&
+                    !ch.archiveMetadata.isArchived &&
+                    (ch.status === 'pending' || ch.status === 'overdue'),
+                );
+                return (
+                  <div>
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <span className="badge badge-neutral uppercase">
+                        {sum?.preferredPaymentMethod || 'pix'}
+                      </span>
+                      {openCompanyCharge ? (
+                        <StatusBadge status={openCompanyCharge.status} />
+                      ) : (
+                        <StatusBadge status={comp.operationalStatus} />
+                      )}
+                    </div>
+                    <div className="mono text-xs text-muted mt-1">
+                      Venc.: {openCompanyCharge?.dueDate || sum?.nextBillingDueDate || '—'}
+                    </div>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              render: (comp) => {
+                const openCompanyCharge = charges.find(
+                  (ch) =>
+                    ch.companyId === comp.id &&
+                    !ch.archiveMetadata.isArchived &&
+                    (ch.status === 'pending' || ch.status === 'overdue'),
+                );
+                return (
+                  <ActionDropdownMenu
+                    label="Ações"
+                    items={[
+                      {
+                        id: 'edit-company-page',
+                        label: 'Editar Empresa, Equipe & Cota (ID Único)',
+                        icon: <Edit3 size={14} />,
+                        variant: 'primary',
+                        onClick: () => navigate(`/app/global/empresas/${comp.id}/editar`),
+                      },
+                      ...(openCompanyCharge
+                        ? [
+                            {
+                              id: 'settle-1click',
+                              label: `Baixar Fatura ${openCompanyCharge.code} como PAGA`,
+                              icon: <CheckCircle2 size={14} />,
+                              onClick: () => handleSettleChargeOneClick(openCompanyCharge),
+                            },
+                            {
+                              id: 'edit-charge',
+                              label: `Editar Fatura ${openCompanyCharge.code}`,
+                              icon: <Wallet size={14} />,
+                              onClick: () =>
+                                navigate(
+                                  `/app/global/financeiro/cobrancas/${openCompanyCharge.id}/editar`,
+                                ),
+                            },
+                          ]
+                        : []),
+                      {
+                        id: 'ledger-modal',
+                        label: 'Livro-Razão & Comprovantes',
+                        icon: <Wallet size={14} />,
+                        onClick: () => openCompanyLedgerModal(comp),
+                      },
+                      {
+                        id: 'company-employees',
+                        label: 'Ficha da Empresa & Filiais',
+                        icon: <GitBranch size={14} />,
+                        onClick: () => navigate(`/app/global/empresas/${comp.id}`),
+                      },
+                      {
+                        id: 'company-contract',
+                        label: 'Ver Contratos da Empresa',
+                        icon: <FileText size={14} />,
+                        onClick: () => navigate(`/app/global/empresas/${comp.id}/contratos`),
+                      },
+                    ]}
+                  />
+                );
+              },
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 2: PROVEDORES & GATEWAYS */}
+      {activeTab === 'canais' && (
+        <UrlDataTable<PaymentMethodConfigEntity>
+          tableId="payment-methods-table"
+          caption="Meios de pagamento e provedores de liquidação configurados na plataforma Olivelas Allin"
+          items={paymentMethods}
+          defaultSortField="createdAt"
+          csvFilename="meios-pagamento-allin.csv"
+          searchPlaceholder="Buscar por nome, provedor ou tipo..."
+          statusExtractor={(pm) => pm.status}
+          searchExtractor={(pm) => `${pm.name} ${pm.providerName} ${pm.type}`}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'inactive', label: 'Inativo' },
+            { value: 'archived', label: t('status.archived') },
+          ]}
+          isArchivedExtractor={(pm) => pm.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'name',
+              header: 'Meio de Pagamento / Modalidade',
+              sortable: true,
+              width: '30%',
+              render: (pm) => (
                 <div>
-                  <span className="badge badge-neutral uppercase">{pm.type}</span>
-                </div>
-              </div>
-            ),
-          },
-          {
-            key: 'providerName',
-            header: 'Provedor / Credencial Mascarada',
-            render: (pm) => (
-              <div>
-                <div className="text-sm">{pm.providerName}</div>
-                <code className="text-xs text-muted">{pm.maskedCredentialPreview}</code>
-              </div>
-            ),
-          },
-          {
-            key: 'feePercentage',
-            header: 'Taxa / Prazo Liquidação',
-            sortable: true,
-            render: (pm) => (
-              <div className="tabular text-xs">
-                <div>Taxa: {pm.feePercentage}%</div>
-                <div className="text-muted">Liquidação: D+{pm.settlementDays}</div>
-              </div>
-            ),
-          },
-          {
-            key: 'status',
-            header: 'Estado',
-            render: (pm) => <StatusBadge status={pm.status} />,
-          },
-          {
-            key: 'actions',
-            header: 'Governança',
-            render: (pm) => (
-              <div className="flex items-center gap-1 flex-wrap">
-                <Link to={`/app/global/meios-pagamento/${pm.id}`} className="btn btn-secondary btn-sm">
-                  <Eye size={13} />
-                  Detalhes
-                </Link>
-                {hasPermission('payment_methods', 'edit') && (
                   <Link
                     to={`/app/global/meios-pagamento/${pm.id}/editar`}
-                    className="btn btn-secondary btn-sm"
+                    className="font-semibold text-left"
+                    style={{ color: 'var(--brand-primary)' }}
                   >
-                    <Edit3 size={13} />
-                    Editar
+                    {pm.name}
                   </Link>
-                )}
-                <button
-                  type="button"
-                  className="btn btn-secondary btn-sm"
-                  onClick={() => handleToggleStatus(pm)}
+                  <div className="mt-1">
+                    <span className="badge badge-neutral uppercase">{pm.type}</span>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'providerName',
+              header: 'Provedor / Credencial Mascarada',
+              width: '32%',
+              render: (pm) => (
+                <div>
+                  <div className="text-sm font-medium">{pm.providerName}</div>
+                  <code className="text-xs text-muted">{pm.maskedCredentialPreview}</code>
+                </div>
+              ),
+            },
+            {
+              key: 'feePercentage',
+              header: 'Taxa & Prazo Liquidação',
+              sortable: true,
+              width: '20%',
+              render: (pm) => (
+                <div className="tabular text-xs">
+                  <div className="font-semibold">Taxa: {pm.feePercentage}%</div>
+                  <div className="text-muted">Liquidação: D+{pm.settlementDays}</div>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Estado',
+              width: '10%',
+              render: (pm) => <StatusBadge status={pm.status} />,
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              render: (pm) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    ...(hasPermission('payment_methods', 'edit')
+                      ? [
+                          {
+                            id: 'edit',
+                            label: 'Editar Configurações (ID Único)',
+                            icon: <Edit3 size={14} />,
+                            variant: 'primary' as const,
+                            onClick: () => navigate(`/app/global/meios-pagamento/${pm.id}/editar`),
+                          },
+                        ]
+                      : []),
+                    {
+                      id: 'detail-page',
+                      label: 'Abrir Ficha Completa',
+                      icon: <FileSpreadsheet size={14} />,
+                      onClick: () => navigate(`/app/global/meios-pagamento/${pm.id}`),
+                    },
+                    {
+                      id: 'toggle',
+                      label: pm.status === 'active' ? 'Pausar Canal' : 'Ativar Canal',
+                      icon: <RefreshCw size={14} />,
+                      onClick: () => handleToggleStatus(pm),
+                    },
+                    pm.archiveMetadata.isArchived
+                      ? {
+                          id: 'restore',
+                          label: 'Restaurar Canal',
+                          icon: <RotateCcw size={14} />,
+                          onClick: async () => {
+                            await repositories.paymentMethods.restore(pm.id, getActor());
+                            await refreshData();
+                            notify({
+                              type: 'success',
+                              title: `Meio de pagamento ${pm.name} restaurado.`,
+                            });
+                          },
+                        }
+                      : {
+                          id: 'archive',
+                          label: 'Arquivar Canal',
+                          icon: <Archive size={14} />,
+                          variant: 'danger' as const,
+                          onClick: () => setArchiveTarget(pm),
+                        },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 3: COTAS DE FUNCIONÁRIOS & EXCEÇÕES POR UNIDADE */}
+      {activeTab === 'cotas' && (
+        <UrlDataTable<CompanyEntity>
+          tableId="company-quotas-table"
+          caption="Cota de funcionários gratuitos (10 grátis por padrão) e exceções por unidade (Matriz e Filiais)"
+          items={orderedCompanies}
+          defaultSortField="tradeName"
+          csvFilename="cotas-funcionarios-empresas.csv"
+          searchPlaceholder="Buscar por unidade, código de filial ou matriz..."
+          statusExtractor={(comp) => comp.operationalStatus}
+          searchExtractor={(comp) => {
+            const s = companySummaries.get(comp.id);
+            return `${comp.tradeName} ${comp.legalName} ${s?.branchCode || ''} ${
+              s?.parentCompanyName || ''
+            }`;
+          }}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'suspended', label: t('status.suspended') },
+            { value: 'onboarding', label: t('status.onboarding') },
+          ]}
+          isArchivedExtractor={(comp) => comp.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'tradeName',
+              header: 'Unidade (Matriz / Filial)',
+              sortable: true,
+              width: '26%',
+              render: (comp) => (
+                <div>
+                  <span className={`badge ${comp.isBranch ? 'badge-info' : 'badge-teal'} mr-1`}>
+                    {comp.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                  </span>
+                  <Link
+                    to={`/app/global/empresas/${comp.id}/editar`}
+                    className="font-semibold text-left"
+                    style={{ color: 'var(--brand-primary)' }}
+                  >
+                    {comp.tradeName}
+                  </Link>
+                </div>
+              ),
+            },
+            {
+              key: 'branchCode',
+              header: 'Código & Filiação',
+              width: '18%',
+              render: (comp) => {
+                const s = companySummaries.get(comp.id);
+                return (
+                  <div className="text-xs text-muted">
+                    <code>{s?.branchCode || 'MATRIZ'}</code>{' '}
+                    {comp.isBranch && s?.parentCompanyName ? `• ${s.parentCompanyName}` : ''}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'employeesCount',
+              header: 'Funcionários Ativos',
+              sortable: true,
+              width: '12%',
+              render: (comp) => {
+                const s = companySummaries.get(comp.id);
+                return <span className="tabular font-semibold">{s?.activeEmployeesCount ?? 0}</span>;
+              },
+            },
+            {
+              key: 'freeEmployeesLimit',
+              header: 'Franquia Gratuita',
+              width: '14%',
+              render: (comp) => {
+                const s = companySummaries.get(comp.id);
+                return (
+                  <div className="tabular">
+                    {s?.freeLimit ?? 10} grátis{' '}
+                    {s?.hasCustomQuotaOverride && <span className="badge badge-info">Custom</span>}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'extraEmployees',
+              header: 'Excedentes & Valor/Extra',
+              width: '14%',
+              render: (comp) => {
+                const s = companySummaries.get(comp.id);
+                if (!s) return '—';
+                return (
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {s.extraEmployeesCount > 0 ? (
+                      <span className="badge badge-warning">+{s.extraEmployeesCount}</span>
+                    ) : (
+                      <span className="badge badge-success">0</span>
+                    )}
+                    <span className="tabular text-xs text-muted">
+                      ({formatCurrency(s.extraEmployeePrice, 'BRL', session.language)}/un.)
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'extraCost',
+              header: 'Adicional Mensal',
+              width: '10%',
+              render: (comp) => {
+                const s = companySummaries.get(comp.id);
+                return (
+                  <span className="tabular font-semibold">
+                    +{formatCurrency(s?.extraLicensesMonthlyCost ?? 0, 'BRL', session.language)}/mês
+                  </span>
+                );
+              },
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '6%',
+              render: (comp) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'edit-quota-page',
+                      label: 'Editar Cota & Equipe (ID Único)',
+                      icon: <Edit3 size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/empresas/${comp.id}/editar`),
+                    },
+                    {
+                      id: 'view-company',
+                      label: 'Abrir Ficha da Unidade',
+                      icon: <Building2 size={14} />,
+                      onClick: () => navigate(`/app/global/empresas/${comp.id}`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* TAB 4: REGRAS GLOBAIS DE COBRANÇA & PIX */}
+      {activeTab === 'regras' && (
+        <form onSubmit={handleSaveGlobalRules} className="card">
+          <div className="card-header">
+            <div>
+              <h2 className="card-title">
+                Regras Globais de Licenciamento de Equipe (10 Funcionários Grátis) &amp; PIX Oficial
+              </h2>
+              <p className="card-subtitle">
+                Parametrize a franquia gratuita de colaboradores por empresa/filial, o valor por
+                assento extra e as diretrizes automáticas de inadimplência.
+              </p>
+            </div>
+            <button type="submit" className="btn btn-primary btn-sm">
+              <Save size={14} /> Salvar Regras Globais
+            </button>
+          </div>
+          <div className="card-body flex flex-col gap-4">
+            <div className="form-grid">
+              <div className="field">
+                <label>Cota Padrão de Funcionários Grátis por Empresa / Filial *</label>
+                <p className="hint">
+                  Quantidade de funcionários ativos inclusos gratuitamente em cada unidade.
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  className="input tabular"
+                  value={rulesForm.defaultFreeEmployeesPerStore}
+                  onChange={(e) =>
+                    setRulesForm({
+                      ...rulesForm,
+                      defaultFreeEmployeesPerStore: Math.max(0, Number(e.target.value) || 0),
+                    })
+                  }
+                />
+              </div>
+              <div className="field">
+                <label>Valor Mensal por Funcionário Excedente (R$) *</label>
+                <p className="hint">
+                  Cobrado automaticamente a partir do {rulesForm.defaultFreeEmployeesPerStore + 1}º
+                  colaborador ativo.
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.10"
+                  className="input tabular"
+                  value={rulesForm.defaultExtraEmployeePrice}
+                  onChange={(e) =>
+                    setRulesForm({
+                      ...rulesForm,
+                      defaultExtraEmployeePrice: Math.max(0, Number(e.target.value) || 0),
+                    })
+                  }
+                />
+              </div>
+              <div className="field">
+                <label>Prazo de Carência após Vencimento (Dias)</label>
+                <p className="hint">
+                  Dias de tolerância antes de marcar a empresa como inadimplente.
+                </p>
+                <input
+                  type="number"
+                  min={0}
+                  max={60}
+                  className="input tabular"
+                  value={rulesForm.gracePeriodDays}
+                  onChange={(e) =>
+                    setRulesForm({
+                      ...rulesForm,
+                      gracePeriodDays: Math.max(0, Number(e.target.value) || 0),
+                    })
+                  }
+                />
+              </div>
+              <div className="field">
+                <label>Chave PIX Oficial para Recebimento B2B</label>
+                <p className="hint">Exibida nas faturas e contratos gerados.</p>
+                <input
+                  className="input mono"
+                  value={rulesForm.pixKey}
+                  onChange={(e) => setRulesForm({ ...rulesForm, pixKey: e.target.value })}
+                />
+              </div>
+              <div className="field">
+                <label>WhatsApp da Central Financeira</label>
+                <p className="hint">Canal para envio de comprovantes e negociação.</p>
+                <input
+                  className="input mono"
+                  value={rulesForm.billingSupportWhatsapp}
+                  onChange={(e) =>
+                    setRulesForm({ ...rulesForm, billingSupportWhatsapp: e.target.value })
+                  }
+                />
+              </div>
+              <div className="field">
+                <label>Bloqueio Preventivo por Inadimplência</label>
+                <p className="hint">Suspender automaticamente após o prazo de carência.</p>
+                <select
+                  className="select"
+                  value={rulesForm.autoBlockOverdue ? 'true' : 'false'}
+                  onChange={(e) =>
+                    setRulesForm({
+                      ...rulesForm,
+                      autoBlockOverdue: e.target.value === 'true',
+                    })
+                  }
                 >
-                  <RefreshCw size={13} />
-                  {pm.status === 'active' ? 'Pausar' : 'Ativar'}
+                  <option value="true">Ativado — Suspender após carência</option>
+                  <option value="false">Desativado — Apenas alertar</option>
+                </select>
+              </div>
+            </div>
+            <div className="field">
+              <label>Diretriz Contratual de Licenciamento de Equipe</label>
+              <textarea
+                className="textarea"
+                value={rulesForm.notes}
+                onChange={(e) => setRulesForm({ ...rulesForm, notes: e.target.value })}
+              />
+            </div>
+          </div>
+        </form>
+      )}
+
+      {/* MODAL 1: LIVRO-RAZÃO & BAIXA DE PAGAMENTO POR EMPRESA */}
+      <ModalDialog
+        open={Boolean(selectedLedgerCompany && selectedLedgerSummary)}
+        onClose={() => setLedgerCompanyId(null)}
+        title={
+          selectedLedgerCompany
+            ? `Livro-Razão & Pagamentos — ${selectedLedgerCompany.tradeName} (${
+                selectedLedgerCompany.branchCode || 'MATRIZ'
+              })`
+            : 'Pagamentos da Empresa'
+        }
+        description={
+          selectedLedgerSummary
+            ? `Titular: ${selectedLedgerSummary.adminOwnerName} (${selectedLedgerSummary.adminOwnerEmail}) • Plano: ${selectedLedgerSummary.planName}`
+            : ''
+        }
+        maxWidth="880px"
+      >
+        {selectedLedgerCompany && selectedLedgerSummary && (
+          <div className="flex flex-col gap-4">
+            <div className="kpi-grid">
+              <div className="kpi-card">
+                <span className="kpi-label">Mensalidade do Plano</span>
+                <span className="kpi-value tabular">
+                  {formatCurrency(
+                    selectedLedgerSummary.basePlanMonthlyCost,
+                    'BRL',
+                    session.language,
+                  )}
+                </span>
+                <span className="kpi-meta">
+                  {selectedLedgerSummary.activeModulesCount} módulo(s) ativo(s)
+                </span>
+              </div>
+              <div className="kpi-card">
+                <span className="kpi-label">Cota de Funcionários</span>
+                <span className="kpi-value tabular">
+                  {selectedLedgerSummary.activeEmployeesCount} / {selectedLedgerSummary.freeLimit}{' '}
+                  grátis
+                </span>
+                <span className="kpi-meta">
+                  +{selectedLedgerSummary.extraEmployeesCount} extra = +
+                  {formatCurrency(
+                    selectedLedgerSummary.extraLicensesMonthlyCost,
+                    'BRL',
+                    session.language,
+                  )}
+                </span>
+              </div>
+              <div className="kpi-card">
+                <span className="kpi-label">Total Mensal da Empresa</span>
+                <span className="kpi-value tabular" style={{ color: 'var(--success)' }}>
+                  {formatCurrency(
+                    selectedLedgerSummary.totalMonthlyBilling,
+                    'BRL',
+                    session.language,
+                  )}
+                </span>
+                <span className="kpi-meta">
+                  Meio: {selectedLedgerSummary.preferredPaymentMethod.toUpperCase()}
+                </span>
+              </div>
+            </div>
+
+            {/* Form to record payment or issue settled invoice */}
+            <form
+              onSubmit={handleRegisterCompanyPayment}
+              className="card"
+              style={{ padding: '1rem' }}
+            >
+              <div className="font-semibold text-sm mb-2">
+                Registrar Recebimento / Baixar Mensalidade desta Empresa
+              </div>
+              <div className="form-grid">
+                <div className="field">
+                  <label>Valor Recebido (R$) *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    min={1}
+                    required
+                    className="input tabular"
+                    value={manualPayAmount}
+                    onChange={(e) => setManualPayAmount(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Meio de Liquidação *</label>
+                  <select
+                    className="select"
+                    value={manualPayMethod}
+                    onChange={(e) => setManualPayMethod(e.target.value as PaymentMethodType)}
+                  >
+                    <option value="pix">PIX Corporativo</option>
+                    <option value="boleto">Boleto Bancário</option>
+                    <option value="credit_card">Cartão de Crédito</option>
+                    <option value="bank_transfer">Transferência TED</option>
+                  </select>
+                </div>
+                <div className="field">
+                  <label>Código / Comprovante *</label>
+                  <input
+                    className="input mono"
+                    required
+                    value={manualPayRef}
+                    onChange={(e) => setManualPayRef(e.target.value)}
+                  />
+                </div>
+                <div className="field">
+                  <label>Descrição / Competência *</label>
+                  <input
+                    className="input"
+                    required
+                    value={manualPayDesc}
+                    onChange={(e) => setManualPayDesc(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end mt-3">
+                <button type="submit" className="btn btn-primary btn-sm">
+                  <CheckCircle2 size={14} /> Confirmar Recebimento & Regularizar Empresa
                 </button>
               </div>
-            ),
-          },
-        ]}
-      />
+            </form>
+
+            {/* Invoice History of this Company */}
+            <div className="table-wrap">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Fatura</th>
+                    <th>Descrição</th>
+                    <th>Vencimento</th>
+                    <th>Meio</th>
+                    <th>Valor</th>
+                    <th>Status</th>
+                    <th>Ação</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {charges
+                    .filter((ch) => ch.companyId === selectedLedgerCompany.id)
+                    .map((ch) => (
+                      <tr key={ch.id}>
+                        <td className="mono font-semibold text-xs">{ch.code}</td>
+                        <td className="text-xs">{ch.description}</td>
+                        <td className="mono text-xs">{ch.dueDate}</td>
+                        <td>
+                          <span className="badge badge-neutral uppercase">
+                            {ch.paymentMethodType}
+                          </span>
+                        </td>
+                        <td className="tabular font-semibold text-xs">
+                          {formatCurrency(ch.amount, ch.currency, session.language)}
+                        </td>
+                        <td>
+                          <StatusBadge status={ch.status} />
+                        </td>
+                        <td>
+                          {ch.status !== 'paid' ? (
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm"
+                              onClick={() => handleSettleChargeOneClick(ch)}
+                            >
+                              Baixar PAGO
+                            </button>
+                          ) : (
+                            <span className="text-xs text-muted">Liquidada</span>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </ModalDialog>
+
+      {/* MODAL 2: EDITAR COTA DE FUNCIONÁRIOS DA EMPRESA */}
+      <ModalDialog
+        open={Boolean(editingQuotaCompany)}
+        onClose={() => setEditingQuotaCompany(null)}
+        title={
+          editingQuotaCompany
+            ? `Cota de Funcionários — ${editingQuotaCompany.tradeName}`
+            : 'Editar Cota da Empresa'
+        }
+        footer={
+          <>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={() => setEditingQuotaCompany(null)}
+            >
+              {t('common.cancel')}
+            </button>
+            <button type="submit" form="quota-override-form" className="btn btn-primary">
+              <Save size={14} /> Salvar Cota da Empresa
+            </button>
+          </>
+        }
+      >
+        <form
+          id="quota-override-form"
+          onSubmit={handleSaveCompanyQuotaModal}
+          className="flex flex-col gap-4"
+        >
+          <div className="field">
+            <label>Limite de Funcionários Grátis nesta Unidade *</label>
+            <input
+              type="number"
+              min={0}
+              required
+              className="input tabular"
+              value={companyFreeQuotaInput}
+              onChange={(e) => setCompanyFreeQuotaInput(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>Valor Mensal por Funcionário Extra (R$) *</label>
+            <input
+              type="number"
+              min={0}
+              step="0.10"
+              required
+              className="input tabular"
+              value={companyExtraPriceInput}
+              onChange={(e) => setCompanyExtraPriceInput(e.target.value)}
+            />
+          </div>
+        </form>
+      </ModalDialog>
+
+      {/* MODAL 3: DETALHES DO CANAL DE LIQUIDAÇÃO */}
+      <ModalDialog
+        open={Boolean(inspectChannelModal)}
+        onClose={() => setInspectChannelModal(null)}
+        title={inspectChannelModal?.name || 'Detalhes do Meio de Pagamento'}
+        description={
+          inspectChannelModal
+            ? `Provedor: ${inspectChannelModal.providerName} • Modalidade: ${inspectChannelModal.type.toUpperCase()}`
+            : ''
+        }
+      >
+        {inspectChannelModal && (
+          <div className="flex flex-col gap-3 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted">Identificador Técnico:</span>
+              <code className="mono">{inspectChannelModal.id}</code>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Credencial Mascarada (Zero Segredos):</span>
+              <code className="mono">{inspectChannelModal.maskedCredentialPreview}</code>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Taxa Operacional:</span>
+              <strong className="tabular">{inspectChannelModal.feePercentage}%</strong>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted">Prazo de Liquidação:</span>
+              <strong className="tabular">D+{inspectChannelModal.settlementDays}</strong>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-muted">Instruções de Conciliação:</span>
+              <p className="text-xs">{inspectChannelModal.instructions}</p>
+            </div>
+            <div className="flex justify-end gap-2 mt-3">
+              <Link
+                to={`/app/global/meios-pagamento/${inspectChannelModal.id}/editar`}
+                className="btn btn-primary btn-sm"
+                onClick={() => setInspectChannelModal(null)}
+              >
+                <Edit3 size={14} /> Editar Canal
+              </Link>
+            </div>
+          </div>
+        )}
+      </ModalDialog>
 
       <ModalDialog
         open={modalOpen}
@@ -1492,3 +2623,255 @@ export const PaymentMethodFormPage: React.FC<{ mode: 'create' | 'edit' }> = ({ m
     </div>
   );
 };
+
+export const ChargeFormPage: React.FC<{ scope: 'global' | 'company'; mode: 'create' | 'edit' }> = ({
+  scope,
+  mode,
+}) => {
+  const { cobrancaId, empresaId } = useParams<{ cobrancaId: string; empresaId?: string }>();
+  const navigate = useNavigate();
+  const { charges, companies, contracts, installments, getActor, refreshData, notify, t } = useApp();
+
+  const existing = mode === 'edit' ? charges.find((c) => c.id === cobrancaId) : undefined;
+  const baseRoute =
+    scope === 'global' ? '/app/global/financeiro/cobrancas' : `/app/empresa/${empresaId}/financeiro/cobrancas`;
+
+  const [companyId, setCompanyId] = useState(
+    existing?.companyId || empresaId || companies[0]?.id || 'emp-olivelas-matriz',
+  );
+  const [description, setDescription] = useState(existing?.description || '');
+  const [amount, setAmount] = useState(existing?.amount ?? 840);
+  const [dueDate, setDueDate] = useState(existing?.dueDate || '2026-11-15');
+  const [installmentTotal, setInstallmentTotal] = useState(existing?.installmentTotal ?? 1);
+  const [paymentMethodType, setPaymentMethodType] = useState<PaymentMethodType>(
+    existing?.paymentMethodType || 'pix',
+  );
+  const [status, setStatus] = useState<PaymentStatus>(existing?.status || 'pending');
+  const [reconciled, setReconciled] = useState<boolean>(existing?.reconciled || false);
+
+  if (mode === 'edit' && !existing) {
+    return (
+      <AccessDeniedView
+        title="Fatura Não Encontrada"
+        reason={`O identificador "${cobrancaId}" não existe.`}
+        backTo={baseRoute}
+      />
+    );
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const targetComp = companies.find((c) => c.id === companyId);
+    if (!targetComp) return;
+    const now = new Date().toISOString();
+    const actor = getActor(targetComp.id);
+
+    if (mode === 'create') {
+      const targetContract = contracts.find((ct) => ct.companyId === targetComp.id);
+      const newId = generateId('chg');
+      const code = `FAT-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+      const totalInst = Math.max(1, Number(installmentTotal) || 1);
+      const numAmount = Number(amount) || 0;
+
+      const newCharge: ChargeEntity = {
+        id: newId,
+        code,
+        companyId: targetComp.id,
+        companyName: targetComp.legalName,
+        contractId: targetContract?.id || 'ctr-olivelas-01',
+        description: description.trim() || `Fatura SaaS — ${targetComp.tradeName}`,
+        amount: numAmount,
+        currency: targetComp.currency,
+        dueDate,
+        status,
+        paymentMethodType,
+        installmentTotal: totalInst,
+        reconciled,
+        createdAt: now,
+        updatedAt: now,
+        archiveMetadata: { isArchived: false },
+        changeHistory: [],
+      };
+      await repositories.charges.create(
+        newCharge,
+        actor,
+        `Emissão da cobrança ${code} para ${targetComp.legalName}.`,
+      );
+      await refreshData();
+      notify({ type: 'success', title: `Cobrança ${code} emitida.` });
+      navigate(baseRoute);
+    } else if (existing) {
+      await repositories.charges.update(
+        existing.id,
+        (curr) => ({
+          ...curr,
+          description: description.trim(),
+          amount: Number(amount) || curr.amount,
+          dueDate,
+          installmentTotal: Math.max(1, Number(installmentTotal) || 1),
+          paymentMethodType,
+          status: reconciled ? 'paid' : status,
+          reconciled,
+          reconciledAt: reconciled ? curr.reconciledAt || now : undefined,
+          reconciledBy: reconciled ? curr.reconciledBy || actor.userName : undefined,
+          updatedAt: now,
+        }),
+        actor,
+        `Edição dedicada da cobrança ${existing.code}.`,
+      );
+      if (reconciled || status === 'paid') {
+        const relatedInst = installments.filter((i) => i.chargeId === existing.id);
+        for (const inst of relatedInst) {
+          await repositories.installments.upsert({
+            ...inst,
+            status: 'paid',
+            paidAt: now,
+          });
+        }
+      }
+      await refreshData();
+      notify({ type: 'success', title: `Cobrança ${existing.code} atualizada.` });
+      navigate(baseRoute);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      <PageHeader
+        breadcrumbs={[
+          { label: scope === 'global' ? t('scope.global') : t('scope.company'), to: baseRoute },
+          { label: 'Cobranças', to: baseRoute },
+          { label: mode === 'create' ? 'Nova Cobrança' : `Editar ${existing?.code}` },
+        ]}
+        title={
+          mode === 'create'
+            ? 'Emitir Nova Cobrança / Fatura Corporativa'
+            : `Editar & Conciliar Fatura — ${existing?.code} (ID: ${existing?.id})`
+        }
+        subtitle="Página dedicada de edição e conciliação bancária com identificador único."
+        actions={
+          <Link to={baseRoute} className="btn btn-secondary btn-sm">
+            <ArrowLeft size={14} /> {t('common.back')}
+          </Link>
+        }
+      />
+
+      <form onSubmit={handleSubmit} className="card">
+        <div className="card-body grid-2">
+          <div className="field">
+            <label htmlFor="chg-comp">Empresa Pagadora *</label>
+            <select
+              id="chg-comp"
+              className="select"
+              disabled={mode === 'edit' || scope === 'company'}
+              value={companyId}
+              onChange={(e) => setCompanyId(e.target.value)}
+            >
+              {companies.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.tradeName} — {c.legalName}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="chg-desc">Descrição da Fatura *</label>
+            <input
+              id="chg-desc"
+              className="input"
+              required
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Ex.: Mensalidade SaaS + Licenças de Equipe"
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="chg-amount">Valor Total (R$) *</label>
+            <input
+              id="chg-amount"
+              type="number"
+              step="0.01"
+              min={0}
+              required
+              className="input tabular"
+              value={amount}
+              onChange={(e) => setAmount(Number(e.target.value))}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="chg-due">Data de Vencimento *</label>
+            <input
+              id="chg-due"
+              type="date"
+              required
+              className="input tabular"
+              value={dueDate}
+              onChange={(e) => setDueDate(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="chg-method">Meio de Liquidação *</label>
+            <select
+              id="chg-method"
+              className="select"
+              value={paymentMethodType}
+              onChange={(e) => setPaymentMethodType(e.target.value as PaymentMethodType)}
+            >
+              <option value="pix">PIX Corporativo</option>
+              <option value="boleto">Boleto Registrado</option>
+              <option value="credit_card">Cartão Corporativo</option>
+              <option value="bank_transfer">Transferência Bancária</option>
+            </select>
+          </div>
+          <div className="field">
+            <label htmlFor="chg-inst">Quantidade de Parcelas</label>
+            <input
+              id="chg-inst"
+              type="number"
+              min={1}
+              max={12}
+              className="input tabular"
+              value={installmentTotal}
+              onChange={(e) => setInstallmentTotal(Number(e.target.value))}
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="chg-status">Status da Cobrança</label>
+            <select
+              id="chg-status"
+              className="select"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as PaymentStatus)}
+            >
+              <option value="pending">Pendente / A Vencer</option>
+              <option value="paid">Pago / Liquidado</option>
+              <option value="overdue">Vencido / Em Atraso</option>
+            </select>
+          </div>
+          <div className="field" style={{ justifyContent: 'flex-end' }}>
+            <label className="flex items-center gap-2 text-sm cursor-pointer">
+              <input
+                type="checkbox"
+                checked={reconciled}
+                onChange={(e) => {
+                  setReconciled(e.target.checked);
+                  if (e.target.checked) setStatus('paid');
+                }}
+              />
+              Conciliada Bancariamente (Baixar todas as parcelas como PAGAS)
+            </label>
+          </div>
+        </div>
+        <div className="card-footer">
+          <Link to={baseRoute} className="btn btn-secondary">
+            {t('common.cancel')}
+          </Link>
+          <button type="submit" className="btn btn-primary">
+            <Save size={14} /> {t('common.save')}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
