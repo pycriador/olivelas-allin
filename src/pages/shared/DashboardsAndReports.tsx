@@ -18,7 +18,21 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { formatCurrency, formatDateTime } from '../../i18n/translations';
-import { ModalDialog, PageHeader, StatusBadge } from '../../components/shared/SharedComponents';
+import {
+  ActionDropdownMenu,
+  ModalDialog,
+  PageHeader,
+  StatusBadge,
+  UrlDataTable,
+} from '../../components/shared/SharedComponents';
+import {
+  CatalogModuleEntity,
+  ChargeEntity,
+  CompanyEntity,
+  ContractEntity,
+  TicketEntity,
+} from '../../types/domain';
+import { getUserActiveRoles } from '../../services/hbacService';
 import { exportRowsToCsv } from '../../services/operationalUtils';
 import {
   computeCompanyLicenseSummary,
@@ -535,34 +549,56 @@ export const CompanyDashboardPage: React.FC = () => {
 };
 
 export type AnalyticsReportTab =
-  | 'saas_finance'
-  | 'abc_pareto'
-  | 'valuation'
-  | 'demand_turnover'
-  | 'crm_ltv'
-  | 'modules_sla';
+  | 'empresas_licencas'
+  | 'modulos_ecossistema'
+  | 'contratos_assinaturas'
+  | 'financeiro_cobrancas'
+  | 'usuarios_hbac'
+  | 'governanca_sla';
+
+interface AllInUserAllocationReportRow {
+  id: string;
+  name: string;
+  email: string;
+  roleLabel: string;
+  department: string;
+  companyId: string;
+  companyName: string;
+  isBranch: boolean;
+  branchCode: string;
+  parentCompanyName?: string;
+  quotaStatus: 'FREE' | 'EXTRA' | 'GLOBAL' | 'INACTIVE';
+  quotaBadgeText: string;
+  monthlyLicenseCost: number;
+  status: string;
+  archiveMetadata: { isArchived: boolean };
+}
 
 export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = ({ scope }) => {
   const { empresaId } = useParams<{ empresaId: string }>();
   const {
     companies,
+    users,
+    roles,
     modules,
     companyModules,
     contracts,
     charges,
+    paymentMethods,
     tickets,
-    operationalItems,
+    apiServices,
     auditEvents,
     session,
     hasPermission,
     notify,
     t,
   } = useApp();
+  const navigate = useNavigate();
 
   const targetCompanyId = scope === 'company' ? empresaId : undefined;
   const company = targetCompanyId ? companies.find((c) => c.id === targetCompanyId) : null;
 
-  const [activeTab, setActiveTab] = useState<AnalyticsReportTab>('saas_finance');
+  const [activeTab, setActiveTab] = useState<AnalyticsReportTab>('empresas_licencas');
   const [selectedBranchId, setSelectedBranchId] = useState<string>('ALL');
   const [periodPreset, setPeriodPreset] = useState<'all' | 'month' | 'quarter' | 'year'>('all');
 
@@ -575,7 +611,8 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
   }
 
   const billingRules = getPlatformBillingRules();
-  const effectiveCompanyFilter = targetCompanyId || (selectedBranchId !== 'ALL' ? selectedBranchId : undefined);
+  const effectiveCompanyFilter =
+    targetCompanyId || (selectedBranchId !== 'ALL' ? selectedBranchId : undefined);
 
   const scopedCompanies = effectiveCompanyFilter
     ? companies.filter((c) => c.id === effectiveCompanyFilter && !c.archiveMetadata.isArchived)
@@ -584,201 +621,278 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
   const scopedSubs = effectiveCompanyFilter
     ? companyModules.filter((s) => s.companyId === effectiveCompanyFilter)
     : companyModules;
+  const scopedContracts = effectiveCompanyFilter
+    ? contracts.filter((ct) => ct.companyId === effectiveCompanyFilter)
+    : contracts;
   const scopedCharges = effectiveCompanyFilter
-    ? charges.filter((c) => c.companyId === effectiveCompanyFilter && !c.archiveMetadata.isArchived)
-    : charges.filter((c) => !c.archiveMetadata.isArchived);
+    ? charges.filter((c) => c.companyId === effectiveCompanyFilter)
+    : charges;
   const scopedTickets = effectiveCompanyFilter
-    ? tickets.filter((tk) => tk.companyId === effectiveCompanyFilter && !tk.archiveMetadata.isArchived)
-    : tickets.filter((tk) => !tk.archiveMetadata.isArchived);
-  const scopedAudit = effectiveCompanyFilter
-    ? auditEvents.filter((ae) => ae.companyId === effectiveCompanyFilter)
-    : auditEvents;
-  const scopedItems = effectiveCompanyFilter
-    ? operationalItems.filter((it) => it.companyId === effectiveCompanyFilter && !it.archiveMetadata.isArchived)
-    : operationalItems.filter((it) => !it.archiveMetadata.isArchived);
+    ? tickets.filter((tk) => tk.companyId === effectiveCompanyFilter)
+    : tickets;
 
-  // 1. SaaS Finance & Employee License Breakdown per Company
-  const companyFinancialRows = scopedCompanies.map((comp) => {
-    const lic = computeCompanyLicenseSummary(comp, companies, billingRules, companyModules, contracts);
-    const compContracts = contracts.filter((ct) => ct.companyId === comp.id && ct.status === 'active');
-    const compPaid = charges
-      .filter((ch) => ch.companyId === comp.id && ch.status === 'paid')
-      .reduce((a, b) => a + b.amount, 0);
-    const compPending = charges
-      .filter((ch) => ch.companyId === comp.id && ch.status === 'pending')
-      .reduce((a, b) => a + b.amount, 0);
-    const compOverdue = charges
-      .filter((ch) => ch.companyId === comp.id && ch.status === 'overdue')
-      .reduce((a, b) => a + b.amount, 0);
+  // 1. Relatório de Empresas (Matrizes & Filiais), Cota de 10 Funcionários Grátis & MRR
+  const companySummariesMap = new Map(
+    scopedCompanies.map((comp) => {
+      const lic = computeCompanyLicenseSummary(
+        comp,
+        companies,
+        billingRules,
+        companyModules,
+        contracts,
+      );
+      const compContracts = contracts.filter(
+        (ct) => ct.companyId === comp.id && ct.status === 'active',
+      );
+      const paidTotal = charges
+        .filter((ch) => ch.companyId === comp.id && ch.status === 'paid')
+        .reduce((a, b) => a + b.amount, 0);
+      const pendingTotal = charges
+        .filter((ch) => ch.companyId === comp.id && ch.status === 'pending')
+        .reduce((a, b) => a + b.amount, 0);
+      const overdueTotal = charges
+        .filter((ch) => ch.companyId === comp.id && ch.status === 'overdue')
+        .reduce((a, b) => a + b.amount, 0);
+      return [
+        comp.id,
+        {
+          lic,
+          contractsCount: compContracts.length,
+          paidTotal,
+          pendingTotal,
+          overdueTotal,
+        },
+      ];
+    }),
+  );
 
-    return {
-      comp,
-      lic,
-      contractsCount: compContracts.length,
-      paidTotal: compPaid,
-      pendingTotal: compPending,
-      overdueTotal: compOverdue,
-    };
-  });
+  // 2. Relatório de Módulos do Ecossistema All In & Receita por Plataforma
+  const moduleStatsMap = new Map(
+    modules.map((mod) => {
+      const activeSubs = scopedSubs.filter(
+        (s) => s.moduleId === mod.id && s.status === 'active',
+      );
+      const subscriberNames = activeSubs
+        .map((s) => companies.find((c) => c.id === s.companyId)?.tradeName || s.companyId)
+        .filter(Boolean);
+      const monthlyRevenue = activeSubs.reduce(
+        (acc, s) => acc + (s.billingCycle === 'yearly' ? Math.round(s.agreedPrice / 12) : s.agreedPrice),
+        0,
+      );
+      return [
+        mod.id,
+        {
+          activeCount: activeSubs.length,
+          subscriberNames,
+          monthlyRevenue,
+        },
+      ];
+    }),
+  );
 
-  // 2. Inventory Items for Valuation, Pareto ABC & Turnover
-  const inventoryItems = scopedItems.filter((it) => it.moduleType === 'inventory');
-  const orderItems = scopedItems.filter((it) => it.moduleType === 'orders');
-  const crmItems = scopedItems.filter((it) => it.moduleType === 'crm');
+  // 5. Relatório Consolidado de Usuários HBAC & Colaboradores Alocados por Unidade (Cota 10 Grátis)
+  const userAllocationRows: AllInUserAllocationReportRow[] = [
+    ...users
+      .filter((u) => !effectiveCompanyFilter || u.companyIds.includes(effectiveCompanyFilter))
+      .map((u) => {
+        const primaryComp = companies.find((c) => c.id === u.companyIds[0]);
+        const activeRoles = getUserActiveRoles(u, roles);
+        return {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          roleLabel:
+            activeRoles.map((r) => `${r.name[session.language]} (N${r.hierarchyLevel})`).join(', ') ||
+            'Global Admin',
+          department: u.department || 'Governança Global',
+          companyId: primaryComp?.id || 'global',
+          companyName:
+            u.companyIds.length > 1
+              ? `${primaryComp?.tradeName || 'Matriz'} (+${u.companyIds.length - 1} unidades)`
+              : primaryComp?.tradeName || 'Console Global All In',
+          isBranch: Boolean(primaryComp?.isBranch),
+          branchCode: primaryComp?.branchCode || 'GLOBAL',
+          parentCompanyName: undefined,
+          quotaStatus: 'GLOBAL' as const,
+          quotaBadgeText: `HBAC Global (${u.companyIds.length} empresas)`,
+          monthlyLicenseCost: 0,
+          status: u.status,
+          archiveMetadata: u.archiveMetadata,
+        };
+      }),
+    ...scopedCompanies.flatMap((comp) => {
+      const sum = companySummariesMap.get(comp.id)?.lic;
+      const limit = sum?.freeLimit ?? 10;
+      const extraPrice = sum?.extraEmployeePrice ?? 19.9;
+      return (comp.allocatedEmployees || []).map((emp, idx) => {
+        const isFree = idx < limit;
+        return {
+          id: `${comp.id}-${emp.id}`,
+          name: emp.name,
+          email: emp.email,
+          roleLabel: `${emp.role} (${emp.jobTitle || 'Operacional'})`,
+          department: emp.department || 'Operações',
+          companyId: comp.id,
+          companyName: comp.tradeName,
+          isBranch: Boolean(comp.isBranch),
+          branchCode: comp.branchCode || (comp.isBranch ? 'FILIAL' : 'MATRIZ'),
+          parentCompanyName: sum?.parentCompanyName,
+          quotaStatus: !emp.active ? ('INACTIVE' as const) : isFree ? ('FREE' as const) : ('EXTRA' as const),
+          quotaBadgeText: !emp.active
+            ? 'Inativo (Sem Custo)'
+            : isFree
+              ? `Franquia Grátis (${idx + 1}/${limit})`
+              : `Excedente (+${formatCurrency(extraPrice, 'BRL', session.language)}/mês)`,
+          monthlyLicenseCost: !emp.active || isFree ? 0 : extraPrice,
+          status: emp.active ? 'active' : 'suspended',
+          archiveMetadata: { isArchived: false },
+        };
+      });
+    }),
+  ];
 
-  const valuationRows = inventoryItems.map((it) => {
-    const unitSale = it.amount;
-    const unitCost = Math.round(unitSale * 0.58 * 100) / 100;
-    const totalSaleValue = unitSale * it.quantity;
-    const totalCostValue = unitCost * it.quantity;
-    const projectedMargin = totalSaleValue - totalCostValue;
-    const marginPct = totalSaleValue > 0 ? Math.round((projectedMargin / totalSaleValue) * 100) : 42;
-    const compName = companies.find((c) => c.id === it.companyId)?.tradeName || it.companyId;
-    return {
-      ...it,
-      compName,
-      unitCost,
-      unitSale,
-      totalCostValue,
-      totalSaleValue,
-      projectedMargin,
-      marginPct,
-    };
-  });
-
-  // 3. Pareto ABC Curve Calculation
-  const sortedByValue = [...valuationRows].sort((a, b) => b.totalSaleValue - a.totalSaleValue);
-  const grandTotalInventorySale = sortedByValue.reduce((acc, r) => acc + r.totalSaleValue, 0) || 1;
-  let cumulativeAcc = 0;
-  const abcRows = sortedByValue.map((r) => {
-    const sharePct = (r.totalSaleValue / grandTotalInventorySale) * 100;
-    cumulativeAcc += sharePct;
-    const abcClass: 'A' | 'B' | 'C' =
-      cumulativeAcc <= 80 ? 'A' : cumulativeAcc <= 95 ? 'B' : 'C';
-    const directive =
-      abcClass === 'A'
-        ? 'Classe A (Alta Prioridade — Reposição Contínua & Estoque de Segurança Rigoroso)'
-        : abcClass === 'B'
-          ? 'Classe B (Giro Intermediário — Revisão Quinzenal de Ponto de Pedido)'
-          : 'Classe C (Cauda Longa — Reposição sob Demanda / Liquidação Promocional)';
-    return {
-      ...r,
-      sharePct: Math.round(sharePct * 10) / 10,
-      cumulativePct: Math.min(100, Math.round(cumulativeAcc * 10) / 10),
-      abcClass,
-      directive,
-    };
-  });
-
-  // 4. Demand, Turnover & Reorder Suggestion
-  const demandRows = valuationRows.map((r, idx) => {
-    const avgDailyDemand = Math.max(0.5, Math.round(((r.quantity * 0.12) + (idx + 1) * 0.4) * 10) / 10);
-    const coverageDays = Math.round(r.quantity / avgDailyDemand);
-    const minSafetyStock = Math.ceil(avgDailyDemand * 15);
-    const suggestedPurchase = Math.max(0, minSafetyStock * 2 - r.quantity);
-    const gmroi = r.totalCostValue > 0 ? Math.round((r.projectedMargin / r.totalCostValue) * 100) / 100 : 1.72;
-    return {
-      ...r,
-      avgDailyDemand,
-      coverageDays,
-      minSafetyStock,
-      suggestedPurchase,
-      gmroi,
-    };
-  });
-
-  // 5. Module Breakdown
-  const moduleBreakdown = modules.map((mod) => {
-    const activeSubs = scopedSubs.filter(
-      (s) => s.moduleId === mod.id && s.status === 'active',
-    );
-    const revenue = activeSubs.reduce((acc, s) => acc + s.agreedPrice, 0);
-    return {
-      code: mod.code,
-      name: mod.name[session.language],
-      category: mod.category,
-      activeCount: activeSubs.length,
-      revenue,
-    };
-  });
+  const totalMrr = Array.from(companySummariesMap.values()).reduce(
+    (acc, item) => acc + item.lic.totalMonthlyBilling,
+    0,
+  );
+  const totalAllocatedStaff = Array.from(companySummariesMap.values()).reduce(
+    (acc, item) => acc + item.lic.activeEmployeesCount,
+    0,
+  );
+  const totalExtraStaff = Array.from(companySummariesMap.values()).reduce(
+    (acc, item) => acc + item.lic.extraEmployeesCount,
+    0,
+  );
+  const paidSum = scopedCharges
+    .filter((c) => !c.archiveMetadata.isArchived && c.status === 'paid')
+    .reduce((a, b) => a + b.amount, 0);
+  const pendingSum = scopedCharges
+    .filter((c) => !c.archiveMetadata.isArchived && c.status === 'pending')
+    .reduce((a, b) => a + b.amount, 0);
+  const overdueSum = scopedCharges
+    .filter((c) => !c.archiveMetadata.isArchived && c.status === 'overdue')
+    .reduce((a, b) => a + b.amount, 0);
 
   const handleExportAnalyticsCsv = () => {
-    if (activeTab === 'saas_finance') {
+    if (activeTab === 'empresas_licencas') {
       exportRowsToCsv(
-        `relatorio-faturamento-licencas-${scope}.csv`,
-        ['Empresa', 'Tipo', 'Funcionários Alocados', 'Cota Grátis', 'Licenças Extras', 'Mensalidade Total (BRL)', 'Liquidado (BRL)', 'Em Atraso (BRL)'],
-        companyFinancialRows.map((r) => [
-          r.comp.tradeName,
-          !r.comp.isBranch ? 'Matriz' : `Filial ${r.comp.branchCode || ''}`,
-          r.lic.activeEmployeesCount,
-          r.lic.freeLimit,
-          r.lic.extraEmployeesCount,
-          r.lic.totalMonthlyBilling,
-          r.paidTotal,
-          r.overdueTotal,
+        `relatorio-allin-empresas-licencas-${scope}.csv`,
+        [
+          'ID',
+          'Unidade',
+          'Hierarquia',
+          'Matriz Pai',
+          'Titular',
+          'Plano Contratado',
+          'Funcionários Ativos',
+          'Cota Grátis',
+          'Licenças Extras',
+          'MRR Total (BRL)',
+          'Liquidado (BRL)',
+          'Em Atraso (BRL)',
+        ],
+        scopedCompanies.map((comp) => {
+          const info = companySummariesMap.get(comp.id);
+          return [
+            comp.id,
+            comp.tradeName,
+            comp.isBranch ? `Filial (${comp.branchCode || 'FILIAL'})` : `Matriz (${comp.branchCode || 'MATRIZ'})`,
+            info?.lic.parentCompanyName || 'Matriz Principal',
+            info?.lic.adminOwnerName || '',
+            info?.lic.planName || '',
+            info?.lic.activeEmployeesCount || 0,
+            info?.lic.freeLimit || 10,
+            info?.lic.extraEmployeesCount || 0,
+            info?.lic.totalMonthlyBilling || 0,
+            info?.paidTotal || 0,
+            info?.overdueTotal || 0,
+          ];
+        }),
+      );
+    } else if (activeTab === 'modulos_ecossistema') {
+      exportRowsToCsv(
+        `relatorio-allin-modulos-ecossistema-${scope}.csv`,
+        ['Código', 'Módulo All In', 'Schema PostgreSQL', 'Categoria', 'Preço Mensal Tabela', 'Empresas Ativas', 'MRR Contratado (BRL)'],
+        modules.map((m) => {
+          const st = moduleStatsMap.get(m.id);
+          return [
+            m.code,
+            m.name[session.language],
+            m.dbSchema || 'public',
+            m.category,
+            m.priceMonthly,
+            st?.activeCount || 0,
+            st?.monthlyRevenue || 0,
+          ];
+        }),
+      );
+    } else if (activeTab === 'contratos_assinaturas') {
+      exportRowsToCsv(
+        `relatorio-allin-contratos-${scope}.csv`,
+        ['Código', 'Plano Contratado', 'Empresa', 'Ciclo', 'Vigência Início', 'Vigência Fim', 'Valor Final (BRL)', 'Assinatura', 'Estado'],
+        scopedContracts.map((ct) => [
+          ct.code,
+          ct.planName,
+          ct.companyName,
+          ct.billingCycle,
+          ct.startDate,
+          ct.endDate,
+          ct.finalValue,
+          ct.signatures[0] ? `${ct.signatures[0].signerName} (${ct.signatures[0].signedAt})` : 'Pendente',
+          ct.status,
         ]),
       );
-    } else if (activeTab === 'abc_pareto') {
+    } else if (activeTab === 'financeiro_cobrancas') {
       exportRowsToCsv(
-        `relatorio-curva-abc-${scope}.csv`,
-        ['SKU', 'Produto', 'Empresa', 'Qtd', 'Valor Total Venda', '% Participação', '% Acumulado', 'Classe ABC', 'Diretriz'],
-        abcRows.map((r) => [
-          r.code,
-          r.title,
-          r.compName,
-          r.quantity,
-          r.totalSaleValue,
-          r.sharePct,
-          r.cumulativePct,
-          r.abcClass,
-          r.directive,
+        `relatorio-allin-financeiro-cobrancas-${scope}.csv`,
+        ['Fatura', 'Empresa', 'Descrição', 'Vencimento', 'Meio de Pagamento', 'Valor (BRL)', 'Estado'],
+        scopedCharges.map((ch) => [
+          ch.code,
+          ch.companyName,
+          ch.description,
+          ch.dueDate,
+          ch.paymentMethodType,
+          ch.amount,
+          ch.status,
         ]),
       );
-    } else if (activeTab === 'valuation') {
+    } else if (activeTab === 'usuarios_hbac') {
       exportRowsToCsv(
-        `relatorio-valuation-estoque-${scope}.csv`,
-        ['SKU', 'Produto', 'Empresa', 'Saldo Qtd', 'Custo Total (BRL)', 'Venda Projetada (BRL)', 'Margem Bruta (BRL)', 'Margem %'],
-        valuationRows.map((r) => [
-          r.code,
-          r.title,
-          r.compName,
-          r.quantity,
-          r.totalCostValue,
-          r.totalSaleValue,
-          r.projectedMargin,
-          r.marginPct,
+        `relatorio-allin-usuarios-alocacao-${scope}.csv`,
+        ['Nome', 'E-mail', 'Papel / Função', 'Unidade', 'Status na Cota (10 Grátis)', 'Custo Licença Extra (BRL)'],
+        userAllocationRows.map((u) => [
+          u.name,
+          u.email,
+          u.roleLabel,
+          u.companyName,
+          u.quotaBadgeText,
+          u.monthlyLicenseCost,
         ]),
       );
     } else {
       exportRowsToCsv(
-        `analytics-${scope}-${targetCompanyId || 'global'}.csv`,
-        ['Código Módulo', 'Módulo', 'Categoria', 'Assinaturas Ativas', 'Receita Contratada (BRL)'],
-        moduleBreakdown.map((m) => [m.code, m.name, m.category, m.activeCount, m.revenue]),
+        `relatorio-allin-governanca-sla-${scope}.csv`,
+        ['Protocolo', 'Assunto', 'Empresa', 'Prioridade', 'SLA Vencimento', 'Estado'],
+        scopedTickets.map((tk) => [
+          tk.code,
+          tk.subject,
+          tk.companyName,
+          tk.priority,
+          tk.slaDueAt,
+          tk.status,
+        ]),
       );
     }
-    notify({ type: 'success', title: 'Relatório CSV exportado com sucesso!' });
+    notify({ type: 'success', title: 'Relatório do All In exportado em CSV com sucesso!' });
   };
 
   const handlePrintExecutiveA4 = () => {
     window.print();
     notify({
       type: 'info',
-      title: 'Demonstrativo Executivo preparado para Impressão / PDF A4.',
+      title: 'Relatório Executivo do All In preparado para Impressão / PDF A4.',
     });
   };
-
-  const totalGrossInventorySale = valuationRows.reduce((a, b) => a + b.totalSaleValue, 0);
-  const totalGrossInventoryCost = valuationRows.reduce((a, b) => a + b.totalCostValue, 0);
-
-  const paidSum = scopedCharges
-    .filter((c) => c.status === 'paid')
-    .reduce((a, b) => a + b.amount, 0);
-  const pendingSum = scopedCharges
-    .filter((c) => c.status === 'pending')
-    .reduce((a, b) => a + b.amount, 0);
-  const overdueSum = scopedCharges
-    .filter((c) => c.status === 'overdue')
-    .reduce((a, b) => a + b.amount, 0);
 
   return (
     <div className="flex flex-col gap-2.5">
@@ -787,8 +901,8 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
           { label: scope === 'global' ? t('scope.global') : company?.tradeName || 'Empresa' },
           { label: t('nav.reports') },
         ]}
-        title="Allin Analytics — Relatórios Gerenciais, Financeiro SaaS, Curva ABC & Valuation"
-        subtitle={`Liquidado: ${formatCurrency(paidSum, 'BRL', session.language)} • Pendente: ${formatCurrency(pendingSum, 'BRL', session.language)} • Vencido: ${formatCurrency(overdueSum, 'BRL', session.language)} • Valuation Estoque: ${formatCurrency(totalGrossInventorySale, 'BRL', session.language)} (${inventoryItems.length} SKUs)`}
+        title="Relatórios Executivos do All In — Empresas, Módulos, Contratos, Faturamento SaaS & HBAC"
+        subtitle={`MRR Consolidado: ${formatCurrency(totalMrr, 'BRL', session.language)}/mês • Equipe Alocada: ${totalAllocatedStaff} (${totalExtraStaff} licenças extras) • Liquidado: ${formatCurrency(paidSum, 'BRL', session.language)} • Pendente: ${formatCurrency(pendingSum, 'BRL', session.language)} • Vencido: ${formatCurrency(overdueSum, 'BRL', session.language)}`}
         scopeBadge={scope === 'global' ? t('scope.global') : company?.tradeName}
         actions={
           <div className="flex items-center gap-2 flex-wrap">
@@ -804,7 +918,7 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
                 <option value="ALL">Todas as Matrizes e Filiais ({companies.length})</option>
                 {sortCompaniesHierarchically(companies).map((c) => (
                   <option key={c.id} value={c.id}>
-                    {!c.isBranch ? `[MATRIZ] ${c.tradeName}` : `[FILIAL ${c.branchCode || ''}] ${c.tradeName}`}
+                    {!c.isBranch ? `[MATRIZ] ${c.tradeName}` : `└─ [FILIAL ${c.branchCode || ''}] ${c.tradeName}`}
                   </option>
                 ))}
               </select>
@@ -818,7 +932,7 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
               onChange={(e) => setPeriodPreset(e.target.value as typeof periodPreset)}
             >
               <option value="all">Todo o Histórico</option>
-              <option value="month">Mês Atual</option>
+              <option value="month">Competência Mensal</option>
               <option value="quarter">Último Trimestre</option>
               <option value="year">Exercício 2026</option>
             </select>
@@ -828,418 +942,905 @@ export const ReportsAnalyticsPage: React.FC<{ scope: 'global' | 'company' }> = (
             </button>
             <button type="button" className="btn btn-primary btn-sm" onClick={handleExportAnalyticsCsv}>
               <Download size={14} />
-              Exportar CSV
+              Exportar CSV da Aba
             </button>
           </div>
         }
       />
 
-      {/* Sub-navigation Tabs for the 6 Executive & Operational Reports */}
-      <div className="subnav-tabs" role="tablist" aria-label="Abas de Relatórios Analíticos">
+      {/* Guias Padronizadas dos 6 Relatórios Oficiais do All In */}
+      <nav className="subnav-tabs" aria-label="Relatórios do Ecossistema Olivelas All In">
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'saas_finance' ? 'active' : ''}`}
-          onClick={() => setActiveTab('saas_finance')}
+          className={`subnav-tab ${activeTab === 'empresas_licencas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('empresas_licencas')}
         >
-          1. Receita SaaS &amp; Licenças ({companyFinancialRows.length})
+          1. Empresas, Filiais &amp; Cota de Equipe ({scopedCompanies.length})
         </button>
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'abc_pareto' ? 'active' : ''}`}
-          onClick={() => setActiveTab('abc_pareto')}
+          className={`subnav-tab ${activeTab === 'modulos_ecossistema' ? 'active' : ''}`}
+          onClick={() => setActiveTab('modulos_ecossistema')}
         >
-          2. Curva ABC de Pareto ({abcRows.length})
+          2. Receita &amp; Adoção por Módulo All In ({modules.length})
         </button>
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'valuation' ? 'active' : ''}`}
-          onClick={() => setActiveTab('valuation')}
+          className={`subnav-tab ${activeTab === 'contratos_assinaturas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('contratos_assinaturas')}
         >
-          3. Valuation &amp; Margem ({valuationRows.length})
+          3. Contratos SaaS &amp; Assinaturas ({scopedContracts.length})
         </button>
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'demand_turnover' ? 'active' : ''}`}
-          onClick={() => setActiveTab('demand_turnover')}
+          className={`subnav-tab ${activeTab === 'financeiro_cobrancas' ? 'active' : ''}`}
+          onClick={() => setActiveTab('financeiro_cobrancas')}
         >
-          4. Giro &amp; Compra Sugerida ({demandRows.length})
+          4. Faturamento, Cobranças &amp; Inadimplência ({scopedCharges.length})
         </button>
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'crm_ltv' ? 'active' : ''}`}
-          onClick={() => setActiveTab('crm_ltv')}
+          className={`subnav-tab ${activeTab === 'usuarios_hbac' ? 'active' : ''}`}
+          onClick={() => setActiveTab('usuarios_hbac')}
         >
-          5. Clientes, LTV &amp; Pedidos ({crmItems.length + orderItems.length})
+          5. Usuários, Alocação &amp; HBAC ({userAllocationRows.length})
         </button>
         <button
           type="button"
-          className={`subnav-tab ${activeTab === 'modules_sla' ? 'active' : ''}`}
-          onClick={() => setActiveTab('modules_sla')}
+          className={`subnav-tab ${activeTab === 'governanca_sla' ? 'active' : ''}`}
+          onClick={() => setActiveTab('governanca_sla')}
         >
-          6. Adoção por Módulo ({moduleBreakdown.length})
+          6. Chamados SLA, API Hub &amp; Auditoria ({scopedTickets.length})
         </button>
-      </div>
+      </nav>
 
-      {/* TAB 1: SaaS Revenue, 10 Free Employees Quota & Delinquency per Company */}
-      {activeTab === 'saas_finance' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '0.92rem' }}>
-                Demonstrativo Financeiro por Empresa (Matriz / Filial) &amp; Alocação de Funcionários (10 Grátis)
-              </h2>
-              <p className="text-xs text-muted">
-                Cálculo consolidado de mensalidade base, franquia gratuita de {billingRules.defaultFreeEmployeesPerStore} funcionários por empresa e cobrança de licenças excedentes.
-              </p>
-            </div>
-            <span className="badge badge-teal">{companyFinancialRows.length} unidade(s)</span>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Empresa (Matriz / Filial)</th>
-                  <th>Equipe &amp; Franquia ({billingRules.defaultFreeEmployeesPerStore} Grátis)</th>
-                  <th className="num">Mensalidade + Extras</th>
-                  <th className="num">Liquidado</th>
-                  <th className="num">Pendente / Atraso</th>
-                </tr>
-              </thead>
-              <tbody>
-                {companyFinancialRows.map(({ comp, lic, paidTotal, pendingTotal, overdueTotal }) => (
-                  <tr key={comp.id}>
-                    <td>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className={`badge ${!comp.isBranch ? 'badge-info' : 'badge-teal'}`}>
-                          {!comp.isBranch ? 'MATRIZ' : `FILIAL ${comp.branchCode || ''}`}
-                        </span>
-                        <Link to={`/app/global/empresas/${comp.id}`} className="font-semibold">
-                          {comp.tradeName}
-                        </Link>
-                      </div>
-                      <div className="text-xs text-muted mono">{comp.taxId}</div>
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="badge badge-neutral">
-                          {lic.activeEmployeesCount} alocado(s) ({Math.min(lic.activeEmployeesCount, lic.freeLimit)}/{lic.freeLimit} grátis)
-                        </span>
-                        {lic.extraEmployeesCount > 0 ? (
-                          <span className="badge badge-warning">
-                            +{lic.extraEmployeesCount} extra(s) ({formatCurrency(lic.extraLicensesMonthlyCost, 'BRL', session.language)})
-                          </span>
-                        ) : (
-                          <span className="badge badge-success">Isento de Extras</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(lic.totalMonthlyBilling, 'BRL', session.language)}/mês
-                    </td>
-                    <td className="num tabular" style={{ color: 'var(--status-success)' }}>
-                      {formatCurrency(paidTotal, 'BRL', session.language)}
-                    </td>
-                    <td className="num tabular">
-                      <div>{formatCurrency(pendingTotal, 'BRL', session.language)} pend.</div>
-                      {overdueTotal > 0 && (
-                        <div className="text-xs font-bold" style={{ color: 'var(--status-danger)' }}>
-                          {formatCurrency(overdueTotal, 'BRL', session.language)} vencido
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 2: Pareto ABC Curve */}
-      {activeTab === 'abc_pareto' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '0.92rem' }}>
-                Curva ABC de Pareto (Classificação 80% A / 15% B / 5% C &amp; Diretriz Estratégica)
-              </h2>
-              <p className="text-xs text-muted">
-                Ordenação decrescente por impacto financeiro no estoque para priorização de capital de giro e reposição.
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span className="badge badge-success">
-                Classe A: {abcRows.filter((r) => r.abcClass === 'A').length}
-              </span>
-              <span className="badge badge-info">
-                Classe B: {abcRows.filter((r) => r.abcClass === 'B').length}
-              </span>
-              <span className="badge badge-neutral">
-                Classe C: {abcRows.filter((r) => r.abcClass === 'C').length}
-              </span>
-            </div>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Classe</th>
-                  <th>SKU / Produto &amp; Unidade</th>
-                  <th className="num">Saldo</th>
-                  <th className="num">Valor Total Venda</th>
-                  <th className="num">% Part. / Acum.</th>
-                  <th>Diretriz de Gestão de Estoque</th>
-                </tr>
-              </thead>
-              <tbody>
-                {abcRows.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <span
-                        className={`badge ${
-                          row.abcClass === 'A'
-                            ? 'badge-success'
-                            : row.abcClass === 'B'
-                              ? 'badge-info'
-                              : 'badge-neutral'
-                        } font-bold`}
+      {/* ABA 1: EMPRESAS (MATRIZ & FILIAIS), COTA DE 10 FUNCIONÁRIOS GRÁTIS & MRR */}
+      {activeTab === 'empresas_licencas' && (
+        <UrlDataTable<CompanyEntity>
+          tableId="report-allin-companies-table"
+          caption="Relatório consolidado de Empresas (Matrizes e Filiais), franquia de 10 funcionários grátis, licenças excedentes e MRR no All In"
+          items={scopedCompanies}
+          defaultSortField=""
+          csvFilename="relatorio-allin-empresas-filiais-licencas.csv"
+          searchPlaceholder="Buscar por Matriz, Filial, titular, plano ou CNPJ..."
+          statusExtractor={(c) => c.operationalStatus}
+          searchExtractor={(c) => {
+            const info = companySummariesMap.get(c.id);
+            return `${c.id} ${c.tradeName} ${c.legalName} ${c.branchCode || ''} ${
+              info?.lic.parentCompanyName || ''
+            } ${info?.lic.adminOwnerName || ''} ${info?.lic.planName || ''}`;
+          }}
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending', label: t('status.pending') },
+            { value: 'suspended', label: t('status.suspended') },
+          ]}
+          isArchivedExtractor={(c) => c.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'tradeName',
+              header: 'Unidade (Matriz / Filial)',
+              width: '25%',
+              csvValue: (c) => `${c.isBranch ? '[FILIAL] ' : '[MATRIZ] '}${c.tradeName}`,
+              render: (c) => {
+                const info = companySummariesMap.get(c.id);
+                return (
+                  <div
+                    style={{
+                      paddingLeft: c.isBranch ? '0.65rem' : 0,
+                      borderLeft: c.isBranch ? '2px solid var(--accent-primary)' : 'none',
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`badge ${c.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                        {c.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                      </span>
+                      <Link
+                        to={`/app/global/empresas/${c.id}`}
+                        className="font-semibold text-sm"
+                        style={{ color: 'var(--accent-primary)' }}
                       >
-                        Classe {row.abcClass}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="font-semibold">{row.title}</div>
-                      <div className="text-xs text-muted mono">
-                        {row.code} • {row.compName}
-                      </div>
-                    </td>
-                    <td className="num tabular">{row.quantity} un</td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(row.totalSaleValue, 'BRL', session.language)}
-                    </td>
-                    <td className="num tabular text-xs">
-                      <strong>{row.sharePct}%</strong>
-                      <div className="text-muted">Acum: {row.cumulativePct}%</div>
-                    </td>
-                    <td className="text-xs text-muted">{row.directive}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: Inventory Valuation & Projected Gross Margin */}
-      {activeTab === 'valuation' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '0.92rem' }}>
-                Valuation Físico-Financeiro de Estoque, Custo Imobilizado &amp; Margem Bruta Projetada
-              </h2>
-              <p className="text-xs text-muted">
-                Comparativo entre capital investido a preço de custo e potencial de realização a preço de venda.
-              </p>
-            </div>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>SKU / Produto</th>
-                  <th>Unidade / Categoria</th>
-                  <th className="num">Saldo</th>
-                  <th className="num">Custo Imobilizado</th>
-                  <th className="num">Valuation Venda</th>
-                  <th className="num">Margem Projetada</th>
-                </tr>
-              </thead>
-              <tbody>
-                {valuationRows.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <div className="font-semibold">{row.title}</div>
-                      <code className="text-xs text-muted">{row.code}</code>
-                    </td>
-                    <td>
-                      <div className="text-xs font-medium">{row.compName}</div>
-                      <span className="badge badge-neutral text-xs">{row.category}</span>
-                    </td>
-                    <td className="num tabular">{row.quantity} un</td>
-                    <td className="num tabular">
-                      {formatCurrency(row.totalCostValue, 'BRL', session.language)}
-                    </td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(row.totalSaleValue, 'BRL', session.language)}
-                    </td>
-                    <td className="num tabular">
-                      <span className="badge badge-success">
-                        +{formatCurrency(row.projectedMargin, 'BRL', session.language)} ({row.marginPct}%)
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: Demand, Coverage in Days, GMROI & Purchase Suggestion */}
-      {activeTab === 'demand_turnover' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '0.92rem' }}>
-                Análise de Demanda Diária, Cobertura de Estoque (Dias), GMROI &amp; Sugestão de Compra
-              </h2>
-              <p className="text-xs text-muted">
-                Previsão de ruptura baseada no giro médio e recomendação automática de reposição para 30 dias.
-              </p>
-            </div>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>SKU / Produto</th>
-                  <th className="num">Saldo Atual</th>
-                  <th className="num">Demanda / Dia</th>
-                  <th className="num">Cobertura</th>
-                  <th className="num">GMROI</th>
-                  <th className="num">Sugestão de Compra</th>
-                </tr>
-              </thead>
-              <tbody>
-                {demandRows.map((row) => (
-                  <tr key={row.id}>
-                    <td>
-                      <div className="font-semibold">{row.title}</div>
-                      <div className="text-xs text-muted mono">
-                        {row.code} • {row.compName}
-                      </div>
-                    </td>
-                    <td className="num tabular">{row.quantity} un</td>
-                    <td className="num tabular">{row.avgDailyDemand} un/dia</td>
-                    <td className="num tabular">
-                      <span
-                        className={`badge ${
-                          row.coverageDays < 15
-                            ? 'badge-danger'
-                            : row.coverageDays < 30
-                              ? 'badge-warning'
-                              : 'badge-success'
-                        }`}
-                      >
-                        {row.coverageDays} dias
-                      </span>
-                    </td>
-                    <td className="num mono text-xs">{row.gmroi}x</td>
-                    <td className="num tabular font-semibold">
-                      {row.suggestedPurchase > 0 ? (
-                        <span className="badge badge-warning">Comprar +{row.suggestedPurchase} un</span>
+                        {c.tradeName}
+                      </Link>
+                    </div>
+                    <div className="text-xs text-muted truncate mt-0.5">
+                      <code>{c.branchCode || c.id}</code> •{' '}
+                      {c.isBranch && info?.lic.parentCompanyName ? (
+                        <>
+                          Matriz Pai: <strong>{info.lic.parentCompanyName}</strong>
+                        </>
                       ) : (
-                        <span className="badge badge-teal">Estoque Saudável</span>
+                        <>
+                          {c.legalName} ({info?.lic.childBranchesCount || 0} filiais)
+                        </>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 5: CRM Customers, LTV & Commercial Orders */}
-      {activeTab === 'crm_ltv' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <div>
-              <h2 style={{ fontSize: '0.92rem' }}>
-                Carteira de Clientes CRM, LTV Projetado &amp; Pedidos Comerciais Faturados
-              </h2>
-              <p className="text-xs text-muted">
-                Visão unificada de contas B2B/B2C e pedidos registrados nos módulos operacionais das empresas.
-              </p>
-            </div>
-            <span className="badge badge-info">
-              {crmItems.length} conta(s) CRM • {orderItems.length} pedido(s)
-            </span>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Código / Tipo</th>
-                  <th>Cliente / Pedido</th>
-                  <th>Etapa / Canal</th>
-                  <th className="num">Volume / Licenças</th>
-                  <th className="num">LTV / Valor Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[...crmItems, ...orderItems].map((item) => (
-                  <tr key={item.id}>
-                    <td>
-                      <span className={`badge ${item.moduleType === 'crm' ? 'badge-teal' : 'badge-info'} uppercase`}>
-                        {item.moduleType}
+                    </div>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'planAndModules',
+              header: 'Plano Contratado & Titular',
+              width: '20%',
+              csvValue: (c) => companySummariesMap.get(c.id)?.lic.planName || '',
+              render: (c) => {
+                const info = companySummariesMap.get(c.id);
+                return (
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-semibold text-xs">{info?.lic.planName}</span>
+                    <span className="text-xs text-muted">
+                      Titular: <strong>{info?.lic.adminOwnerName}</strong> •{' '}
+                      {info?.lic.activeModulesCount || 0} mód. ativos
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'quota',
+              header: `Equipe & Cota (${billingRules.defaultFreeEmployeesPerStore} Grátis)`,
+              width: '21%',
+              csvValue: (c) => {
+                const info = companySummariesMap.get(c.id);
+                return `${info?.lic.activeEmployeesCount || 0}/${info?.lic.freeLimit || 10} grátis (+${
+                  info?.lic.extraEmployeesCount || 0
+                } extras)`;
+              },
+              render: (c) => {
+                const info = companySummariesMap.get(c.id);
+                if (!info) return null;
+                return (
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className="badge badge-neutral tabular">
+                        {info.lic.activeEmployeesCount} / {info.lic.freeLimit} grátis
                       </span>
-                      <div className="mono text-xs mt-0.5">{item.code}</div>
-                    </td>
-                    <td className="font-semibold">{item.title}</td>
-                    <td>
-                      <span className="badge badge-neutral">{item.category}</span>
-                    </td>
-                    <td className="num tabular">{item.quantity}</td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(item.amount, 'BRL', session.language)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+                      {info.lic.extraEmployeesCount > 0 ? (
+                        <span className="badge badge-warning">
+                          +{info.lic.extraEmployeesCount} extra = +
+                          {formatCurrency(info.lic.extraLicensesMonthlyCost, 'BRL', session.language)}
+                        </span>
+                      ) : (
+                        <span className="badge badge-success">Dentro da Cota</span>
+                      )}
+                    </div>
+                    <span className="text-xs text-muted">
+                      Base: {formatCurrency(info.lic.basePlanMonthlyCost, 'BRL', session.language)}/mês
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'mrr',
+              header: 'MRR Mensal Total',
+              width: '13%',
+              isNumeric: true,
+              csvValue: (c) => companySummariesMap.get(c.id)?.lic.totalMonthlyBilling || 0,
+              render: (c) => {
+                const info = companySummariesMap.get(c.id);
+                return (
+                  <div>
+                    <div className="font-bold tabular text-sm">
+                      {formatCurrency(info?.lic.totalMonthlyBilling || 0, 'BRL', session.language)}/mês
+                    </div>
+                    <span className="badge badge-neutral uppercase text-xs">
+                      {info?.lic.preferredPaymentMethod || 'pix'}
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'financialStatus',
+              header: 'Liquidado vs. Em Aberto',
+              width: '13%',
+              isNumeric: true,
+              csvValue: (c) => companySummariesMap.get(c.id)?.paidTotal || 0,
+              render: (c) => {
+                const info = companySummariesMap.get(c.id);
+                return (
+                  <div className="tabular text-xs">
+                    <div className="font-semibold" style={{ color: 'var(--status-success)' }}>
+                      Pago: {formatCurrency(info?.paidTotal || 0, 'BRL', session.language)}
+                    </div>
+                    {(info?.overdueTotal || 0) > 0 ? (
+                      <div className="font-bold" style={{ color: 'var(--status-danger)' }}>
+                        Vencido: {formatCurrency(info?.overdueTotal || 0, 'BRL', session.language)}
+                      </div>
+                    ) : (
+                      <div className="text-muted">
+                        Pend.: {formatCurrency(info?.pendingTotal || 0, 'BRL', session.language)}
+                      </div>
+                    )}
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (c) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'open-company',
+                      label: 'Abrir Ficha da Empresa',
+                      icon: <Building2 size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/empresas/${c.id}`),
+                    },
+                    {
+                      id: 'edit-company',
+                      label: 'Editar Empresa & Equipe (ID Único)',
+                      icon: <Users size={14} />,
+                      onClick: () => navigate(`/app/global/empresas/${c.id}/editar`),
+                    },
+                    {
+                      id: 'company-finance',
+                      label: 'Ver Pagamentos & Contratos',
+                      icon: <CreditCard size={14} />,
+                      onClick: () => navigate(`/app/global/empresas/${c.id}/financeiro`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
       )}
 
-      {/* TAB 6: Commercial Module Adoption (original table preserved + enhanced) */}
-      {activeTab === 'modules_sla' && (
-        <div className="card url-data-table-card">
-          <div className="card-header">
-            <h2 style={{ fontSize: '0.92rem' }}>Desempenho e Adoção por Módulo Comercial ({moduleBreakdown.length} módulos)</h2>
-          </div>
-          <div className="table-wrapper" style={{ border: 'none', borderRadius: 0 }}>
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th>Código</th>
-                  <th>Módulo Comercial</th>
-                  <th>Categoria</th>
-                  <th className="num">Assinaturas Ativas</th>
-                  <th className="num">Valor Contratado Acumulado</th>
-                </tr>
-              </thead>
-              <tbody>
-                {moduleBreakdown.map((row) => (
-                  <tr key={row.code}>
-                    <td>
-                      <code className="text-xs">{row.code}</code>
-                    </td>
-                    <td className="font-semibold">{row.name}</td>
-                    <td>
-                      <span className="badge">{row.category}</span>
-                    </td>
-                    <td className="num tabular">{row.activeCount}</td>
-                    <td className="num font-semibold tabular">
-                      {formatCurrency(row.revenue, 'BRL', session.language)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
+      {/* ABA 2: CATÁLOGO DE MÓDULOS DO ECOSSISTEMA ALL IN & RECEITA POR PLATAFORMA */}
+      {activeTab === 'modulos_ecossistema' && (
+        <UrlDataTable<CatalogModuleEntity>
+          tableId="report-allin-modules-table"
+          caption="Relatório de adoção comercial, schemas PostgreSQL dedicados e receita recorrente por módulo do ecossistema Olivelas All In"
+          items={modules}
+          defaultSortField="code"
+          csvFilename="relatorio-allin-modulos-receita.csv"
+          searchPlaceholder="Buscar por módulo comercial, código, schema PostgreSQL ou categoria..."
+          statusExtractor={(m) => m.commercialStatus}
+          searchExtractor={(m) =>
+            `${m.code} ${m.name['pt-BR']} ${m.description['pt-BR']} ${m.dbSchema || ''} ${m.category}`
+          }
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'beta', label: 'Beta' },
+            { value: 'legacy', label: 'Legado' },
+          ]}
+          isArchivedExtractor={(m) => m.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'code',
+              header: 'Código & Schema SQL',
+              width: '18%',
+              sortable: true,
+              csvValue: (m) => `${m.code} (${m.dbSchema || 'public'})`,
+              render: (m) => (
+                <div className="flex flex-col gap-1">
+                  <code className="text-xs font-semibold mono">{m.code}</code>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    <span className={`badge ${m.isExample ? 'badge-warning' : 'badge-teal'}`}>
+                      {m.isExample ? 'Módulo Base' : `schema: ${m.dbSchema || m.code}`}
+                    </span>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'name',
+              header: 'Plataforma / Módulo All In',
+              width: '30%',
+              sortable: true,
+              csvValue: (m) => m.name[session.language],
+              render: (m) => (
+                <div className="flex flex-col gap-0.5">
+                  <Link
+                    to={`/app/global/modulos/${m.id}`}
+                    className="font-semibold text-sm"
+                    style={{ color: 'var(--accent-primary)' }}
+                  >
+                    {m.name[session.language]}
+                  </Link>
+                  <span className="text-xs text-muted truncate">{m.description[session.language]}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'priceMonthly',
+              header: 'Preço de Tabela (Mensal / Anual)',
+              width: '16%',
+              isNumeric: true,
+              sortable: true,
+              csvValue: (m) => m.priceMonthly,
+              render: (m) => (
+                <div className="tabular text-xs">
+                  <div className="font-semibold">
+                    {formatCurrency(m.priceMonthly, m.currency, session.language)}/mês
+                  </div>
+                  <div className="text-muted">
+                    {formatCurrency(m.priceYearly, m.currency, session.language)}/ano
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'subscribers',
+              header: 'Empresas Assinantes Ativas',
+              width: '16%',
+              csvValue: (m) => moduleStatsMap.get(m.id)?.activeCount || 0,
+              render: (m) => {
+                const st = moduleStatsMap.get(m.id);
+                return (
+                  <div className="flex flex-col gap-0.5">
+                    <div>
+                      <span className="badge badge-info">{st?.activeCount || 0} empresa(s) ativa(s)</span>
+                    </div>
+                    <span className="text-xs text-muted truncate">
+                      {st && st.subscriberNames.length > 0
+                        ? st.subscriberNames.join(', ')
+                        : 'Disponível para contratação'}
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'monthlyRevenue',
+              header: 'MRR Contratado',
+              width: '12%',
+              isNumeric: true,
+              csvValue: (m) => moduleStatsMap.get(m.id)?.monthlyRevenue || 0,
+              render: (m) => {
+                const st = moduleStatsMap.get(m.id);
+                return (
+                  <span className="font-bold tabular text-sm" style={{ color: 'var(--status-success)' }}>
+                    {formatCurrency(st?.monthlyRevenue || 0, 'BRL', session.language)}/mês
+                  </span>
+                );
+              },
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (m) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'view-mod',
+                      label: 'Ficha Técnica do Módulo',
+                      icon: <Package size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/modulos/${m.id}`),
+                    },
+                    {
+                      id: 'edit-mod',
+                      label: 'Editar Preço & Limites (ID Único)',
+                      icon: <TrendingUp size={14} />,
+                      onClick: () => navigate(`/app/global/modulos/${m.id}/editar`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* ABA 3: CONTRATOS SAAS, VIGÊNCIAS & ASSINATURAS ELETRÔNICAS */}
+      {activeTab === 'contratos_assinaturas' && (
+        <UrlDataTable<ContractEntity>
+          tableId="report-allin-contracts-table"
+          caption="Relatório de contratos comerciais, aditivos, vigência e assinatura eletrônica SHA-256 no All In"
+          items={scopedContracts}
+          defaultSortField="createdAt"
+          csvFilename="relatorio-allin-contratos-assinaturas.csv"
+          searchPlaceholder="Buscar por código do contrato, empresa, plano ou signatário..."
+          statusExtractor={(ct) => ct.status}
+          searchExtractor={(ct) =>
+            `${ct.code} ${ct.planName} ${ct.companyName} ${ct.signatures[0]?.signerName || ''}`
+          }
+          statusOptions={[
+            { value: 'active', label: t('status.active') },
+            { value: 'pending_signature', label: t('status.pending_signature') },
+            { value: 'draft', label: t('status.draft') },
+            { value: 'expired', label: t('status.expired') },
+          ]}
+          isArchivedExtractor={(ct) => ct.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'code',
+              header: 'Contrato & Versão',
+              width: '22%',
+              sortable: true,
+              csvValue: (ct) => `${ct.code} - ${ct.planName}`,
+              render: (ct) => (
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <Link
+                      to={`/app/global/contratos/${ct.id}`}
+                      className="font-semibold text-sm"
+                      style={{ color: 'var(--accent-primary)' }}
+                    >
+                      {ct.code}
+                    </Link>
+                    <span className="badge badge-neutral">v{ct.version}</span>
+                  </div>
+                  <span className="text-xs text-muted truncate">{ct.planName}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'companyName',
+              header: 'Empresa Contratante',
+              width: '20%',
+              sortable: true,
+              render: (ct) => (
+                <div className="flex flex-col gap-0.5">
+                  <Link to={`/app/global/empresas/${ct.companyId}`} className="font-semibold text-xs">
+                    {ct.companyName}
+                  </Link>
+                  <span className="text-xs text-muted mono">
+                    {ct.moduleIds.length} módulo(s) vinculado(s)
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'startDate',
+              header: 'Ciclo & Vigência Contratual',
+              width: '18%',
+              render: (ct) => (
+                <div className="text-xs tabular">
+                  <div>
+                    <span className="badge badge-info uppercase">{ct.billingCycle}</span>
+                  </div>
+                  <div className="text-muted mt-0.5">
+                    {ct.startDate} até {ct.endDate}
+                  </div>
+                </div>
+              ),
+            },
+            {
+              key: 'signatures',
+              header: 'Assinatura Eletrônica & Hash',
+              width: '19%',
+              render: (ct) =>
+                ct.signatures[0] ? (
+                  <div className="text-xs">
+                    <div className="font-semibold" style={{ color: 'var(--status-success)' }}>
+                      Assinado por {ct.signatures[0].signerName}
+                    </div>
+                    <div className="text-muted mono truncate">
+                      {formatDateTime(ct.signatures[0].signedAt, session.language)}
+                    </div>
+                  </div>
+                ) : (
+                  <span className="badge badge-warning">Aguardando Assinatura</span>
+                ),
+            },
+            {
+              key: 'finalValue',
+              header: 'Valor & Estado',
+              width: '13%',
+              isNumeric: true,
+              sortable: true,
+              render: (ct) => (
+                <div className="tabular">
+                  <div className="font-bold text-sm">
+                    {formatCurrency(ct.finalValue, ct.currency, session.language)}
+                  </div>
+                  <StatusBadge status={ct.status} />
+                </div>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (ct) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'view-contract',
+                      label: 'Abrir Instrumento Contratual A4',
+                      icon: <FileSignature size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/contratos/${ct.id}`),
+                    },
+                    {
+                      id: 'edit-contract',
+                      label: 'Editar Contrato (ID Único)',
+                      icon: <ScrollText size={14} />,
+                      onClick: () => navigate(`/app/global/contratos/${ct.id}/editar`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* ABA 4: FATURAMENTO SAAS, COBRANÇAS, INADIMPLÊNCIA & MEIOS DE PAGAMENTO */}
+      {activeTab === 'financeiro_cobrancas' && (
+        <UrlDataTable<ChargeEntity>
+          tableId="report-allin-charges-table"
+          caption="Relatório financeiro de cobranças, faturas SaaS, meios de pagamento e inadimplência no All In"
+          items={scopedCharges}
+          defaultSortField="dueDate"
+          csvFilename="relatorio-allin-financeiro-cobrancas.csv"
+          searchPlaceholder="Buscar por código da fatura, empresa, meio de pagamento ou descrição..."
+          statusExtractor={(ch) => ch.status}
+          searchExtractor={(ch) =>
+            `${ch.code} ${ch.companyName} ${ch.description} ${ch.paymentMethodType}`
+          }
+          statusOptions={[
+            { value: 'paid', label: t('status.paid') },
+            { value: 'pending', label: t('status.pending') },
+            { value: 'overdue', label: t('status.overdue') },
+          ]}
+          isArchivedExtractor={(ch) => ch.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'code',
+              header: 'Fatura & Descrição',
+              width: '26%',
+              sortable: true,
+              render: (ch) => (
+                <div className="flex flex-col gap-0.5">
+                  <Link
+                    to={`/app/global/financeiro/cobrancas/${ch.id}/editar`}
+                    className="font-semibold text-sm mono"
+                    style={{ color: 'var(--accent-primary)' }}
+                  >
+                    {ch.code}
+                  </Link>
+                  <span className="text-xs text-muted truncate">{ch.description}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'companyName',
+              header: 'Empresa (Matriz / Filial)',
+              width: '22%',
+              sortable: true,
+              render: (ch) => {
+                const comp = companies.find((c) => c.id === ch.companyId);
+                return (
+                  <div className="flex flex-col gap-0.5">
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`badge ${comp?.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                        {comp?.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                      </span>
+                      <Link
+                        to={`/app/global/empresas/${ch.companyId}`}
+                        className="font-semibold text-xs"
+                      >
+                        {ch.companyName}
+                      </Link>
+                    </div>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'paymentMethodType',
+              header: 'Canal / Gateway de Liquidação',
+              width: '18%',
+              render: (ch) => {
+                const pm = paymentMethods.find((m) => m.type === ch.paymentMethodType);
+                return (
+                  <div className="flex flex-col gap-0.5">
+                    <div>
+                      <span className="badge badge-neutral uppercase">{ch.paymentMethodType}</span>
+                    </div>
+                    <span className="text-xs text-muted">
+                      {pm ? `${pm.providerName} (Taxa ${pm.feePercentage}%)` : 'Liquidação Direta'}
+                    </span>
+                  </div>
+                );
+              },
+            },
+            {
+              key: 'dueDate',
+              header: 'Vencimento & Parcelas',
+              width: '14%',
+              sortable: true,
+              render: (ch) => (
+                <div className="tabular text-xs">
+                  <div className="font-semibold mono">{ch.dueDate}</div>
+                  <div className="text-muted">Parcelado em {ch.installmentTotal}x</div>
+                </div>
+              ),
+            },
+            {
+              key: 'amount',
+              header: 'Valor & Status',
+              width: '12%',
+              isNumeric: true,
+              sortable: true,
+              render: (ch) => (
+                <div className="tabular">
+                  <div className="font-bold text-sm">
+                    {formatCurrency(ch.amount, ch.currency, session.language)}
+                  </div>
+                  <StatusBadge status={ch.status} />
+                </div>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (ch) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'edit-charge',
+                      label: 'Editar Cobrança (ID Único)',
+                      icon: <CreditCard size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/financeiro/cobrancas/${ch.id}/editar`),
+                    },
+                    {
+                      id: 'open-finance',
+                      label: 'Ir para Financeiro & Conciliação',
+                      icon: <BarChart3 size={14} />,
+                      onClick: () => navigate('/app/global/financeiro/cobrancas'),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* ABA 5: USUÁRIOS, ALOCAÇÃO MULTIEMPRESA (COTA 10 GRÁTIS) & PAPÉIS HBAC */}
+      {activeTab === 'usuarios_hbac' && (
+        <UrlDataTable<AllInUserAllocationReportRow>
+          tableId="report-allin-users-hbac-table"
+          caption="Relatório de identidades, colaboradores alocados nas Matrizes e Filiais, franquia de 10 funcionários grátis e papéis HBAC no All In"
+          items={userAllocationRows}
+          defaultSortField=""
+          csvFilename="relatorio-allin-usuarios-alocacao-hbac.csv"
+          searchPlaceholder="Buscar por colaborador, e-mail, papel HBAC, Matriz ou Filial..."
+          statusExtractor={(u) => u.quotaStatus}
+          searchExtractor={(u) =>
+            `${u.name} ${u.email} ${u.roleLabel} ${u.companyName} ${u.department} ${u.quotaBadgeText}`
+          }
+          statusOptions={[
+            { value: 'FREE', label: 'Dentro da Cota Gratuita (10 Grátis)' },
+            { value: 'EXTRA', label: 'Licença Excedente Cobrada' },
+            { value: 'GLOBAL', label: 'Escopo Global HBAC' },
+            { value: 'INACTIVE', label: 'Inativo / Pausado' },
+          ]}
+          isArchivedExtractor={(u) => u.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'name',
+              header: 'Usuário / Colaborador Alocado',
+              width: '25%',
+              render: (u) => (
+                <div className="flex flex-col gap-0.5">
+                  <span className="font-semibold text-sm">{u.name}</span>
+                  <span className="text-xs text-muted mono">{u.email}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'roleLabel',
+              header: 'Papel HBAC / Função Operacional',
+              width: '22%',
+              render: (u) => (
+                <div className="flex flex-col gap-0.5">
+                  <span className="badge badge-info">{u.roleLabel}</span>
+                  <span className="text-xs text-muted">{u.department}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'companyName',
+              header: 'Unidade Vinculada (Matriz / Filial)',
+              width: '24%',
+              render: (u) => (
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span
+                      className={`badge ${
+                        u.companyId === 'global'
+                          ? 'badge-neutral'
+                          : u.isBranch
+                            ? 'badge-info'
+                            : 'badge-teal'
+                      }`}
+                    >
+                      {u.companyId === 'global'
+                        ? 'GLOBAL'
+                        : u.isBranch
+                          ? `└─ FILIAL ${u.branchCode}`
+                          : 'MATRIZ'}
+                    </span>
+                    <span className="font-semibold text-xs">{u.companyName}</span>
+                  </div>
+                  {u.isBranch && u.parentCompanyName && (
+                    <span className="text-xs text-muted">
+                      Matriz Pai: <strong>{u.parentCompanyName}</strong>
+                    </span>
+                  )}
+                </div>
+              ),
+            },
+            {
+              key: 'quotaBadgeText',
+              header: 'Enquadramento na Cota (10 Grátis)',
+              width: '21%',
+              render: (u) => (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span
+                    className={`badge ${
+                      u.quotaStatus === 'EXTRA'
+                        ? 'badge-warning'
+                        : u.quotaStatus === 'FREE'
+                          ? 'badge-success'
+                          : 'badge-teal'
+                    }`}
+                  >
+                    {u.quotaBadgeText}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (u) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    ...(u.id.startsWith('usr-')
+                      ? [
+                          {
+                            id: 'edit-usr',
+                            label: 'Editar Usuário & HBAC (ID Único)',
+                            icon: <ShieldCheck size={14} />,
+                            variant: 'primary' as const,
+                            onClick: () => navigate(`/app/global/usuarios/${u.id}/editar`),
+                          },
+                        ]
+                      : [
+                          {
+                            id: 'edit-comp-staff',
+                            label: 'Gerenciar Equipe na Empresa',
+                            icon: <Building2 size={14} />,
+                            variant: 'primary' as const,
+                            onClick: () => navigate(`/app/global/empresas/${u.companyId}/editar`),
+                          },
+                        ]),
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
+      )}
+
+      {/* ABA 6: GOVERNANÇA OPERACIONAL — CHAMADOS SLA, API HUB & AUDITORIA FORENSE */}
+      {activeTab === 'governanca_sla' && (
+        <UrlDataTable<TicketEntity>
+          tableId="report-allin-governance-tickets-table"
+          caption={`Relatório de SLA de Chamados (${scopedTickets.length}), Conectores API Hub (${apiServices.length} serviços) e Trilha de Auditoria (${auditEvents.length} eventos)`}
+          items={scopedTickets}
+          defaultSortField="createdAt"
+          csvFilename="relatorio-allin-chamados-sla.csv"
+          searchPlaceholder="Buscar por protocolo de chamado, assunto, empresa ou responsável..."
+          statusExtractor={(tk) => tk.status}
+          searchExtractor={(tk) =>
+            `${tk.code} ${tk.subject} ${tk.companyName} ${tk.assignedToUserName || ''} ${tk.priority}`
+          }
+          statusOptions={[
+            { value: 'open', label: t('status.open') },
+            { value: 'in_progress', label: t('status.in_progress') },
+            { value: 'resolved', label: t('status.resolved') },
+          ]}
+          isArchivedExtractor={(tk) => tk.archiveMetadata.isArchived}
+          columns={[
+            {
+              key: 'code',
+              header: 'Protocolo & Assunto do Chamado',
+              width: '28%',
+              sortable: true,
+              render: (tk) => (
+                <div className="flex flex-col gap-0.5">
+                  <Link
+                    to={`/app/global/tickets/${tk.id}`}
+                    className="font-semibold text-sm mono"
+                    style={{ color: 'var(--accent-primary)' }}
+                  >
+                    {tk.code} — {tk.subject}
+                  </Link>
+                  <span className="text-xs text-muted truncate">{tk.description}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'companyName',
+              header: 'Empresa Solicitante',
+              width: '20%',
+              render: (tk) => (
+                <div className="flex flex-col gap-0.5">
+                  <Link to={`/app/global/empresas/${tk.companyId}`} className="font-semibold text-xs">
+                    {tk.companyName}
+                  </Link>
+                  <span className="text-xs text-muted">
+                    Atendente: {tk.assignedToUserName || 'Fila Global'}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'priority',
+              header: 'Prioridade & Prazo SLA',
+              width: '22%',
+              render: (tk) => (
+                <div className="flex flex-col gap-0.5">
+                  <div>
+                    <StatusBadge status={tk.priority} />
+                  </div>
+                  <span className="text-xs text-muted mono">
+                    Meta SLA: {formatDateTime(tk.slaDueAt, session.language)}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'status',
+              header: 'Estado Operacional',
+              width: '14%',
+              render: (tk) => <StatusBadge status={tk.status} />,
+            },
+            {
+              key: 'actions',
+              header: 'Ações',
+              width: '8%',
+              isNumeric: true,
+              render: (tk) => (
+                <ActionDropdownMenu
+                  label="Ações"
+                  items={[
+                    {
+                      id: 'open-ticket',
+                      label: 'Abrir Atendimento & Histórico',
+                      icon: <LifeBuoy size={14} />,
+                      variant: 'primary',
+                      onClick: () => navigate(`/app/global/tickets/${tk.id}`),
+                    },
+                    {
+                      id: 'edit-ticket',
+                      label: 'Editar Chamado (ID Único)',
+                      icon: <ScrollText size={14} />,
+                      onClick: () => navigate(`/app/global/tickets/${tk.id}/editar`),
+                    },
+                  ]}
+                />
+              ),
+            },
+          ]}
+        />
       )}
     </div>
   );
