@@ -681,6 +681,51 @@
     border-color: var(--border-subtle);
   }
 
+  /* HTTP Method Badges (API Hub) */
+  .method-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3.6rem;
+    padding: 0.2rem 0.55rem;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border-radius: 0.45rem;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-subtle);
+    color: var(--text-primary);
+    line-height: 1.2;
+    flex-shrink: 0;
+  }
+
+  .method-GET {
+    background-color: var(--status-info-bg);
+    color: var(--status-info);
+    border-color: var(--status-info-border);
+  }
+
+  .method-POST {
+    background-color: var(--status-success-bg);
+    color: var(--status-success);
+    border-color: var(--status-success-border);
+  }
+
+  .method-PUT,
+  .method-PATCH {
+    background-color: var(--status-warning-bg);
+    color: var(--status-warning);
+    border-color: var(--status-warning-border);
+  }
+
+  .method-DELETE {
+    background-color: var(--status-danger-bg);
+    color: var(--status-danger);
+    border-color: var(--status-danger-border);
+  }
+
   /* Forms & Inputs arredondados */
   .form-grid {
     display: grid;

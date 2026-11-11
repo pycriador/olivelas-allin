@@ -877,50 +877,98 @@ export const ApiHubCatalogPage: React.FC<{ activeTab: ApiHubTab }> = ({ activeTa
           columns={[
             {
               key: 'method',
-              header: 'Método / Serviço & Rota',
-              width: '56%',
+              header: 'Método / ID',
+              width: '10%',
               sortable: true,
+              csvValue: (s) => s.method,
+              render: (s) => (
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0', alignItems: 'flex-start' }}>
+                  <span className={`method-badge method-${s.method}`}>{s.method}</span>
+                  <span className="text-xs text-muted mono">{s.id}</span>
+                </div>
+              ),
+            },
+            {
+              key: 'name',
+              header: 'Serviço HTTP & Descrição',
+              width: '28%',
+              sortable: true,
+              csvValue: (s) => s.name,
+              render: (s) => (
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                  <Link
+                    to={`/app/global/api-hub/servicos/${s.id}`}
+                    className="font-semibold text-sm"
+                    style={{ color: 'var(--accent-primary)' }}
+                  >
+                    {s.name}
+                  </Link>
+                  <span className="text-xs text-muted" style={{ lineHeight: 1.35 }}>
+                    {s.description}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'path',
+              header: 'Endpoint / URL Base',
+              width: '24%',
+              csvValue: (s) => `${s.baseUrl}${s.path}`,
+              render: (s) => (
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                  <code className="text-xs font-semibold mono" style={{ color: 'var(--text-primary)' }}>
+                    {s.path}
+                  </code>
+                  <span className="text-xs text-muted mono truncate" title={s.baseUrl}>
+                    {s.baseUrl}
+                  </span>
+                </div>
+              ),
+            },
+            {
+              key: 'collectionId',
+              header: 'Coleção & Domínio',
+              width: '15%',
+              csvValue: (s) => {
+                const col = apiCollections.find((c) => c.id === s.collectionId);
+                return col?.name || s.collectionId;
+              },
               render: (s) => {
                 const col = apiCollections.find((c) => c.id === s.collectionId);
                 return (
-                  <div className="flex flex-col gap-0.5">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`method-badge method-${s.method}`}>{s.method}</span>
-                      <Link to={`/app/global/api-hub/servicos/${s.id}`} className="font-semibold">
-                        {s.name}
-                      </Link>
-                      <span className="badge badge-neutral text-xs">{col?.name || s.collectionId}</span>
-                    </div>
-                    <code className="text-xs text-muted">
-                      {s.baseUrl}
-                      {s.path}
-                    </code>
+                  <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0', alignItems: 'flex-start' }}>
+                    <span className="badge badge-teal">{col?.name || s.collectionId}</span>
+                    <span className="text-xs text-muted">{col?.category || 'Core API'}</span>
                   </div>
                 );
               },
             },
             {
               key: 'timeoutMs',
-              header: 'Autenticação / Status HTTP',
-              width: '34%',
+              header: 'Autenticação & Status HTTP',
+              width: '15%',
+              csvValue: (s) => `${s.authType} (${s.timeoutMs}ms)`,
               render: (s) => (
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="badge badge-info text-xs">{s.authType}</span>
-                  {s.expectedResponses.map((r) => (
-                    <span
-                      key={r.statusCode}
-                      className={`badge ${r.statusCode < 300 ? 'badge-success' : 'badge-warning'} mono`}
-                    >
-                      {r.statusCode}
-                    </span>
-                  ))}
+                <div className="flex flex-col gap-1" style={{ padding: '0.15rem 0' }}>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    <span className="badge badge-info text-xs">{s.authType}</span>
+                    {s.expectedResponses.map((r) => (
+                      <span
+                        key={r.statusCode}
+                        className={`badge ${r.statusCode < 300 ? 'badge-success' : 'badge-warning'} mono`}
+                      >
+                        {r.statusCode}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-xs text-muted mono">Timeout: {s.timeoutMs} ms</span>
                 </div>
               ),
             },
             {
               key: 'actions',
               header: 'Ações',
-              width: '10%',
+              width: '8%',
               isNumeric: true,
               render: (s) => (
                 <ActionDropdownMenu
