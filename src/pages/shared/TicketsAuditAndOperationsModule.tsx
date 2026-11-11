@@ -1388,7 +1388,7 @@ export const AuditEventDetailPage: React.FC<{ scope: 'global' | 'company' }> = (
 export const CompanyOperationModulePage: React.FC<{
   moduleType: 'inventory' | 'orders' | 'crm';
 }> = ({ moduleType }) => {
-  const { empresaId } = useParams<{ empresaId: string }>();
+  const { empresaId: routeEmpresaId } = useParams<{ empresaId: string }>();
   const navigate = useNavigate();
   const {
     companies,
@@ -1402,7 +1402,10 @@ export const CompanyOperationModulePage: React.FC<{
     t,
   } = useApp();
 
+  const isGlobalScope = !routeEmpresaId;
+  const empresaId = routeEmpresaId || session.activeCompanyId || companies[0]?.id || 'emp-olivelas-matriz';
   const company = companies.find((c) => c.id === empresaId);
+  const operationBasePrefix = isGlobalScope ? '/app/global/operacao' : `/app/empresa/${empresaId}/operacao`;
   const [newModalOpen, setNewModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newCategory, setNewCategory] = useState('');
@@ -1445,7 +1448,7 @@ export const CompanyOperationModulePage: React.FC<{
     );
   }
 
-  if (!isModuleSubscribed(empresaId, moduleMeta.moduleCode)) {
+  if (!isGlobalScope && !isModuleSubscribed(empresaId, moduleMeta.moduleCode)) {
     return (
       <AccessDeniedView
         reason={`A empresa ${company.tradeName} não possui o módulo comercial ${moduleMeta.moduleCode} ativo em seu contrato.`}
@@ -1454,7 +1457,7 @@ export const CompanyOperationModulePage: React.FC<{
     );
   }
 
-  if (!hasPermission(moduleType, 'view', empresaId)) {
+  if (!hasPermission(moduleType, 'view', isGlobalScope ? undefined : empresaId)) {
     return (
       <AccessDeniedView
         reason={`Seu papel atual não possui a permissão ${moduleType}:view na empresa ${company.tradeName}.`}
@@ -1463,9 +1466,11 @@ export const CompanyOperationModulePage: React.FC<{
     );
   }
 
-  const currentItems = operationalItems.filter(
-    (item) => item.companyId === empresaId && item.moduleType === moduleType,
-  );
+  const currentItems = isGlobalScope
+    ? operationalItems.filter((item) => item.moduleType === moduleType)
+    : operationalItems.filter(
+        (item) => item.companyId === empresaId && item.moduleType === moduleType,
+      );
 
   const handleAddRecord = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1551,14 +1556,17 @@ export const CompanyOperationModulePage: React.FC<{
     <div className="flex flex-col gap-2.5">
       <PageHeader
         breadcrumbs={[
-          { label: company.tradeName, to: `/app/empresa/${empresaId}` },
+          {
+            label: isGlobalScope ? t('scope.global') : company.tradeName,
+            to: isGlobalScope ? '/app/global' : `/app/empresa/${empresaId}`,
+          },
           { label: moduleMeta.title.split('—')[0].trim() },
         ]}
         title={moduleMeta.title}
         subtitle={`${moduleMeta.subtitle} • ${currentItems.length} registros ativos`}
-        scopeBadge={company.tradeName}
+        scopeBadge={isGlobalScope ? undefined : company.tradeName}
         actions={
-          hasPermission(moduleType, 'create', empresaId) && (
+          hasPermission(moduleType, 'create', isGlobalScope ? undefined : empresaId) && (
             <button type="button" className="btn btn-primary btn-sm" onClick={() => setNewModalOpen(true)}>
               <Plus size={14} />
               Novo Registro ({moduleMeta.moduleCode})
@@ -1568,11 +1576,11 @@ export const CompanyOperationModulePage: React.FC<{
       />
 
       <UrlDataTable<OperationalItemEntity>
-        tableId={`op-table-${moduleType}-${empresaId}`}
+        tableId={`op-table-${moduleType}-${isGlobalScope ? 'global' : empresaId}`}
         caption={moduleMeta.title}
         items={currentItems}
         defaultSortField="updatedAt"
-        csvFilename={`${moduleType}-${empresaId}.csv`}
+        csvFilename={`${moduleType}-${isGlobalScope ? 'global' : empresaId}.csv`}
         searchPlaceholder="Buscar por código, descrição ou categoria..."
         statusExtractor={(r) => r.status}
         searchExtractor={(r) => `${r.code} ${r.title} ${r.category}`}
@@ -1594,7 +1602,7 @@ export const CompanyOperationModulePage: React.FC<{
               return (
                 <div>
                   <Link
-                    to={`/app/empresa/${empresaId}/operacao/${slug}/${r.id}/editar`}
+                    to={`${operationBasePrefix}/${slug}/${r.id}/editar`}
                     className="mono font-semibold"
                     style={{ color: 'var(--brand-primary)' }}
                   >
@@ -1642,14 +1650,14 @@ export const CompanyOperationModulePage: React.FC<{
                 <ActionDropdownMenu
                   label="Ações"
                   items={[
-                    ...(hasPermission(moduleType, 'edit', empresaId)
+                    ...(hasPermission(moduleType, 'edit', isGlobalScope ? undefined : empresaId)
                       ? [
                           {
                             id: 'edit-page',
                             label: 'Editar Registro (ID Único)',
                             icon: <Edit3 size={14} />,
                             variant: 'primary' as const,
-                            onClick: () => navigate(`/app/empresa/${empresaId}/operacao/${slug}/${r.id}/editar`),
+                            onClick: () => navigate(`${operationBasePrefix}/${slug}/${r.id}/editar`),
                           },
                           {
                             id: 'toggle-status',
@@ -1659,7 +1667,7 @@ export const CompanyOperationModulePage: React.FC<{
                           },
                         ]
                       : []),
-                    ...(hasPermission(moduleType, 'archive', empresaId)
+                    ...(hasPermission(moduleType, 'archive', isGlobalScope ? undefined : empresaId)
                       ? [
                           r.archiveMetadata.isArchived
                             ? {
@@ -1842,14 +1850,18 @@ export const CompanyOperationModulePage: React.FC<{
 export const CompanyOperationItemFormPage: React.FC<{
   moduleType: 'inventory' | 'orders' | 'crm';
 }> = ({ moduleType }) => {
-  const { empresaId, itemId } = useParams<{ empresaId: string; itemId: string }>();
+  const { empresaId: routeEmpresaId, itemId } = useParams<{ empresaId: string; itemId: string }>();
   const navigate = useNavigate();
-  const { companies, operationalItems, getActor, refreshData, notify, t } = useApp();
+  const { companies, operationalItems, session, getActor, refreshData, notify, t } = useApp();
 
+  const isGlobalScope = !routeEmpresaId;
+  const existing = operationalItems.find((it) =>
+    it.id === itemId && (isGlobalScope ? true : it.companyId === routeEmpresaId),
+  );
+  const empresaId = routeEmpresaId || existing?.companyId || session.activeCompanyId || companies[0]?.id || 'emp-olivelas-matriz';
   const company = companies.find((c) => c.id === empresaId);
-  const existing = operationalItems.find((it) => it.id === itemId && it.companyId === empresaId);
   const slug = moduleType === 'inventory' ? 'estoque' : moduleType === 'orders' ? 'vendas' : 'crm';
-  const baseRoute = `/app/empresa/${empresaId}/operacao/${slug}`;
+  const baseRoute = isGlobalScope ? `/app/global/operacao/${slug}` : `/app/empresa/${empresaId}/operacao/${slug}`;
 
   const [title, setTitle] = useState(existing?.title || '');
   const [category, setCategory] = useState(existing?.category || 'Geral');

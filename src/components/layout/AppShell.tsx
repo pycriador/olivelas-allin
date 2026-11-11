@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Activity,
   BarChart3,
   Boxes,
   Building2,
+  ChevronDown,
   CreditCard,
   Database,
   DatabaseBackup,
@@ -280,6 +281,16 @@ interface SidebarNavItem {
   badgeText?: string;
 }
 
+type SidebarAccordionGroup = 'commercialModules' | 'commercial' | 'operations' | 'governance';
+
+function resolveActiveSidebarGroup(pathname: string): SidebarAccordionGroup | null {
+  if (/\/ecossistema\/[^/]+/.test(pathname)) return 'commercialModules';
+  if (/\/(modulos|empresas|contratos|financeiro|meios-pagamento)(\/|$)/.test(pathname)) return 'commercial';
+  if (/\/(operacao|ecossistema)(\/|$)/.test(pathname)) return 'operations';
+  if (/\/(usuarios|papeis|api-hub|tickets|auditoria|relatorios)(\/|$)/.test(pathname)) return 'governance';
+  return null;
+}
+
 export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode }) => {
   const {
     currentUser,
@@ -303,6 +314,26 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<SidebarAccordionGroup, boolean>>(() => {
+    const activeGroup = resolveActiveSidebarGroup(location.pathname);
+    return {
+      commercialModules: activeGroup === 'commercialModules',
+      commercial: activeGroup === 'commercial',
+      operations: activeGroup === 'operations',
+      governance: activeGroup === 'governance',
+    };
+  });
+
+  useEffect(() => {
+    const activeGroup = resolveActiveSidebarGroup(location.pathname);
+    if (activeGroup) {
+      setOpenGroups((prev) => (prev[activeGroup] ? prev : { ...prev, [activeGroup]: true }));
+    }
+  }, [location.pathname]);
+
+  const toggleSidebarGroup = (group: SidebarAccordionGroup) => {
+    setOpenGroups((prev) => ({ ...prev, [group]: !prev[group] }));
+  };
 
   if (!currentUser) {
     return (
@@ -368,6 +399,10 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
     { to: '/app/global/contratos', label: t('nav.contracts'), icon: <FileSignature size={15} />, resource: 'contracts', group: 'commercial' },
     { to: '/app/global/financeiro', label: t('nav.finance'), icon: <CreditCard size={15} />, resource: 'finance', group: 'commercial' },
     { to: '/app/global/meios-pagamento', label: t('nav.paymentMethods'), icon: <KeyRound size={15} />, resource: 'payment_methods', group: 'commercial' },
+    { to: '/app/global/ecossistema', label: 'Console do Ecossistema', icon: <Layers size={15} />, resource: 'modules', end: true, group: 'operations' },
+    { to: '/app/global/operacao/estoque', label: t('nav.inventory'), icon: <Boxes size={15} />, resource: 'inventory', group: 'operations' },
+    { to: '/app/global/operacao/vendas', label: t('nav.orders'), icon: <ShoppingCart size={15} />, resource: 'orders', group: 'operations' },
+    { to: '/app/global/operacao/crm', label: t('nav.crm'), icon: <Activity size={15} />, resource: 'crm', group: 'operations' },
     { to: '/app/global/usuarios', label: t('nav.users'), icon: <Users size={15} />, resource: 'users', group: 'governance' },
     { to: '/app/global/papeis', label: t('nav.roles'), icon: <ShieldCheck size={15} />, resource: 'roles', group: 'governance' },
     { to: '/app/global/api-hub/servicos', label: t('nav.apiHub'), icon: <Terminal size={15} />, resource: 'api_hub', group: 'governance' },
@@ -382,6 +417,7 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
     { to: `/app/empresa/${cid}/modulos`, label: t('nav.modules'), icon: <Package size={15} />, resource: 'modules', group: 'commercial' },
     { to: `/app/empresa/${cid}/contratos`, label: t('nav.contracts'), icon: <FileSignature size={15} />, resource: 'contracts', requiredModuleCode: 'allin_contratos', group: 'commercial' },
     { to: `/app/empresa/${cid}/financeiro`, label: t('nav.finance'), icon: <CreditCard size={15} />, resource: 'finance', requiredModuleCode: 'allin_financeiro', group: 'commercial' },
+    { to: `/app/empresa/${cid}/ecossistema`, label: 'Console do Ecossistema', icon: <Layers size={15} />, resource: 'modules', end: true, group: 'operations' },
     { to: `/app/empresa/${cid}/operacao/estoque`, label: t('nav.inventory'), icon: <Boxes size={15} />, resource: 'inventory', requiredModuleCode: 'allin_estoque', group: 'operations' },
     { to: `/app/empresa/${cid}/operacao/vendas`, label: t('nav.orders'), icon: <ShoppingCart size={15} />, resource: 'orders', requiredModuleCode: 'allin_vendas', group: 'operations' },
     { to: `/app/empresa/${cid}/operacao/crm`, label: t('nav.crm'), icon: <Activity size={15} />, resource: 'crm', requiredModuleCode: 'allin_crm', group: 'operations' },
@@ -685,161 +721,227 @@ export const WorkspaceLayout: React.FC<{ mode: 'global' | 'company' }> = ({ mode
           </div>
         </div>
 
-        {/* Navigation Links Grouped Like gestao_estoque */}
+        {/* Navigation Links with Collapsible Accordion Sections */}
         <nav
           aria-label="Módulos e Recursos Autorizados"
-          style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.85rem', overflowY: 'auto' }}
+          style={{ padding: '0.75rem', flex: 1, display: 'flex', flexDirection: 'column', gap: '0.45rem', overflowY: 'auto' }}
         >
           {/* Top Primary Items */}
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1" style={{ marginBottom: '0.2rem' }}>
             {topItems.map(renderNavLink)}
           </div>
 
-          {/* Módulos Comerciais (Instâncias Alocadas com SSO All In em Nova Aba) */}
-          <div>
-            <div
-              className="flex items-center gap-2 px-2 mb-1"
-              style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
-            >
-              <Layers size={12} />
-              <span>Módulos Comerciais</span>
-            </div>
-            <div
-              style={{
-                marginLeft: '0.45rem',
-                paddingLeft: '0.55rem',
-                borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.2rem',
-              }}
-            >
-              {OLIVELAS_MODULE_INSTANCE_SERVERS.filter((srv) =>
-                mode === 'global' ? true : isModuleSubscribed(cid, srv.slug),
-              ).map((srv) => {
-                const targetPath = `${ecosystemBaseRoute}/${srv.slug}`;
-                const active = location.pathname === targetPath;
-                const activeComp =
-                  mode === 'company'
-                    ? currentCompany
-                    : companies.find((c) => c.id === session.activeCompanyId) || companies[0];
-                const labelClean = srv.brandName.replace(/^Olivelas\s*-\s*/i, '');
-                return (
-                  <a
-                    key={srv.slug}
-                    href={`http://localhost:${srv.port}${srv.adminPath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSidebarOpen(false);
-                      openModuleInstanceInNewTab({
-                        moduleSlug: srv.slug,
-                        companyId: activeComp?.id || cid,
-                        companyName: activeComp?.tradeName || 'Olivelas Nebula Holdings',
-                        userId: currentUser.id,
-                        userEmail: currentUser.email,
-                        userName: currentUser.name,
-                        userRole: userActiveRoles[0]?.code || 'GLOBAL_ADMIN',
-                      });
-                    }}
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.38rem 0.65rem',
-                      borderRadius: '0.6rem',
-                      fontSize: '0.75rem',
-                      fontWeight: active ? 600 : 500,
-                      color: active ? '#ffffff' : '#cbd5e1',
-                      backgroundColor: active ? 'var(--bg-sidebar-active)' : 'transparent',
-                      textDecoration: 'none',
-                      cursor: 'pointer',
-                    }}
-                    title={`Abrir instância alocada de ${srv.brandName} em nova aba (Porta ${srv.port})`}
-                  >
-                    <span className="truncate">{labelClean}</span>
-                    <ExternalLink size={11} style={{ opacity: 0.7, flexShrink: 0 }} />
-                  </a>
-                );
-              })}
-            </div>
-          </div>
+          {/* 1. Sanfona: Módulos Comerciais */}
+          {(() => {
+            const visibleModuleServers = OLIVELAS_MODULE_INSTANCE_SERVERS.filter((srv) =>
+              mode === 'global' ? true : isModuleSubscribed(cid, srv.slug),
+            );
+            if (visibleModuleServers.length === 0) return null;
+            const isGroupOpen = openGroups.commercialModules;
+            const isGroupActive = resolveActiveSidebarGroup(location.pathname) === 'commercialModules';
 
-          {/* Commercial & Modules Group */}
-          {commercialItems.length > 0 && (
-            <div>
-              <div
-                className="flex items-center gap-2 px-2 mb-1"
-                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
-              >
-                <FolderTree size={12} />
-                <span>Comercial & Licenciamento</span>
-              </div>
-              <div
-                style={{
-                  marginLeft: '0.45rem',
-                  paddingLeft: '0.55rem',
-                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.2rem',
-                }}
-              >
-                {commercialItems.map(renderNavLink)}
-              </div>
-            </div>
-          )}
+            return (
+              <div className="sidebar-accordion-section">
+                <button
+                  type="button"
+                  className={`sidebar-accordion-trigger ${isGroupOpen ? 'is-open' : ''} ${isGroupActive ? 'has-active-child' : ''}`}
+                  onClick={() => toggleSidebarGroup('commercialModules')}
+                  aria-expanded={isGroupOpen}
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <Layers size={13} style={{ flexShrink: 0 }} />
+                    <span className="truncate">Módulos Comerciais</span>
+                  </span>
+                  <span className="flex items-center gap-1.5" style={{ flexShrink: 0 }}>
+                    <span className="sidebar-accordion-count">{visibleModuleServers.length}</span>
+                    <ChevronDown
+                      size={13}
+                      className="sidebar-accordion-chevron"
+                      style={{ transform: isGroupOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
+                  </span>
+                </button>
 
-          {/* Operations Group */}
-          {operationItems.length > 0 && (
-            <div>
-              <div
-                className="flex items-center gap-2 px-2 mb-1"
-                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
-              >
-                <TrendingUp size={12} />
-                <span>Operação (Exemplos Base)</span>
+                {isGroupOpen && (
+                  <div className="sidebar-accordion-content">
+                    {visibleModuleServers.map((srv) => {
+                      const targetPath = `${ecosystemBaseRoute}/${srv.slug}`;
+                      const active = location.pathname === targetPath;
+                      const activeComp =
+                        mode === 'company'
+                          ? currentCompany
+                          : companies.find((c) => c.id === session.activeCompanyId) || companies[0];
+                      const labelClean = srv.brandName.replace(/^Olivelas\s*-\s*/i, '');
+                      return (
+                        <div
+                          key={srv.slug}
+                          className="flex items-center gap-1"
+                          style={{
+                            borderRadius: '0.6rem',
+                            backgroundColor: active ? 'var(--bg-sidebar-active)' : 'transparent',
+                          }}
+                        >
+                          <Link
+                            to={targetPath}
+                            onClick={() => setSidebarOpen(false)}
+                            style={{
+                              flex: 1,
+                              minWidth: 0,
+                              display: 'flex',
+                              alignItems: 'center',
+                              padding: '0.38rem 0.55rem',
+                              borderRadius: '0.6rem',
+                              fontSize: '0.75rem',
+                              fontWeight: active ? 600 : 500,
+                              color: active ? '#ffffff' : '#cbd5e1',
+                              textDecoration: 'none',
+                            }}
+                            title={`Gerenciar ${srv.brandName} no All In`}
+                          >
+                            <span className="truncate">{labelClean}</span>
+                          </Link>
+                          <a
+                            href={`http://localhost:${srv.port}${srv.adminPath}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSidebarOpen(false);
+                              openModuleInstanceInNewTab({
+                                moduleSlug: srv.slug,
+                                companyId: activeComp?.id || cid,
+                                companyName: activeComp?.tradeName || 'Olivelas Nebula Holdings',
+                                userId: currentUser.id,
+                                userEmail: currentUser.email,
+                                userName: currentUser.name,
+                                userRole: userActiveRoles[0]?.code || 'GLOBAL_ADMIN',
+                              });
+                            }}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: '0.32rem 0.42rem',
+                              borderRadius: '0.45rem',
+                              color: active ? '#ffffff' : '#94a3b8',
+                              textDecoration: 'none',
+                              cursor: 'pointer',
+                              flexShrink: 0,
+                            }}
+                            title={`Abrir instância alocada de ${srv.brandName} em nova aba (Porta ${srv.port})`}
+                          >
+                            <ExternalLink size={11} />
+                          </a>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
-              <div
-                style={{
-                  marginLeft: '0.45rem',
-                  paddingLeft: '0.55rem',
-                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.2rem',
-                }}
-              >
-                {operationItems.map(renderNavLink)}
-              </div>
-            </div>
-          )}
+            );
+          })()}
 
-          {/* Governance & Audit Group */}
-          {governanceItems.length > 0 && (
-            <div>
-              <div
-                className="flex items-center gap-2 px-2 mb-1"
-                style={{ fontSize: '0.66rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: '#94a3b8' }}
-              >
-                <Shield size={12} />
-                <span>Governança, HBAC & Auditoria</span>
+          {/* 2. Sanfona: Comercial & Licenciamento */}
+          {commercialItems.length > 0 && (() => {
+            const isGroupOpen = openGroups.commercial;
+            const isGroupActive = resolveActiveSidebarGroup(location.pathname) === 'commercial';
+            return (
+              <div className="sidebar-accordion-section">
+                <button
+                  type="button"
+                  className={`sidebar-accordion-trigger ${isGroupOpen ? 'is-open' : ''} ${isGroupActive ? 'has-active-child' : ''}`}
+                  onClick={() => toggleSidebarGroup('commercial')}
+                  aria-expanded={isGroupOpen}
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <FolderTree size={13} style={{ flexShrink: 0 }} />
+                    <span className="truncate">Comercial &amp; Licenciamento</span>
+                  </span>
+                  <span className="flex items-center gap-1.5" style={{ flexShrink: 0 }}>
+                    <span className="sidebar-accordion-count">{commercialItems.length}</span>
+                    <ChevronDown
+                      size={13}
+                      className="sidebar-accordion-chevron"
+                      style={{ transform: isGroupOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
+                  </span>
+                </button>
+                {isGroupOpen && (
+                  <div className="sidebar-accordion-content">
+                    {commercialItems.map(renderNavLink)}
+                  </div>
+                )}
               </div>
-              <div
-                style={{
-                  marginLeft: '0.45rem',
-                  paddingLeft: '0.55rem',
-                  borderLeft: '1px solid rgba(148, 163, 184, 0.16)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.2rem',
-                }}
-              >
-                {governanceItems.map(renderNavLink)}
+            );
+          })()}
+
+          {/* 3. Sanfona: Operação */}
+          {operationItems.length > 0 && (() => {
+            const isGroupOpen = openGroups.operations;
+            const isGroupActive = resolveActiveSidebarGroup(location.pathname) === 'operations';
+            return (
+              <div className="sidebar-accordion-section">
+                <button
+                  type="button"
+                  className={`sidebar-accordion-trigger ${isGroupOpen ? 'is-open' : ''} ${isGroupActive ? 'has-active-child' : ''}`}
+                  onClick={() => toggleSidebarGroup('operations')}
+                  aria-expanded={isGroupOpen}
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <TrendingUp size={13} style={{ flexShrink: 0 }} />
+                    <span className="truncate">Operação</span>
+                  </span>
+                  <span className="flex items-center gap-1.5" style={{ flexShrink: 0 }}>
+                    <span className="sidebar-accordion-count">{operationItems.length}</span>
+                    <ChevronDown
+                      size={13}
+                      className="sidebar-accordion-chevron"
+                      style={{ transform: isGroupOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
+                  </span>
+                </button>
+                {isGroupOpen && (
+                  <div className="sidebar-accordion-content">
+                    {operationItems.map(renderNavLink)}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            );
+          })()}
+
+          {/* 4. Sanfona: Governança, HBAC & Auditoria */}
+          {governanceItems.length > 0 && (() => {
+            const isGroupOpen = openGroups.governance;
+            const isGroupActive = resolveActiveSidebarGroup(location.pathname) === 'governance';
+            return (
+              <div className="sidebar-accordion-section">
+                <button
+                  type="button"
+                  className={`sidebar-accordion-trigger ${isGroupOpen ? 'is-open' : ''} ${isGroupActive ? 'has-active-child' : ''}`}
+                  onClick={() => toggleSidebarGroup('governance')}
+                  aria-expanded={isGroupOpen}
+                >
+                  <span className="flex items-center gap-2 min-w-0">
+                    <Shield size={13} style={{ flexShrink: 0 }} />
+                    <span className="truncate">Governança, HBAC &amp; Auditoria</span>
+                  </span>
+                  <span className="flex items-center gap-1.5" style={{ flexShrink: 0 }}>
+                    <span className="sidebar-accordion-count">{governanceItems.length}</span>
+                    <ChevronDown
+                      size={13}
+                      className="sidebar-accordion-chevron"
+                      style={{ transform: isGroupOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                    />
+                  </span>
+                </button>
+                {isGroupOpen && (
+                  <div className="sidebar-accordion-content">
+                    {governanceItems.map(renderNavLink)}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
         </nav>
 
         {/* Active User Footer (Estilo gestao_estoque) */}

@@ -167,7 +167,13 @@ export const App: React.FC = () => {
         {/* 16. Relatórios e Indicadores Globais */}
         <Route path="relatorios" element={<ReportsAnalyticsPage scope="global" />} />
 
-        {/* 17. Ecossistema Olivelas (16 Plataformas & Schemas Supabase) */}
+        {/* 17. Operação & Ecossistema Olivelas (16 Plataformas & Schemas Supabase) */}
+        <Route path="operacao/estoque" element={<CompanyOperationModulePage moduleType="inventory" />} />
+        <Route path="operacao/estoque/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="inventory" />} />
+        <Route path="operacao/vendas" element={<CompanyOperationModulePage moduleType="orders" />} />
+        <Route path="operacao/vendas/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="orders" />} />
+        <Route path="operacao/crm" element={<CompanyOperationModulePage moduleType="crm" />} />
+        <Route path="operacao/crm/:itemId/editar" element={<CompanyOperationItemFormPage moduleType="crm" />} />
         <Route path="ecossistema" element={<OlivelasEcosystemHub />} />
         <Route path="ecossistema/:moduleSlug" element={<OlivelasEcosystemHub />} />
       </Route>
