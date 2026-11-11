@@ -868,6 +868,13 @@
     white-space: normal;
   }
 
+  .data-table td .btn-sm,
+  .table td .btn-sm {
+    padding: 0.28rem 0.55rem;
+    font-size: 0.72rem;
+    gap: 0.3rem;
+  }
+
   .data-table th.num,
   .data-table td.num,
   .table th.text-right,

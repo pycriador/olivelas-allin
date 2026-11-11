@@ -1417,7 +1417,8 @@ export const PaymentMethodsPage: React.FC<{
             {
               key: 'actions',
               header: 'Ações',
-              width: '8%',
+              width: '10%',
+              isNumeric: true,
               render: (comp) => {
                 const openCompanyCharge = charges.find(
                   (ch) =>
@@ -1552,7 +1553,8 @@ export const PaymentMethodsPage: React.FC<{
             {
               key: 'actions',
               header: 'Ações',
-              width: '8%',
+              width: '10%',
+              isNumeric: true,
               render: (pm) => (
                 <ActionDropdownMenu
                   label="Ações"
@@ -1634,58 +1636,79 @@ export const PaymentMethodsPage: React.FC<{
           columns={[
             {
               key: 'tradeName',
-              header: 'Unidade (Matriz / Filial)',
+              header: 'Unidade (Matriz / Filial) & Filiação',
               sortable: true,
-              width: '26%',
-              render: (comp) => (
-                <div>
-                  <span className={`badge ${comp.isBranch ? 'badge-info' : 'badge-teal'} mr-1`}>
-                    {comp.isBranch ? '└─ FILIAL' : 'MATRIZ'}
-                  </span>
-                  <Link
-                    to={`/app/global/empresas/${comp.id}/editar`}
-                    className="font-semibold text-left"
-                    style={{ color: 'var(--brand-primary)' }}
-                  >
-                    {comp.tradeName}
-                  </Link>
-                </div>
-              ),
-            },
-            {
-              key: 'branchCode',
-              header: 'Código & Filiação',
-              width: '18%',
+              width: '28%',
               render: (comp) => {
                 const s = companySummaries.get(comp.id);
                 return (
-                  <div className="text-xs text-muted">
-                    <code>{s?.branchCode || 'MATRIZ'}</code>{' '}
-                    {comp.isBranch && s?.parentCompanyName ? `• ${s.parentCompanyName}` : ''}
+                  <div
+                    style={{
+                      paddingLeft: comp.isBranch ? '0.65rem' : 0,
+                      borderLeft: comp.isBranch ? '2px solid var(--accent-primary)' : 'none',
+                    }}
+                  >
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <span className={`badge ${comp.isBranch ? 'badge-info' : 'badge-teal'}`}>
+                        {comp.isBranch ? '└─ FILIAL' : 'MATRIZ'}
+                      </span>
+                      <Link
+                        to={`/app/global/empresas/${comp.id}/editar`}
+                        className="font-semibold text-sm truncate"
+                        style={{ color: 'var(--accent-primary)' }}
+                      >
+                        {comp.tradeName}
+                      </Link>
+                    </div>
+                    <div className="text-xs text-muted truncate mt-0.5">
+                      <code>{s?.branchCode || comp.id}</code>
+                      {comp.isBranch && s?.parentCompanyName
+                        ? ` • Matriz: ${s.parentCompanyName}`
+                        : ` • ${comp.legalName}`}
+                    </div>
                   </div>
                 );
               },
             },
             {
               key: 'employeesCount',
-              header: 'Funcionários Ativos',
+              header: 'Equipe Alocada',
               sortable: true,
-              width: '12%',
+              width: '16%',
               render: (comp) => {
                 const s = companySummaries.get(comp.id);
-                return <span className="tabular font-semibold">{s?.activeEmployeesCount ?? 0}</span>;
+                return (
+                  <div className="flex flex-col gap-0.5">
+                    <div>
+                      <span className="badge badge-neutral tabular">
+                        {s?.activeEmployeesCount ?? 0} colaborador(es)
+                      </span>
+                    </div>
+                    <span className="text-xs text-muted truncate">
+                      Titular: {s?.adminOwnerName || '—'}
+                    </span>
+                  </div>
+                );
               },
             },
             {
               key: 'freeEmployeesLimit',
               header: 'Franquia Gratuita',
-              width: '14%',
+              width: '16%',
               render: (comp) => {
                 const s = companySummaries.get(comp.id);
                 return (
-                  <div className="tabular">
-                    {s?.freeLimit ?? 10} grátis{' '}
-                    {s?.hasCustomQuotaOverride && <span className="badge badge-info">Custom</span>}
+                  <div className="flex flex-col gap-0.5">
+                    <span className="font-semibold tabular text-xs">
+                      Até {s?.freeLimit ?? 10} funcionários grátis
+                    </span>
+                    <div>
+                      {s?.hasCustomQuotaOverride ? (
+                        <span className="badge badge-info">Exceção Customizada</span>
+                      ) : (
+                        <span className="badge badge-teal">Padrão Global</span>
+                      )}
+                    </div>
                   </div>
                 );
               },
@@ -1693,19 +1716,21 @@ export const PaymentMethodsPage: React.FC<{
             {
               key: 'extraEmployees',
               header: 'Excedentes & Valor/Extra',
-              width: '14%',
+              width: '16%',
               render: (comp) => {
                 const s = companySummaries.get(comp.id);
                 if (!s) return '—';
                 return (
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {s.extraEmployeesCount > 0 ? (
-                      <span className="badge badge-warning">+{s.extraEmployeesCount}</span>
-                    ) : (
-                      <span className="badge badge-success">0</span>
-                    )}
+                  <div className="flex flex-col gap-0.5">
+                    <div>
+                      {s.extraEmployeesCount > 0 ? (
+                        <span className="badge badge-warning">+{s.extraEmployeesCount} extra(s)</span>
+                      ) : (
+                        <span className="badge badge-success">Dentro da Cota (0)</span>
+                      )}
+                    </div>
                     <span className="tabular text-xs text-muted">
-                      ({formatCurrency(s.extraEmployeePrice, 'BRL', session.language)}/un.)
+                      {formatCurrency(s.extraEmployeePrice, 'BRL', session.language)} / extra
                     </span>
                   </div>
                 );
@@ -1714,20 +1739,27 @@ export const PaymentMethodsPage: React.FC<{
             {
               key: 'extraCost',
               header: 'Adicional Mensal',
-              width: '10%',
+              width: '14%',
+              isNumeric: true,
               render: (comp) => {
                 const s = companySummaries.get(comp.id);
                 return (
-                  <span className="tabular font-semibold">
-                    +{formatCurrency(s?.extraLicensesMonthlyCost ?? 0, 'BRL', session.language)}/mês
-                  </span>
+                  <div className="tabular">
+                    <div className="font-bold text-sm">
+                      +{formatCurrency(s?.extraLicensesMonthlyCost ?? 0, 'BRL', session.language)}/mês
+                    </div>
+                    <div className="text-xs text-muted">
+                      MRR: {formatCurrency(s?.totalMonthlyBilling ?? 0, 'BRL', session.language)}
+                    </div>
+                  </div>
                 );
               },
             },
             {
               key: 'actions',
               header: 'Ações',
-              width: '6%',
+              width: '10%',
+              isNumeric: true,
               render: (comp) => (
                 <ActionDropdownMenu
                   label="Ações"
