@@ -145,14 +145,20 @@ Ao inspecionar qualquer módulo em `/app/global/ecossistema/:moduleSlug` ou `/ap
 
 ---
 
-## 7. Motor HBAC Hierárquico, Tabelas Sem Scroll Horizontal e UI Unificada
+## 7. Motor HBAC Hierárquico, Menu Lateral em Sanfona, Tabelas com Scroll Interno e Relatórios All In
 
-- **Listagem Unificada em Tabela Única (`/app/global/modulos` e `/app/global/ecossistema`):**
-  - Todos os módulos são apresentados em uma única lista tabular consolidada (sem cards fragmentados).
-  - **Modal de Detalhes (`ModuleDetailsModal`):** Exibe todas as informações técnicas, KPIs, recursos, arquitetura (`Página Estática` vs `Schema PostgreSQL`) e fecha com botão **X**, tecla `ESC` ou clique fora.
-  - **Menu Dropdown de Ações (`ActionDropdownMenu`):** Agrupa todas as ações de cada linha (*Ver Detalhes*, *Abrir Plataforma SSO*, *CRUD & RAG*, *Editar*, *Ativar/Desativar*) em um único menu suspenso inteligente com posicionamento automático (`fixed`).
-- **Zero Scroll Horizontal em Todas as Tabelas:**
-  - Todas as tabelas e modais utilizam layout fluido (`table-layout: fixed`, `overflow-x: hidden`, quebra inteligente de palavras e ocultação progressiva de colunas secundárias em telas menores), eliminando qualquer barra de rolagem horizontal.
+- **Menu Lateral Fixo com Sanfona (Accordion) de 4 Grupos (`AppShell.tsx`):**
+  - A barra lateral permanece fixa (`100vh`) com rolagem independente da área de conteúdo e organiza os módulos em **4 seções retráteis (sanfona)** com contador de itens e abertura automática da seção ativa:
+    1. **Módulos Comerciais:** Acesso direto ao painel de governança no All In (`/ecossistema/:moduleSlug`) e atalho para abrir a instância dedicada em nova aba (`http://localhost:<porta>/<app>`).
+    2. **Comercial & Licenciamento:** Módulos Ativos, Catálogo de Módulos, Empresas & Filiais (com hierarquia Matriz → Filial validada), Contratos, Financeiro e Meios de Pagamento.
+    3. **Operação:** Console do Ecossistema, Estoque (SKU), Pedidos & Vendas e CRM & Pipeline (disponíveis no escopo Global e no escopo da Empresa).
+    4. **Governança, HBAC & Auditoria:** Usuários, Papéis & HBAC, API Hub, Tickets & Chamados, Auditoria Forense e Relatórios All In.
+- **Tabelas com Rolagem Interna e Estado na URL (`UrlDataTable`):**
+  - Todas as listagens (`/app/global/modulos`, `/app/global/empresas`, `/app/global/papeis`, `/app/global/api-hub/servicos`, `/app/global/meios-pagamento/cotas`, `/app/empresa/:empresaId` e `/app/empresa/:empresaId/modulos-ativos`) utilizam scroll interno no corpo da tabela (`.table-wrapper`), mantendo cabeçalhos (`sticky`) e barra de paginação sempre visíveis sem estourar os limites horizontais ou verticais da página.
+- **Módulos Ativos da Empresa em Tabela com Filtro e URL Própria:**
+  - Tanto no painel da empresa (`/app/empresa/:empresaId`) quanto na rota exclusiva `/app/empresa/:empresaId/modulos-ativos`, os módulos contratados são exibidos em tabela com filtro de busca (`?q=`), filtro por tipo (`?type=all|commercial|examples`), coluna de **URL Própria do Módulo** (`http://localhost:<porta>/<app>` e rota interna `/app/empresa/:empresaId/ecossistema/:slug`) e exportação CSV.
+- **Central de Relatórios Executivos All In (`/app/global/relatorios` e `/app/empresa/:empresaId/relatorios`):**
+  - Relatórios nativos do ecossistema All In divididos em 6 visões auditáveis: *Empresas, Filiais & Cota de 10 Funcionários Grátis*, *Módulos Comerciais & Adoção*, *Contratos & Assinaturas SHA-256*, *Financeiro, Parcelas & Conciliação*, *Usuários & Matriz HBAC* e *Governança, Tickets & API Hub*.
 
 ---
 
@@ -167,10 +173,19 @@ Ao inspecionar qualquer módulo em `/app/global/ecossistema/:moduleSlug` ou `/ap
 
 ### 8.2. Console Global da Plataforma (`/app/global`)
 - `/app/global` — Dashboard Executivo Global
-- `/app/global/ecossistema` — Hub Unificado das 37 Plataformas Comerciais Olivelas
-- `/app/global/ecossistema/:moduleSlug` — Workspace de 5 Abas do Módulo
-- `/app/global/modulos` — Catálogo Unificado (37 Plataformas Comerciais + 10 Módulos Base) com Modal de Detalhes e Menu Dropdown
-- `/app/global/empresas` | `/usuarios` | `/papeis` | `/contratos` | `/financeiro` | `/meios-pagamento` | `/api-hub/servicos` | `/tickets` | `/auditoria` | `/relatorios`
+- `/app/global/ecossistema` — Hub Unificado das Plataformas Comerciais Olivelas
+- `/app/global/ecossistema/:moduleSlug` — Workspace de Governança e Operação Ao Vivo do Módulo
+- `/app/global/modulos` — Catálogo Unificado com Modal de Detalhes e Menu Dropdown
+- `/app/global/operacao/estoque` | `/operacao/vendas` | `/operacao/crm` — Operação Global Sincronizada
+- `/app/global/empresas` | `/usuarios` | `/papeis` | `/contratos` | `/financeiro` | `/meios-pagamento/cotas` | `/api-hub/servicos` | `/tickets` | `/auditoria` | `/relatorios`
+
+### 8.3. Ambiente Operacional da Empresa (`/app/empresa/:empresaId`)
+- `/app/empresa/:empresaId` — Painel Operacional da Empresa com Tabela de Módulos Ativos, KPIs e Trilha de Auditoria
+- `/app/empresa/:empresaId/modulos-ativos` — URL Própria da Tabela de Módulos Ativos da Empresa com Busca e Filtro por Tipo
+- `/app/empresa/:empresaId/modulos` — Catálogo Comercial e Contratação Sob Demanda
+- `/app/empresa/:empresaId/ecossistema/:moduleSlug` — Workspace Dedicado do Módulo Comercial na Empresa
+- `/app/empresa/:empresaId/operacao/estoque` | `/operacao/vendas` | `/operacao/crm` — Módulos Operacionais Base
+- `/app/empresa/:empresaId/contratos` | `/financeiro` | `/usuarios` | `/papeis` | `/tickets` | `/auditoria` | `/relatorios`
 
 ---
 
